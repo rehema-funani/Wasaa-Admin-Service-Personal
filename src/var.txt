@@ -1,0 +1,122 @@
+#!/bin/bash
+
+# Create root project directories
+mkdir -p src/{app,components,hooks,api,utils,context,styles,types,constants,assets,lib}
+
+# Create main app routes structure based on your navigation
+mkdir -p src/app/dashboard
+mkdir -p src/app/admin/{users,Group,livestreams,finance,Wallpaper,Avatar,System-Setting,Gift}
+
+# Create user management routes
+mkdir -p src/app/admin/users/{user-details,countrywise-Analysis,reported-user-list}
+
+# Create group management routes
+mkdir -p src/app/admin/Group/{all-group-list,all-reported-group-list}
+
+# Create livestreams management routes
+mkdir -p src/app/admin/livestreams/{all-livestreams,scheduled,settings,categories,featured,analytics,moderation,reported}
+
+# Create finance management routes
+mkdir -p src/app/admin/finance/{transactions,user-wallets,withdrawals,top-ups,payment-methods,reports,gift-history}
+
+# Create settings routes
+mkdir -p src/app/admin/Wallpaper/{list-all-wallpaper,add-a-new-wallpaper}
+mkdir -p src/app/admin/Avatar/{list-all-avatar,add-a-new-avatar}
+mkdir -p src/app/admin/System-Setting/{General-Setting,App-Setting,Web-Setting,Advanced-Setting,email-Configration,Pages,LanguageSettings,reportSettings}
+mkdir -p src/app/admin/Gift/{gift-list,add-new-gift,gift-categories}
+
+# Create component directories
+mkdir -p src/components/{layout,ui,common}
+mkdir -p src/components/{users,groups,livestreams,finance,settings,dashboard}
+
+# Create main layout components
+touch src/components/layout/{Sidebar.jsx,Header.jsx,Footer.jsx,AdminLayout.jsx}
+
+# Create common UI components
+mkdir -p src/components/ui
+touch src/components/ui/{Button.jsx,Card.jsx,Table.jsx,Modal.jsx,Dropdown.jsx,Tabs.jsx,Form.jsx,Input.jsx}
+
+# Create common components
+touch src/components/common/{DataTable.jsx,SearchBox.jsx,FilterPanel.jsx,Pagination.jsx,StatusBadge.jsx}
+
+# Create feature-specific components
+touch src/components/livestreams/{LivestreamCard.jsx,StreamPlayer.jsx,StreamControls.jsx}
+touch src/components/finance/{TransactionList.jsx,WalletCard.jsx,PaymentMethodForm.jsx}
+
+# Create hooks
+touch src/hooks/{useAuth.js,useApi.js,useToast.js,useForm.js,useModal.js}
+
+# Create API related files
+mkdir -p src/api/services
+touch src/api/{client.js,endpoints.js}
+touch src/api/services/{users.js,groups.js,livestreams.js,finance.js,settings.js}
+
+# Create utility files
+touch src/utils/{formatting.js,validation.js,date.js,storage.js,helpers.js}
+
+# Create context providers
+touch src/context/{AuthContext.jsx,ThemeContext.jsx,SocketContext.jsx,NotificationContext.jsx}
+
+# Create style files
+touch src/styles/{globals.css,variables.css,theme.css}
+
+# Create type definitions (if using TypeScript)
+touch src/types/{user.ts,group.ts,livestream.ts,finance.ts,settings.ts}
+
+# Create constants
+touch src/constants/{routes.js,config.js,messages.js,permissions.js}
+
+# Create lib wrappers for third-party libraries
+touch src/lib/{storage.js,http.js,socket.js,analytics.js,payment.js}
+
+# Create route file based on the provided routes
+cat > src/constants/routes.js << 'EOL'
+import { 
+  IoHome, 
+  IoGlobe, 
+  IoPeople, 
+  IoTvOutline,
+  IoTimeOutline,
+  IoVideocamOutline,
+  IoBarChartOutline,
+  IoShieldOutline,
+  IoReceiptOutline,
+  IoWalletOutline,
+  IoCardOutline,
+  IoStatsChartOutline,
+  IoStarOutline,
+  IoWarning,
+  IoImages,
+  IoColorPalette,
+  IoSettingsSharp
+} from 'react-icons/io5';
+import { Users } from 'lucide-react';
+
+const routes = [
+  {
+    type: 'link',
+    path: '/',
+    title: 'Dashboard',
+    icon: IoHome,
+  },
+  // rest of the routes...
+];
+
+export default routes;
+EOL
+
+# Create basic index file
+cat > src/app/page.jsx << 'EOL'
+import React from 'react';
+
+export default function Dashboard() {
+  return (
+    <div className="dashboard-container">
+      <h1>Dashboard</h1>
+      <p>Welcome to your finance-integrated communication platform</p>
+    </div>
+  );
+}
+EOL
+
+echo "File structure created successfully!"
