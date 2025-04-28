@@ -158,7 +158,7 @@ const DataTable: React.FC<DataTableProps> = ({
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
             <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead>

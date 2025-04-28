@@ -9,7 +9,7 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = () => {
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [pageTitle, setPageTitle] = useState<string>('Dashboard');
   const location = useLocation();
@@ -56,7 +56,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
-        setCollapsed(true);
+        setMobileMenuOpen(false);
       }
     };
 
@@ -67,16 +67,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
 
   return (
     <div className="w-full min-h-screen flex bg-gray-50">
-      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+      <div className="w-[17%]">
+        <Sidebar />
+      </div>
 
-      <div className={`
-        flex-1 w-full flex flex-col h-[100vh] transition-all duration-300
-      `}>
-        <Header sidebarCollapsed={collapsed} />
-
-        <main className="flex-1 overflow-x-hidden h-full overflow-y-auto">
+      <div className="w-full md:w-[83%] flex flex-col h-[100vh]">
+        <Header />
+        <main className="overflow-x-auto h-full w-full overflow-y-auto">
           <div className="w-full mx-auto">
-
             <div className={`transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'}`}>
               {loading ? (
                 <div className="flex justify-center items-center h-64">
@@ -89,16 +87,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
           </div>
         </main>
 
-        <Footer sidebarCollapsed={collapsed} />
+        <Footer />
       </div>
 
       <div
         className={`
           fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-20 lg:hidden
           transition-opacity duration-300
-          ${!collapsed ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+          ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
         `}
-        onClick={() => setCollapsed(true)}
+        onClick={() => setMobileMenuOpen(false)}
       />
     </div>
   );

@@ -11,6 +11,7 @@ const ReportedUsers = lazy(() => import('./app/admin/users/reported-user-list/pa
 const CountryDetailPage = lazy(() => import('./app/admin/users/countrywise-Analysis/CountryDetailPage'));
 
 const GroupList = lazy(() => import('./app/admin/Group/all-group-list/page'));
+const GroupDetailPage = lazy(() => import('./app/admin/Group/all-group-list/GroupDetailPage'));
 const ReportedGroups = lazy(() => import('./app/admin/Group/all-reported-group-list/page'));
 
 const AllLivestreams = lazy(() => import('./app/admin/livestreams/all-livestreams/page'));
@@ -93,6 +94,7 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/users/reported-user-list" element={<ReportedUsers />} />
 
                     <Route path="admin/Group/all-group-list" element={<GroupList />} />
+                    <Route path="admin/Group/all-group-list/:id" element={<GroupDetailPage />} />
                     <Route path="admin/Group/all-reported-group-list" element={<ReportedGroups />} />
 
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />

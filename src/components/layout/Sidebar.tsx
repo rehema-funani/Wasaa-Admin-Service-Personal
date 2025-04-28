@@ -3,7 +3,6 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
-  ChevronUp,
   Home,
   Menu,
   X,
@@ -15,16 +14,20 @@ import routes, { LinkRoute, DropdownRoute, SectionRoute } from '../../constants/
 type RouteItem = LinkRoute | DropdownRoute | SectionRoute;
 
 interface SidebarProps {
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
+  // We keep this prop for TypeScript compatibility, but we won't use it functionally
+  collapsed?: boolean;
+  setCollapsed?: (collapsed: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
+const Sidebar: React.FC<SidebarProps> = () => {
   const location = useLocation();
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+  // Fixed sidebar width - no longer collapsible
+  const sidebarWidth = 256;
 
   useEffect(() => {
     const handleResize = () => {
@@ -96,7 +99,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         >
           <NavLink
             to={item.path}
-            className={({ isActive }) => ``}
             onMouseEnter={() => setHoveredItem(itemKey)}
             onMouseLeave={() => setHoveredItem(null)}
           >
@@ -133,19 +135,17 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
                   {renderIcon(item.icon, isActivePage)}
                 </motion.span>
               )}
-              {!collapsed && (
-                <motion.span
-                  className={`text-[12px] font-normal transition-all ${isActivePage ? 'text-indigo-600' : 'text-gray-800'}`}
-                  animate={{
-                    x: isHovered && !isActivePage ? 4 : 0
-                  }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {item.title}
-                </motion.span>
-              )}
+              <motion.span
+                className={`text-[12px] font-normal transition-all ${isActivePage ? 'text-indigo-600' : 'text-gray-800'}`}
+                animate={{
+                  x: isHovered && !isActivePage ? 4 : 0
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                {item.title}
+              </motion.span>
 
-              {!collapsed && isHovered && !isActivePage && (
+              {isHovered && !isActivePage && (
                 <motion.span
                   className="ml-auto text-indigo-400"
                   initial={{ opacity: 0, x: -5 }}
@@ -207,30 +207,26 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
                   {renderIcon(item.icon, hasActive || isOpen)}
                 </motion.span>
               )}
-              {!collapsed && (
-                <motion.span
-                  className={`text-[12px] font-normal ${hasActive || isOpen ? 'text-indigo-600' : 'text-gray-800'}`}
-                >
-                  {item.title}
-                </motion.span>
-              )}
-            </div>
-            {!collapsed && (
               <motion.span
-                className="text-gray-400"
-                animate={{
-                  rotate: isOpen ? 180 : 0,
-                  scale: isHovered ? 1.1 : 1
-                }}
-                transition={{ duration: 0.3 }}
+                className={`text-[12px] font-normal ${hasActive || isOpen ? 'text-indigo-600' : 'text-gray-800'}`}
               >
-                <ChevronDown size={16} />
+                {item.title}
               </motion.span>
-            )}
+            </div>
+            <motion.span
+              className="text-gray-400"
+              animate={{
+                rotate: isOpen ? 180 : 0,
+                scale: isHovered ? 1.1 : 1
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <ChevronDown size={16} />
+            </motion.span>
           </motion.button>
 
           <AnimatePresence>
-            {isOpen && !collapsed && (
+            {isOpen && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
@@ -271,16 +267,14 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         >
-          {!collapsed && (
-            <motion.h3
-              className="mb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-            >
-              {item.title}
-            </motion.h3>
-          )}
+          <motion.h3
+            className="mb-2 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            {item.title}
+          </motion.h3>
           <div className="space-y-1">
             {item.items.map((subItem: any, idx: number) => (
               <motion.div
@@ -352,71 +346,22 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         `}
         initial={false}
         animate={{
-          width: collapsed ? 80 : 256,
           boxShadow: '0 0 20px rgba(0, 0, 0, 0.03)'
         }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 30
-        }}
       >
-        <motion.div
-          className="h-16 flex items-center justify-between px-4 border-b border-gray-50"
-          initial={false}
-          animate={{
-            paddingLeft: collapsed ? 16 : 16
-          }}
-        >
-          {!collapsed ? (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <NavLink to="/" className="flex items-center">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200/50">
-                  WC
-                </div>
-                <motion.span
-                  className="ml-2 text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                >
-                  Wasaa chat
-                </motion.span>
-              </NavLink>
-            </motion.div>
-          ) : (
-            <motion.div
-              className="mx-auto"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200/50">
-                SP
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-50">
+          <div>
+            <NavLink to="/" className="flex items-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200/50">
+                WC
               </div>
-            </motion.div>
-          )}
-
-          <motion.button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-2 rounded-lg hover:bg-indigo-50 transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            <motion.div
-              animate={{ rotate: collapsed ? 180 : 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-            >
-              <ChevronUp size={18} className="text-indigo-400" />
-            </motion.div>
-          </motion.button>
-        </motion.div>
+              <span className="ml-2 text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
+                Wasaa chat
+              </span>
+            </NavLink>
+          </div>
+          {/* The collapse button is removed */}
+        </div>
 
         <motion.nav
           className="p-3 overflow-y-auto h-[calc(100vh-4rem)] hide-scrollbar"

@@ -3,27 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell,
   Search,
-  Settings,
-  HelpCircle,
   User,
   LogOut,
   ChevronDown,
-  Sun,
-  Moon,
   CreditCard,
   UserCog,
   Mail,
   X,
-  Check,
   Clock,
   AlertCircle
 } from 'lucide-react';
 
-interface HeaderProps {
-  sidebarCollapsed: boolean;
-}
-
-const Header: React.FC<HeaderProps> = ({ sidebarCollapsed }) => {
+const Header: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
@@ -177,11 +168,6 @@ const Header: React.FC<HeaderProps> = ({ sidebarCollapsed }) => {
       className="h-[60px] bg-white/80 backdrop-blur-xl border-b border-gray-50  
       flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20 transition-width"
       initial={false}
-      animate={sidebarCollapsed ? {
-        transition: { type: "spring", stiffness: 300, damping: 30 }
-      } : {
-        transition: { type: "spring", stiffness: 300, damping: 30 }
-      }}
     >
       <div className="relative flex-1 max-w-md">
         <motion.div
