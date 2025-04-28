@@ -1,17 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 interface FooterProps {
   sidebarCollapsed: boolean;
 }
 
-const Footer: React.FC<FooterProps> = ({ sidebarCollapsed }) => {
+const Footer: React.FC<FooterProps> = () => {
   const currentYear = new Date().getFullYear();
 
   return (
     <motion.footer
-      className="py-4 px-4 sm:px-6 border-t border-gray-50 bg-white/80 backdrop-blur-xl
+      className="py-1 px-4 sm:px-6 border-t border-gray-100 bg-white/80 backdrop-blur-xl
                  transition-all text-xs sm:text-sm"
       initial={false}
       animate={{
@@ -25,7 +25,7 @@ const Footer: React.FC<FooterProps> = ({ sidebarCollapsed }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <span>© {currentYear} StreamPay. All rights reserved.</span>
+          <span>© {currentYear} wasaa chat. All rights reserved.</span>
         </motion.div>
         <motion.div
           className="mt-3 flex justify-center sm:justify-start"

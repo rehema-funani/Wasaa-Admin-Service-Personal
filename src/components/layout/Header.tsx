@@ -174,14 +174,12 @@ const Header: React.FC<HeaderProps> = ({ sidebarCollapsed }) => {
 
   return (
     <motion.header
-      className="h-16 bg-white/80 backdrop-blur-xl border-b border-gray-50  
-      flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20 transition-width shadow-sm"
+      className="h-[60px] bg-white/80 backdrop-blur-xl border-b border-gray-50  
+      flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20 transition-width"
       initial={false}
       animate={sidebarCollapsed ? {
-        // marginLeft: '5rem',
         transition: { type: "spring", stiffness: 300, damping: 30 }
       } : {
-        // marginLeft: '16rem',
         transition: { type: "spring", stiffness: 300, damping: 30 }
       }}
     >

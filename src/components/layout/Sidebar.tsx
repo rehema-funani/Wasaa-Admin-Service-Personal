@@ -377,7 +377,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
             >
               <NavLink to="/" className="flex items-center">
                 <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200/50">
-                  SP
+                  WC
                 </div>
                 <motion.span
                   className="ml-2 text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600"
@@ -385,7 +385,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: 0.1 }}
                 >
-                  StreamPay
+                  Wasaa chat
                 </motion.span>
               </NavLink>
             </motion.div>

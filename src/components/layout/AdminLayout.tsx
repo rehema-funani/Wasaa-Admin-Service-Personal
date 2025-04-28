@@ -70,35 +70,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
       <div className={`
-        flex-1 w-full flex flex-col min-h-screen transition-all duration-300
+        flex-1 w-full flex flex-col h-[100vh] transition-all duration-300
       `}>
         <Header sidebarCollapsed={collapsed} />
 
-        <main className="flex-1 p-4 sm:p-6 overflow-x-hidden">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">{pageTitle}</h1>
-
-              <nav className="flex mt-2" aria-label="Breadcrumb">
-                <ol className="inline-flex items-center space-x-1 md:space-x-3">
-                  <li className="inline-flex items-center">
-                    <a href="/" className="text-sm font-medium text-primary-600 hover:text-primary-800">
-                      Home
-                    </a>
-                  </li>
-                  {location.pathname !== '/' && (
-                    <li>
-                      <div className="flex items-center">
-                        <svg className="w-3 h-3 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path>
-                        </svg>
-                        <span className="text-sm font-medium text-gray-500">{pageTitle}</span>
-                      </div>
-                    </li>
-                  )}
-                </ol>
-              </nav>
-            </div>
+        <main className="flex-1 overflow-x-hidden h-full overflow-y-auto">
+          <div className="w-full mx-auto">
 
             <div className={`transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'}`}>
               {loading ? (
