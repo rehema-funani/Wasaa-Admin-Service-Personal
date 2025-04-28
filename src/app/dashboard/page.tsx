@@ -14,14 +14,14 @@ import {
   Wallet
 } from 'lucide-react';
 
-import StatCard from './StatCard';
-import UserActivityChart from './UserActivityChart';
-import LoginTypesPieChart from './LoginTypesPieChart';
-import RecentUsersTable from './RecentUsersTable';
-import RecentGroupsTable from './RecentGroupsTable';
-import ActiveEntitiesList from './ActiveEntitiesList';
-import LivestreamMetrics from './LivestreamMetrics';
-import WalletMetrics from './WalletMetrics';
+import StatCard from '../../components/dashboard/StatCard';
+import UserActivityChart from '../../components/dashboard/UserActivityChart';
+import LoginTypesPieChart from '../../components/dashboard/LoginTypesPieChart';
+import RecentUsersTable from '../../components/dashboard/RecentUsersTable';
+import RecentGroupsTable from '../../components/dashboard/RecentGroupsTable';
+import ActiveEntitiesList from '../../components/dashboard/ActiveEntitiesList';
+import LivestreamMetrics from '../../components/dashboard/LivestreamMetrics';
+import WalletMetrics from '../../components/dashboard/WalletMetrics';
 
 const Dashboard = () => {
   const [activeTimeframe, setActiveTimeframe] = useState('week');

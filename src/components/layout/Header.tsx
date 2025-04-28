@@ -185,7 +185,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarCollapsed }) => {
     >
       <div className="relative flex-1 max-w-md">
         <motion.div
-          className="flex items-center bg-gray-50/80 rounded-2xl border border-gray-100 overflow-hidden"
+          className="flex items-center bg-gray-50/80 rounded-xl border border-gray-100 overflow-hidden"
           initial={false}
           animate={{
             width: searchOpen ? '100%' : '100%',
@@ -206,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarCollapsed }) => {
             value={searchValue}
             onChange={handleSearchChange}
             placeholder="Search..."
-            className="flex-1 py-2.5 bg-transparent outline-none text-sm text-gray-700"
+            className="flex-1 py-2.5 bg-transparent outline-none border-gray-100 text-sm text-gray-700 rounded-r-xl"
             onFocus={handleSearchFocus}
             onBlur={() => setTimeout(() => setSearchOpen(false), 100)}
           />
@@ -230,20 +230,6 @@ const Header: React.FC<HeaderProps> = ({ sidebarCollapsed }) => {
       </div>
 
       <div className="flex items-center space-x-1 sm:space-x-2">
-        <motion.button
-          className="p-2 rounded-xl text-gray-400 hover:text-indigo-500 transition-all"
-          whileHover={{
-            scale: 1.1,
-            backgroundColor: 'rgba(238, 242, 255, 0.8)'
-          }}
-          whileTap={{ scale: 0.95 }}
-          onMouseEnter={() => setHoveredButton('theme')}
-          onMouseLeave={() => setHoveredButton(null)}
-        >
-          <Sun size={20} className="hidden dark:block" strokeWidth={1.8} />
-          <Moon size={20} className="block dark:hidden" strokeWidth={1.8} />
-        </motion.button>
-
         <div className="relative" ref={notificationsRef}>
           <motion.button
             className={`
@@ -362,35 +348,6 @@ const Header: React.FC<HeaderProps> = ({ sidebarCollapsed }) => {
           </AnimatePresence>
         </div>
 
-        {/* Settings */}
-        <motion.button
-          className="p-2 rounded-xl text-gray-400 hover:text-indigo-500 transition-all"
-          whileHover={{
-            scale: 1.1,
-            backgroundColor: 'rgba(238, 242, 255, 0.8)'
-          }}
-          whileTap={{ scale: 0.95 }}
-          onMouseEnter={() => setHoveredButton('settings')}
-          onMouseLeave={() => setHoveredButton(null)}
-        >
-          <Settings size={20} strokeWidth={1.8} />
-        </motion.button>
-
-        {/* Help */}
-        <motion.button
-          className="p-2 rounded-xl text-gray-400 hover:text-indigo-500 transition-all"
-          whileHover={{
-            scale: 1.1,
-            backgroundColor: 'rgba(238, 242, 255, 0.8)'
-          }}
-          whileTap={{ scale: 0.95 }}
-          onMouseEnter={() => setHoveredButton('help')}
-          onMouseLeave={() => setHoveredButton(null)}
-        >
-          <HelpCircle size={20} strokeWidth={1.8} />
-        </motion.button>
-
-        {/* User menu */}
         <div className="relative ml-2" ref={userMenuRef}>
           <motion.button
             className={`
