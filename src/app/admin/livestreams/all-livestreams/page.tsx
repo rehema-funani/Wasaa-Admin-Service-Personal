@@ -32,7 +32,7 @@ import FilterPanel from '../../../../components/common/FilterPanel';
 import DataTable from '../../../../components/common/DataTable';
 import Pagination from '../../../../components/common/Pagination';
 
-const AllLivestreamsPage = () => {
+const page = () => {
   // States for the page
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -1018,7 +1018,6 @@ const AllLivestreamsPage = () => {
     }
 
     if (filters.streamDate && (filters.streamDate.from || filters.streamDate.to)) {
-      // Simple date comparison - in a real app would use proper date objects
       if (filters.streamDate.from) {
         filtered = filtered.filter(stream => {
           const month = stream.startTime.split(' ')[0];
@@ -1247,4 +1246,4 @@ const AllLivestreamsPage = () => {
   );
 };
 
-export default AllLivestreamsPage;
+export default page;
