@@ -8,12 +8,11 @@ const ErrorPage = lazy(() => import('./app/error/error-page'));
 const UserDetails = lazy(() => import('./app/admin/users/user-details/page'));
 const CountrywiseUsers = lazy(() => import('./app/admin/users/countrywise-Analysis/page'));
 const ReportedUsers = lazy(() => import('./app/admin/users/reported-user-list/page'));
+const CountryDetailPage = lazy(() => import('./app/admin/users/countrywise-Analysis/CountryDetailPage'));
 
-// Group pages
 const GroupList = lazy(() => import('./app/admin/Group/all-group-list/page'));
 const ReportedGroups = lazy(() => import('./app/admin/Group/all-reported-group-list/page'));
 
-// Livestream pages
 const AllLivestreams = lazy(() => import('./app/admin/livestreams/all-livestreams/page'));
 const ScheduledStreams = lazy(() => import('./app/admin/livestreams/scheduled/page'));
 const StreamSettings = lazy(() => import('./app/admin/livestreams/settings/page'));
@@ -46,27 +45,22 @@ const Pages = lazy(() => import('./app/admin/System-Setting/Pages/page'));
 const LanguageSettings = lazy(() => import('./app/admin/System-Setting/LanguageSettings/page'));
 const ReportSettings = lazy(() => import('./app/admin/System-Setting/reportSettings/page'));
 
-// Gift settings
 const GiftList = lazy(() => import('./app/admin/Gift/gift-list/page'));
 const AddGift = lazy(() => import('./app/admin/Gift/add-new-gift/page'));
 const GiftCategories = lazy(() => import('./app/admin/Gift/gift-categories/page'));
 
-// Auth pages
 const Login = lazy(() => import('./app/auth/login/page'));
 const Register = lazy(() => import('./app/auth/register/page'));
 const ForgotPassword = lazy(() => import('./app/auth/forgot-password/page'));
 
-// Loading component for Suspense
 const LoadingFallback = () => (
     <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
     </div>
 );
 
-// Auth guard component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    // In a real app, you would check authentication here
-    const isAuthenticated = true; // Replace with actual auth check
+    const isAuthenticated = true;
 
     if (!isAuthenticated) {
         return <Navigate to="/auth/login" replace />;
@@ -79,12 +73,10 @@ const AppRouter: React.FC = () => {
     return (
         <Suspense fallback={<LoadingFallback />}>
             <Routes>
-                {/* Auth routes */}
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/register" element={<Register />} />
                 <Route path="/auth/forgot-password" element={<ForgotPassword />} />
 
-                {/* Protected admin routes */}
                 <Route
                     path="/"
                     element={
@@ -93,19 +85,16 @@ const AppRouter: React.FC = () => {
                         </ProtectedRoute>
                     }
                 >
-                    {/* Dashboard */}
                     <Route index element={<Dashboard />} />
 
-                    {/* Users */}
                     <Route path="admin/users/user-details" element={<UserDetails />} />
                     <Route path="admin/users/countrywise-Analysis" element={<CountrywiseUsers />} />
+                    <Route path="admin/users/countrywise-Analysis/:id" element={<CountryDetailPage />} />
                     <Route path="admin/users/reported-user-list" element={<ReportedUsers />} />
 
-                    {/* Groups */}
                     <Route path="admin/Group/all-group-list" element={<GroupList />} />
                     <Route path="admin/Group/all-reported-group-list" element={<ReportedGroups />} />
 
-                    {/* Livestreams */}
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />
                     <Route path="admin/livestreams/scheduled" element={<ScheduledStreams />} />
                     <Route path="admin/livestreams/settings" element={<StreamSettings />} />
@@ -115,7 +104,6 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/livestreams/moderation" element={<StreamModeration />} />
                     <Route path="admin/livestreams/reported" element={<ReportedStreams />} />
 
-                    {/* Finance */}
                     <Route path="admin/finance/transactions" element={<Transactions />} />
                     <Route path="admin/finance/user-wallets" element={<UserWallets />} />
                     <Route path="admin/finance/withdrawals" element={<Withdrawals />} />
@@ -124,15 +112,12 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/finance/reports" element={<FinancialReports />} />
                     <Route path="admin/finance/gift-history" element={<GiftHistory />} />
 
-                    {/* Wallpaper Settings */}
                     <Route path="admin/Wallpaper/list-all-wallpaper" element={<WallpaperList />} />
                     <Route path="admin/Wallpaper/add-a-new-wallpaper" element={<AddWallpaper />} />
 
-                    {/* Avatar Settings */}
                     <Route path="admin/Avatar/list-all-avatar" element={<AvatarList />} />
                     <Route path="admin/Avatar/add-a-new-avatar" element={<AddAvatar />} />
 
-                    {/* System Settings */}
                     <Route path="admin/System-Setting/General-Setting" element={<GeneralSettings />} />
                     <Route path="admin/System-Setting/App-Setting" element={<AppSettings />} />
                     <Route path="admin/System-Setting/Web-Setting" element={<WebSettings />} />
@@ -142,13 +127,11 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/System-Setting/LanguageSettings" element={<LanguageSettings />} />
                     <Route path="admin/System-Setting/reportSettings" element={<ReportSettings />} />
 
-                    {/* Gift Settings */}
                     <Route path="admin/Gift/gift-list" element={<GiftList />} />
                     <Route path="admin/Gift/add-new-gift" element={<AddGift />} />
                     <Route path="admin/Gift/gift-categories" element={<GiftCategories />} />
                 </Route>
 
-                {/* Catch all - 404 */}
                 <Route path="*" element={<ErrorPage />} />
             </Routes>
         </Suspense>

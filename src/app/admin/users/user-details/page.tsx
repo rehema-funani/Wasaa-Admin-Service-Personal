@@ -29,7 +29,6 @@ const page = () => {
     'admin', 'inactive', 'new york'
   ]);
 
-  // Mock Data - Normally this would come from an API
   const usersData = [
     {
       id: '1',
@@ -198,7 +197,6 @@ const page = () => {
     }
   ];
 
-  // Filter options for FilterPanel
   const filterOptions = [
     {
       id: 'role',
@@ -239,7 +237,6 @@ const page = () => {
     }
   ];
 
-  // Table columns definition
   const columns = [
     {
       id: 'name',
@@ -366,7 +363,6 @@ const page = () => {
     }
   ];
 
-  // Simulating data loading
   useEffect(() => {
     setIsLoading(true);
     setTimeout(() => {
@@ -375,7 +371,6 @@ const page = () => {
     }, 1000);
   }, []);
 
-  // Handle search
   const handleSearch = (query: string) => {
     setSearchQuery(query);
 
@@ -386,7 +381,6 @@ const page = () => {
 
     const lowercasedQuery = query.toLowerCase();
 
-    // Filter by name, email, role, or location
     const filtered = usersData.filter(user =>
       user.name.toLowerCase().includes(lowercasedQuery) ||
       user.email.toLowerCase().includes(lowercasedQuery) ||
@@ -396,31 +390,26 @@ const page = () => {
 
     setFilteredUsers(filtered);
 
-    // Add to recent searches
     if (query.trim() !== '' && !recentSearches.includes(query)) {
       setRecentSearches(prev => [query, ...prev.slice(0, 4)]);
     }
 
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1);
   };
 
-  // Handle filter apply
   const handleApplyFilters = (filters: Record<string, any>) => {
     setAppliedFilters(filters);
 
     let filtered = [...usersData];
 
-    // Filter by role
     if (filters.role) {
       filtered = filtered.filter(user => user.role === filters.role);
     }
 
-    // Filter by status (multiselect)
     if (filters.status && filters.status.length > 0) {
       filtered = filtered.filter(user => filters.status.includes(user.status));
     }
 
-    // Filter by transactions
     if (filters.transactions) {
       const transactionCount = parseInt(filters.transactions);
       if (!isNaN(transactionCount)) {
@@ -428,16 +417,11 @@ const page = () => {
       }
     }
 
-    // Filter by verified (boolean)
     if (filters.verified) {
-      // For demonstration purposes, let's assume users with more than 10 transactions are verified
       filtered = filtered.filter(user => user.transactions > 10);
     }
 
-    // Filter by join date range
     if (filters.joinDate && (filters.joinDate.from || filters.joinDate.to)) {
-      // In a real app, you'd want to properly parse these dates
-      // For demo, we'll just do simple filtering on the string dates
       if (filters.joinDate.from) {
         filtered = filtered.filter(user => {
           const month = user.joinDate.split(' ')[0];
@@ -490,31 +474,17 @@ const page = () => {
     setCurrentPage(page);
   };
 
-  // Handle items per page change
   const handleItemsPerPageChange = (perPage: number) => {
     setItemsPerPage(perPage);
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1); 
   };
 
-  // Handle row selection
-  const handleRowSelection = (rowId: string) => {
-    setSelectedUsers(prev => {
-      if (prev.includes(rowId)) {
-        return prev.filter(id => id !== rowId);
-      } else {
-        return [...prev, rowId];
-      }
-    });
-  };
-
-  // Export as CSV (placeholder)
   const handleExport = () => {
     alert('Export functionality would go here');
   };
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto">
-      {/* Page Header */}
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -580,7 +550,6 @@ const page = () => {
         </div>
       </motion.div>
 
-      {/* Users Table */}
       <motion.div
         className="mb-6"
         initial={{ opacity: 0, y: -10 }}
