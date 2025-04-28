@@ -1,0 +1,355 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* Primary color (blue) */
+        --color-primary-50: 240, 247, 255;
+        --color-primary-100: 224, 238, 254;
+        --color-primary-200: 185, 218, 251;
+        --color-primary-300: 125, 188, 249;
+        --color-primary-400: 74, 157, 245;
+        --color-primary-500: 34, 129, 235;
+        --color-primary-600: 19, 103, 209;
+        --color-primary-700: 17, 82, 174;
+        --color-primary-800: 17, 70, 143;
+        --color-primary-900: 19, 61, 118;
+        --color-primary-950: 15, 40, 80;
+
+        /* Default border radius */
+        --radius: 0.5rem;
+    }
+
+    /* Defines the dark theme variables */
+    .dark {
+        --background: 16, 24, 39;
+        --foreground: 255, 255, 255;
+
+        --card: 31, 41, 55;
+        --card-foreground: 255, 255, 255;
+
+        --popover: 31, 41, 55;
+        --popover-foreground: 255, 255, 255;
+
+        --primary: 34, 129, 235;
+        --primary-foreground: 255, 255, 255;
+
+        --secondary: 51, 65, 85;
+        --secondary-foreground: 255, 255, 255;
+
+        --muted: 51, 65, 85;
+        --muted-foreground: 156, 163, 175;
+
+        --accent: 42, 82, 190;
+        --accent-foreground: 255, 255, 255;
+
+        --destructive: 185, 28, 28;
+        --destructive-foreground: 255, 255, 255;
+
+        --border: 55, 65, 81;
+        --input: 75, 85, 99;
+        --ring: 34, 129, 235;
+    }
+
+    /* Apply different color schemes */
+    [data-color-scheme="indigo"] {
+        --color-primary-50: 238, 242, 255;
+        --color-primary-100: 224, 231, 255;
+        --color-primary-200: 199, 210, 254;
+        --color-primary-300: 165, 180, 252;
+        --color-primary-400: 129, 140, 248;
+        --color-primary-500: 99, 102, 241;
+        --color-primary-600: 79, 70, 229;
+        --color-primary-700: 67, 56, 202;
+        --color-primary-800: 55, 48, 163;
+        --color-primary-900: 49, 46, 129;
+        --color-primary-950: 30, 27, 75;
+    }
+
+    [data-color-scheme="purple"] {
+        --color-primary-50: 250, 245, 255;
+        --color-primary-100: 243, 232, 255;
+        --color-primary-200: 233, 213, 255;
+        --color-primary-300: 216, 180, 254;
+        --color-primary-400: 192, 132, 252;
+        --color-primary-500: 168, 85, 247;
+        --color-primary-600: 147, 51, 234;
+        --color-primary-700: 126, 34, 206;
+        --color-primary-800: 107, 33, 168;
+        --color-primary-900: 88, 28, 135;
+        --color-primary-950: 59, 7, 100;
+    }
+
+    [data-color-scheme="teal"] {
+        --color-primary-50: 240, 253, 250;
+        --color-primary-100: 204, 251, 241;
+        --color-primary-200: 153, 246, 228;
+        --color-primary-300: 94, 234, 212;
+        --color-primary-400: 45, 212, 191;
+        --color-primary-500: 20, 184, 166;
+        --color-primary-600: 13, 148, 136;
+        --color-primary-700: 15, 118, 110;
+        --color-primary-800: 17, 94, 89;
+        --color-primary-900: 19, 78, 74;
+        --color-primary-950: 4, 47, 46;
+    }
+
+    [data-color-scheme="green"] {
+        --color-primary-50: 240, 253, 244;
+        --color-primary-100: 220, 252, 231;
+        --color-primary-200: 187, 247, 208;
+        --color-primary-300: 134, 239, 172;
+        --color-primary-400: 74, 222, 128;
+        --color-primary-500: 34, 197, 94;
+        --color-primary-600: 22, 163, 74;
+        --color-primary-700: 21, 128, 61;
+        --color-primary-800: 22, 101, 52;
+        --color-primary-900: 20, 83, 45;
+        --color-primary-950: 5, 46, 22;
+    }
+
+    html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        scroll-behavior: smooth;
+    }
+
+    html,
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        height: 100%;
+    }
+
+    /* Default focus styles */
+    *:focus-visible {
+        outline: 2px solid rgb(var(--color-primary-600));
+        outline-offset: 2px;
+    }
+
+    /* iOS-style scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
+
+@layer components {
+
+    /* Button styles */
+    .btn {
+        @apply inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+    }
+
+    .btn-sm {
+        @apply h-8 px-3 text-xs;
+    }
+
+    .btn-md {
+        @apply h-10 px-4 py-2 text-sm;
+    }
+
+    .btn-lg {
+        @apply h-11 px-5 py-2 text-base;
+    }
+
+    .btn-primary {
+        @apply bg-primary-600 text-white hover:bg-primary-700;
+    }
+
+    .btn-outline {
+        @apply border border-gray-300 bg-transparent hover:bg-gray-50 text-gray-700;
+    }
+
+    .btn-ghost {
+        @apply bg-transparent hover:bg-gray-100 text-gray-700;
+    }
+
+    .btn-success {
+        @apply bg-green-600 text-white hover:bg-green-700;
+    }
+
+    .btn-danger {
+        @apply bg-red-600 text-white hover:bg-red-700;
+    }
+
+    /* Card styles */
+    .card {
+        @apply bg-white rounded-xl border border-gray-100 shadow-soft p-5;
+    }
+
+    /* Form field styles */
+    .form-input {
+        @apply block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-500 focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50;
+    }
+
+    .form-select {
+        @apply block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-primary-500 focus:ring-primary-500 disabled:opacity-50;
+    }
+
+    .form-checkbox {
+        @apply h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600;
+    }
+
+    .form-radio {
+        @apply h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium text-gray-700 mb-1;
+    }
+
+    /* Status badge */
+    .badge {
+        @apply inline-flex items-center rounded-full px-2 py-1 text-xs font-medium;
+    }
+
+    .badge-primary {
+        @apply bg-primary-100 text-primary-800;
+    }
+
+    .badge-success {
+        @apply bg-green-100 text-green-800;
+    }
+
+    .badge-warning {
+        @apply bg-amber-100 text-amber-800;
+    }
+
+    .badge-danger {
+        @apply bg-red-100 text-red-800;
+    }
+
+    .badge-info {
+        @apply bg-blue-100 text-blue-800;
+    }
+
+    /* Table styles */
+    .table-container {
+        @apply w-full overflow-x-auto;
+    }
+
+    .table {
+        @apply min-w-full divide-y divide-gray-200;
+    }
+
+    .table-header {
+        @apply bg-gray-50;
+    }
+
+    .table-header-cell {
+        @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+    }
+
+    .table-body {
+        @apply bg-white divide-y divide-gray-200;
+    }
+
+    .table-row {
+        @apply hover:bg-gray-50;
+    }
+
+    .table-cell {
+        @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+    }
+
+    /* Shadow variations */
+    .shadow-soft {
+        @apply shadow-[0_2px_10px_0_rgba(0, 0, 0, 0.08)];
+    }
+
+    .shadow-soft-md {
+        @apply shadow-[0_4px_16px_0_rgba(0, 0, 0, 0.08)];
+    }
+
+    .shadow-soft-lg {
+        @apply shadow-[0_6px_20px_0_rgba(0, 0, 0, 0.1)];
+    }
+}
+
+/* Custom fade animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-fade-out {
+    animation: fadeOut 0.3s ease-in-out;
+}
+
+/* Custom slide animations */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.3s ease-in-out;
+}
+
+.animate-slide-out-right {
+    animation: slideOutRight 0.3s ease-in-out;
+}
+
+/* iOS-style glass morphism */
+.backdrop-blur-glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}

@@ -1,0 +1,112 @@
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+
+// Define notification types
+type NotificationType = 'info' | 'success' | 'warning' | 'error';
+
+// Individual notification interface
+interface Notification {
+    id: string;
+    type: NotificationType;
+    message: string;
+    title?: string;
+    autoClose?: boolean;
+    duration?: number;
+}
+
+// Context type
+interface NotificationContextType {
+    notifications: Notification[];
+    addNotification: (notification: Omit<Notification, 'id'>) => string;
+    removeNotification: (id: string) => void;
+    clearAllNotifications: () => void;
+}
+
+const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+
+interface NotificationProviderProps {
+    children: ReactNode;
+}
+
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+
+    // Add a new notification
+    const addNotification = useCallback((notification: Omit<Notification, 'id'>): string => {
+        const id = Date.now().toString();
+        const newNotification: Notification = {
+            ...notification,
+            id,
+            autoClose: notification.autoClose !== false,
+            duration: notification.duration || 5000, // Default to 5 seconds
+        };
+
+        setNotifications(prev => [...prev, newNotification]);
+
+        // Auto-close if enabled
+        if (newNotification.autoClose) {
+            setTimeout(() => {
+                removeNotification(id);
+            }, newNotification.duration);
+        }
+
+        return id;
+    }, []);
+
+    // Remove a notification by ID
+    const removeNotification = useCallback((id: string) => {
+        setNotifications(prev => prev.filter(notification => notification.id !== id));
+    }, []);
+
+    // Clear all notifications
+    const clearAllNotifications = useCallback(() => {
+        setNotifications([]);
+    }, []);
+
+    // Create the context value
+    const value: NotificationContextType = {
+        notifications,
+        addNotification,
+        removeNotification,
+        clearAllNotifications
+    };
+
+    return (
+        <NotificationContext.Provider value={value}>
+            {children}
+
+            {/* This would typically include a NotificationContainer component */}
+            {/* that renders the actual notifications UI */}
+            {/* For example: */}
+            {/* <NotificationContainer notifications={notifications} onClose={removeNotification} /> */}
+        </NotificationContext.Provider>
+    );
+};
+
+// Custom hook for using notifications
+export const useNotifications = () => {
+    const context = useContext(NotificationContext);
+    if (context === undefined) {
+        throw new Error('useNotifications must be used within a NotificationProvider');
+    }
+    return context;
+};
+
+export const useNotificationActions = () => {
+    const { addNotification } = useNotifications();
+
+    return {
+        info: (message: string, options = {}) =>
+            addNotification({ type: 'info', message, ...options }),
+
+        success: (message: string, options = {}) =>
+            addNotification({ type: 'success', message, ...options }),
+
+        warning: (message: string, options = {}) =>
+            addNotification({ type: 'warning', message, ...options }),
+
+        error: (message: string, options = {}) =>
+            addNotification({ type: 'error', message, ...options }),
+    };
+};
+
+export default NotificationContext;
