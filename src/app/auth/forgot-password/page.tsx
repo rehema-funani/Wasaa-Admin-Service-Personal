@@ -1,20 +1,45 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { validateEmail } from '../../../utils/validation';
+import userService from '../../../api/services/users';
+import { formatErrorMessage } from '../../../utils/formatting';
 
 const page = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: any) => {
+  const navigate = useNavigate();
+
+  const validateForm = (): boolean => {
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return false;
+    }
+
+    setError(null);
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await userService.forgotPassword(email);
       setIsSubmitted(true);
-      console.log('Password reset request for:', { email });
-    }, 1500);
+    } catch (err) {
+      setError(formatErrorMessage(err) || 'Failed to send reset link. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

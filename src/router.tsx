@@ -51,6 +51,7 @@ const AddGift = lazy(() => import('./app/admin/Gift/add-new-gift/page'));
 const GiftCategories = lazy(() => import('./app/admin/Gift/gift-categories/page'));
 
 const Login = lazy(() => import('./app/auth/login/page'));
+const VerifyOtp = lazy(() => import('./app/auth/verify/page'));
 const ForgotPassword = lazy(() => import('./app/auth/forgot-password/page'));
 const Reset = lazy(() => import('./app/auth/forgot-password/reset'));
 
@@ -75,6 +76,7 @@ const AppRouter: React.FC = () => {
         <Suspense fallback={<LoadingFallback />}>
             <Routes>
                 <Route path="/auth/login" element={<Login />} />
+                <Route path="/auth/login/verify-otp" element={<VerifyOtp />} />
                 <Route path="/auth/forgot-password" element={<ForgotPassword />} />
                 <Route path="/auth/reset-password" element={<Reset />} />
 

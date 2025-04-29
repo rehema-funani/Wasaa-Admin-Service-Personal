@@ -1,20 +1,48 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { getStorageItem, removeStorageItem, setStorageItem } from '../utils/storage';
+import userService from '../api/services/users';
 
 type User = {
     id: string;
-    name: string;
-    email: string;
-    role: string;
+    name?: string;
+    email?: string;
+    role?: string;
     avatar?: string;
+    roleId?: string;
+    permissions?: string[];
+};
+
+type LoginResponse = {
+    success?: boolean;
+    requiresOtp?: boolean;
+    message?: string;
+    accessToken?: string;
+    user?: {
+        id: string;
+        email?: string;
+        first_name?: string;
+        last_name?: string;
+        phone_number?: string;
+        profile_picture?: string;
+        role_id?: string;
+        role?: {
+            id: string;
+            title: string;
+            role_permissions: Array<any>;
+        };
+    };
+    refreshToken?: string;
+    user_id?: string;
 };
 
 type AuthContextType = {
     user: User | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: (email: string, password: string) => Promise<void>;
-    logout: () => void;
-    register: (name: string, email: string, password: string) => Promise<void>;
+    error: string | null;
+    login: (email: string, password: string) => Promise<LoginResponse>;
+    verifyOtp: (payload: { otp: string; user_id: string; source?: string }) => Promise<LoginResponse>;
+    logout: () => Promise<void>;
     forgotPassword: (email: string) => Promise<void>;
     resetPassword: (token: string, newPassword: string) => Promise<void>;
 };
@@ -28,93 +56,143 @@ type AuthProviderProps = {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const checkAuthStatus = async () => {
-            try {
-                const token = localStorage.getItem('auth_token');
+    const checkAuthStatus = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
 
-                if (token) {
-                    setUser({
-                        id: '1',
-                        name: 'Admin User',
-                        email: 'admin@streampay.com',
-                        role: 'admin'
-                    });
-                }
-            } catch (error) {
-                console.error('Authentication check failed:', error);
-                localStorage.removeItem('auth_token');
+        try {
+            const token = getStorageItem('authToken');
+
+            if (!token) {
                 setUser(null);
-            } finally {
                 setIsLoading(false);
+                return;
             }
-        };
 
-        checkAuthStatus();
+            await userService.testConnection();
+
+            const userData = await userService.getCurrentUser();
+            setUser(userData);
+        } catch (err) {
+            removeStorageItem('authToken');
+            setUser(null);
+
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Authentication failed');
+            }
+            console.error('Auth check failed:', err);
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
-    // Login function
-    const login = async (email: string, password: string) => {
+    useEffect(() => {
+        checkAuthStatus();
+    }, [checkAuthStatus]);
+
+    const login = async (email: string, password: string): Promise<LoginResponse> => {
         setIsLoading(true);
+        setError(null);
+
         try {
-            // In a real implementation, this would be an API call
-            // For demo purposes, we'll just simulate a successful login
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Check credentials (demo only - in real app would be done server-side)
-            if (email === 'admin@streampay.com' && password === 'password') {
-                // Store token
-                localStorage.setItem('auth_token', 'demo_token_12345');
-
-                // Set user
-                setUser({
-                    id: '1',
-                    name: 'Admin User',
-                    email: 'admin@streampay.com',
-                    role: 'admin'
-                });
+            const response = await userService.login(email, password);
+            return response;
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
             } else {
-                throw new Error('Invalid credentials');
+                setError('Login failed');
             }
-        } catch (error) {
-            console.error('Login failed:', error);
-            throw error;
+            console.error('Login failed:', err);
+            throw err;
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Logout function
-    const logout = () => {
-        localStorage.removeItem('auth_token');
-        setUser(null);
+    const verifyOtp = async (payload: { otp: string; user_id: string; source?: string }): Promise<LoginResponse> => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await userService.verifyOtp(payload);
+
+            if (response.accessToken) {
+                // Save the access token
+                setStorageItem('authToken', response.accessToken);
+
+                // Save the refresh token if present
+                if (response.refreshToken) {
+                    setStorageItem('refreshToken', response.refreshToken);
+                }
+
+                if (response.user) {
+                    const userData: User = {
+                        id: response.user.id,
+                        name: `${response.user.first_name || ''} ${response.user.last_name || ''}`.trim(),
+                        email: response.user.email || '',
+                        role: response.user.role?.title || '',
+                        avatar: response.user.profile_picture,
+                        // You can also save permissions or other role-related data
+                        roleId: response.user.role_id,
+                        permissions: response.user.role?.role_permissions?.map(rp => rp.permissions?.title) || []
+                    };
+
+                    // Set user data in state
+                    setUser(userData);
+
+                    // Optionally store user data in localStorage for persistence
+                    setStorageItem('userData', JSON.stringify(userData));
+                }
+            } else {
+                setError(response.message || 'Invalid OTP');
+            }
+
+            return response;
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed to verify OTP');
+            }
+            console.error('OTP verification failed:', err);
+            throw err;
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const register = async (name: string, email: string, password: string) => {
+    const logout = async () => {
         setIsLoading(true);
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            console.log('User registered:', { name, email });
-
-        } catch (error) {
-            console.error('Registration failed:', error);
-            throw error;
+            await userService.logout();
+        } catch (err) {
+            console.error('Logout API error:', err);
         } finally {
+            removeStorageItem('authToken');
+            setUser(null);
             setIsLoading(false);
         }
     };
 
     const forgotPassword = async (email: string) => {
         setIsLoading(true);
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+        setError(null);
 
-            console.log('Password reset requested for:', email);
-        } catch (error) {
-            console.error('Password reset request failed:', error);
-            throw error;
+        try {
+            await userService.forgotPassword(email);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed to send reset email');
+            }
+            console.error('Forgot password failed:', err);
+            throw err;
         } finally {
             setIsLoading(false);
         }
@@ -122,25 +200,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const resetPassword = async (token: string, newPassword: string) => {
         setIsLoading(true);
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+        setError(null);
 
-            console.log('Password reset completed with token:', token);
-        } catch (error) {
-            console.error('Password reset failed:', error);
-            throw error;
+        try {
+            await userService.resetPassword(token, newPassword);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed to reset password');
+            }
+            console.error('Password reset failed:', err);
+            throw err;
         } finally {
             setIsLoading(false);
         }
     };
 
+    useEffect(() => {
+        console.log('Auth state updated:', {
+            isAuthenticated: !!user,
+            isLoading,
+            userName: user?.name || 'Not logged in',
+            tokenExists: !!getStorageItem('authToken')
+        });
+    }, [user, isLoading]);
+
     const value: AuthContextType = {
         user,
         isAuthenticated: !!user,
         isLoading,
+        error,
         login,
+        verifyOtp,
         logout,
-        register,
         forgotPassword,
         resetPassword
     };
@@ -152,7 +245,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
 };
 
-// Custom hook for using auth context
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (context === undefined) {

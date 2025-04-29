@@ -1,22 +1,47 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
+import { setStorageItem } from '../../../utils/storage';
+import { formatErrorMessage } from '../../../utils/formatting';
 
-const WasaaAdminLogin = () => {
+const page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
 
-  const handleSubmit = (e: any) => {
+  const navigate = useNavigate();
+  const { login, isLoading, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log('Login attempt with:', { email, password });
-    }, 1500);
+    try {
+      const response = await login(email, password);
+      console.log(response);
+
+      if (rememberMe) {
+        setStorageItem('rememberedEmail', email);
+      }
+
+      navigate('/auth/login/verify-otp', {
+        state: { user_id: response.user_id }
+      });
+
+    } catch (err) {
+      setErrors({
+        general: formatErrorMessage(err) || 'Login failed. Please try again.'
+      });
+    }
   };
-
   return (
     <div className="flex h-screen w-full bg-white">
       <div className="hidden lg:block lg:w-2/5 bg-zinc-50 relative overflow-hidden">
@@ -42,7 +67,6 @@ const WasaaAdminLogin = () => {
                 </div>
               </div>
 
-              {/* Chart representation */}
               <div className="bg-white/80 backdrop-blur-md shadow-sm rounded-2xl p-5 mb-4">
                 <div className="flex items-center justify-between mb-3">
                   <p className="text-xs font-medium text-gray-500">Daily Transactions</p>
@@ -172,7 +196,6 @@ const WasaaAdminLogin = () => {
               </motion.div>
             </div>
 
-            {/* Biometric option */}
             <div className="flex items-center justify-between pt-1">
               <div className="flex items-center">
                 <input
@@ -198,7 +221,6 @@ const WasaaAdminLogin = () => {
               </div>
             </div>
 
-            {/* Sign in button */}
             <motion.button
               onClick={handleSubmit}
               whileHover={{ scale: 1.01 }}
@@ -238,4 +260,4 @@ const WasaaAdminLogin = () => {
   );
 };
 
-export default WasaaAdminLogin;
+export default page;
