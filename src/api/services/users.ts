@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import { api } from '../axios';
 
 
 type User = {
@@ -34,43 +34,6 @@ type LoginResponse = {
     refreshToken?: string;
     user_id?: string;
 };
-
-const baseURL = import.meta.env.VITE_API_URL || 'http://138.68.190.213:3010/';
-const apiKey = import.meta.env.VITE_API_KEY || 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==';
-
-const api = axios.create({
-  baseURL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'x-api-key': apiKey
-  },
-  timeout: 30_000,
-});
-
-// Request interceptor using js-cookie
-api.interceptors.request.use(
-  (config) => {
-    try {
-      // Get token from cookies
-      const token = Cookies.get('authToken');
-      
-      // Add token to headers if it exists
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      
-      return config;
-    } catch (error) {
-      // Log error but don't block the request
-      console.error('Error accessing token from cookies:', error);
-      return config;
-    }
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 export const userService = {
   async login(email: string, password: string): Promise<LoginResponse> {
@@ -198,6 +161,30 @@ async getUsers(): Promise<any> {
   }
 },
 
+async getAdminUsers (): Promise<any> {
+  try {
+    const response = await api.get('/admin');
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get admin users');
+    }
+    throw new Error('Failed to get admin users. Please check your network connection.');
+  }
+},
+
+async getUser (userId: string): Promise<any> {
+  try {
+    const response = await api.get(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get user');
+    }
+    throw new Error('Failed to get user. Please check your network connection.');
+  }
+},
+
 async deleteUser(userId: string): Promise<any> {
   try {
     const response = await api.delete(`/users/${userId}`);
@@ -234,17 +221,17 @@ async createUser(userData: any): Promise<any> {
   }
 },
 
-async getAdminUsers(): Promise<any> {
+async updateUserRole (userId: string, roleId: string): Promise<any> {
   try {
-    const response = await api.get('/users?role=admin');
+    const response = await api.patch(`/users/${userId}/role`, { role_id: roleId });
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to get admin users');
+      throw new Error(error.response.data.message || 'Failed to update user role');
     }
-    throw new Error('Failed to get admin users. Please check your network connection.');
+    throw new Error('Failed to update user role. Please check your network connection.');
   }
-}
+},
 };
 
 export default userService;

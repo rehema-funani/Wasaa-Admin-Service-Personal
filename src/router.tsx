@@ -14,6 +14,9 @@ const GroupList = lazy(() => import('./app/admin/Group/all-group-list/page'));
 const GroupDetailPage = lazy(() => import('./app/admin/Group/all-group-list/GroupDetailPage'));
 const ReportedGroups = lazy(() => import('./app/admin/Group/all-reported-group-list/page'));
 
+const RolesPage = lazy(() => import('./app/admin/roles/roles'));
+const SystemUsers = lazy(() => import('./app/admin/roles/user-settings'));
+
 const AllLivestreams = lazy(() => import('./app/admin/livestreams/all-livestreams/page'));
 const ScheduledStreams = lazy(() => import('./app/admin/livestreams/scheduled/page'));
 const StreamSettings = lazy(() => import('./app/admin/livestreams/settings/page'));
@@ -98,6 +101,9 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/Group/all-group-list" element={<GroupList />} />
                     <Route path="admin/Group/all-group-list/:id" element={<GroupDetailPage />} />
                     <Route path="admin/Group/all-reported-group-list" element={<ReportedGroups />} />
+
+                    <Route path="admin/system/roles" element={<RolesPage />} />
+                    <Route path='admin/system/users' element={<SystemUsers />} />
 
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />
                     <Route path="admin/livestreams/scheduled" element={<ScheduledStreams />} />

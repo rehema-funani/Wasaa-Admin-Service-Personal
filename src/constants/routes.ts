@@ -16,7 +16,10 @@ import {
   AlertTriangle,
   ImageIcon,
   Palette,
-  Settings
+  Settings,
+  Users,
+  Key,
+  Shield
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -70,6 +73,30 @@ const routes: Route[] = [
           path: '/admin/users/countrywise-Analysis',
           title: 'Countrywise Users',
           icon: Globe,
+        },
+      ],
+    },
+    {
+      type: 'section',
+      title: 'User Management',
+      items: [
+        {
+          type: 'link',
+          path: '/admin/system/users',
+          title: 'User Accounts',
+          icon: Users,
+        },
+        {
+          type: 'link',
+          path: '/admin/system/roles',
+          title: 'Roles',
+          icon: Shield,
+        },
+        {
+          type: 'link',
+          path: '/admin/system/permissions',
+          title: 'Permissions',
+          icon: Key,
         },
       ],
     },
