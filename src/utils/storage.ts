@@ -1,4 +1,3 @@
-// storage.ts - Local storage utilities
 export const setStorageItem = (key: string, value: any): void => {
   try {
     const serializedValue = typeof value === 'object' 
@@ -19,7 +18,6 @@ export const getStorageItem = (key: string): any => {
       return null;
     }
     
-    // Try to parse as JSON, if it fails return the string value
     try {
       return JSON.parse(item);
     } catch (e) {

@@ -8,194 +8,82 @@ import {
   Trash2,
   UserPlus,
   Clock,
-  CalendarDays
+  CalendarDays,
+  AlertCircle
 } from 'lucide-react';
 import StatusBadge from '../../../../components/common/StatusBadge';
 import SearchBox from '../../../../components/common/SearchBox';
 import FilterPanel from '../../../../components/common/FilterPanel';
 import DataTable from '../../../../components/common/DataTable';
 import Pagination from '../../../../components/common/Pagination';
+import { userService } from '../../../../api/services/users';
+import { format, formatDistanceToNow } from 'date-fns';
+import { toast } from 'react-hot-toast';
 
 const page = () => {
-  // States for the page
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [users, setUsers] = useState<any[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
   const [recentSearches, setRecentSearches] = useState<string[]>([
     'admin', 'inactive', 'new york'
   ]);
 
-  const usersData = [
-    {
-      id: '1',
-      name: 'Emma Johnson',
-      email: 'emma.johnson@example.com',
-      role: 'Admin',
-      status: 'active',
-      location: 'New York, USA',
-      lastActive: '2 minutes ago',
-      joinDate: 'Jan 15, 2024',
-      transactions: 67
-    },
-    {
-      id: '2',
-      name: 'Liam Wilson',
-      email: 'liam.wilson@example.com',
-      role: 'User',
-      status: 'inactive',
-      location: 'London, UK',
-      lastActive: '3 days ago',
-      joinDate: 'Mar 22, 2024',
-      transactions: 5
-    },
-    {
-      id: '3',
-      name: 'Olivia Davis',
-      email: 'olivia.davis@example.com',
-      role: 'Moderator',
-      status: 'active',
-      location: 'Sydney, Australia',
-      lastActive: '5 hours ago',
-      joinDate: 'Nov 8, 2023',
-      transactions: 128
-    },
-    {
-      id: '4',
-      name: 'Noah Martinez',
-      email: 'noah.martinez@example.com',
-      role: 'User',
-      status: 'pending',
-      location: 'Toronto, Canada',
-      lastActive: 'Never',
-      joinDate: 'Apr 1, 2024',
-      transactions: 0
-    },
-    {
-      id: '5',
-      name: 'Ava Thompson',
-      email: 'ava.thompson@example.com',
-      role: 'Admin',
-      status: 'active',
-      location: 'Berlin, Germany',
-      lastActive: '1 hour ago',
-      joinDate: 'Aug 17, 2023',
-      transactions: 243
-    },
-    {
-      id: '6',
-      name: 'James Taylor',
-      email: 'james.taylor@example.com',
-      role: 'User',
-      status: 'blocked',
-      location: 'Paris, France',
-      lastActive: '2 months ago',
-      joinDate: 'Feb 3, 2023',
-      transactions: 31
-    },
-    {
-      id: '7',
-      name: 'Isabella Brown',
-      email: 'isabella.brown@example.com',
-      role: 'Moderator',
-      status: 'active',
-      location: 'Tokyo, Japan',
-      lastActive: '30 minutes ago',
-      joinDate: 'Jun 12, 2023',
-      transactions: 87
-    },
-    {
-      id: '8',
-      name: 'Ethan Miller',
-      email: 'ethan.miller@example.com',
-      role: 'User',
-      status: 'active',
-      location: 'Chicago, USA',
-      lastActive: '12 hours ago',
-      joinDate: 'Sep 28, 2023',
-      transactions: 54
-    },
-    {
-      id: '9',
-      name: 'Sophia Garcia',
-      email: 'sophia.garcia@example.com',
-      role: 'User',
-      status: 'inactive',
-      location: 'Madrid, Spain',
-      lastActive: '5 days ago',
-      joinDate: 'Dec 7, 2023',
-      transactions: 12
-    },
-    {
-      id: '10',
-      name: 'Mason Rodriguez',
-      email: 'mason.rodriguez@example.com',
-      role: 'Admin',
-      status: 'active',
-      location: 'San Francisco, USA',
-      lastActive: '1 minute ago',
-      joinDate: 'Apr 30, 2023',
-      transactions: 198
-    },
-    {
-      id: '11',
-      name: 'Charlotte Lee',
-      email: 'charlotte.lee@example.com',
-      role: 'User',
-      status: 'processing',
-      location: 'Seoul, South Korea',
-      lastActive: 'Now',
-      joinDate: 'May 15, 2024',
-      transactions: 3
-    },
-    {
-      id: '12',
-      name: 'Lucas Wright',
-      email: 'lucas.wright@example.com',
-      role: 'User',
-      status: 'active',
-      location: 'Miami, USA',
-      lastActive: '3 hours ago',
-      joinDate: 'Jan 2, 2024',
-      transactions: 27
-    },
-    {
-      id: '13',
-      name: 'Amelia Lopez',
-      email: 'amelia.lopez@example.com',
-      role: 'Moderator',
-      status: 'active',
-      location: 'Barcelona, Spain',
-      lastActive: '45 minutes ago',
-      joinDate: 'Jul 19, 2023',
-      transactions: 92
-    },
-    {
-      id: '14',
-      name: 'Benjamin Young',
-      email: 'benjamin.young@example.com',
-      role: 'User',
-      status: 'inactive',
-      location: 'Amsterdam, Netherlands',
-      lastActive: '1 week ago',
-      joinDate: 'Oct 11, 2023',
-      transactions: 18
-    },
-    {
-      id: '15',
-      name: 'Mia Hernandez',
-      email: 'mia.hernandez@example.com',
-      role: 'Admin',
-      status: 'active',
-      location: 'Los Angeles, USA',
-      lastActive: '10 minutes ago',
-      joinDate: 'Feb 28, 2024',
-      transactions: 156
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await userService.getUsers();
+      const formattedUsers = response.users.map((user: any) => ({
+        id: user.id,
+        name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+        email: user.email || '',
+        role: user.role?.title || 'User',
+        status: user.status || 'active',
+        location: user.location || 'Not specified',
+        lastActive: user.last_login ? formatDistanceToNow(new Date(user.last_login), { addSuffix: true }) : 'Never',
+        joinDate: user.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'Unknown',
+        transactions: user.transactions_count || 0,
+        role_id: user.role_id,
+        phone_number: user.phone_number
+      }));
+
+      setUsers(formattedUsers);
+      setFilteredUsers(formattedUsers);
+    } catch (err) {
+      console.error('Failed to fetch users:', err);
+      setError('Failed to load users. Please try again later.');
+      toast.error('Failed to load users');
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleDeleteUser = async (userId: string) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      setIsLoading(true);
+      try {
+        await userService.deleteUser(userId);
+        toast.success('User deleted successfully');
+        // Refresh the user list
+        fetchUsers();
+      } catch (err) {
+        console.error('Failed to delete user:', err);
+        toast.error('Failed to delete user');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
   const filterOptions = [
     {
@@ -246,10 +134,10 @@ const page = () => {
       cell: (value: string, row: any) => (
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center font-medium text-sm mr-3">
-            {value.split(' ').map(n => n[0]).join('')}
+            {value ? value.split(' ').map(n => n[0]).join('') : '??'}
           </div>
           <div>
-            <p className="font-medium text-gray-800">{value}</p>
+            <p className="font-medium text-gray-800">{value || 'Unnamed User'}</p>
             <p className="text-xs text-gray-500">{row.email}</p>
           </div>
         </div>
@@ -332,7 +220,7 @@ const page = () => {
       accessor: (row: any) => row.id,
       sortable: false,
       width: '100px',
-      cell: (value: string) => (
+      cell: (value: string, row: any) => (
         <div className="flex items-center space-x-1">
           <motion.button
             className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
@@ -347,6 +235,7 @@ const page = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Edit user"
+            onClick={() => handleEditUser(row)}
           >
             <Edit size={16} strokeWidth={1.8} />
           </motion.button>
@@ -355,6 +244,7 @@ const page = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Delete user"
+            onClick={() => handleDeleteUser(value)}
           >
             <Trash2 size={16} strokeWidth={1.8} />
           </motion.button>
@@ -363,29 +253,35 @@ const page = () => {
     }
   ];
 
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setFilteredUsers(usersData);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+  // Edit user stub - in a real app, this would open a modal or navigate to an edit page
+  const handleEditUser = (user: any) => {
+    // This would typically open a modal or navigate to an edit page
+    console.log('Edit user:', user);
+    // Example: navigate(`/users/edit/${user.id}`);
+  };
+
+  // Add user stub - in a real app, this would open a modal or navigate to a create page
+  const handleAddUser = () => {
+    // This would typically open a modal or navigate to a creation page
+    console.log('Add new user');
+    // Example: navigate('/users/create');
+  };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
 
     if (query.trim() === '') {
-      setFilteredUsers(usersData);
+      setFilteredUsers(users);
       return;
     }
 
     const lowercasedQuery = query.toLowerCase();
 
-    const filtered = usersData.filter(user =>
-      user.name.toLowerCase().includes(lowercasedQuery) ||
-      user.email.toLowerCase().includes(lowercasedQuery) ||
-      user.role.toLowerCase().includes(lowercasedQuery) ||
-      user.location.toLowerCase().includes(lowercasedQuery)
+    const filtered = users.filter(user =>
+      (user.name?.toLowerCase() || '').includes(lowercasedQuery) ||
+      (user.email?.toLowerCase() || '').includes(lowercasedQuery) ||
+      (user.role?.toLowerCase() || '').includes(lowercasedQuery) ||
+      (user.location?.toLowerCase() || '').includes(lowercasedQuery)
     );
 
     setFilteredUsers(filtered);
@@ -400,7 +296,7 @@ const page = () => {
   const handleApplyFilters = (filters: Record<string, any>) => {
     setAppliedFilters(filters);
 
-    let filtered = [...usersData];
+    let filtered = [...users];
 
     if (filters.role) {
       filtered = filtered.filter(user => user.role === filters.role);
@@ -423,18 +319,18 @@ const page = () => {
 
     if (filters.joinDate && (filters.joinDate.from || filters.joinDate.to)) {
       if (filters.joinDate.from) {
+        const fromDate = new Date(filters.joinDate.from);
         filtered = filtered.filter(user => {
-          const month = user.joinDate.split(' ')[0];
-          const fromMonth = filters.joinDate.from.split('-')[1];
-          return parseInt(getMonthNumber(month)) >= parseInt(fromMonth);
+          const userDate = new Date(user.joinDate);
+          return userDate >= fromDate;
         });
       }
 
       if (filters.joinDate.to) {
+        const toDate = new Date(filters.joinDate.to);
         filtered = filtered.filter(user => {
-          const month = user.joinDate.split(' ')[0];
-          const toMonth = filters.joinDate.to.split('-')[1];
-          return parseInt(getMonthNumber(month)) <= parseInt(toMonth);
+          const userDate = new Date(user.joinDate);
+          return userDate <= toDate;
         });
       }
     }
@@ -443,10 +339,10 @@ const page = () => {
     if (searchQuery.trim() !== '') {
       const lowercasedQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(user =>
-        user.name.toLowerCase().includes(lowercasedQuery) ||
-        user.email.toLowerCase().includes(lowercasedQuery) ||
-        user.role.toLowerCase().includes(lowercasedQuery) ||
-        user.location.toLowerCase().includes(lowercasedQuery)
+        (user.name?.toLowerCase() || '').includes(lowercasedQuery) ||
+        (user.email?.toLowerCase() || '').includes(lowercasedQuery) ||
+        (user.role?.toLowerCase() || '').includes(lowercasedQuery) ||
+        (user.location?.toLowerCase() || '').includes(lowercasedQuery)
       );
     }
 
@@ -454,19 +350,10 @@ const page = () => {
     setCurrentPage(1); // Reset to first page
   };
 
-  // Helper to get month number
-  const getMonthNumber = (month: string) => {
-    const months: Record<string, string> = {
-      'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
-      'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
-    };
-    return months[month] || '01';
-  };
-
   // Reset all filters
   const handleResetFilters = () => {
     setAppliedFilters({});
-    setFilteredUsers(usersData);
+    setFilteredUsers(users);
   };
 
   // Handle page change
@@ -476,7 +363,7 @@ const page = () => {
 
   const handleItemsPerPageChange = (perPage: number) => {
     setItemsPerPage(perPage);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const handleExport = () => {
@@ -517,6 +404,7 @@ const page = () => {
             className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0 }}
+            onClick={handleAddUser}
           >
             <UserPlus size={16} className="mr-2" strokeWidth={1.8} />
             Add User
@@ -534,7 +422,7 @@ const page = () => {
           <SearchBox
             placeholder="Search users by name, email, role or location..."
             onSearch={handleSearch}
-            suggestions={usersData.map(user => user.name).slice(0, 5)}
+            suggestions={users.map(user => user.name).slice(0, 5)}
             recentSearches={recentSearches}
             showRecentByDefault={true}
           />
@@ -549,6 +437,17 @@ const page = () => {
           />
         </div>
       </motion.div>
+
+      {error && (
+        <motion.div
+          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <AlertCircle size={18} className="mr-2" />
+          {error}
+        </motion.div>
+      )}
 
       <motion.div
         className="mb-6"

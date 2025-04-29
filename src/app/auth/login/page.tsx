@@ -15,33 +15,44 @@ const page = () => {
   const navigate = useNavigate();
   const { login, isLoading, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     navigate('/');
+  //   }
+  // }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       const response = await login(email, password);
-      console.log(response);
+      console.log('Login response:', response);
 
       if (rememberMe) {
         setStorageItem('rememberedEmail', email);
       }
 
-      navigate('/auth/login/verify-otp', {
-        state: { user_id: response.user_id }
-      });
-
+      if (response && response.user_id) {
+        navigate('/auth/login/verify-otp', {
+          state: { user_id: response.user_id }
+        });
+      } else if (response && response.user && response.user.id) {
+        navigate('/auth/login/verify-otp', {
+          state: { user_id: response.user.id }
+        });
+      } else {
+        console.error('User ID not found in response:', response);
+        setErrors({
+          general: 'Authentication error: Unable to proceed to verification'
+        });
+      }
     } catch (err) {
       setErrors({
         general: formatErrorMessage(err) || 'Login failed. Please try again.'
       });
     }
   };
+
   return (
     <div className="flex h-screen w-full bg-white">
       <div className="hidden lg:block lg:w-2/5 bg-zinc-50 relative overflow-hidden">
@@ -133,7 +144,7 @@ const page = () => {
             <p className="text-xs text-gray-500 mt-1">Access your admin dashboard</p>
           </div>
 
-          <div className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-xs font-medium text-gray-700 mb-1">
                 Email
@@ -201,6 +212,8 @@ const page = () => {
                 <input
                   id="remember-device"
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-3.5 w-3.5 rounded-sm border-gray-300 text-teal-500 focus:ring-0 focus:ring-offset-0"
                 />
                 <label htmlFor="remember-device" className="ml-2 text-xs text-gray-500">
@@ -235,7 +248,7 @@ const page = () => {
                 </svg>
               ) : "Sign in"}
             </motion.button>
-          </div>
+          </form>
 
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">

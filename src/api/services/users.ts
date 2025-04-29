@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getStorageItem } from '../../utils/storage';
+import Cookies from 'js-cookie';
+
 
 type User = {
     id: string;
@@ -34,50 +35,39 @@ type LoginResponse = {
     user_id?: string;
 };
 
-const API_URL = import.meta.env.REACT_APP_API_URL || 'http://138.68.190.213:3010/';
-
+const baseURL = import.meta.env.VITE_API_URL || 'http://138.68.190.213:3010/';
+const apiKey = import.meta.env.VITE_API_KEY || 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==';
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
-    'x-api-key': import.meta.env.VITE_API_KEY || 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==',
+    'Accept': 'application/json',
+    'x-api-key': apiKey
   },
-  timeout: 30000, 
+  timeout: 30_000,
 });
 
+// Request interceptor using js-cookie
 api.interceptors.request.use(
   (config) => {
-    const token = getStorageItem('authToken');
-    
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-api.interceptors.response.use(
-  (response) => {
-    console.log(`✅ Response: ${response.status} from ${response.config.url}`, response.data);
-    return response;
-  },
-  (error) => {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        console.error(`❌ Response error ${error.response.status}:`, error.response.data);
-      } else if (error.request) {
-        console.error('❌ No response received:', error.request);
-      } else {
-        console.error('❌ Request setup error:', error.message);
+    try {
+      // Get token from cookies
+      const token = Cookies.get('authToken');
+      
+      // Add token to headers if it exists
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
-    } else {
-      console.error('❌ Non-Axios error:', error);
+      
+      return config;
+    } catch (error) {
+      // Log error but don't block the request
+      console.error('Error accessing token from cookies:', error);
+      return config;
     }
+  },
+  (error) => {
     return Promise.reject(error);
   }
 );
@@ -97,7 +87,7 @@ export const userService = {
 
   async verifyOtp(payload: { otp: string; user_id: string; source?: string }): Promise<LoginResponse> {
   try {
-    const response = await api.post<LoginResponse>('/auth/verify-otp', payload);
+    const response = await api.post<any>('/auth/verify-otp', payload);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -194,7 +184,67 @@ export const userService = {
       console.error('API connection test failed:', error);
       return false;
     }
+  },
+
+async getUsers(): Promise<any> {
+  try {
+    const response = await api.get('/users');
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get users');
+    }
+    throw new Error('Failed to get users. Please check your network connection.');
   }
+},
+
+async deleteUser(userId: string): Promise<any> {
+  try {
+    const response = await api.delete(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to delete user');
+    }
+    throw new Error('Failed to delete user. Please check your network connection.');
+  }
+},
+
+async updateUser(userId: string, userData: any): Promise<any> {
+  try {
+    const response = await api.put(`/users/${userId}`, userData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to update user');
+    }
+    throw new Error('Failed to update user. Please check your network connection.');
+  }
+},
+
+async createUser(userData: any): Promise<any> {
+  try {
+    const response = await api.post('/users', userData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to create user');
+    }
+    throw new Error('Failed to create user. Please check your network connection.');
+  }
+},
+
+async getAdminUsers(): Promise<any> {
+  try {
+    const response = await api.get('/users?role=admin');
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get admin users');
+    }
+    throw new Error('Failed to get admin users. Please check your network connection.');
+  }
+}
 };
 
 export default userService;

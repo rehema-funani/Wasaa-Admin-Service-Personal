@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { getStorageItem, removeStorageItem, setStorageItem } from '../utils/storage';
+import { getStorageItem, removeStorageItem } from '../utils/storage';
 import userService from '../api/services/users';
+import Cookies from 'js-cookie';
+
 
 type User = {
     id: string;
@@ -118,17 +120,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsLoading(true);
         setError(null);
         try {
+            // Call API
             const response = await userService.verifyOtp(payload);
 
-            if (response.accessToken) {
-                // Save the access token
-                setStorageItem('authToken', response.accessToken);
+            // Store tokens in cookies with error handling
+            try {
+                // Set cookie expiration (default is end of session if not specified)
+                const cookieOptions = {
+                    expires: 7, // 7 days
+                    secure: window.location.protocol === 'https:', // Secure in production
+                    sameSite: 'strict' as const
+                };
 
-                // Save the refresh token if present
-                if (response.refreshToken) {
-                    setStorageItem('refreshToken', response.refreshToken);
-                }
+                // Store tokens
+                Cookies.set('authToken', response.accessToken || '', cookieOptions);
+                Cookies.set('refreshToken', response.refreshToken || '', cookieOptions);
 
+                // Process and store user data if available
                 if (response.user) {
                     const userData: User = {
                         id: response.user.id,
@@ -136,19 +144,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                         email: response.user.email || '',
                         role: response.user.role?.title || '',
                         avatar: response.user.profile_picture,
-                        // You can also save permissions or other role-related data
                         roleId: response.user.role_id,
                         permissions: response.user.role?.role_permissions?.map(rp => rp.permissions?.title) || []
                     };
 
-                    // Set user data in state
+                    // Update user state
                     setUser(userData);
 
-                    // Optionally store user data in localStorage for persistence
-                    setStorageItem('userData', JSON.stringify(userData));
+                    // Store user data
+                    Cookies.set('userData', JSON.stringify(userData), cookieOptions);
                 }
-            } else {
-                setError(response.message || 'Invalid OTP');
+
+                // Verify storage worked
+                const tokenCheck = Cookies.get('authToken');
+                console.log('Token stored successfully in cookies:', !!tokenCheck);
+
+            } catch (storageError) {
+                // Log storage errors but don't fail the operation
+                console.error('Error storing auth data in cookies:', storageError);
             }
 
             return response;
@@ -216,15 +229,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        console.log('Auth state updated:', {
-            isAuthenticated: !!user,
-            isLoading,
-            userName: user?.name || 'Not logged in',
-            tokenExists: !!getStorageItem('authToken')
-        });
-    }, [user, isLoading]);
 
     const value: AuthContextType = {
         user,
