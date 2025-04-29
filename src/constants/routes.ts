@@ -91,13 +91,7 @@ const routes: Route[] = [
           path: '/admin/system/roles',
           title: 'Roles',
           icon: Shield,
-        },
-        {
-          type: 'link',
-          path: '/admin/system/permissions',
-          title: 'Permissions',
-          icon: Key,
-        },
+        }
       ],
     },
     {
@@ -247,112 +241,118 @@ const routes: Route[] = [
       title: 'Settings',
       items: [
         {
-          type: 'dropdown',
-          title: 'Wallpaper Settings',
-          icon: ImageIcon,
-          key: 'Wallpaper Settings',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/Wallpaper/list-all-wallpaper',
-              title: 'Wallpaper List',
-            },
-            {
-              type: 'link',
-              path: '/admin/Wallpaper/add-a-new-wallpaper',
-              title: 'Add Wallpapper',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Avatar Settings',
-          icon: Palette,
-          key: 'Avatar Setting',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/Avatar/list-all-avatar',
-              title: 'Avatar List',
-            },
-            {
-              type: 'link',
-              path: '/admin/Avatar/add-a-new-avatar',
-              title: 'Add Avatar',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'System Settings',
-          icon: Settings,
-          key: 'System Settings',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/System-Setting/General-Setting',
-              title: 'General Setting',
-            },
-            {
-              type: 'link',
-              path: '/admin/System-Setting/App-Setting',
-              title: 'App Setting',
-            },
-            {
-              type: 'link',
-              path: '/admin/System-Setting/Web-Setting',
-              title: 'Frontend Setting',
-            },
-            {
-              type: 'link',
-              path: '/admin/System-Setting/Advanced-Setting',
-              title: 'OTP Cofigration',
-            },
-            {
-              type: 'link',
-              path: '/admin/System-Setting/email-Configration',
-              title: 'Email Configration',
-            },
-            {
-              type: 'link',
-              path: '/admin/System-Setting/Pages',
-              title: 'Pages',
-            },
-            {
-              type: 'link',
-              path: '/admin/System-Setting/LanguageSettings',
-              title: 'Language Settings',
-            },
-            {
-              type: 'link',
-              path: '/admin/System-Setting/reportSettings',
-              title: 'Report Settings',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Gift Settings',
-          icon: Gift,
-          key: 'Gift Settings',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/Gift/gift-list',
-              title: 'Gift List',
-            },
-            {
-              type: 'link',
-              path: '/admin/Gift/add-new-gift',
-              title: 'Add New Gift',
-            },
-            {
-              type: 'link',
-              path: '/admin/Gift/gift-categories',
-              title: 'Gift Categories',
-            },
-          ],
-        },
+      type: 'link',
+      path: '/admin/settings',
+      title: 'Settings',
+      icon: Settings,
+    },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Wallpaper Settings',
+        //   icon: ImageIcon,
+        //   key: 'Wallpaper Settings',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/Wallpaper/list-all-wallpaper',
+        //       title: 'Wallpaper List',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/Wallpaper/add-a-new-wallpaper',
+        //       title: 'Add Wallpapper',
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Avatar Settings',
+        //   icon: Palette,
+        //   key: 'Avatar Setting',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/Avatar/list-all-avatar',
+        //       title: 'Avatar List',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/Avatar/add-a-new-avatar',
+        //       title: 'Add Avatar',
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'dropdown',
+        //   title: 'System Settings',
+        //   icon: Settings,
+        //   key: 'System Settings',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/System-Setting/General-Setting',
+        //       title: 'General Setting',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/System-Setting/App-Setting',
+        //       title: 'App Setting',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/System-Setting/Web-Setting',
+        //       title: 'Frontend Setting',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/System-Setting/Advanced-Setting',
+        //       title: 'OTP Cofigration',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/System-Setting/email-Configration',
+        //       title: 'Email Configration',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/System-Setting/Pages',
+        //       title: 'Pages',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/System-Setting/LanguageSettings',
+        //       title: 'Language Settings',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/System-Setting/reportSettings',
+        //       title: 'Report Settings',
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Gift Settings',
+        //   icon: Gift,
+        //   key: 'Gift Settings',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/Gift/gift-list',
+        //       title: 'Gift List',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/Gift/add-new-gift',
+        //       title: 'Add New Gift',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/Gift/gift-categories',
+        //       title: 'Gift Categories',
+        //     },
+        //   ],
+        // },
       ],
     },
   ];

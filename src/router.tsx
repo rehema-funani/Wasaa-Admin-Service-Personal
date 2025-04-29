@@ -40,14 +40,7 @@ const AddWallpaper = lazy(() => import('./app/admin/Wallpaper/add-a-new-wallpape
 const AvatarList = lazy(() => import('./app/admin/Avatar/list-all-avatar/page'));
 const AddAvatar = lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page'));
 
-const GeneralSettings = lazy(() => import('./app/admin/System-Setting/General-Setting/page'));
-const AppSettings = lazy(() => import('./app/admin/System-Setting/App-Setting/page'));
-const WebSettings = lazy(() => import('./app/admin/System-Setting/Web-Setting/page'));
-const OtpConfig = lazy(() => import('./app/admin/System-Setting/Advanced-Setting/page'));
-const EmailConfig = lazy(() => import('./app/admin/System-Setting/email-Configration/page'));
-const Pages = lazy(() => import('./app/admin/System-Setting/Pages/page'));
-const LanguageSettings = lazy(() => import('./app/admin/System-Setting/LanguageSettings/page'));
-const ReportSettings = lazy(() => import('./app/admin/System-Setting/reportSettings/page'));
+const GeneralSettings = lazy(() => import('./app/admin/Settings/page'));
 
 const GiftList = lazy(() => import('./app/admin/Gift/gift-list/page'));
 const AddGift = lazy(() => import('./app/admin/Gift/add-new-gift/page'));
@@ -128,14 +121,7 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/Avatar/list-all-avatar" element={<AvatarList />} />
                     <Route path="admin/Avatar/add-a-new-avatar" element={<AddAvatar />} />
 
-                    <Route path="admin/System-Setting/General-Setting" element={<GeneralSettings />} />
-                    <Route path="admin/System-Setting/App-Setting" element={<AppSettings />} />
-                    <Route path="admin/System-Setting/Web-Setting" element={<WebSettings />} />
-                    <Route path="admin/System-Setting/Advanced-Setting" element={<OtpConfig />} />
-                    <Route path="admin/System-Setting/email-Configration" element={<EmailConfig />} />
-                    <Route path="admin/System-Setting/Pages" element={<Pages />} />
-                    <Route path="admin/System-Setting/LanguageSettings" element={<LanguageSettings />} />
-                    <Route path="admin/System-Setting/reportSettings" element={<ReportSettings />} />
+                    <Route path="admin/settings" element={<GeneralSettings />} />
 
                     <Route path="admin/Gift/gift-list" element={<GiftList />} />
                     <Route path="admin/Gift/add-new-gift" element={<AddGift />} />
