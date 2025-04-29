@@ -1,7 +1,6 @@
 import { 
   Home, 
   Globe,
-  Users,
   UserCircle,
   Group,
   MonitorPlay,
@@ -20,7 +19,6 @@ import {
   Settings
 } from 'lucide-react';
 
-// Define types for our routes
 export type LinkRoute = {
   type: 'link';
   path: string;

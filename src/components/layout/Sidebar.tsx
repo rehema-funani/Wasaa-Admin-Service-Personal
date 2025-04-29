@@ -8,13 +8,12 @@ import {
   X,
   ArrowRight
 } from 'lucide-react';
-
+import logo from '../../assets/images/logo-wasaa.png'
 import routes, { LinkRoute, DropdownRoute, SectionRoute } from '../../constants/routes';
 
 type RouteItem = LinkRoute | DropdownRoute | SectionRoute;
 
 interface SidebarProps {
-  // We keep this prop for TypeScript compatibility, but we won't use it functionally
   collapsed?: boolean;
   setCollapsed?: (collapsed: boolean) => void;
 }
@@ -26,8 +25,6 @@ const Sidebar: React.FC<SidebarProps> = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
-  // Fixed sidebar width - no longer collapsible
-  const sidebarWidth = 256;
 
   useEffect(() => {
     const handleResize = () => {
@@ -349,18 +346,19 @@ const Sidebar: React.FC<SidebarProps> = () => {
           boxShadow: '0 0 20px rgba(0, 0, 0, 0.03)'
         }}
       >
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-50">
+        <div className="flex items-center justify-between px-4 border-b border-gray-50">
           <div>
             <NavLink to="/" className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200/50">
-                WC
-              </div>
-              <span className="ml-2 text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
-                Wasaa chat
-              </span>
+              <motion.img
+                src={logo}
+                alt="Logo"
+                className="h-14 w-auto rounded-full"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+              />
             </NavLink>
           </div>
-          {/* The collapse button is removed */}
         </div>
 
         <motion.nav
