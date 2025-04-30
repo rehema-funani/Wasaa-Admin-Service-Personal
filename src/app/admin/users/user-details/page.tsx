@@ -74,7 +74,6 @@ const page = () => {
       try {
         await userService.deleteUser(userId);
         toast.success('User deleted successfully');
-        // Refresh the user list
         fetchUsers();
       } catch (err) {
         console.error('Failed to delete user:', err);

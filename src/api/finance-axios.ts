@@ -1,9 +1,9 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-const baseURL = import.meta.env.VITE_API_URL || 'http://138.68.190.213:3010/';
+const baseURL = import.meta.env.VITE_API_URL || 'http://138.68.190.213:3030/api';
 const apiKey = import.meta.env.VITE_API_KEY || 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==';
 
-export const api = axios.create({
+export const finance = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ export const api = axios.create({
   timeout: 30_000,
 });
 
-api.interceptors.request.use(
+finance.interceptors.request.use(
   (config) => {
     try {
       const token = Cookies.get('authToken');

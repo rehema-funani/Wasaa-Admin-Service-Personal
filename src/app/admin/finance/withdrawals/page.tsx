@@ -7,555 +7,301 @@ import {
   XCircle,
   Clock,
   CalendarDays,
-  AlertCircle,
   DollarSign,
   FileText,
-  ArrowDownRight,
-  CreditCard,
   Banknote,
+  Hash,
+  Phone,
+  CreditCard,
+  ArrowUpRight
 } from 'lucide-react';
-import StatusBadge from '../../../../components/common/StatusBadge';
 import SearchBox from '../../../../components/common/SearchBox';
-import FilterPanel from '../../../../components/common/FilterPanel';
 import DataTable from '../../../../components/common/DataTable';
 import Pagination from '../../../../components/common/Pagination';
+import financeService from '../../../../api/services/finance';
+
+interface Withdrawal {
+  id: string;
+  user_uuid: string;
+  paymentMethodId: number;
+  amount: number;
+  phone: string;
+  description: string;
+  transactionCode: string | null;
+  metadata: any;
+  createdAt: string;
+  updatedAt: string;
+  PaymentMethod?: {
+    id: number;
+    name: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  user?: {
+    id: string;
+    username: string;
+    phone_number: string;
+    email: string | null;
+    profile_picture: string | null;
+    preferences: any;
+  };
+  // Additional properties
+  formattedDate?: string;
+  formattedTime?: string;
+  currency?: string;
+}
 
 const page = () => {
-  // States for the page
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [filteredRequests, setFilteredRequests] = useState<any[]>([]);
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
+  const [filteredWithdrawals, setFilteredWithdrawals] = useState<Withdrawal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
+  const [error, setError] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<string[]>([
-    'pending', 'high priority', 'bank transfer'
+    'withdrawal', 'mpesa', 'bank transfer'
   ]);
 
-  const withdrawalRequestsData = [
-    {
-      id: 'WDR-4501',
-      user: {
-        id: '1',
-        name: 'Emma Johnson',
-        email: 'emma.johnson@example.com'
-      },
-      amount: 500.00,
-      fee: 5.00,
-      currency: 'USD',
-      status: 'pending',
-      priority: 'medium',
-      method: 'bank_transfer',
-      methodDetails: {
-        bank: 'Chase Bank',
-        accountNumber: '****3456',
-        routingNumber: '****7890'
-      },
-      requestDate: 'Apr 26, 2025',
-      requestTime: '14:32',
-      expectedDate: 'Apr 28, 2025',
-      notes: 'Monthly withdrawal',
-      reasonCode: null
-    },
-    {
-      id: 'WDR-4502',
-      user: {
-        id: '3',
-        name: 'Olivia Davis',
-        email: 'olivia.davis@example.com'
-      },
-      amount: 1200.00,
-      fee: 12.00,
-      currency: 'USD',
-      status: 'completed',
-      priority: 'standard',
-      method: 'bank_transfer',
-      methodDetails: {
-        bank: 'Bank of America',
-        accountNumber: '****2345',
-        routingNumber: '****6789'
-      },
-      requestDate: 'Apr 24, 2025',
-      requestTime: '09:15',
-      expectedDate: 'Apr 26, 2025',
-      notes: 'Business expense reimbursement',
-      reasonCode: null
-    },
-    {
-      id: 'WDR-4503',
-      user: {
-        id: '5',
-        name: 'Ava Thompson',
-        email: 'ava.thompson@example.com'
-      },
-      amount: 2500.00,
-      fee: 25.00,
-      currency: 'USD',
-      status: 'pending',
-      priority: 'high',
-      method: 'wire_transfer',
-      methodDetails: {
-        bank: 'Citibank',
-        accountNumber: '****8765',
-        swiftCode: 'CITIUS33'
-      },
-      requestDate: 'Apr 26, 2025',
-      requestTime: '11:45',
-      expectedDate: 'Apr 29, 2025',
-      notes: 'Urgent vendor payment',
-      reasonCode: null
-    },
-    {
-      id: 'WDR-4504',
-      user: {
-        id: '7',
-        name: 'Isabella Brown',
-        email: 'isabella.brown@example.com'
-      },
-      amount: 350.00,
-      fee: 3.50,
-      currency: 'USD',
-      status: 'rejected',
-      priority: 'standard',
-      method: 'bank_transfer',
-      methodDetails: {
-        bank: 'Wells Fargo',
-        accountNumber: '****1234',
-        routingNumber: '****5678'
-      },
-      requestDate: 'Apr 23, 2025',
-      requestTime: '15:20',
-      expectedDate: 'Apr 25, 2025',
-      notes: 'Personal withdrawal',
-      reasonCode: 'insufficient_funds'
-    },
-    {
-      id: 'WDR-4505',
-      user: {
-        id: '10',
-        name: 'Mason Rodriguez',
-        email: 'mason.rodriguez@example.com'
-      },
-      amount: 1750.00,
-      fee: 17.50,
-      currency: 'USD',
-      status: 'processing',
-      priority: 'medium',
-      method: 'debit_card',
-      methodDetails: {
-        cardType: 'Visa',
-        cardNumber: '****7890',
-        expiryDate: '06/27'
-      },
-      requestDate: 'Apr 25, 2025',
-      requestTime: '10:35',
-      expectedDate: 'Apr 26, 2025',
-      notes: 'Monthly profit withdrawal',
-      reasonCode: null
-    },
-    {
-      id: 'WDR-4506',
-      user: {
-        id: '13',
-        name: 'Amelia Lopez',
-        email: 'amelia.lopez@example.com'
-      },
-      amount: 900.00,
-      fee: 9.00,
-      currency: 'USD',
-      status: 'completed',
-      priority: 'standard',
-      method: 'paypal',
-      methodDetails: {
-        email: 'amelia.lopez@gmail.com'
-      },
-      requestDate: 'Apr 22, 2025',
-      requestTime: '13:40',
-      expectedDate: 'Apr 24, 2025',
-      notes: 'Freelance payment',
-      reasonCode: null
-    },
-    {
-      id: 'WDR-4507',
-      user: {
-        id: '15',
-        name: 'Mia Hernandez',
-        email: 'mia.hernandez@example.com'
-      },
-      amount: 3200.00,
-      fee: 32.00,
-      currency: 'USD',
-      status: 'pending',
-      priority: 'high',
-      method: 'wire_transfer',
-      methodDetails: {
-        bank: 'TD Bank',
-        accountNumber: '****6543',
-        swiftCode: 'TDOMUS44'
-      },
-      requestDate: 'Apr 26, 2025',
-      requestTime: '09:55',
-      expectedDate: 'Apr 30, 2025',
-      notes: 'Business expense withdrawal',
-      reasonCode: null
-    },
-    {
-      id: 'WDR-4508',
-      user: {
-        id: '8',
-        name: 'Ethan Miller',
-        email: 'ethan.miller@example.com'
-      },
-      amount: 150.00,
-      fee: 1.50,
-      currency: 'USD',
-      status: 'completed',
-      priority: 'low',
-      method: 'debit_card',
-      methodDetails: {
-        cardType: 'MasterCard',
-        cardNumber: '****4321',
-        expiryDate: '11/26'
-      },
-      requestDate: 'Apr 21, 2025',
-      requestTime: '16:15',
-      expectedDate: 'Apr 22, 2025',
-      notes: 'Small expense reimbursement',
-      reasonCode: null
-    },
-    {
-      id: 'WDR-4509',
-      user: {
-        id: '12',
-        name: 'Lucas Wright',
-        email: 'lucas.wright@example.com'
-      },
-      amount: 450.00,
-      fee: 4.50,
-      currency: 'USD',
-      status: 'cancelled',
-      priority: 'standard',
-      method: 'bank_transfer',
-      methodDetails: {
-        bank: 'PNC Bank',
-        accountNumber: '****9876',
-        routingNumber: '****5432'
-      },
-      requestDate: 'Apr 24, 2025',
-      requestTime: '11:30',
-      expectedDate: 'Apr 26, 2025',
-      notes: 'Cancelled by user',
-      reasonCode: 'user_cancelled'
-    },
-    {
-      id: 'WDR-4510',
-      user: {
-        id: '2',
-        name: 'Liam Wilson',
-        email: 'liam.wilson@example.com'
-      },
-      amount: 75.00,
-      fee: 0.75,
-      currency: 'USD',
-      status: 'completed',
-      priority: 'low',
-      method: 'paypal',
-      methodDetails: {
-        email: 'liam.wilson@hotmail.com'
-      },
-      requestDate: 'Apr 20, 2025',
-      requestTime: '14:50',
-      expectedDate: 'Apr 21, 2025',
-      notes: 'Small withdrawal',
-      reasonCode: null
-    },
-    {
-      id: 'WDR-4511',
-      user: {
-        id: '6',
-        name: 'James Taylor',
-        email: 'james.taylor@example.com'
-      },
-      amount: 1100.00,
-      fee: 11.00,
-      currency: 'USD',
-      status: 'on_hold',
-      priority: 'medium',
-      method: 'wire_transfer',
-      methodDetails: {
-        bank: 'Santander',
-        accountNumber: '****3456',
-        swiftCode: 'SVRNUS33'
-      },
-      requestDate: 'Apr 23, 2025',
-      requestTime: '10:20',
-      expectedDate: 'Apr 27, 2025',
-      notes: 'On hold pending verification',
-      reasonCode: 'verification_needed'
-    },
-    {
-      id: 'WDR-4512',
-      user: {
-        id: '9',
-        name: 'Sophia Garcia',
-        email: 'sophia.garcia@example.com'
-      },
-      amount: 250.00,
-      fee: 2.50,
-      currency: 'USD',
-      status: 'pending',
-      priority: 'standard',
-      method: 'debit_card',
-      methodDetails: {
-        cardType: 'Visa',
-        cardNumber: '****1234',
-        expiryDate: '08/26'
-      },
-      requestDate: 'Apr 25, 2025',
-      requestTime: '13:10',
-      expectedDate: 'Apr 26, 2025',
-      notes: 'Regular withdrawal',
-      reasonCode: null
-    }
-  ];
+  // Helper function to format phone numbers
+  const formatPhoneNumber = (phone: string | undefined | null): string => {
+    if (!phone) return '';
 
-  const filterOptions = [
-    {
-      id: 'status',
-      label: 'Status',
-      type: 'multiselect' as const,
-      options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'processing', label: 'Processing' },
-        { value: 'completed', label: 'Completed' },
-        { value: 'rejected', label: 'Rejected' },
-        { value: 'cancelled', label: 'Cancelled' },
-        { value: 'on_hold', label: 'On Hold' }
-      ]
-    },
-    {
-      id: 'priority',
-      label: 'Priority',
-      type: 'select' as const,
-      options: [
-        { value: 'high', label: 'High' },
-        { value: 'medium', label: 'Medium' },
-        { value: 'standard', label: 'Standard' },
-        { value: 'low', label: 'Low' }
-      ]
-    },
-    {
-      id: 'method',
-      label: 'Withdrawal Method',
-      type: 'multiselect' as const,
-      options: [
-        { value: 'bank_transfer', label: 'Bank Transfer' },
-        { value: 'wire_transfer', label: 'Wire Transfer' },
-        { value: 'debit_card', label: 'Debit Card' },
-        { value: 'paypal', label: 'PayPal' }
-      ]
-    },
-    {
-      id: 'amount',
-      label: 'Amount',
-      type: 'range' as const,
-      min: 0,
-      max: 5000,
-      step: 100
-    },
-    {
-      id: 'requestDate',
-      label: 'Request Date',
-      type: 'daterange' as const
+    // For Kenyan numbers that start with 254
+    if (phone.startsWith('254')) {
+      return `+${phone.substring(0, 3)} ${phone.substring(3, 6)} ${phone.substring(6, 9)} ${phone.substring(9)}`;
     }
-  ];
 
+    // Return as is if not matching our expected format
+    return phone;
+  };
+
+  // Helper function to get payment method icon
+  const getPaymentMethodIcon = (methodName: string | undefined): React.ReactNode => {
+    if (!methodName) return <DollarSign size={14} className="text-gray-500 mr-1.5" strokeWidth={1.8} />;
+
+    const normalizedName = methodName.toLowerCase();
+
+    if (normalizedName.includes('mpesa') || normalizedName.includes('mobile')) {
+      return <Phone size={14} className="text-green-500 mr-1.5" strokeWidth={1.8} />;
+    } else if (normalizedName.includes('card') || normalizedName.includes('visa') || normalizedName.includes('master')) {
+      return <CreditCard size={14} className="text-indigo-500 mr-1.5" strokeWidth={1.8} />;
+    } else if (normalizedName.includes('bank') || normalizedName.includes('transfer')) {
+      return <Banknote size={14} className="text-blue-500 mr-1.5" strokeWidth={1.8} />;
+    } else {
+      return <DollarSign size={14} className="text-gray-500 mr-1.5" strokeWidth={1.8} />;
+    }
+  };
+
+  // Format date and time
+  const formatDateTime = (dateString: string): { date: string; time: string } => {
+    try {
+      const date = new Date(dateString);
+      return {
+        date: date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }),
+        time: date.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+    } catch (error) {
+      return { date: 'Invalid Date', time: '--:--' };
+    }
+  };
+
+  // Fetch withdrawal requests from API
+  useEffect(() => {
+    const fetchWithdrawals = async () => {
+      try {
+        setIsLoading(true);
+        const response = await financeService.getAllWithdrawals();
+
+        // Check if the response has the expected structure
+        const data = response?.withdrawals || response?.data?.withdrawals || [];
+
+        // Process data to add user info if not available
+        const processedData = data.map((withdrawal: Withdrawal) => {
+          if (!withdrawal.user) {
+            withdrawal.user = {
+              id: withdrawal.user_uuid || 'unknown',
+              username: 'User #' + (withdrawal.user_uuid?.substring(0, 5) || 'Unknown'),
+              phone_number: withdrawal.phone || 'No phone available',
+              email: null,
+              profile_picture: null,
+              preferences: null
+            };
+          }
+
+          return {
+            ...withdrawal,
+            amount: Number(withdrawal.amount),
+            formattedDate: formatDateTime(withdrawal.createdAt).date,
+            formattedTime: formatDateTime(withdrawal.createdAt).time,
+            currency: 'KES' // Default currency
+          };
+        });
+
+        setWithdrawals(processedData);
+        setFilteredWithdrawals(processedData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching withdrawals:', err);
+        setError('Failed to load withdrawal data. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWithdrawals();
+  }, []);
+
+  // Define table columns
   const columns = [
     {
       id: 'id',
-      header: 'Request ID',
-      accessor: (row: any) => row.id,
+      header: 'Withdrawal ID',
+      accessor: (row: Withdrawal) => row.id,
       sortable: true,
-      width: '120px',
+      width: '130px',
       cell: (value: string) => (
-        <span className="font-medium text-gray-800">{value}</span>
+        <div className="flex items-center">
+          <Hash size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
+          <span className="font-medium text-gray-800 text-sm">{value.substring(0, 8)}...</span>
+        </div>
       )
     },
     {
       id: 'user',
       header: 'User',
-      accessor: (row: any) => row.user.name,
+      accessor: (row: Withdrawal) => row.user?.username || '',
       sortable: true,
-      cell: (value: string, row: any) => (
-        <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white flex items-center justify-center font-medium text-sm mr-3">
-            {value.split(' ').map((n: string) => n[0]).join('')}
+      width: '180px',
+      cell: (value: string, row: Withdrawal) => {
+        // Get the first letter of the username as initial
+        const initial = (value && value.length > 0) ? value[0].toUpperCase() : 'U';
+
+        return (
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+              {initial}
+            </div>
+            <div>
+              <p className="font-medium text-gray-800">{value || 'Unknown User'}</p>
+              <p className="text-xs text-gray-500">{formatPhoneNumber(row.user?.phone_number || row.phone)}</p>
+            </div>
           </div>
-          <div>
-            <p className="font-medium text-gray-800">{value}</p>
-            <p className="text-xs text-gray-500">{row.user.email}</p>
+        );
+      }
+    },
+    {
+      id: 'method',
+      header: 'Payment Method',
+      accessor: (row: Withdrawal) => row.PaymentMethod?.name || '',
+      sortable: true,
+      width: '150px',
+      cell: (value: string, row: Withdrawal) => {
+        const icon = getPaymentMethodIcon(value);
+
+        return (
+          <div className="flex items-center">
+            {icon}
+            <span className="font-medium text-gray-800">{value || 'Unknown Method'}</span>
           </div>
-        </div>
-      )
+        );
+      }
     },
     {
       id: 'amount',
       header: 'Amount',
-      accessor: (row: any) => row.amount,
+      accessor: (row: Withdrawal) => row.amount || 0,
+      sortable: true,
+      width: '130px',
+      cell: (value: number, row: Withdrawal) => {
+        const currency = row.currency || 'KES';
+
+        return (
+          <div className="font-medium text-gray-800">
+            <div className="flex items-center">
+              <DollarSign size={14} strokeWidth={1.8} className="text-gray-400 mr-0.5" />
+              <span>{value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="text-xs text-gray-500 ml-1">{currency}</span>
+            </div>
+          </div>
+        );
+      }
+    },
+    {
+      id: 'transaction',
+      header: 'Transaction',
+      accessor: (row: Withdrawal) => row.transactionCode || '',
       sortable: true,
       width: '150px',
-      cell: (value: number, row: any) => (
-        <div className="flex flex-col">
-          <div className="font-medium text-gray-800">
-            ${value.toFixed(2)}
-            <span className="text-xs text-gray-500 ml-1">{row.currency}</span>
-          </div>
-          <div className="text-xs text-gray-500 mt-0.5">
-            Fee: ${row.fee.toFixed(2)}
-          </div>
+      cell: (value: string) => (
+        <div className="flex items-center">
+          <span className="font-medium text-gray-800 text-sm">{value || 'N/A'}</span>
         </div>
       )
     },
     {
-      id: 'method',
-      header: 'Method',
-      accessor: (row: any) => row.method,
+      id: 'description',
+      header: 'Description',
+      accessor: (row: Withdrawal) => row.description || '',
       sortable: true,
-      cell: (value: string, row: any) => {
-        const methodIcons: Record<string, React.ReactNode> = {
-          'bank_transfer': <Banknote size={14} className="text-blue-500 mr-1.5" strokeWidth={1.8} />,
-          'wire_transfer': <Banknote size={14} className="text-indigo-500 mr-1.5" strokeWidth={1.8} />,
-          'debit_card': <CreditCard size={14} className="text-green-500 mr-1.5" strokeWidth={1.8} />,
-          'paypal': <DollarSign size={14} className="text-blue-500 mr-1.5" strokeWidth={1.8} />
-        };
-
-        const methodLabels: Record<string, string> = {
-          'bank_transfer': 'Bank Transfer',
-          'wire_transfer': 'Wire Transfer',
-          'debit_card': 'Debit Card',
-          'paypal': 'PayPal'
-        };
-
-        let details = '';
-        if (value === 'bank_transfer' || value === 'wire_transfer') {
-          details = row.methodDetails.bank;
-        } else if (value === 'debit_card') {
-          details = `${row.methodDetails.cardType} ${row.methodDetails.cardNumber}`;
-        } else if (value === 'paypal') {
-          details = row.methodDetails.email;
+      cell: (value: string, row: Withdrawal) => {
+        // Extract account information from metadata if available
+        let accountInfo = '';
+        if (row.metadata && row.metadata.account) {
+          accountInfo = `Account: ${row.metadata.account}`;
         }
+
+        return (
+          <div className="flex items-start">
+            <FileText size={14} className="text-gray-400 mr-1.5 mt-0.5" strokeWidth={1.8} />
+            <div>
+              <p className="text-gray-800 text-sm">{value || 'No description'}</p>
+              {accountInfo && (
+                <p className="text-xs text-gray-500 mt-0.5">{accountInfo}</p>
+              )}
+            </div>
+          </div>
+        );
+      }
+    },
+    {
+      id: 'date',
+      header: 'Date & Time',
+      accessor: (row: Withdrawal) => row.createdAt || '',
+      sortable: true,
+      width: '150px',
+      cell: (value: string) => {
+        const { date, time } = formatDateTime(value);
 
         return (
           <div className="flex flex-col">
             <div className="flex items-center">
-              {methodIcons[value]}
-              <span className="font-medium text-gray-800">{methodLabels[value]}</span>
+              <CalendarDays size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
+              <span className="text-sm">{date}</span>
             </div>
-            <p className="text-xs text-gray-500 mt-0.5 ml-5">{details}</p>
+            <div className="flex items-center mt-1">
+              <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
+              <span className="text-gray-500 text-sm">{time}</span>
+            </div>
           </div>
         );
       }
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      accessor: (row: any) => row.status,
-      sortable: true,
-      width: '120px',
-      cell: (value: string, row: any) => {
-        const statusMap: Record<string, any> = {
-          'pending': { color: 'yellow', icon: true },
-          'processing': { color: 'blue', icon: true },
-          'completed': { color: 'green', icon: true },
-          'rejected': { color: 'red', icon: true },
-          'cancelled': { color: 'gray', icon: false },
-          'on_hold': { color: 'purple', icon: true }
-        };
-
-        return (
-          <div className="flex flex-col">
-            <StatusBadge
-              status={value as any}
-              size="sm"
-              withIcon
-              withDot={value === 'completed'}
-              className={`status-badge-${statusMap[value]?.color}`}
-            />
-            {row.reasonCode && (
-              <p className="text-xs text-red-500 mt-1 capitalize">
-                {row.reasonCode.replace(/_/g, ' ')}
-              </p>
-            )}
-          </div>
-        );
-      }
-    },
-    {
-      id: 'priority',
-      header: 'Priority',
-      accessor: (row: any) => row.priority,
-      sortable: true,
-      width: '100px',
-      cell: (value: string) => {
-        const priorityColors: Record<string, string> = {
-          'high': 'bg-red-100 text-red-700',
-          'medium': 'bg-yellow-100 text-yellow-700',
-          'standard': 'bg-blue-100 text-blue-700',
-          'low': 'bg-gray-100 text-gray-700'
-        };
-
-        return (
-          <span className={`
-            px-2 py-1 rounded-md text-xs font-medium capitalize
-            ${priorityColors[value] || 'bg-gray-100 text-gray-700'}
-          `}>
-            {value}
-          </span>
-        );
-      }
-    },
-    {
-      id: 'dates',
-      header: 'Dates',
-      accessor: (row: any) => row.requestDate,
-      sortable: true,
-      cell: (value: string, row: any) => (
-        <div className="flex flex-col">
-          <div className="flex items-center">
-            <CalendarDays size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-            <span className="text-gray-800">Requested: {value}</span>
-          </div>
-          <div className="flex items-center mt-1">
-            <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-            <span className="text-gray-500 text-sm">{row.requestTime}</span>
-          </div>
-          <div className="flex items-center mt-1">
-            <ArrowDownRight size={14} className="text-green-500 mr-1.5" strokeWidth={1.8} />
-            <span className="text-gray-600 text-sm">Expected: {row.expectedDate}</span>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'notes',
-      header: 'Notes',
-      accessor: (row: any) => row.notes,
-      sortable: true,
-      width: '200px',
-      cell: (value: string) => (
-        <div className="flex items-start">
-          <FileText size={14} className="text-gray-400 mr-1.5 mt-0.5" strokeWidth={1.8} />
-          <span className="text-gray-600 text-sm">{value}</span>
-        </div>
-      )
     },
     {
       id: 'actions',
       header: 'Actions',
-      accessor: (row: any) => row.id,
+      accessor: (row: Withdrawal) => row.id,
       sortable: false,
-      width: '100px',
-      cell: (value: string, row: any) => (
+      width: '80px',
+      cell: (value: string) => (
         <div className="flex items-center space-x-1">
           <motion.button
             className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
@@ -565,67 +311,38 @@ const page = () => {
           >
             <Eye size={16} strokeWidth={1.8} />
           </motion.button>
-          {row.status === 'pending' && (
-            <>
-              <motion.button
-                className="p-1.5 rounded-lg text-gray-500 hover:bg-green-100 hover:text-green-600"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Approve request"
-              >
-                <CheckCircle size={16} strokeWidth={1.8} />
-              </motion.button>
-              <motion.button
-                className="p-1.5 rounded-lg text-gray-500 hover:bg-red-100 hover:text-red-600"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Reject request"
-              >
-                <XCircle size={16} strokeWidth={1.8} />
-              </motion.button>
-            </>
-          )}
-          {(row.status === 'on_hold' || row.status === 'processing') && (
-            <motion.button
-              className="p-1.5 rounded-lg text-gray-500 hover:bg-yellow-100 hover:text-yellow-600"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Flag for review"
-            >
-              <AlertCircle size={16} strokeWidth={1.8} />
-            </motion.button>
-          )}
         </div>
       )
     }
   ];
 
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setFilteredRequests(withdrawalRequestsData);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
   const handleSearch = (query: string) => {
     setSearchQuery(query);
 
     if (query.trim() === '') {
-      setFilteredRequests(withdrawalRequestsData);
+      setFilteredWithdrawals(withdrawals);
       return;
     }
 
     const lowercasedQuery = query.toLowerCase();
 
-    const filtered = withdrawalRequestsData.filter(request =>
-      request.id.toLowerCase().includes(lowercasedQuery) ||
-      request.user.name.toLowerCase().includes(lowercasedQuery) ||
-      request.user.email.toLowerCase().includes(lowercasedQuery) ||
-      request.notes.toLowerCase().includes(lowercasedQuery)
-    );
+    const filtered = withdrawals.filter(withdrawal => {
+      const id = withdrawal.id?.toLowerCase() || '';
+      const description = withdrawal.description?.toLowerCase() || '';
+      const username = withdrawal.user?.username?.toLowerCase() || '';
+      const phone = withdrawal.user?.phone_number?.toLowerCase() || withdrawal.phone?.toLowerCase() || '';
+      const paymentMethod = withdrawal.PaymentMethod?.name?.toLowerCase() || '';
+      const transactionCode = withdrawal.transactionCode?.toLowerCase() || '';
 
-    setFilteredRequests(filtered);
+      return id.includes(lowercasedQuery) ||
+        description.includes(lowercasedQuery) ||
+        username.includes(lowercasedQuery) ||
+        phone.includes(lowercasedQuery) ||
+        paymentMethod.includes(lowercasedQuery) ||
+        transactionCode.includes(lowercasedQuery);
+    });
+
+    setFilteredWithdrawals(filtered);
 
     if (query.trim() !== '' && !recentSearches.includes(query)) {
       setRecentSearches(prev => [query, ...prev.slice(0, 4)]);
@@ -634,82 +351,6 @@ const page = () => {
     setCurrentPage(1);
   };
 
-  const handleApplyFilters = (filters: Record<string, any>) => {
-    setAppliedFilters(filters);
-
-    let filtered = [...withdrawalRequestsData];
-
-    if (filters.status && filters.status.length > 0) {
-      filtered = filtered.filter(request => filters.status.includes(request.status));
-    }
-
-    if (filters.priority) {
-      filtered = filtered.filter(request => request.priority === filters.priority);
-    }
-
-    if (filters.method && filters.method.length > 0) {
-      filtered = filtered.filter(request => filters.method.includes(request.method));
-    }
-
-    if (filters.amount && (filters.amount.from !== undefined || filters.amount.to !== undefined)) {
-      if (filters.amount.from !== undefined) {
-        filtered = filtered.filter(request => request.amount >= filters.amount.from);
-      }
-      if (filters.amount.to !== undefined) {
-        filtered = filtered.filter(request => request.amount <= filters.amount.to);
-      }
-    }
-
-    if (filters.requestDate && (filters.requestDate.from || filters.requestDate.to)) {
-      // Simple date comparison - in a real app would use proper date objects
-      if (filters.requestDate.from) {
-        filtered = filtered.filter(request => {
-          const month = request.requestDate.split(' ')[0];
-          const fromMonth = filters.requestDate.from.split('-')[1];
-          return parseInt(getMonthNumber(month)) >= parseInt(fromMonth);
-        });
-      }
-
-      if (filters.requestDate.to) {
-        filtered = filtered.filter(request => {
-          const month = request.requestDate.split(' ')[0];
-          const toMonth = filters.requestDate.to.split('-')[1];
-          return parseInt(getMonthNumber(month)) <= parseInt(toMonth);
-        });
-      }
-    }
-
-    // Apply search query if it exists
-    if (searchQuery.trim() !== '') {
-      const lowercasedQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(request =>
-        request.id.toLowerCase().includes(lowercasedQuery) ||
-        request.user.name.toLowerCase().includes(lowercasedQuery) ||
-        request.user.email.toLowerCase().includes(lowercasedQuery) ||
-        request.notes.toLowerCase().includes(lowercasedQuery)
-      );
-    }
-
-    setFilteredRequests(filtered);
-    setCurrentPage(1); // Reset to first page
-  };
-
-  // Helper to get month number
-  const getMonthNumber = (month: string) => {
-    const months: Record<string, string> = {
-      'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
-      'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
-    };
-    return months[month] || '01';
-  };
-
-  // Reset all filters
-  const handleResetFilters = () => {
-    setAppliedFilters({});
-    setFilteredRequests(withdrawalRequestsData);
-  };
-
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -720,6 +361,10 @@ const page = () => {
   };
 
   const handleExport = () => {
+    if (filteredWithdrawals.length === 0) {
+      alert('No withdrawal data to export');
+      return;
+    }
     alert('Export functionality would go here');
   };
 
@@ -732,8 +377,8 @@ const page = () => {
         transition={{ duration: 0.3 }}
       >
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Withdrawal Requests</h1>
-          <p className="text-gray-500 mt-1">Process and manage user withdrawal requests</p>
+          <h1 className="text-2xl font-semibold text-gray-800">Withdrawals</h1>
+          <p className="text-gray-500 mt-1">Track and manage user withdrawals</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <motion.button
@@ -745,38 +390,35 @@ const page = () => {
             <Download size={16} className="mr-2" strokeWidth={1.8} />
             Export
           </motion.button>
+          <motion.button
+            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
+            whileTap={{ y: 0 }}
+          >
+            <ArrowUpRight size={16} className="mr-2" strokeWidth={1.8} />
+            New Withdrawal
+          </motion.button>
         </div>
       </motion.div>
 
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+        className="mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <div className="md:col-span-2">
-          <SearchBox
-            placeholder="Search by ID, user, email or notes..."
-            onSearch={handleSearch}
-            suggestions={[
-              'WDR-4501',
-              'Emma Johnson',
-              'pending',
-              'high priority'
-            ]}
-            recentSearches={recentSearches}
-            showRecentByDefault={true}
-          />
-        </div>
-        <div className="md:col-span-1">
-          <FilterPanel
-            title="Withdrawal Filters"
-            filters={[]}
-            onApplyFilters={handleApplyFilters}
-            onResetFilters={handleResetFilters}
-            initialExpanded={false}
-          />
-        </div>
+        <SearchBox
+          placeholder="Search by ID, username, phone, transaction code..."
+          onSearch={handleSearch}
+          suggestions={[
+            'Mpesa',
+            '254712',
+            'TXN-',
+            'Withdrawal'
+          ]}
+          recentSearches={recentSearches}
+          showRecentByDefault={true}
+        />
       </motion.div>
 
       <motion.div
@@ -785,14 +427,26 @@ const page = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        <DataTable
-          columns={columns}
-          data={filteredRequests}
-          selectable={true}
-          isLoading={isLoading}
-          emptyMessage="No withdrawal requests found. Try adjusting your filters or search terms."
-          defaultRowsPerPage={itemsPerPage}
-        />
+        {error ? (
+          <div className="p-4 bg-red-50 text-red-800 rounded-lg">
+            <p>{error}</p>
+            <button
+              className="mt-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-md"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={filteredWithdrawals}
+            selectable={true}
+            isLoading={isLoading}
+            emptyMessage="No withdrawals found. Try adjusting your search terms."
+            defaultRowsPerPage={itemsPerPage}
+          />
+        )}
       </motion.div>
 
       <motion.div
@@ -801,7 +455,7 @@ const page = () => {
         transition={{ duration: 0.3, delay: 0.3 }}
       >
         <Pagination
-          totalItems={filteredRequests.length}
+          totalItems={filteredWithdrawals.length}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
           onPageChange={handlePageChange}

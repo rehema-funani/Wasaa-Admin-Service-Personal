@@ -28,8 +28,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
-      if (window.innerWidth >= 1024) {
+      setIsMobile(window.innerWidth < 720);
+      if (window.innerWidth >= 720) {
         setMobileOpen(false);
       }
     };

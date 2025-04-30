@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   CreditCard,
   Plus,
@@ -13,421 +13,64 @@ import {
   Banknote,
   DollarSign,
   Eye,
+  RefreshCw,
+  AlertCircle,
+  XCircle
 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 import SearchBox from '../../../../components/common/SearchBox';
 import FilterPanel from '../../../../components/common/FilterPanel';
 import DataTable from '../../../../components/common/DataTable';
 import Pagination from '../../../../components/common/Pagination';
+import financeService from '../../../../api/services/finance';
 
-const page = () => {
-  // States for the page
+// import CreatePaymentMethodModal from './modals/CreatePaymentMethodModal';
+// import EditPaymentMethodModal from './modals/EditPaymentMethodModal';
+// import ViewPaymentMethodModal from './modals/ViewPaymentMethodModal';
+// import DeletePaymentMethodModal from './modals/DeletePaymentMethodModal';
+
+const PaymentMethods = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [filteredMethods, setFilteredMethods] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
   const [recentSearches, setRecentSearches] = useState<string[]>([
     'visa', 'default', 'expired'
   ]);
 
-  const paymentMethodsData = [
-    {
-      id: 'PM-5001',
-      user: {
-        id: '1',
-        name: 'Emma Johnson',
-        email: 'emma.johnson@example.com'
-      },
-      type: 'credit_card',
-      details: {
-        cardType: 'Visa',
-        cardNumber: '•••• •••• •••• 5678',
-        expiryDate: '09/27',
-        cardholderName: 'Emma Johnson'
-      },
-      status: 'active',
-      isDefault: true,
-      isVerified: true,
-      securityLevel: 'high',
-      addedDate: 'Jan 15, 2024',
-      lastUsed: '2 hours ago',
-      billingAddress: {
-        line1: '123 Main St',
-        city: 'New York',
-        state: 'NY',
-        zip: '10001',
-        country: 'United States'
-      },
-      usageCount: 24
-    },
-    {
-      id: 'PM-5002',
-      user: {
-        id: '1',
-        name: 'Emma Johnson',
-        email: 'emma.johnson@example.com'
-      },
-      type: 'bank_account',
-      details: {
-        bankName: 'Chase Bank',
-        accountType: 'Checking',
-        accountNumber: '•••• •••• 3456',
-        routingNumber: '•••• 7890'
-      },
-      status: 'active',
-      isDefault: false,
-      isVerified: true,
-      securityLevel: 'high',
-      addedDate: 'Mar 22, 2024',
-      lastUsed: '5 days ago',
-      billingAddress: {
-        line1: '123 Main St',
-        city: 'New York',
-        state: 'NY',
-        zip: '10001',
-        country: 'United States'
-      },
-      usageCount: 7
-    },
-    {
-      id: 'PM-5003',
-      user: {
-        id: '3',
-        name: 'Olivia Davis',
-        email: 'olivia.davis@example.com'
-      },
-      type: 'credit_card',
-      details: {
-        cardType: 'Mastercard',
-        cardNumber: '•••• •••• •••• 4321',
-        expiryDate: '11/26',
-        cardholderName: 'Olivia Davis'
-      },
-      status: 'active',
-      isDefault: true,
-      isVerified: true,
-      securityLevel: 'high',
-      addedDate: 'Nov 8, 2023',
-      lastUsed: '1 day ago',
-      billingAddress: {
-        line1: '456 Oak St',
-        city: 'Sydney',
-        state: 'NSW',
-        zip: '2000',
-        country: 'Australia'
-      },
-      usageCount: 42
-    },
-    {
-      id: 'PM-5004',
-      user: {
-        id: '5',
-        name: 'Ava Thompson',
-        email: 'ava.thompson@example.com'
-      },
-      type: 'paypal',
-      details: {
-        email: 'ava.thompson@gmail.com',
-        verified: true
-      },
-      status: 'active',
-      isDefault: true,
-      isVerified: true,
-      securityLevel: 'medium',
-      addedDate: 'Aug 17, 2023',
-      lastUsed: '12 hours ago',
-      billingAddress: {
-        line1: '789 Pine St',
-        city: 'Berlin',
-        state: '',
-        zip: '10115',
-        country: 'Germany'
-      },
-      usageCount: 18
-    },
-    {
-      id: 'PM-5005',
-      user: {
-        id: '7',
-        name: 'Isabella Brown',
-        email: 'isabella.brown@example.com'
-      },
-      type: 'credit_card',
-      details: {
-        cardType: 'American Express',
-        cardNumber: '•••• •••• •••• 9876',
-        expiryDate: '04/25',
-        cardholderName: 'Isabella Brown'
-      },
-      status: 'expired',
-      isDefault: false,
-      isVerified: true,
-      securityLevel: 'medium',
-      addedDate: 'Jun 12, 2023',
-      lastUsed: '2 months ago',
-      billingAddress: {
-        line1: '234 Cedar St',
-        city: 'Tokyo',
-        state: '',
-        zip: '100-0001',
-        country: 'Japan'
-      },
-      usageCount: 9
-    },
-    {
-      id: 'PM-5006',
-      user: {
-        id: '10',
-        name: 'Mason Rodriguez',
-        email: 'mason.rodriguez@example.com'
-      },
-      type: 'bank_account',
-      details: {
-        bankName: 'Bank of America',
-        accountType: 'Savings',
-        accountNumber: '•••• •••• 6543',
-        routingNumber: '•••• 2109'
-      },
-      status: 'active',
-      isDefault: true,
-      isVerified: true,
-      securityLevel: 'high',
-      addedDate: 'Apr 30, 2023',
-      lastUsed: '3 hours ago',
-      billingAddress: {
-        line1: '567 Maple St',
-        city: 'San Francisco',
-        state: 'CA',
-        zip: '94101',
-        country: 'United States'
-      },
-      usageCount: 31
-    },
-    {
-      id: 'PM-5007',
-      user: {
-        id: '10',
-        name: 'Mason Rodriguez',
-        email: 'mason.rodriguez@example.com'
-      },
-      type: 'credit_card',
-      details: {
-        cardType: 'Visa',
-        cardNumber: '•••• •••• •••• 8765',
-        expiryDate: '07/26',
-        cardholderName: 'Mason Rodriguez'
-      },
-      status: 'active',
-      isDefault: false,
-      isVerified: true,
-      securityLevel: 'high',
-      addedDate: 'Sep 15, 2023',
-      lastUsed: '1 week ago',
-      billingAddress: {
-        line1: '567 Maple St',
-        city: 'San Francisco',
-        state: 'CA',
-        zip: '94101',
-        country: 'United States'
-      },
-      usageCount: 12
-    },
-    {
-      id: 'PM-5008',
-      user: {
-        id: '13',
-        name: 'Amelia Lopez',
-        email: 'amelia.lopez@example.com'
-      },
-      type: 'credit_card',
-      details: {
-        cardType: 'Discover',
-        cardNumber: '•••• •••• •••• 2345',
-        expiryDate: '03/28',
-        cardholderName: 'Amelia Lopez'
-      },
-      status: 'pending_verification',
-      isDefault: false,
-      isVerified: false,
-      securityLevel: 'low',
-      addedDate: 'Apr 20, 2025',
-      lastUsed: 'Never',
-      billingAddress: {
-        line1: '890 Birch St',
-        city: 'Barcelona',
-        state: '',
-        zip: '08001',
-        country: 'Spain'
-      },
-      usageCount: 0
-    },
-    {
-      id: 'PM-5009',
-      user: {
-        id: '15',
-        name: 'Mia Hernandez',
-        email: 'mia.hernandez@example.com'
-      },
-      type: 'apple_pay',
-      details: {
-        deviceName: 'iPhone 16 Pro',
-        tokenizedId: '••••••••AF24'
-      },
-      status: 'active',
-      isDefault: true,
-      isVerified: true,
-      securityLevel: 'high',
-      addedDate: 'Feb 28, 2024',
-      lastUsed: '5 hours ago',
-      billingAddress: {
-        line1: '345 Elm St',
-        city: 'Los Angeles',
-        state: 'CA',
-        zip: '90001',
-        country: 'United States'
-      },
-      usageCount: 27
-    },
-    {
-      id: 'PM-5010',
-      user: {
-        id: '8',
-        name: 'Ethan Miller',
-        email: 'ethan.miller@example.com'
-      },
-      type: 'google_pay',
-      details: {
-        deviceName: 'Pixel 9',
-        tokenizedId: '••••••••BT37'
-      },
-      status: 'active',
-      isDefault: true,
-      isVerified: true,
-      securityLevel: 'high',
-      addedDate: 'Sep 28, 2023',
-      lastUsed: '2 days ago',
-      billingAddress: {
-        line1: '678 Walnut St',
-        city: 'Chicago',
-        state: 'IL',
-        zip: '60601',
-        country: 'United States'
-      },
-      usageCount: 15
-    },
-    {
-      id: 'PM-5011',
-      user: {
-        id: '2',
-        name: 'Liam Wilson',
-        email: 'liam.wilson@example.com'
-      },
-      type: 'credit_card',
-      details: {
-        cardType: 'Visa',
-        cardNumber: '•••• •••• •••• 3456',
-        expiryDate: '12/26',
-        cardholderName: 'Liam Wilson'
-      },
-      status: 'suspended',
-      isDefault: false,
-      isVerified: true,
-      securityLevel: 'medium',
-      addedDate: 'Mar 22, 2024',
-      lastUsed: '2 weeks ago',
-      billingAddress: {
-        line1: '901 Spruce St',
-        city: 'London',
-        state: '',
-        zip: 'SW1A 1AA',
-        country: 'United Kingdom'
-      },
-      usageCount: 3
-    },
-    {
-      id: 'PM-5012',
-      user: {
-        id: '9',
-        name: 'Sophia Garcia',
-        email: 'sophia.garcia@example.com'
-      },
-      type: 'paypal',
-      details: {
-        email: 'sophia.garcia@hotmail.com',
-        verified: true
-      },
-      status: 'active',
-      isDefault: true,
-      isVerified: true,
-      securityLevel: 'medium',
-      addedDate: 'Dec 7, 2023',
-      lastUsed: '3 days ago',
-      billingAddress: {
-        line1: '123 Rose St',
-        city: 'Madrid',
-        state: '',
-        zip: '28001',
-        country: 'Spain'
-      },
-      usageCount: 8
-    }
-  ];
+  // Modal states
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState<any>(null);
 
-  const filterOptions = [
-    {
-      id: 'type',
-      label: 'Payment Type',
-      type: 'multiselect' as const,
-      options: [
-        { value: 'credit_card', label: 'Credit Card' },
-        { value: 'bank_account', label: 'Bank Account' },
-        { value: 'paypal', label: 'PayPal' },
-        { value: 'apple_pay', label: 'Apple Pay' },
-        { value: 'google_pay', label: 'Google Pay' }
-      ]
-    },
-    {
-      id: 'status',
-      label: 'Status',
-      type: 'multiselect' as const,
-      options: [
-        { value: 'active', label: 'Active' },
-        { value: 'expired', label: 'Expired' },
-        { value: 'suspended', label: 'Suspended' },
-        { value: 'pending_verification', label: 'Pending Verification' }
-      ]
-    },
-    {
-      id: 'isDefault',
-      label: 'Default Method',
-      type: 'boolean' as const
-    },
-    {
-      id: 'securityLevel',
-      label: 'Security Level',
-      type: 'select' as const,
-      options: [
-        { value: 'high', label: 'High' },
-        { value: 'medium', label: 'Medium' },
-        { value: 'low', label: 'Low' }
-      ]
-    },
-    {
-      id: 'usageCount',
-      label: 'Usage Count',
-      type: 'range' as const,
-      min: 0,
-      max: 50,
-      step: 5
-    },
-    {
-      id: 'addedDate',
-      label: 'Added Date',
-      type: 'daterange' as const
+  // Fetch payment methods from API
+  const fetchPaymentMethods = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await financeService.getAllPaymentMethods();
+      setPaymentMethods(response.data || []);
+      setFilteredMethods(response.data || []);
+    } catch (err: any) {
+      console.error('Failed to fetch payment methods:', err);
+      setError(err.message || 'Failed to load payment methods. Please try again.');
+      toast.error('Failed to load payment methods');
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchPaymentMethods();
+  }, []);
 
   const getPaymentMethodIcon = (type: string) => {
     switch (type) {
@@ -461,16 +104,16 @@ const page = () => {
     {
       id: 'user',
       header: 'User',
-      accessor: (row: any) => row.user.name,
+      accessor: (row: any) => row.user?.name,
       sortable: true,
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-medium text-sm mr-3">
-            {value.split(' ').map((n: string) => n[0]).join('')}
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+            {value ? value.split(' ').map((n: string) => n[0]).join('') : '??'}
           </div>
           <div>
-            <p className="font-medium text-gray-800">{value}</p>
-            <p className="text-xs text-gray-500">{row.user.email}</p>
+            <p className="font-medium text-gray-800">{value || 'Unknown User'}</p>
+            <p className="text-xs text-gray-500">{row.user?.email || 'No email'}</p>
           </div>
         </div>
       )
@@ -488,29 +131,29 @@ const page = () => {
           if (value === 'credit_card') {
             return (
               <div className="flex items-center">
-                {row.details.cardType === 'Visa' && (
+                {row.details?.cardType === 'Visa' && (
                   <span className="text-blue-600 font-medium mr-1">VISA</span>
                 )}
-                {row.details.cardType === 'Mastercard' && (
+                {row.details?.cardType === 'Mastercard' && (
                   <span className="text-orange-600 font-medium mr-1">MC</span>
                 )}
-                {row.details.cardType === 'American Express' && (
+                {row.details?.cardType === 'American Express' && (
                   <span className="text-blue-800 font-medium mr-1">AMEX</span>
                 )}
-                {row.details.cardType === 'Discover' && (
+                {row.details?.cardType === 'Discover' && (
                   <span className="text-orange-500 font-medium mr-1">DISC</span>
                 )}
-                <span>{row.details.cardNumber}</span>
+                <span>{row.details?.cardNumber || '••••'}</span>
               </div>
             );
           } else if (value === 'bank_account') {
-            return `${row.details.bankName} - ${row.details.accountType}`;
+            return `${row.details?.bankName || 'Bank'} - ${row.details?.accountType || 'Account'}`;
           } else if (value === 'paypal') {
-            return row.details.email;
+            return row.details?.email || 'PayPal Account';
           } else if (value === 'apple_pay' || value === 'google_pay') {
-            return `${row.details.deviceName} (${row.details.tokenizedId})`;
+            return `${row.details?.deviceName || 'Device'} (${row.details?.tokenizedId || '••••'})`;
           }
-          return '';
+          return 'No details available';
         };
 
         return (
@@ -531,10 +174,12 @@ const page = () => {
             <div className="mt-1 text-sm text-gray-600 ml-6">
               {getDetailsText()}
             </div>
-            <div className="flex items-center mt-1 text-xs text-gray-500 ml-6">
-              <CalendarDays size={12} className="mr-1" strokeWidth={1.8} />
-              <span>Expires: {row.details.expiryDate}</span>
-            </div>
+            {row.details?.expiryDate && (
+              <div className="flex items-center mt-1 text-xs text-gray-500 ml-6">
+                <CalendarDays size={12} className="mr-1" strokeWidth={1.8} />
+                <span>Expires: {row.details.expiryDate}</span>
+              </div>
+            )}
           </div>
         );
       }
@@ -563,13 +208,18 @@ const page = () => {
             icon: <AlertTriangle size={12} className="mr-1" strokeWidth={2} />
           },
           'pending_verification': {
-            label: 'Pending Verification',
+            label: 'Pending',
             color: 'bg-yellow-100 text-yellow-700',
             icon: <AlertTriangle size={12} className="mr-1" strokeWidth={2} />
+          },
+          'inactive': {
+            label: 'Inactive',
+            color: 'bg-gray-100 text-gray-700',
+            icon: <XCircle size={12} className="mr-1" strokeWidth={2} />
           }
         };
 
-        const config = statusConfig[value] || statusConfig['active'];
+        const config = statusConfig[value] || statusConfig['inactive'];
 
         return (
           <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${config.color}`}>
@@ -592,12 +242,14 @@ const page = () => {
           'low': 'text-red-600'
         };
 
+        const level = value || 'medium';
+
         return (
           <div className="flex flex-col">
             <div className="flex items-center">
-              <Shield size={14} className={securityColors[value]} strokeWidth={1.8} />
-              <span className={`ml-1.5 font-medium capitalize ${securityColors[value]}`}>
-                {value}
+              <Shield size={14} className={securityColors[level]} strokeWidth={1.8} />
+              <span className={`ml-1.5 font-medium capitalize ${securityColors[level]}`}>
+                {level}
               </span>
             </div>
             {row.isVerified ? (
@@ -618,17 +270,19 @@ const page = () => {
     {
       id: 'billingAddress',
       header: 'Billing Address',
-      accessor: (row: any) => row.billingAddress.country,
+      accessor: (row: any) => row.billingAddress?.country,
       sortable: true,
       cell: (value: string, row: any) => {
-        const address = row.billingAddress;
+        const address = row.billingAddress || {};
         return (
           <div className="text-sm">
-            <div>{address.line1}</div>
-            <div>
-              {address.city}{address.state ? `, ${address.state}` : ''} {address.zip}
-            </div>
-            <div className="text-gray-500">{address.country}</div>
+            <div>{address.line1 || 'No address'}</div>
+            {address.city && (
+              <div>
+                {address.city}{address.state ? `, ${address.state}` : ''} {address.zip}
+              </div>
+            )}
+            <div className="text-gray-500">{address.country || 'Not specified'}</div>
           </div>
         );
       }
@@ -644,17 +298,17 @@ const page = () => {
           <div className="flex items-center">
             <span className={`
               px-2 py-1 rounded-md text-xs font-medium
-              ${value === 0
+              ${!value
                 ? 'bg-gray-100 text-gray-500'
                 : value > 20
                   ? 'bg-green-100 text-green-700'
                   : 'bg-blue-50 text-blue-700'}
             `}>
-              {value} {value === 1 ? 'time' : 'times'}
+              {value || 0} {value === 1 ? 'time' : 'times'}
             </span>
           </div>
           <div className="text-xs text-gray-500 mt-1">
-            Last used: {row.lastUsed}
+            Last used: {row.lastUsed || 'Never'}
           </div>
         </div>
       )
@@ -668,7 +322,7 @@ const page = () => {
       cell: (value: string) => (
         <div className="flex items-center">
           <CalendarDays size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-          <span>{value}</span>
+          <span>{value || 'Unknown'}</span>
         </div>
       )
     },
@@ -685,6 +339,7 @@ const page = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View payment method"
+            onClick={() => handleViewMethod(row)}
           >
             <Eye size={16} strokeWidth={1.8} />
           </motion.button>
@@ -693,6 +348,7 @@ const page = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Edit payment method"
+            onClick={() => handleEditMethod(row)}
           >
             <Edit size={16} strokeWidth={1.8} />
           </motion.button>
@@ -702,6 +358,7 @@ const page = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               aria-label="Delete payment method"
+              onClick={() => handleDeleteMethod(row)}
             >
               <Trash2 size={16} strokeWidth={1.8} />
             </motion.button>
@@ -712,6 +369,7 @@ const page = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               aria-label="Set as default"
+              onClick={() => handleSetDefault(row.id)}
             >
               <Star size={16} strokeWidth={1.8} />
             </motion.button>
@@ -721,31 +379,75 @@ const page = () => {
     }
   ];
 
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setFilteredMethods(paymentMethodsData);
+  // Handler for toggling payment method status (active/inactive)
+  const handleToggleStatus = async (methodId: string) => {
+    try {
+      setIsLoading(true);
+      await financeService.togglePaymentMethodStatus(methodId);
+      toast.success('Payment method status updated successfully');
+      fetchPaymentMethods(); // Reload the list
+    } catch (err: any) {
+      console.error('Failed to toggle payment method status:', err);
+      toast.error(err.message || 'Failed to update payment method status');
+    } finally {
       setIsLoading(false);
-    }, 1000);
-  }, []);
+    }
+  };
+
+  // Handler for setting a payment method as default
+  const handleSetDefault = async (methodId: string) => {
+    try {
+      setIsLoading(true);
+      // This endpoint may vary depending on your API
+      await financeService.updatePaymentMethod(methodId, { isDefault: true });
+      toast.success('Default payment method updated');
+      fetchPaymentMethods(); // Reload the list
+    } catch (err: any) {
+      console.error('Failed to set default payment method:', err);
+      toast.error(err.message || 'Failed to update default payment method');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Modal handlers
+  const handleCreateMethod = () => {
+    setSelectedMethod(null);
+    setShowCreateModal(true);
+  };
+
+  const handleEditMethod = (method: any) => {
+    setSelectedMethod(method);
+    setShowEditModal(true);
+  };
+
+  const handleViewMethod = (method: any) => {
+    setSelectedMethod(method);
+    setShowViewModal(true);
+  };
+
+  const handleDeleteMethod = (method: any) => {
+    setSelectedMethod(method);
+    setShowDeleteModal(true);
+  };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
 
     if (query.trim() === '') {
-      setFilteredMethods(paymentMethodsData);
+      setFilteredMethods(paymentMethods);
       return;
     }
 
     const lowercasedQuery = query.toLowerCase();
 
-    const filtered = paymentMethodsData.filter(method =>
-      method.id.toLowerCase().includes(lowercasedQuery) ||
-      method.user.name.toLowerCase().includes(lowercasedQuery) ||
-      method.user.email.toLowerCase().includes(lowercasedQuery) ||
-      method.type.toLowerCase().includes(lowercasedQuery) ||
-      (method.details.cardType && method.details.cardType.toLowerCase().includes(lowercasedQuery)) ||
-      (method.details.bankName && method.details.bankName.toLowerCase().includes(lowercasedQuery))
+    const filtered = paymentMethods.filter(method =>
+      (method.id?.toLowerCase() || '').includes(lowercasedQuery) ||
+      (method.user?.name?.toLowerCase() || '').includes(lowercasedQuery) ||
+      (method.user?.email?.toLowerCase() || '').includes(lowercasedQuery) ||
+      (method.type?.toLowerCase() || '').includes(lowercasedQuery) ||
+      (method.details?.cardType?.toLowerCase() || '').includes(lowercasedQuery) ||
+      (method.details?.bankName?.toLowerCase() || '').includes(lowercasedQuery)
     );
 
     setFilteredMethods(filtered);
@@ -757,10 +459,62 @@ const page = () => {
     setCurrentPage(1);
   };
 
+  const filterOptions = [
+    {
+      id: 'type',
+      label: 'Payment Type',
+      type: 'multiselect' as const,
+      options: [
+        { value: 'credit_card', label: 'Credit Card' },
+        { value: 'bank_account', label: 'Bank Account' },
+        { value: 'paypal', label: 'PayPal' },
+        { value: 'apple_pay', label: 'Apple Pay' },
+        { value: 'google_pay', label: 'Google Pay' }
+      ]
+    },
+    {
+      id: 'status',
+      label: 'Status',
+      type: 'multiselect' as const,
+      options: [
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' },
+        { value: 'pending_verification', label: 'Pending' },
+        { value: 'expired', label: 'Expired' },
+        { value: 'suspended', label: 'Suspended' }
+      ]
+    },
+    {
+      id: 'securityLevel',
+      label: 'Security Level',
+      type: 'select' as const,
+      options: [
+        { value: 'high', label: 'High' },
+        { value: 'medium', label: 'Medium' },
+        { value: 'low', label: 'Low' }
+      ]
+    },
+    {
+      id: 'isDefault',
+      label: 'Default Method',
+      type: 'boolean' as const
+    },
+    {
+      id: 'usageCount',
+      label: 'Usage Count',
+      type: 'range' as const
+    },
+    {
+      id: 'addedDate',
+      label: 'Added Date',
+      type: 'daterange' as const
+    }
+  ];
+
   const handleApplyFilters = (filters: Record<string, any>) => {
     setAppliedFilters(filters);
 
-    let filtered = [...paymentMethodsData];
+    let filtered = [...paymentMethods];
 
     if (filters.type && filters.type.length > 0) {
       filtered = filtered.filter(method => filters.type.includes(method.type));
@@ -780,41 +534,34 @@ const page = () => {
 
     if (filters.usageCount && (filters.usageCount.from !== undefined || filters.usageCount.to !== undefined)) {
       if (filters.usageCount.from !== undefined) {
-        filtered = filtered.filter(method => method.usageCount >= filters.usageCount.from);
+        filtered = filtered.filter(method => (method.usageCount || 0) >= filters.usageCount.from);
       }
       if (filters.usageCount.to !== undefined) {
-        filtered = filtered.filter(method => method.usageCount <= filters.usageCount.to);
+        filtered = filtered.filter(method => (method.usageCount || 0) <= filters.usageCount.to);
       }
     }
 
     if (filters.addedDate && (filters.addedDate.from || filters.addedDate.to)) {
-      if (filters.addedDate.from) {
-        filtered = filtered.filter(method => {
-          const month = method.addedDate.split(' ')[0];
-          const fromMonth = filters.addedDate.from.split('-')[1];
-          return parseInt(getMonthNumber(month)) >= parseInt(fromMonth);
-        });
-      }
+      // This would need to be adapted based on your date format
+      filtered = filtered.filter(method => {
+        const addedDate = new Date(method.addedDate || '2000-01-01');
+        const fromDate = filters.addedDate.from ? new Date(filters.addedDate.from) : new Date(0);
+        const toDate = filters.addedDate.to ? new Date(filters.addedDate.to) : new Date(9999, 11, 31);
 
-      if (filters.addedDate.to) {
-        filtered = filtered.filter(method => {
-          const month = method.addedDate.split(' ')[0];
-          const toMonth = filters.addedDate.to.split('-')[1];
-          return parseInt(getMonthNumber(month)) <= parseInt(toMonth);
-        });
-      }
+        return addedDate >= fromDate && addedDate <= toDate;
+      });
     }
 
     // Apply search query if it exists
     if (searchQuery.trim() !== '') {
       const lowercasedQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(method =>
-        method.id.toLowerCase().includes(lowercasedQuery) ||
-        method.user.name.toLowerCase().includes(lowercasedQuery) ||
-        method.user.email.toLowerCase().includes(lowercasedQuery) ||
-        method.type.toLowerCase().includes(lowercasedQuery) ||
-        (method.details.cardType && method.details.cardType.toLowerCase().includes(lowercasedQuery)) ||
-        (method.details.bankName && method.details.bankName.toLowerCase().includes(lowercasedQuery))
+        (method.id?.toLowerCase() || '').includes(lowercasedQuery) ||
+        (method.user?.name?.toLowerCase() || '').includes(lowercasedQuery) ||
+        (method.user?.email?.toLowerCase() || '').includes(lowercasedQuery) ||
+        (method.type?.toLowerCase() || '').includes(lowercasedQuery) ||
+        (method.details?.cardType?.toLowerCase() || '').includes(lowercasedQuery) ||
+        (method.details?.bankName?.toLowerCase() || '').includes(lowercasedQuery)
       );
     }
 
@@ -822,19 +569,10 @@ const page = () => {
     setCurrentPage(1); // Reset to first page
   };
 
-  // Helper to get month number
-  const getMonthNumber = (month: string) => {
-    const months: Record<string, string> = {
-      'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
-      'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
-    };
-    return months[month] || '01';
-  };
-
   // Reset all filters
   const handleResetFilters = () => {
     setAppliedFilters({});
-    setFilteredMethods(paymentMethodsData);
+    setFilteredMethods(paymentMethods);
   };
 
   // Handle page change
@@ -847,8 +585,23 @@ const page = () => {
     setCurrentPage(1);
   };
 
-  const handleExport = () => {
-    alert('Export functionality would go here');
+  const confirmDelete = async (methodId: string) => {
+    try {
+      setIsLoading(true);
+      await financeService.deletePaymentMethod(methodId);
+      toast.success('Payment method deleted successfully');
+      fetchPaymentMethods(); // Reload the list
+      setShowDeleteModal(false);
+    } catch (err: any) {
+      console.error('Failed to delete payment method:', err);
+      toast.error(err.message || 'Failed to delete payment method');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleModalSuccess = () => {
+    fetchPaymentMethods();
   };
 
   return (
@@ -860,14 +613,17 @@ const page = () => {
         transition={{ duration: 0.3 }}
       >
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Payment Methods</h1>
+          <h1 className="text-2xl font-semibold text-gray-800 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+            Payment Methods
+          </h1>
           <p className="text-gray-500 mt-1">Manage user payment methods and security settings</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
-            whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
-            whileTap={{ y: 0 }}
+            className="flex items-center px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-xl text-sm shadow-sm"
+            whileHover={{ y: -2, boxShadow: '0 8px 16px rgba(99, 102, 241, 0.2)' }}
+            whileTap={{ y: 0, boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}
+            onClick={handleCreateMethod}
           >
             <Plus size={16} className="mr-2" strokeWidth={1.8} />
             Add Payment Method
@@ -887,9 +643,9 @@ const page = () => {
             onSearch={handleSearch}
             suggestions={[
               'Visa',
-              'Emma Johnson',
-              'Chase Bank',
-              'default'
+              'Mastercard',
+              'Bank Account',
+              'PayPal'
             ]}
             recentSearches={recentSearches}
             showRecentByDefault={true}
@@ -905,6 +661,17 @@ const page = () => {
           />
         </div>
       </motion.div>
+
+      {error && (
+        <motion.div
+          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <AlertCircle size={18} className="mr-2" />
+          {error}
+        </motion.div>
+      )}
 
       <motion.div
         className="mb-6"
@@ -938,8 +705,44 @@ const page = () => {
           showSummary={true}
         />
       </motion.div>
+
+      {/* <AnimatePresence>
+        {showCreateModal && (
+          <CreatePaymentMethodModal
+            isOpen={showCreateModal}
+            onClose={() => setShowCreateModal(false)}
+            onSuccess={handleModalSuccess}
+          />
+        )}
+
+        {showEditModal && selectedMethod && (
+          <EditPaymentMethodModal
+            isOpen={showEditModal}
+            onClose={() => setShowEditModal(false)}
+            onSuccess={handleModalSuccess}
+            paymentMethod={selectedMethod}
+          />
+        )}
+
+        {showViewModal && selectedMethod && (
+          <ViewPaymentMethodModal
+            isOpen={showViewModal}
+            onClose={() => setShowViewModal(false)}
+            paymentMethod={selectedMethod}
+          />
+        )}
+
+        {showDeleteModal && selectedMethod && (
+          <DeletePaymentMethodModal
+            isOpen={showDeleteModal}
+            onClose={() => setShowDeleteModal(false)}
+            onConfirm={() => confirmDelete(selectedMethod.id)}
+            paymentMethod={selectedMethod}
+          />
+        )}
+      </AnimatePresence> */}
     </div>
   );
 };
 
-export default page;
+export default PaymentMethods;
