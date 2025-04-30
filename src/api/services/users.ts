@@ -211,7 +211,7 @@ async updateUser(userId: string, userData: any): Promise<any> {
 
 async createUser(userData: any): Promise<any> {
   try {
-    const response = await api.post('/users', userData);
+    const response = await api.post('/admin', userData);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -232,6 +232,18 @@ async updateUserRole (userId: string, roleId: string): Promise<any> {
     throw new Error('Failed to update user role. Please check your network connection.');
   }
 },
+
+async sendPasswordReset (id: string): Promise<void> {
+  try {
+    await api.get(`/admin/${id}/send-password-reset`);
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to send password reset email');
+    }
+    throw new Error('Failed to send password reset email. Please check your network connection.');
+  }
+},
+
 };
 
 export default userService;

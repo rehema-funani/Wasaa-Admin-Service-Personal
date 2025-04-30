@@ -103,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
               className={`
                 flex items-center py-2.5 px-4 rounded-2xl transition-all relative
                 ${isActivePage
-                  ? 'text-indigo-600 font-medium'
+                  ? 'text-indigo-600 font-medium border border-indigo-200 bg-indigo-50'
                   : 'text-gray-700 hover:text-indigo-500'
                 }
               `}
@@ -133,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
                 </motion.span>
               )}
               <motion.span
-                className={`text-[12px] font-normal transition-all ${isActivePage ? 'text-indigo-600' : 'text-gray-800'}`}
+                className={`text-[13px] transition-all ${isActivePage ? 'text-indigo-600' : 'text-gray-800'}`}
                 animate={{
                   x: isHovered && !isActivePage ? 4 : 0
                 }}

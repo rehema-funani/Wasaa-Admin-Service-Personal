@@ -48,7 +48,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
       const routes = module.default;
       const title = getTitleFromRoutes(routes) || 'Dashboard';
       setPageTitle(title);
-      document.title = `${title} | StreamPay Admin`;
+      document.title = `${title} | Wasaa CRM`;
     });
 
   }, [location.pathname]);
