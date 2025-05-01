@@ -214,6 +214,30 @@ const routes: Route[] = [
     },
     {
       type: 'section',
+      title:'Gifts',
+      items: [
+        {
+          type: 'link',
+          path: '/admin/gifts/add-gift',
+          title: 'Add Gift',
+          icon: ImageIcon,
+        },
+         {
+          type: 'link',
+          path: '/admin/gifts/gift-list',
+          title: 'Gift List',
+          icon: Gift,
+        },
+        {
+          type: 'link',
+          path: '/admin/gifts/gift-categories',
+          title: 'Gift Categories',
+          icon: Palette,
+        },
+      ]
+    },
+    {
+      type: 'section',
       title: 'Reports',
       items: [
         {

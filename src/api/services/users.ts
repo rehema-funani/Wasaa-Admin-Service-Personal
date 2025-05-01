@@ -126,7 +126,6 @@ export const userService = {
     }
   },
 
-
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {
     try {
       await api.post('/auth/change-password', { currentPassword, newPassword });
@@ -149,100 +148,159 @@ export const userService = {
     }
   },
 
-async getUsers(): Promise<any> {
-  try {
-    const response = await api.get('/users');
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to get users');
+  async getUsers(): Promise<any> {
+    try {
+      const response = await api.get('/users');
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get users');
+      }
+      throw new Error('Failed to get users. Please check your network connection.');
     }
-    throw new Error('Failed to get users. Please check your network connection.');
-  }
-},
+  },
 
-async getAdminUsers (): Promise<any> {
-  try {
-    const response = await api.get('/admin');
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to get admin users');
+  async getAdminUsers (): Promise<any> {
+    try {
+      const response = await api.get('/admin');
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get admin users');
+      }
+      throw new Error('Failed to get admin users. Please check your network connection.');
     }
-    throw new Error('Failed to get admin users. Please check your network connection.');
-  }
-},
+  },
 
-async getUser (userId: string): Promise<any> {
-  try {
-    const response = await api.get(`/users/${userId}`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to get user');
+  async getUser (userId: string): Promise<any> {
+    try {
+      const response = await api.get(`/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get user');
+      }
+      throw new Error('Failed to get user. Please check your network connection.');
     }
-    throw new Error('Failed to get user. Please check your network connection.');
-  }
-},
+  },
 
-async deleteUser(userId: string): Promise<any> {
-  try {
-    const response = await api.delete(`/users/${userId}`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to delete user');
+  async deleteUser(userId: string): Promise<any> {
+    try {
+      const response = await api.delete(`/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to delete user');
+      }
+      throw new Error('Failed to delete user. Please check your network connection.');
     }
-    throw new Error('Failed to delete user. Please check your network connection.');
-  }
-},
+  },
 
-async updateUser(userId: string, userData: any): Promise<any> {
-  try {
-    const response = await api.put(`/users/${userId}`, userData);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to update user');
+  async updateUser(userId: string, userData: any): Promise<any> {
+    try {
+      const response = await api.put(`/users/${userId}`, userData);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to update user');
+      }
+      throw new Error('Failed to update user. Please check your network connection.');
     }
-    throw new Error('Failed to update user. Please check your network connection.');
-  }
-},
+  },
 
-async createUser(userData: any): Promise<any> {
-  try {
-    const response = await api.post('/admin', userData);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to create user');
+  async createUser(userData: any): Promise<any> {
+    try {
+      const response = await api.post('/admin', userData);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to create user');
+      }
+      throw new Error('Failed to create user. Please check your network connection.');
     }
-    throw new Error('Failed to create user. Please check your network connection.');
-  }
-},
+  },
 
-async updateUserRole (userId: string, roleId: string): Promise<any> {
-  try {
-    const response = await api.patch(`/users/${userId}/role`, { role_id: roleId });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to update user role');
+  async updateUserRole (userId: string, roleId: string): Promise<any> {
+    try {
+      const response = await api.patch(`/users/${userId}/role`, { role_id: roleId });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to update user role');
+      }
+      throw new Error('Failed to update user role. Please check your network connection.');
     }
-    throw new Error('Failed to update user role. Please check your network connection.');
-  }
-},
+  },
 
-async sendPasswordReset (id: string): Promise<void> {
-  try {
-    await api.get(`/admin/${id}/send-password-reset`);
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to send password reset email');
+  async sendPasswordReset (id: string): Promise<void> {
+    try {
+      await api.get(`/admin/${id}/send-password-reset`);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to send password reset email');
+      }
+      throw new Error('Failed to send password reset email. Please check your network connection.');
     }
-    throw new Error('Failed to send password reset email. Please check your network connection.');
+  },
+
+  async getReportedUsers (): Promise<any> {
+    try {
+      const response = await api.get('/users/reported-users');
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get reported users');
+      }
+      throw new Error('Failed to get reported users. Please check your network connection.');
+    }
+  },
+
+  async updateReportStatus (userId: string, status: string): Promise<any> {
+    try {
+      const response = await api.put(`/users/${userId}/report-status`, { status });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to update report status');
+      }
+      throw new Error('Failed to update report status. Please check your network connection.');
+    }
+  },
+  async reopenReport (userId: string): Promise<any> { 
+    try {
+      const response = await api.put(`/users/${userId}/reopen-report`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to reopen report');
+      }
+      throw new Error('Failed to reopen report. Please check your network connection.');
+    }
+  },
+
+  async dismissReport (userId: string): Promise<any> {  
+    try {
+      const response = await api.put(`/users/${userId}/dismiss-report`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to dismiss report');
+      }
+      throw new Error('Failed to dismiss report. Please check your network connection.');
+    }
+  },
+
+  async resolveReport (userId: string, ): Promise<any> {
+    try {
+      const response = await api.put(`/users/${userId}/resolve-report`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to resolve report');
+      }
+      throw new Error('Failed to resolve report. Please check your network connection.');
+    }
   }
-},
 
 };
 

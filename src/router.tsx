@@ -42,8 +42,8 @@ const AddAvatar = lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page'))
 
 const GeneralSettings = lazy(() => import('./app/admin/Settings/page'));
 
-const GiftList = lazy(() => import('./app/admin/Gift/gift-list/page'));
 const AddGift = lazy(() => import('./app/admin/Gift/add-new-gift/page'));
+const GiftList = lazy(() => import('./app/admin/Gift/gift-list/page'));
 const GiftCategories = lazy(() => import('./app/admin/Gift/gift-categories/page'));
 
 const Login = lazy(() => import('./app/auth/login/page'));
@@ -123,9 +123,9 @@ const AppRouter: React.FC = () => {
 
                     <Route path="admin/settings" element={<GeneralSettings />} />
 
-                    <Route path="admin/Gift/gift-list" element={<GiftList />} />
-                    <Route path="admin/Gift/add-new-gift" element={<AddGift />} />
-                    <Route path="admin/Gift/gift-categories" element={<GiftCategories />} />
+                    <Route path="admin/gifts/gift-list" element={<GiftList />} />
+                    <Route path="admin/gifts/add-gift" element={<AddGift />} />
+                    <Route path="admin/gifts/gift-categories" element={<GiftCategories />} />
                 </Route>
 
                 <Route path="*" element={<ErrorPage />} />

@@ -143,18 +143,6 @@ const page = () => {
       )
     },
     {
-      id: 'role',
-      header: 'Role',
-      accessor: (row: any) => row.role,
-      sortable: true,
-      width: '120px',
-      cell: (value: string) => (
-        <span className="inline-flex px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
-          {value}
-        </span>
-      )
-    },
-    {
       id: 'status',
       header: 'Status',
       accessor: (row: any) => row.status,
@@ -252,18 +240,12 @@ const page = () => {
     }
   ];
 
-  // Edit user stub - in a real app, this would open a modal or navigate to an edit page
   const handleEditUser = (user: any) => {
-    // This would typically open a modal or navigate to an edit page
     console.log('Edit user:', user);
-    // Example: navigate(`/users/edit/${user.id}`);
   };
 
-  // Add user stub - in a real app, this would open a modal or navigate to a create page
   const handleAddUser = () => {
-    // This would typically open a modal or navigate to a creation page
     console.log('Add new user');
-    // Example: navigate('/users/create');
   };
 
   const handleSearch = (query: string) => {
@@ -334,7 +316,6 @@ const page = () => {
       }
     }
 
-    // Apply search query if it exists
     if (searchQuery.trim() !== '') {
       const lowercasedQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(user =>
@@ -346,10 +327,9 @@ const page = () => {
     }
 
     setFilteredUsers(filtered);
-    setCurrentPage(1); // Reset to first page
+    setCurrentPage(1);
   };
 
-  // Reset all filters
   const handleResetFilters = () => {
     setAppliedFilters({});
     setFilteredUsers(users);
