@@ -1,19 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { formatErrorMessage } from '../../../utils/formatting';
 
-const page = () => {
-    const [otp, setOtp] = useState('');
+const page: React.FC = () => {
+    const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
     const [timer, setTimer] = useState(60);
     const [canResend, setCanResend] = useState(false);
-    const [errors, setErrors] = useState<{ otp?: string; general?: string }>({});
+    const [errors, setErrors] = useState({});
     const location = useLocation();
     const userId = location.state?.user_id;
-
     const navigate = useNavigate();
     const { verifyOtp, isLoading, isAuthenticated } = useAuth();
+
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    useEffect(() => {
+        inputRefs.current = inputRefs.current.slice(0, 6);
+    }, []);
+
+    useEffect(() => {
+        if (inputRefs.current[0]) {
+            inputRefs.current[0].focus();
+        }
+    }, []);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -22,7 +33,7 @@ const page = () => {
     }, [isAuthenticated, navigate]);
 
     useEffect(() => {
-        let interval: ReturnType<typeof setInterval>;
+        let interval;
 
         if (timer > 0 && !canResend) {
             interval = setInterval(() => {
@@ -37,16 +48,21 @@ const page = () => {
         };
     }, [timer, canResend]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (e) => {
+        if (e && e.preventDefault) {
+            e.preventDefault();
+        }
 
-        if (!otp || otp.length < 4) {
-            setErrors({ otp: 'Please enter a valid OTP code' });
+        // Get the most current OTP value directly from state
+        const otpValue = otpValues.join('');
+
+        if (!otpValue || otpValue.length < 6) {
+            setErrors({ otp: 'Please enter a valid 6-digit OTP code' });
             return;
         }
 
         const payload = {
-            otp,
+            otp: otpValue,
             user_id: userId,
             source: 'web'
         }
@@ -65,13 +81,104 @@ const page = () => {
         setCanResend(false);
         setTimer(60);
         setErrors({});
+        setOtpValues(['', '', '', '', '', '']);
+        if (inputRefs.current[0]) {
+            inputRefs.current[0].focus();
+        }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        if (/^\d*$/.test(value) && value.length <= 6) {
-            setOtp(value);
-            setErrors({});
+    const handleOtpChange = (index: any, value: any) => {
+        if (!/^\d*$/.test(value)) return;
+
+        const newOtpValues = [...otpValues];
+        newOtpValues[index] = value.slice(-1);
+        setOtpValues(newOtpValues);
+
+        setErrors({});
+
+        if (value && index < 5) {
+            if (inputRefs.current[index + 1]) {
+                inputRefs.current[index + 1]?.focus();
+            }
+        }
+
+        if (index === 5 && value) {
+            const allBoxesFilled = newOtpValues.every(val => val !== '');
+
+            if (allBoxesFilled) {
+                setTimeout(() => {
+                    const payload = {
+                        otp: newOtpValues.join(''),
+                        user_id: userId,
+                        source: 'web'
+                    };
+
+                    verifyOtp(payload)
+                        .then(() => navigate('/'))
+                        .catch((err) => {
+                            setErrors({
+                                general: formatErrorMessage(err) || 'Verification failed. Please try again.'
+                            });
+                        });
+                }, 300);
+            }
+        }
+    };
+
+    // Handle keyboard navigation between boxes
+    const handleKeyDown = (index: any, e: any) => {
+        if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus();
+        }
+
+        // Allow arrow navigation between boxes
+        if (e.key === 'ArrowLeft' && index > 0) {
+            e.preventDefault();
+            inputRefs.current[index - 1]?.focus();
+        }
+
+        if (e.key === 'ArrowRight' && index < 5) {
+            e.preventDefault();
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+
+    const handlePaste = (e) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text');
+
+        if (!/^\d+$/.test(pastedData)) return;
+
+        const digits: string[] = pastedData.slice(0, 6).split('');
+        const newOtpValues = [...otpValues];
+
+        digits.forEach((digit, i) => {
+            if (i < 6) newOtpValues[i] = digit;
+        });
+
+        setOtpValues(newOtpValues);
+
+        const focusIndex = Math.min(digits.length, 5);
+        if (inputRefs.current[focusIndex]) {
+            inputRefs.current[focusIndex].focus();
+        }
+
+        if (digits.length >= 6) {
+            setTimeout(() => {
+                const payload = {
+                    otp: newOtpValues.join(''),
+                    user_id: userId,
+                    source: 'web'
+                };
+
+                verifyOtp(payload)
+                    .then(() => navigate('/'))
+                    .catch((err) => {
+                        setErrors({
+                            general: formatErrorMessage(err) || 'Verification failed. Please try again.'
+                        });
+                    });
+            }, 300);
         }
     };
 
@@ -175,9 +282,9 @@ const page = () => {
                         <p className="text-xs text-gray-500 mt-1">Enter the verification code sent to your email</p>
                     </div>
 
-                    {errors.general && (
+                    {errors?.general && (
                         <div className="mb-4 p-3 bg-red-50 rounded-xl border border-red-100">
-                            <p className="text-xs text-red-500">{errors.general}</p>
+                            <p className="text-xs text-red-500">{errors?.general}</p>
                         </div>
                     )}
 
@@ -186,24 +293,35 @@ const page = () => {
                             <label htmlFor="otp" className="block text-xs font-medium text-gray-700 mb-1">
                                 Verification Code
                             </label>
-                            <motion.div
-                                whileFocus={{ scale: 1.005 }}
-                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                            >
-                                <input
-                                    id="otp"
-                                    type="text"
-                                    value={otp}
-                                    onChange={handleInputChange}
-                                    placeholder="Enter 6-digit code"
-                                    required
-                                    className={`w-full px-3 py-2.5 rounded-xl text-center tracking-widest text-lg font-medium border ${errors.otp ? 'border-red-300 bg-red-50/50' : 'border-gray-200 bg-gray-50/50'
-                                        } focus:bg-white focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-transparent transition-all duration-200`}
-                                />
-                                {errors.otp && (
-                                    <p className="mt-1 text-xs text-red-500">{errors.otp}</p>
-                                )}
-                            </motion.div>
+
+                            <div className="flex gap-2 mb-1">
+                                {[0, 1, 2, 3, 4, 5].map((index) => (
+                                    <motion.div
+                                        key={index}
+                                        whileFocus={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                        className="flex-1"
+                                    >
+                                        <input
+                                            ref={(el) => (inputRefs.current[index] = el)}
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={1}
+                                            value={otpValues[index]}
+                                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                                            onKeyDown={(e) => handleKeyDown(index, e)}
+                                            onPaste={index === 0 ? handlePaste : undefined}
+                                            className={`w-full aspect-square px-0 py-2 rounded-xl text-center text-lg font-medium border ${errors.otp ? 'border-red-300 bg-red-50/50' : 'border-gray-200 bg-gray-50/50'
+                                                } focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200`}
+                                        />
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {errors.otp && (
+                                <p className="mt-1 text-xs text-red-500">{errors.otp}</p>
+                            )}
                         </div>
 
                         <motion.button
