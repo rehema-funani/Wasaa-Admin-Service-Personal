@@ -9,25 +9,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: { /* your primary colors */ },
-        secondary: { /* your secondary colors */ },
-        success: { /* your success colors */ },
-        warning: { /* your warning colors */ },
-        danger: { /* your danger colors */ },
-      },
-      fontFamily: {
-        sans: [
-          'Open Sans',  // 👈 Added Open Sans first
-          'ui-sans-serif',
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'Helvetica Neue',
-          'Arial',
-          'sans-serif',
-        ],
+        primary: { /* primary colors */ },
+        secondary: { /* secondary colors */ },
+        success: { /* success colors */ },
+        warning: { /* warning colors */ },
+        danger: { /* danger colors */ },
       },
       boxShadow: {
         'soft-sm': '0 2px 4px 0 rgba(0, 0, 0, 0.05)',
