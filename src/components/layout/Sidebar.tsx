@@ -133,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
                 </motion.span>
               )}
               <motion.span
-                className={`text-[13px] transition-all ${isActivePage ? 'text-indigo-600' : 'text-gray-800'}`}
+                className={`text-[14px] transition-all ${isActivePage ? 'text-indigo-600' : 'text-gray-800'}`}
                 animate={{
                   x: isHovered && !isActivePage ? 4 : 0
                 }}
@@ -205,7 +205,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
                 </motion.span>
               )}
               <motion.span
-                className={`text-[12px] font-normal ${hasActive || isOpen ? 'text-indigo-600' : 'text-gray-800'}`}
+                className={`text-[14px] font-normal ${hasActive || isOpen ? 'text-indigo-600' : 'text-gray-800'}`}
               >
                 {item.title}
               </motion.span>

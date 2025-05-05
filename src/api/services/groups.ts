@@ -16,7 +16,7 @@ export const groupService = {
 
   async getReportedGroups(): Promise<any> {
     try {
-      const response = await api.get('/groups/reported');
+      const response = await api.get('/groups/reported-groups');
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

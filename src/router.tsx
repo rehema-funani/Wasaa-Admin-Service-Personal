@@ -41,6 +41,8 @@ const AvatarList = lazy(() => import('./app/admin/Avatar/list-all-avatar/page'))
 const AddAvatar = lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page'));
 
 const GeneralSettings = lazy(() => import('./app/admin/Settings/page'));
+const Languages = lazy(() => import('./app/admin/languages/all-languages/page'));
+const Translations = lazy(() => import('./app/admin/languages/translations/page'));
 
 const AddGift = lazy(() => import('./app/admin/Gift/add-new-gift/page'));
 const GiftList = lazy(() => import('./app/admin/Gift/gift-list/page'));
@@ -122,6 +124,8 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/Avatar/add-a-new-avatar" element={<AddAvatar />} />
 
                     <Route path="admin/settings" element={<GeneralSettings />} />
+                    <Route path="admin/languages" element={<Languages />} />
+                    <Route path="admin/languages/:id/translations" element={<Translations />} />
 
                     <Route path="admin/gifts/gift-list" element={<GiftList />} />
                     <Route path="admin/gifts/add-gift" element={<AddGift />} />

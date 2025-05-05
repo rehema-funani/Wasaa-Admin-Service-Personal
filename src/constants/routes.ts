@@ -19,7 +19,8 @@ import {
   Settings,
   Users,
   Key,
-  Shield
+  Shield,
+  Languages
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -265,11 +266,17 @@ const routes: Route[] = [
       title: 'Settings',
       items: [
         {
-      type: 'link',
-      path: '/admin/settings',
-      title: 'Settings',
-      icon: Settings,
-    },
+          type: 'link',
+          path: '/admin/settings',
+          title: 'Settings',
+          icon: Settings,
+        },
+        {
+          type: 'link',
+          path: '/admin/languages',
+          title: 'Languages',
+          icon: Languages,
+        },
       ],
     },
   ];

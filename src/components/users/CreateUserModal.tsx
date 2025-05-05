@@ -61,49 +61,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
         }
     };
 
-    const InputField = ({
-        label,
-        name,
-        type = 'text',
-        value,
-        onChange,
-        required = false,
-        icon,
-        placeholder = ''
-    }: {
-        label: string,
-        name: string,
-        type?: string,
-        value: string,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-        required?: boolean,
-        icon?: React.ReactNode,
-        placeholder?: string
-    }) => (
-        <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={name}>
-                {label} {required && <span className="text-red-500">*</span>}
-            </label>
-            <div className="relative">
-                {icon && (
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        {icon}
-                    </div>
-                )}
-                <input
-                    type={type}
-                    id={name}
-                    name={name}
-                    required={required}
-                    value={value}
-                    onChange={onChange}
-                    placeholder={placeholder}
-                    className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 bg-white text-gray-900 border border-gray-100 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100`}
-                />
-            </div>
-        </div>
-    );
-
     return (
         <AnimatePresence>
             {isOpen && (
@@ -276,5 +233,48 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
         </AnimatePresence>
     );
 };
+
+const InputField = ({
+    label,
+    name,
+    type = 'text',
+    value,
+    onChange,
+    required = false,
+    icon,
+    placeholder = ''
+}: {
+    label: string,
+    name: string,
+    type?: string,
+    value: string,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    required?: boolean,
+    icon?: React.ReactNode,
+    placeholder?: string
+}) => (
+    <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={name}>
+            {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        <div className="relative">
+            {icon && (
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    {icon}
+                </div>
+            )}
+            <input
+                type={type}
+                id={name}
+                name={name}
+                required={required}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 bg-white text-gray-900 border border-gray-100 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100`}
+            />
+        </div>
+    </div>
+);
 
 export default CreateUserModal;

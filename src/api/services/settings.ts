@@ -1,6 +1,7 @@
 import { api } from "../axios";
 
 export interface WebsiteSettings {
+  id: string;
   website_name: string;
   website_link?: string;
   website_email?: string;
@@ -24,8 +25,8 @@ export const settingsService = {
     return response.data;
   },
 
-  updateSettings: async (settingsData: FormData): Promise<WebsiteSettings> => {
-    const response = await api.put('/settings', settingsData, {
+  updateSettings: async (settingsData: FormData, id: string): Promise<WebsiteSettings> => {
+    const response = await api.put(`/settings/${id}`, settingsData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
