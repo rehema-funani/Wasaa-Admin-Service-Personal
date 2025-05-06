@@ -26,7 +26,7 @@ const TicketsIndexPage: React.FC = () => {
 
         try {
             const fetchedTickets = await ticketService.getTickets();
-            setTickets(fetchedTickets);
+            setTickets(fetchedTickets.tickets);
         } catch (err) {
             setError('Failed to fetch tickets. Please try again later.');
             console.error(err);

@@ -1,4 +1,3 @@
-// api/services/ticketService.ts
 import { 
   Ticket, 
   TicketFormData, 
@@ -8,31 +7,31 @@ import {
   TicketEscalation, 
   TicketEscalationFormData 
 } from '../../types/team';
-import { api } from '../axios';
+import { supportaxios } from '../support-axios';
 
 export const ticketService = {
   getTickets: async (params?: Record<string, any>): Promise<Ticket[]> => {
-    const response = await api.get('/tickets', { params });
+    const response = await supportaxios.get('/tickets', { params });
     return response.data;
   },
 
   getTicket: async (id: string): Promise<Ticket> => {
-    const response = await api.get(`/tickets/${id}`);
+    const response = await supportaxios.get(`/tickets/${id}`);
     return response.data;
   },
 
   createTicket: async (ticket: TicketFormData): Promise<Ticket> => {
-    const response = await api.post('/tickets', ticket);
+    const response = await supportaxios.post('/tickets', ticket);
     return response.data;
   },
 
   updateTicket: async (id: string, ticket: Partial<TicketFormData>): Promise<Ticket> => {
-    const response = await api.put(`/tickets/${id}`, ticket);
+    const response = await supportaxios.put(`/tickets/${id}`, ticket);
     return response.data;
   },
 
   deleteTicket: async (id: string): Promise<void> => {
-    await api.delete(`/tickets/${id}`);
+    await supportaxios.delete(`/tickets/${id}`);
   },
 
   // Ticket Assignments
@@ -40,17 +39,17 @@ export const ticketService = {
     ticketId: string, 
     assignment: { teamId?: string; userId?: string }
   ): Promise<TicketAssignment> => {
-    const response = await api.post(`/tickets/${ticketId}/assign`, assignment);
+    const response = await supportaxios.post(`/tickets/${ticketId}/assign`, assignment);
     return response.data;
   },
 
   getTicketAssignments: async (params?: Record<string, any>): Promise<TicketAssignment[]> => {
-    const response = await api.get('/assignments', { params });
+    const response = await supportaxios.get('/assignments', { params });
     return response.data;
   },
 
   deleteTicketAssignment: async (assignmentId: string): Promise<void> => {
-    await api.delete(`/assignments/${assignmentId}`);
+    await supportaxios.delete(`/assignments/${assignmentId}`);
   },
 
   // Ticket Escalations
@@ -58,18 +57,17 @@ export const ticketService = {
     ticketId: string,
     escalation: TicketEscalationFormData
   ): Promise<TicketEscalation> => {
-    const response = await api.post(`/tickets/${ticketId}/escalate`, escalation);
+    const response = await supportaxios.post(`/tickets/${ticketId}/escalate`, escalation);
     return response.data;
   },
 
   getTicketEscalations: async (ticketId: string): Promise<TicketEscalation[]> => {
-    const response = await api.get(`/tickets/${ticketId}/escalations`);
+    const response = await supportaxios.get(`/tickets/${ticketId}/escalations`);
     return response.data;
   },
 
-  // Ticket Comments
   getTicketComments: async (ticketId: string): Promise<TicketComment[]> => {
-    const response = await api.get(`/tickets/${ticketId}/comments`);
+    const response = await supportaxios.get(`/tickets/${ticketId}/comments`);
     return response.data;
   },
 
@@ -77,7 +75,7 @@ export const ticketService = {
     ticketId: string, 
     comment: TicketCommentFormData
   ): Promise<TicketComment> => {
-    const response = await api.post(`/tickets/${ticketId}/comments`, comment);
+    const response = await supportaxios.post(`/tickets/${ticketId}/comments`, comment);
     return response.data;
   },
 
@@ -86,11 +84,11 @@ export const ticketService = {
     commentId: string,
     comment: TicketCommentFormData
   ): Promise<TicketComment> => {
-    const response = await api.put(`/tickets/${ticketId}/comments/${commentId}`, comment);
+    const response = await supportaxios.put(`/tickets/${ticketId}/comments/${commentId}`, comment);
     return response.data;
   },
 
   deleteTicketComment: async (ticketId: string, commentId: string): Promise<void> => {
-    await api.delete(`/tickets/${ticketId}/comments/${commentId}`);
+    await supportaxios.delete(`/tickets/${ticketId}/comments/${commentId}`);
   }
 };

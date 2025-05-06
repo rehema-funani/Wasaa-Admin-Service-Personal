@@ -60,6 +60,8 @@ const Tickets = lazy(() => import('./app/admin/support/ticket'));
 const TicketDetail = lazy(() => import('./app/admin/support/viewticket'));
 const Reassign = lazy(() => import('./app/admin/support/assignticket'));
 
+const Logs = lazy(() => import('./app/admin/audits/page'));
+
 const LoadingFallback = () => (
     <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
@@ -144,6 +146,8 @@ const AppRouter: React.FC = () => {
                     <Route path="/admin/support/tickets" element={<Tickets />} />
                     <Route path="/admin/support/tickets/:id" element={<TicketDetail />} />
                     <Route path="/admin/support/assignments" element={<Reassign />} />
+
+                    <Route path="admin/logs" element={<Logs />} />
 
                 </Route>
 

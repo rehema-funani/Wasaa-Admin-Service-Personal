@@ -100,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
           >
             <motion.div
               className={`
-                flex items-center py-2.5 px-4 rounded-xl transition-all relative
+                flex items-center py-2 px-4 rounded-xl transition-all relative
                 ${isActivePage
                   ? 'text-indigo-600 font-medium border-0 bg-gradient-to-r from-indigo-50/80 to-blue-50/80'
                   : 'text-gray-700 hover:text-indigo-500'
@@ -407,7 +407,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
           {routes.map((item: RouteItem, idx: number) => (
             <motion.div
               key={idx}
-              className="mb-1"
+              className=""
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{

@@ -1,0 +1,31 @@
+export interface AuditLog {
+    id: string;
+    user_id: string;
+    username: string;
+    ip_address: string;
+    service_name: string;
+    status_code: number;
+    session_id: string;
+    user_email: string;
+    event_type: string;
+    event_description: string;
+    entity_affected: string;
+    entity_id: string;
+    http_method: string;
+    request_url: string;
+    query_params: string;
+    request_body: Record<string, any>;
+    response_body: Record<string, any>;
+    execution_time: number;
+    location: string;
+    user_agent: string;
+    device_type: string;
+    device_model: string;
+    os: string;
+    browser: string;
+    auth_method: string;
+    roles: string;
+    permissions: string;
+    is_successful: boolean;
+    created_at?: string;
+}
