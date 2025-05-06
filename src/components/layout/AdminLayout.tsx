@@ -148,18 +148,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
                   }}
                   className="w-full"
                 >
-                  {/* <motion.div
-                    className="mb-6 pb-4 border-b border-gray-100"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.1 }}
-                  >
-                    <h1 className="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-indigo-500">
-                      {pageTitle}
-                    </h1>
-                    <div className="h-px w-20 bg-gradient-to-r from-indigo-500 to-blue-400 mt-2 rounded-full" />
-                  </motion.div> */}
-
                   <motion.div
                     className="content-card"
                     initial={{ opacity: 0, y: 20 }}
@@ -206,7 +194,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
       </AnimatePresence>
 
       <style>{`
-        /* Glass morphism effect for modern UI */
         .glass-morphism {
           background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(12px);
@@ -214,7 +201,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
           border-right: 1px solid rgba(255, 255, 255, 0.5);
         }
         
-        /* Header with glass effect */
         .glass-header {
           background: rgba(255, 255, 255, 0.8);
           backdrop-filter: blur(12px);
@@ -222,7 +208,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
           border-bottom: 1px solid rgba(230, 232, 240, 0.8);
         }
         
-        /* Content cards with subtle depth */
         .content-card {
           background: rgba(255, 255, 255, 0.7);
           border-radius: 16px;
@@ -252,7 +237,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
           background: rgba(148, 163, 184, 0.5);
         }
         
-        /* Subtle noise texture */
         .bg-noise {
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }

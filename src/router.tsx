@@ -42,7 +42,7 @@ const AddAvatar = lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page'))
 
 const GeneralSettings = lazy(() => import('./app/admin/Settings/page'));
 const Languages = lazy(() => import('./app/admin/languages/all-languages/page'));
-const Translations = lazy(() => import('./app/admin/languages/translations/page'));
+const Translations = lazy(() => import('./app/admin/languages/all-languages/details'));
 
 const AddGift = lazy(() => import('./app/admin/Gift/add-new-gift/page'));
 const GiftList = lazy(() => import('./app/admin/Gift/gift-list/page'));
@@ -52,6 +52,13 @@ const Login = lazy(() => import('./app/auth/login/page'));
 const VerifyOtp = lazy(() => import('./app/auth/verify/page'));
 const ForgotPassword = lazy(() => import('./app/auth/forgot-password/page'));
 const Reset = lazy(() => import('./app/auth/forgot-password/reset'));
+
+const Support = lazy(() => import('./app/admin/support/page'));
+const Teams = lazy(() => import('./app/admin/support/team'));
+const TeamDetail = lazy(() => import('./app/admin/support/viewteam'));
+const Tickets = lazy(() => import('./app/admin/support/ticket'));
+const TicketDetail = lazy(() => import('./app/admin/support/viewticket'));
+const Reassign = lazy(() => import('./app/admin/support/assignticket'));
 
 const LoadingFallback = () => (
     <div className="flex items-center justify-center h-screen">
@@ -130,6 +137,14 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/gifts/gift-list" element={<GiftList />} />
                     <Route path="admin/gifts/add-gift" element={<AddGift />} />
                     <Route path="admin/gifts/gift-categories" element={<GiftCategories />} />
+
+                    <Route path="admin/support" element={<Support />} />
+                    <Route path="/admin/support/teams" element={<Teams />} />
+                    <Route path="/admin/support/teams/:id" element={<TeamDetail />} />
+                    <Route path="/admin/support/tickets" element={<Tickets />} />
+                    <Route path="/admin/support/tickets/:id" element={<TicketDetail />} />
+                    <Route path="/admin/support/assignments" element={<Reassign />} />
+
                 </Route>
 
                 <Route path="*" element={<ErrorPage />} />
