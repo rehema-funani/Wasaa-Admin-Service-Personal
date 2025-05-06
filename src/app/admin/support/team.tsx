@@ -1,4 +1,3 @@
-// pages/support/teams/index.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Team, TeamFormData } from '../../../types/team';
@@ -17,7 +16,6 @@ const team: React.FC = () => {
     const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // Fetch teams on component mount
     useEffect(() => {
         fetchTeams();
     }, []);
@@ -28,7 +26,7 @@ const team: React.FC = () => {
 
         try {
             const fetchedTeams = await teamService.getTeams();
-            setTeams(fetchedTeams);
+            setTeams(fetchedTeams.teams);
         } catch (err) {
             setError('Failed to fetch teams. Please try again later.');
             console.error(err);
@@ -47,7 +45,6 @@ const team: React.FC = () => {
     };
 
     const handleDeleteTeam = async (id: string) => {
-        // Show confirmation dialog
         if (!window.confirm('Are you sure you want to delete this team?')) {
             return;
         }
@@ -56,7 +53,6 @@ const team: React.FC = () => {
 
         try {
             await teamService.deleteTeam(id);
-            // Remove team from state
             setTeams(prevTeams => prevTeams.filter(team => team.id !== id));
         } catch (err) {
             setError('Failed to delete team. Please try again later.');

@@ -27,7 +27,7 @@ export const TeamList: React.FC<TeamListProps> = ({
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredTeams = teams.filter(team =>
-        team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        team?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         team.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 

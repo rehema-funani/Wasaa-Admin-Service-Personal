@@ -354,7 +354,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
       <motion.aside
         className={`
           flex flex-col h-full bg-white/85 backdrop-blur-xl
-          transition-all duration-300 z-30 overflow-hidden
+          transition-all duration-300 overflow-hidden
           ${isMobile ? 'hidden' : 'block'}
         `}
         initial={false}

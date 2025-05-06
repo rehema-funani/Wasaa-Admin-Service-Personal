@@ -35,7 +35,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({
                         <div className="bg-blue-100 p-2 rounded-lg">
                             <Users size={20} className="text-blue-600" />
                         </div>
-                        <h3 className="ml-3 font-medium text-gray-900">{team.name}</h3>
+                        <h3 className="ml-3 font-medium text-gray-900">{team.title}</h3>
                     </div>
 
                     <div className="relative">
@@ -84,10 +84,10 @@ export const TeamCard: React.FC<TeamCardProps> = ({
                     <div className="mt-2 flex -space-x-2 overflow-hidden">
                         {team.members.slice(0, 5).map((member) => (
                             <Avatar
-                                key={member.id}
-                                src={member.avatar}
-                                alt={member.name}
-                                initials={member.name.charAt(0)}
+                                key={member?.id}
+                                src={member?.avatar}
+                                alt={member?.user?.first_name}
+                                initials={member?.user?.first_name.charAt(0)}
                                 size="sm"
                                 className="border-2 border-white"
                             />

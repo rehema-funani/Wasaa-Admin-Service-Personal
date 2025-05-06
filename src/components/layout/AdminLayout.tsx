@@ -107,7 +107,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
             }}
           />
 
-          <div className="w-full mx-auto p-6 relative z-10">
+          <div className="w-full mx-auto p-6 relative">
             <AnimatePresence mode="wait">
               {loading ? (
                 <motion.div
@@ -167,11 +167,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
             </AnimatePresence>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-gray-100/30 to-transparent pointer-events-none" />
+          {/* <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-gray-100/30 to-transparent pointer-events-none" /> */}
         </main>
 
         <motion.div
-          className="relative z-10"
+          className="relative"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}

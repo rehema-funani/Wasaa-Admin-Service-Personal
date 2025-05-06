@@ -1,28 +1,29 @@
-// types/team.ts
 export interface TeamMember {
   id: string;
-  name: string;
+  name?: string;
   email: string;
   role: string;
   avatar?: string;
+  user?: any
 }
 
 export interface Team {
   id: string;
-  name: string;
+  title: string;
   description: string;
   createdAt: string;
   members: TeamMember[];
+  level?: string;
 }
 
 export interface TeamFormData {
   name: string;
   description: string;
+  level: string;
+  members: Array<any>;
 }
 
-// types/ticket.ts
 export type TicketPriority = 'low' | 'medium' | 'high' | 'critical'| 'urgent';
-// priority: 'low' | 'medium' | 'high' | 'critical';
 export type TicketStatus = 'open' | 'in-progress' | 'pending' | 'resolved' | 'closed';
 
 export interface Ticket {

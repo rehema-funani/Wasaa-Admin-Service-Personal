@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Ticket, AlertCircle, Clock, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '../common/Button';
-import { Ticket, TicketFormData } from '../../types/team';
+import { Ticket as TicketType, TicketFormData } from '../../types/team';
 
 interface TicketFormProps {
-    ticket?: Ticket;
+    ticket?: TicketType;
     onSubmit: (data: TicketFormData) => void;
     onCancel: () => void;
     isSubmitting?: boolean;
@@ -46,39 +47,78 @@ export const TicketForm: React.FC<TicketFormProps> = ({
         onSubmit(formData);
     };
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex justify-between items-center mb-2">
-                <h2 className="text-xl font-semibold text-gray-900">
-                    {ticket ? 'Edit Ticket' : 'Create New Ticket'}
-                </h2>
-                <button
-                    type="button"
-                    onClick={onCancel}
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                >
-                    <X size={20} />
-                </button>
-            </div>
+    // Priority color mapping
+    const priorityColors = {
+        low: 'bg-gray-100 border-gray-200 text-gray-700',
+        medium: 'bg-blue-50 border-blue-200 text-blue-700',
+        high: 'bg-orange-50 border-orange-200 text-orange-700',
+        critical: 'bg-red-50 border-red-200 text-red-700'
+    };
 
-            <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+    // Status color mapping
+    const statusColors = {
+        open: 'bg-gray-100 border-gray-200 text-gray-700',
+        'in-progress': 'bg-blue-50 border-blue-200 text-blue-700',
+        pending: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+        resolved: 'bg-green-50 border-green-200 text-green-700',
+        closed: 'bg-gray-100 border-gray-200 text-gray-700'
+    };
+
+    // Animation variants
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 10 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                damping: 25,
+                stiffness: 300
+            }
+        }
+    };
+
+    return (
+        <motion.form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
+            <motion.div variants={itemVariants}>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1.5">
                     Title
                 </label>
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter ticket title"
-                />
-            </div>
+                <div className="relative">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <Ticket size={18} />
+                    </div>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        required
+                        className="w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                        placeholder="Enter ticket title"
+                    />
+                </div>
+            </motion.div>
 
-            <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            <motion.div variants={itemVariants}>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1.5">
                     Description
                 </label>
                 <textarea
@@ -87,56 +127,80 @@ export const TicketForm: React.FC<TicketFormProps> = ({
                     value={formData.description}
                     onChange={handleChange}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none transition-all duration-200"
                     placeholder="Enter ticket description"
                 />
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <motion.div variants={itemVariants}>
+                    <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1.5">
                         Priority
                     </label>
-                    <select
-                        id="priority"
-                        name="priority"
-                        value={formData.priority}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                        <option value="critical">Critical</option>
-                    </select>
-                </div>
+                    <div className="relative">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <AlertCircle size={18} />
+                        </div>
+                        <select
+                            id="priority"
+                            name="priority"
+                            value={formData.priority}
+                            onChange={handleChange}
+                            className={`w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${priorityColors[formData.priority as keyof typeof priorityColors]}`}
+                        >
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                </motion.div>
 
-                <div>
-                    <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                <motion.div variants={itemVariants}>
+                    <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1.5">
                         Status
                     </label>
-                    <select
-                        id="status"
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                        <option value="open">Open</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="pending">Pending</option>
-                        <option value="resolved">Resolved</option>
-                        <option value="closed">Closed</option>
-                    </select>
-                </div>
+                    <div className="relative">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <Clock size={18} />
+                        </div>
+                        <select
+                            id="status"
+                            name="status"
+                            value={formData.status}
+                            onChange={handleChange}
+                            className={`w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${statusColors[formData.status as keyof typeof statusColors]}`}
+                        >
+                            <option value="open">Open</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="pending">Pending</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                </motion.div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4">
+            <motion.div
+                variants={itemVariants}
+                className="flex justify-end gap-3 pt-5"
+            >
                 <Button
                     type="button"
                     variant="outline"
                     onClick={onCancel}
                     disabled={isSubmitting}
+                    className="border-gray-200/80 bg-white/70 backdrop-blur-sm hover:bg-gray-50/90 rounded-xl transition-all duration-200"
                 >
                     Cancel
                 </Button>
@@ -144,10 +208,12 @@ export const TicketForm: React.FC<TicketFormProps> = ({
                     type="submit"
                     isLoading={isSubmitting}
                     disabled={isSubmitting}
+                    className="bg-blue-500/90 hover:bg-blue-600/90 text-white rounded-xl shadow-sm shadow-blue-500/20 transition-all duration-200"
+                    rightIcon={ticket ? <Check size={16} /> : undefined}
                 >
                     {ticket ? 'Update Ticket' : 'Create Ticket'}
                 </Button>
-            </div>
-        </form>
+            </motion.div>
+        </motion.form>
     );
 };
