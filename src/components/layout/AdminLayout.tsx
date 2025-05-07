@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Footer from './Footer';
@@ -66,132 +65,50 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
   return (
     <div className="w-full min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100/80">
       <div className="w-[17%] shadow-lg shadow-gray-100/50 relative z-20">
-        <motion.div
-          className="h-full glass-morphism"
-          initial={{ opacity: 0.9 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="h-full glass-morphism">
           <Sidebar />
-        </motion.div>
+        </div>
       </div>
 
       <div className="w-full md:w-[83%] flex flex-col h-[100vh]">
         <div className="sticky top-0 z-10">
-          <motion.div
-            className="glass-header shadow-sm"
-            initial={{ y: -10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{
-              duration: 0.4,
-              type: "spring",
-              stiffness: 200,
-              damping: 20
-            }}
-          >
+          <div className="glass-header shadow-sm">
             <Header />
-          </motion.div>
+          </div>
         </div>
 
         <main className="flex-grow overflow-x-auto w-full overflow-y-auto relative">
-          <motion.div
-            className="absolute inset-0 bg-noise opacity-5 pointer-events-none"
-            animate={{
-              opacity: [0.03, 0.05, 0.03],
-              scale: [1, 1.02, 1]
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
+          <div className="absolute inset-0 bg-noise opacity-5 pointer-events-none" />
 
           <div className="w-full mx-auto p-6 relative">
-            <AnimatePresence mode="wait">
-              {loading ? (
-                <motion.div
-                  key="loader"
-                  className="flex justify-center items-center h-64"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      opacity: [0.7, 1, 0.7]
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      repeatType: "reverse"
-                    }}
-                    className="relative"
-                  >
-                    <Loader2 className="animate-spin h-10 w-10 text-indigo-500" />
-                    <div className="absolute inset-0 blur-xl bg-indigo-300/20 rounded-full scale-150" />
-                  </motion.div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="content"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{
-                    duration: 0.4,
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 15
-                  }}
-                  className="w-full"
-                >
-                  <motion.div
-                    className="content-card"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: 0.2,
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 15
-                    }}
-                  >
-                    <Outlet />
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="relative">
+                  <Loader2 className="animate-spin h-10 w-10 text-indigo-500" />
+                  <div className="absolute inset-0 blur-xl bg-indigo-300/20 rounded-full scale-150" />
+                </div>
+              </div>
+            ) : (
+              <div className="w-full">
+                <div className="content-card">
+                  <Outlet />
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-gray-100/30 to-transparent pointer-events-none" /> */}
         </main>
 
-        <motion.div
-          className="relative"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
+        <div className="relative">
           <Footer />
-        </motion.div>
+        </div>
       </div>
 
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            className="fixed inset-0 bg-gray-900/30 backdrop-blur-md z-30 lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => setMobileMenuOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-gray-900/30 backdrop-blur-md z-30 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
 
       <style>{`
         .glass-morphism {

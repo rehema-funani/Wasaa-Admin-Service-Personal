@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
   Home,
@@ -72,14 +71,14 @@ const Sidebar: React.FC<SidebarProps> = () => {
       <IconComponent
         width={16}
         height={16}
-        className={`${isActivePage ? 'text-indigo-600' : 'text-gray-600'} transition-colors`}
-        strokeWidth={1.5}
+        className={`${isActivePage ? 'text-blue-600' : 'text-gray-500'} transition-colors`}
+        strokeWidth={1.8}
       />
     );
   };
 
   const renderNavItem = (item: RouteItem, level = 0) => {
-    const paddingLeft = level * 12 + 16;
+    const paddingLeft = level * 10 + 16;
     const itemKey = item.type === 'link' ? item.path : item.type === 'dropdown' ? item.key : item.title;
 
     if (item.type === 'link') {
@@ -87,89 +86,63 @@ const Sidebar: React.FC<SidebarProps> = () => {
       const isHovered = hoveredItem === itemKey;
 
       return (
-        <motion.div
-          initial={false}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-        >
+        <div className="my-1">
           <NavLink
             to={item.path}
             onMouseEnter={() => setHoveredItem(itemKey)}
             onMouseLeave={() => setHoveredItem(null)}
           >
-            <motion.div
+            <div
               className={`
-                flex items-center py-2 px-4 rounded-xl transition-all relative
+                flex items-center py-1.5 px-3 rounded-lg transition-all duration-150 relative hover:translate-x-0.5 
                 ${isActivePage
-                  ? 'text-indigo-600 font-medium border-0 bg-gradient-to-r from-indigo-50/80 to-blue-50/80'
-                  : 'text-gray-700 hover:text-indigo-500'
+                  ? 'text-blue-600 font-medium border-0 bg-gradient-to-r from-blue-50/60 to-indigo-50/40'
+                  : 'text-gray-700 hover:text-blue-500'
                 }
               `}
               style={{ paddingLeft }}
-              whileHover={{
-                x: 4,
-                scale: 1.02,
-                transition: { duration: 0.2, type: "spring", stiffness: 400 }
-              }}
-              whileTap={{ scale: 0.98 }}
             >
               {isActivePage && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-indigo-50/90 to-blue-50/80 rounded-xl backdrop-blur-sm ring-1 ring-white/50"
-                  layoutId="activeBackground"
-                  initial={false}
-                  transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-indigo-50/30 rounded-lg backdrop-blur-sm ring-1 ring-blue-100/20"
                   style={{ zIndex: -1 }}
                 />
               )}
 
               {item.icon && (
-                <motion.div
-                  className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full ${isActivePage ? 'bg-gradient-to-br from-indigo-100 to-blue-50' : 'bg-gray-50/60'}`}
-                  animate={{
-                    scale: isHovered || isActivePage ? 1.1 : 1,
-                    background: isHovered && !isActivePage ? 'linear-gradient(to bottom right, rgba(238, 242, 255, 0.8), rgba(224, 231, 255, 0.5))' : (isActivePage ? 'linear-gradient(to bottom right, rgba(224, 231, 255, 0.9), rgba(199, 210, 254, 0.6))' : 'rgba(249, 250, 251, 0.6)')
-                  }}
-                  transition={{ duration: 0.2 }}
+                <div
+                  className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-150 mr-2.5
+                    ${isActivePage ? 'bg-gradient-to-br from-blue-100/80 to-indigo-50/60' : 'bg-gray-50/60'}
+                    ${isHovered && !isActivePage ? 'bg-gradient-to-br from-blue-50/50 to-indigo-50/30' : ''}
+                  `}
                 >
                   {renderIcon(item.icon, isActivePage)}
-                </motion.div>
+                </div>
               )}
-              <motion.span
-                className={`text-[14px] transition-all font-medium ${isActivePage ? 'text-indigo-600' : 'text-gray-500'}`}
-                animate={{
-                  x: isHovered && !isActivePage ? 2 : 0,
-                  opacity: isHovered && !isActivePage ? 0.9 : 1
-                }}
-                transition={{ duration: 0.2 }}
+              <span
+                className={`text-[13px] transition-all font-medium 
+                  ${isActivePage ? 'text-blue-600' : 'text-gray-600'}
+                `}
               >
                 {item.title}
-              </motion.span>
+              </span>
 
               {isHovered && !isActivePage && (
-                <motion.span
-                  className="ml-auto text-indigo-400"
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -5 }}
-                  transition={{ duration: 0.2 }}
+                <span
+                  className="ml-auto text-blue-400 opacity-70 transition-all duration-150"
                 >
-                  <ArrowRight size={14} />
-                </motion.span>
+                  <ArrowRight size={12} />
+                </span>
               )}
 
               {isActivePage && (
-                <motion.div
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-indigo-500 to-blue-400 rounded-r-full"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
+                <div
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-blue-500 rounded-r-full"
                 />
               )}
-            </motion.div>
+            </div>
           </NavLink>
-        </motion.div>
+        </div>
       );
     }
 
@@ -179,128 +152,91 @@ const Sidebar: React.FC<SidebarProps> = () => {
       const isHovered = hoveredItem === itemKey;
 
       return (
-        <div>
-          <motion.button
+        <div className="my-1">
+          <button
             onClick={() => toggleDropdown(item.key)}
             className={`
-              flex items-center justify-between w-full py-2.5 px-4 rounded-xl transition-all duration-200
+              flex items-center justify-between w-full py-1.5 px-3 rounded-lg transition-all duration-150
+              hover:translate-x-0.5 
               ${hasActive || isOpen
-                ? 'text-indigo-600 font-medium'
-                : 'text-gray-700 hover:text-indigo-500'
+                ? 'text-blue-600 font-medium'
+                : 'text-gray-700 hover:text-blue-500'
               }
               relative
             `}
             style={{ paddingLeft }}
-            whileHover={{
-              x: 2,
-              transition: { duration: 0.2 }
-            }}
-            whileTap={{ scale: 0.98 }}
             onMouseEnter={() => setHoveredItem(itemKey)}
             onMouseLeave={() => setHoveredItem(null)}
           >
             {(hasActive || isOpen) && (
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-indigo-50/70 to-blue-50/50 rounded-xl backdrop-blur-sm ring-1 ring-indigo-100/50"
-                initial={false}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
+              <div
+                className="absolute inset-0 bg-gradient-to-r from-blue-50/40 to-indigo-50/20 rounded-lg backdrop-blur-sm"
                 style={{ zIndex: -1 }}
               />
             )}
             <div className="flex items-center">
               {item.icon && (
-                <motion.div
-                  className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full ${hasActive || isOpen ? 'bg-gradient-to-br from-indigo-100 to-blue-50' : 'bg-gray-50/60'}`}
-                  animate={{
-                    scale: isHovered || hasActive || isOpen ? 1.1 : 1,
-                    background: isHovered && !hasActive && !isOpen ? 'linear-gradient(to bottom right, rgba(238, 242, 255, 0.8), rgba(224, 231, 255, 0.5))' : ((hasActive || isOpen) ? 'linear-gradient(to bottom right, rgba(224, 231, 255, 0.9), rgba(199, 210, 254, 0.6))' : 'rgba(249, 250, 251, 0.6)')
-                  }}
-                  transition={{ duration: 0.2 }}
+                <div
+                  className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-150 mr-2.5
+                    ${hasActive || isOpen ? 'bg-gradient-to-br from-blue-100/80 to-indigo-50/60' : 'bg-gray-50/60'}
+                    ${isHovered && !hasActive && !isOpen ? 'bg-gradient-to-br from-blue-50/50 to-indigo-50/30' : ''}
+                  `}
                 >
                   {renderIcon(item.icon, hasActive || isOpen)}
-                </motion.div>
+                </div>
               )}
-              <motion.span
-                className={`text-[14px] font-medium ${hasActive || isOpen ? 'text-indigo-600' : 'text-gray-700'}`}
+              <span
+                className={`text-[13px] font-medium ${hasActive || isOpen ? 'text-blue-600' : 'text-gray-600'}`}
               >
                 {item.title}
-              </motion.span>
+              </span>
             </div>
-            <motion.div
-              className={`flex items-center justify-center w-5 h-5 rounded-full ${isOpen ? 'bg-indigo-100' : 'bg-transparent'}`}
-              animate={{
-                rotate: isOpen ? 180 : 0,
-                scale: isHovered ? 1.1 : 1
-              }}
-              transition={{ duration: 0.3 }}
+            <div
+              className={`flex items-center justify-center w-5 h-5 rounded-full transition-all duration-150
+                ${isOpen ? 'bg-blue-50' : 'bg-transparent'} 
+              `}
             >
-              <ChevronDown size={14} className={isOpen ? "text-indigo-500" : "text-gray-400"} />
-            </motion.div>
-          </motion.button>
+              <ChevronDown size={13} className={`transition-transform duration-200 ${isOpen ? "text-blue-500 transform rotate-180" : "text-gray-400"}`} />
+            </div>
+          </button>
 
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="overflow-hidden"
-              >
-                <motion.div
-                  className="mt-1 ml-6 pl-2 border-l border-indigo-100"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
+          <div
+            className={`overflow-hidden transition-all duration-200 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+          >
+            <div
+              className="ml-5 pl-2 border-l border-blue-100/50"
+            >
+              {item.items.map((subItem: any, idx: number) => (
+                <div
+                  key={idx}
                 >
-                  {item.items.map((subItem: any, idx: number) => (
-                    <motion.div
-                      key={idx}
-                      className="mt-1"
-                      initial={{ x: -10, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{
-                        duration: 0.3,
-                        delay: 0.05 * idx,
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 25
-                      }}
-                    >
-                      {renderNavItem(subItem, level + 1)}
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  {renderNavItem(subItem, level + 1)}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       );
     }
 
     if (item.type === 'section') {
       return (
-        <motion.div
-          className="mt-6 first:mt-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
+        <div
+          className="mt-4 first:mt-1 mb-1"
         >
-          <div className="space-y-1">
+          {level === 0 && (
+            <div className="px-4 py-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">{item.title}</span>
+            </div>
+          )}
+          <div className="space-y-0.5">
             {item.items.map((subItem: any, idx: number) => (
-              <motion.div
-                key={idx}
-                initial={{ x: -5, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.05 * idx }}
-              >
+              <div key={idx}>
                 {renderNavItem(subItem, level)}
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       );
     }
 
@@ -309,173 +245,110 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
   const renderMobileMenuButton = () => {
     return (
-      <motion.button
+      <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed bottom-6 right-6 z-50 p-4 rounded-full bg-gradient-to-tr from-indigo-600 to-blue-500 text-white shadow-xl hover:shadow-indigo-200/50 backdrop-blur-md"
-        whileHover={{ scale: 1.05, boxShadow: "0 15px 25px -5px rgba(79, 70, 229, 0.5)" }}
-        whileTap={{ scale: 0.95 }}
-        initial={false}
-        animate={{
-          boxShadow: mobileOpen
-            ? '0 15px 30px -5px rgba(99, 102, 241, 0.5)'
-            : '0 10px 15px -3px rgba(99, 102, 241, 0.3)'
-        }}
+        className="lg:hidden fixed bottom-6 right-6 z-50 p-3 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg hover:shadow-blue-200/50 transition-all duration-200 backdrop-blur-md"
         aria-label="Toggle menu"
       >
-        <AnimatePresence mode="wait">
-          {mobileOpen ? (
-            <motion.div
-              key="close"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <X size={22} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="menu"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Menu size={22} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.button>
+        {mobileOpen ? (
+          <div className="transition-all duration-150">
+            <X size={20} />
+          </div>
+        ) : (
+          <div className="transition-all duration-150">
+            <Menu size={20} />
+          </div>
+        )}
+      </button>
     );
   };
 
   return (
     <>
-      <motion.aside
+      <aside
         className={`
-          flex flex-col h-full bg-white/85 backdrop-blur-xl
-          transition-all duration-300 overflow-hidden
+          flex flex-col h-full bg-white/90 backdrop-blur-xl
+          transition-all duration-300 overflow-hidden border-r border-gray-100/70
           ${isMobile ? 'hidden' : 'block'}
         `}
-        initial={false}
-        animate={{
-          boxShadow: '0 0 25px rgba(0, 0, 0, 0.04)'
-        }}
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-50">
+        <div className="flex items-center justify-between py-3 px-4 border-b border-gray-100/50">
           <div>
             <NavLink to="/" className="flex items-center">
-              <motion.div
-                className="relative"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
+              <div
+                className="relative transition-all duration-150"
               >
-                <motion.img
+                <img
                   src={logo}
                   alt="Logo"
-                  className="h-12 w-auto rounded-xl"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
+                  className="h-9 w-auto rounded-lg transition-all duration-150"
                 />
-                <motion.div
-                  className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-indigo-200/20 to-blue-200/10 blur-sm -z-10"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
+                <div
+                  className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-blue-200/10 to-indigo-200/5 blur-sm -z-10"
                 />
-              </motion.div>
-              <motion.div
+              </div>
+              <div
                 className="ml-2 hidden lg:block"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
               >
-                <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
+                <span className="text-base font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500">
                   Wasaa
                 </span>
-              </motion.div>
+              </div>
             </NavLink>
           </div>
         </div>
 
-        <motion.nav
-          className="p-3 overflow-y-auto h-[calc(100vh-4rem)] hide-scrollbar bg-gradient-to-b from-white/90 to-white/70"
-          initial={false}
-          animate={{ opacity: 1 }}
+        <nav
+          className="px-2 py-2 overflow-y-auto h-[calc(100vh-3.5rem)] hide-scrollbar bg-gradient-to-b from-white/90 to-white/70"
         >
           {routes.map((item: RouteItem, idx: number) => (
-            <motion.div
+            <div
               key={idx}
-              className=""
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.3,
-                delay: 0.03 * idx,
-                type: "spring",
-                stiffness: 200,
-                damping: 20
-              }}
             >
               {renderNavItem(item)}
-            </motion.div>
-          ))}
-        </motion.nav>
-      </motion.aside>
-
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.aside
-            className="fixed inset-0 bg-white/95 backdrop-blur-xl z-40 lg:hidden overflow-auto"
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          >
-            <div className="h-16 flex items-center justify-between px-4 border-b border-gray-50/80">
-              <NavLink to="/" className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200/50 ring-1 ring-white/30">
-                  WC
-                </div>
-                <span className="ml-2 text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
-                  Wasaa Chat
-                </span>
-              </NavLink>
-
-              <motion.button
-                onClick={() => setMobileOpen(false)}
-                className="p-2 rounded-lg hover:bg-indigo-50 group"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Close menu"
-              >
-                <X size={20} className="text-indigo-400 group-hover:text-indigo-600 transition-colors" />
-              </motion.button>
             </div>
+          ))}
+        </nav>
+      </aside>
 
-            <motion.nav className="p-3 overflow-y-auto max-h-[calc(100vh-4rem)]">
-              {routes.map((item: RouteItem, idx: number) => (
-                <motion.div
-                  key={idx}
-                  className="mb-1"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: 0.05 * idx,
-                    type: "spring",
-                    stiffness: 200,
-                    damping: 20
-                  }}
-                >
-                  {renderNavItem(item)}
-                </motion.div>
-              ))}
-            </motion.nav>
-          </motion.aside>
-        )}
-      </AnimatePresence>
+      {mobileOpen && (
+        <aside
+          className="fixed inset-0 bg-white/95 backdrop-blur-xl z-40 lg:hidden overflow-auto"
+          style={{
+            transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
+            transition: 'transform 0.3s ease-in-out'
+          }}
+        >
+          <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100/50">
+            <NavLink to="/" className="flex items-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-medium text-sm shadow-md">
+                W
+              </div>
+              <span className="ml-2 text-base font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500">
+                Wasaa
+              </span>
+            </NavLink>
+
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="p-1.5 rounded-lg hover:bg-gray-100/50 transition-all duration-150"
+              aria-label="Close menu"
+            >
+              <X size={18} className="text-gray-500" />
+            </button>
+          </div>
+
+          <nav className="p-2 overflow-y-auto max-h-[calc(100vh-3.5rem)]">
+            {routes.map((item: RouteItem, idx: number) => (
+              <div
+                key={idx}
+              >
+                {renderNavItem(item)}
+              </div>
+            ))}
+          </nav>
+        </aside>
+      )}
 
       {renderMobileMenuButton()}
 
@@ -488,26 +361,17 @@ const Sidebar: React.FC<SidebarProps> = () => {
           scrollbar-width: none;
         }
         
-        /* Adding subtle iOS 18-like glass morphism effects */
+        /* iOS 18-like glass morphism */
         .glass-morphism {
           background: rgba(255, 255, 255, 0.8);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Light gradient overlays for depth */
-        .depth-gradient {
-          position: relative;
-        }
-        .depth-gradient::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          z-index: -1;
-          border-radius: inherit;
-          background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(249, 250, 251, 0.5));
-          opacity: 0.7;
+        /* For dropdown animation - smoother transitions */
+        .max-h-96 {
+          max-height: 24rem;
         }
       `}</style>
     </>

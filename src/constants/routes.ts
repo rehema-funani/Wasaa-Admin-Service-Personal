@@ -277,6 +277,18 @@ const routes: Route[] = [
           title: 'Languages',
           icon: Languages,
         },
+        {
+          type: 'link',
+          path: '/admin/logs',
+          title: 'Audit Logs',
+          icon: Key,
+        },
+        {
+          type: 'link',
+          path: '/admin/support',
+          title: 'Support',
+          icon: Globe,
+        }
       ],
     },
   ];

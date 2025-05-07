@@ -10,21 +10,61 @@ import {
     Download
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { format, parseISO } from 'date-fns';
-import { AuditLog } from '../../../types/log';
-import { api } from '../../../api/axios';
 import { Badge } from '../../../components/common/Badge';
 import { Button } from '../../../components/common/Button';
 import { Card } from '../../../components/common/Card';
 import { Modal } from '../../../components/common/Modal';
 import { logsService } from '../../../api/services/logs';
 
-const JsonViewer: React.FC<{ data: Record<string, any> }> = ({ data }) => {
-    if (!data || Object.keys(data).length === 0) return <div className="text-gray-500 italic">Empty</div>;
+interface AuditLog {
+    _id: string;
+    user_id: string;
+    username: string;
+    ip_address: string;
+    service_name: string;
+    status_code: number;
+    session_id?: string;
+    user_email?: string;
+    event_type: string;
+    event_description: string;
+    entity_affected: string;
+    entity_id: string;
+    http_method: string;
+    request_url: string;
+    query_params: string;
+    request_body: any;
+    response_body: any;
+    execution_time: number;
+    location: string;
+    user_agent: string;
+    device_type: string;
+    device_model: string;
+    os: string;
+    browser: string;
+    auth_method: string;
+    roles: string;
+    permissions: string;
+    is_successful: boolean;
+    __v: number;
+}
+
+const JsonViewer: React.FC<{ data: any }> = ({ data }) => {
+    if (!data || (typeof data === 'object' && Object.keys(data).length === 0) || data === '') {
+        return <div className="text-gray-500 italic">Empty</div>;
+    }
+
+    let jsonData = data;
+    if (typeof data === 'string' && data.trim() !== '') {
+        try {
+            jsonData = JSON.parse(data);
+        } catch (e) {
+            return <div className="text-sm text-gray-900">{data}</div>;
+        }
+    }
 
     return (
         <pre className="bg-gray-800/10 backdrop-blur-sm p-3 rounded-lg text-xs text-gray-900 overflow-auto max-h-60">
-            {JSON.stringify(data, null, 2)}
+            {JSON.stringify(jsonData, null, 2)}
         </pre>
     );
 };
@@ -42,19 +82,16 @@ const page: React.FC = () => {
     const [page, setPage] = useState(1);
     const [itemsPerPage] = useState(10);
 
-    // Fetch audit logs
     useEffect(() => {
         fetchAuditLogs();
     }, []);
 
-    // Apply filters
     useEffect(() => {
         let filtered = [...auditLogs];
 
-        // Apply search
         if (searchQuery) {
             filtered = filtered.filter(log =>
-                log.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (getUsernameDisplay(log).toLowerCase().includes(searchQuery.toLowerCase())) ||
                 log.event_description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 log.entity_affected.toLowerCase().includes(searchQuery.toLowerCase())
             );
@@ -80,14 +117,46 @@ const page: React.FC = () => {
 
         try {
             const response = await logsService.getAuditLogs();
-            setAuditLogs(response.data);
-            setFilteredLogs(response.data);
+            setAuditLogs(response.results || []);
+            setFilteredLogs(response.results || []);
         } catch (err) {
             setError('Failed to fetch audit logs. Please try again later.');
             console.error(err);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const getUsernameDisplay = (log: AuditLog) => {
+        if (log.username && log.username !== 'undefined undefined') {
+            return log.username;
+        }
+
+        if (log.response_body && typeof log.response_body === 'object' && log.response_body.users) {
+            for (const user of log.response_body.users) {
+                if (user.id === log.user_id) {
+                    return `${user.first_name} ${user.last_name}`;
+                }
+            }
+        }
+
+        return 'Unknown user';
+    };
+
+    const getUserEmailDisplay = (log: AuditLog) => {
+        if (log.user_email) {
+            return log.user_email;
+        }
+
+        if (log.response_body && typeof log.response_body === 'object' && log.response_body.users) {
+            for (const user of log.response_body.users) {
+                if (user.id === log.user_id) {
+                    return user.email;
+                }
+            }
+        }
+
+        return '';
     };
 
     const handleViewDetails = (log: AuditLog) => {
@@ -186,7 +255,7 @@ const page: React.FC = () => {
                                     value={eventFilter}
                                     onChange={(e) => {
                                         setEventFilter(e.target.value);
-                                        setPage(1); 
+                                        setPage(1);
                                     }}
                                     className="w-full pl-10 pr-10 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
                                 >
@@ -269,14 +338,14 @@ const page: React.FC = () => {
                                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entity</th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
                                         {paginatedLogs.map((log) => (
                                             <motion.tr
-                                                key={log.id}
+                                                key={log._id}
                                                 className="hover:bg-blue-50/30 transition-colors cursor-pointer"
                                                 whileHover={{ backgroundColor: 'rgba(239, 246, 255, 0.6)' }}
                                                 onClick={() => handleViewDetails(log)}
@@ -284,10 +353,12 @@ const page: React.FC = () => {
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                     <Badge
                                                         variant={
-                                                            log.event_type.includes('CREATE') ? 'success' :
-                                                                log.event_type.includes('UPDATE') ? 'primary' :
-                                                                    log.event_type.includes('DELETE') ? 'danger' :
-                                                                        'default'
+                                                            log.event_type.includes('create') ? 'success' :
+                                                                log.event_type.includes('update') ? 'primary' :
+                                                                    log.event_type.includes('delete') ? 'danger' :
+                                                                        log.event_type.includes('login') ? 'info' :
+                                                                            log.event_type.includes('fetch') ? 'default' :
+                                                                                'default'
                                                         }
                                                         size="sm"
                                                     >
@@ -298,8 +369,8 @@ const page: React.FC = () => {
                                                     <div className="flex items-center">
                                                         <User size={16} className="text-gray-400 mr-2" />
                                                         <div>
-                                                            <div className="text-sm font-medium text-gray-900">{log.username}</div>
-                                                            <div className="text-xs text-gray-500">{log.user_email}</div>
+                                                            <div className="text-sm font-medium text-gray-900">{getUsernameDisplay(log)}</div>
+                                                            <div className="text-xs text-gray-500">{getUserEmailDisplay(log)}</div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -316,9 +387,7 @@ const page: React.FC = () => {
                                                     {getStatusBadge(log.is_successful)}
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                                                    {log.created_at
-                                                        ? format(parseISO(log.created_at), 'MMM d, yyyy HH:mm:ss')
-                                                        : 'N/A'}
+                                                    {log.service_name}
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap">
                                                     <Button
@@ -326,7 +395,7 @@ const page: React.FC = () => {
                                                         size="sm"
                                                         rightIcon={<ChevronRight size={14} />}
                                                         onClick={(e) => {
-                                                            e.stopPropagation(); // Prevent row click event
+                                                            e.stopPropagation();
                                                             handleViewDetails(log);
                                                         }}
                                                     >
@@ -385,8 +454,8 @@ const page: React.FC = () => {
                                                         key={pageNum}
                                                         onClick={() => handlePageChange(pageNum)}
                                                         className={`relative inline-flex items-center px-3 py-2 text-sm font-medium ${pageNum === page
-                                                                ? 'bg-blue-500 text-white'
-                                                                : 'bg-white text-gray-700 hover:bg-gray-50'
+                                                            ? 'bg-blue-500 text-white'
+                                                            : 'bg-white text-gray-700 hover:bg-gray-50'
                                                             } border border-gray-200 mx-1 rounded-md`}
                                                     >
                                                         {pageNum}
@@ -442,7 +511,7 @@ const page: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <div className="text-xs text-gray-500">Entity ID</div>
-                                                    <div className="text-sm font-medium text-gray-900 truncate">{selectedLog.entity_id}</div>
+                                                    <div className="text-sm font-medium text-gray-900 truncate">{selectedLog.entity_id || 'N/A'}</div>
                                                 </div>
                                                 <div>
                                                     <div className="text-xs text-gray-500">Execution Time</div>
@@ -462,27 +531,27 @@ const page: React.FC = () => {
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
                                                     <div className="text-xs text-gray-500">Username</div>
-                                                    <div className="text-sm font-medium text-gray-900">{selectedLog.username}</div>
+                                                    <div className="text-sm font-medium text-gray-900">{getUsernameDisplay(selectedLog)}</div>
                                                 </div>
                                                 <div>
                                                     <div className="text-xs text-gray-500">Email</div>
-                                                    <div className="text-sm font-medium text-gray-900">{selectedLog.user_email}</div>
+                                                    <div className="text-sm font-medium text-gray-900">{getUserEmailDisplay(selectedLog)}</div>
                                                 </div>
                                                 <div>
                                                     <div className="text-xs text-gray-500">User ID</div>
                                                     <div className="text-sm font-medium text-gray-900 truncate">{selectedLog.user_id}</div>
                                                 </div>
                                                 <div>
-                                                    <div className="text-xs text-gray-500">Session ID</div>
-                                                    <div className="text-sm font-medium text-gray-900 truncate">{selectedLog.session_id}</div>
-                                                </div>
-                                                <div>
                                                     <div className="text-xs text-gray-500">IP Address</div>
-                                                    <div className="text-sm font-medium text-gray-900">{selectedLog.ip_address}</div>
+                                                    <div className="text-sm font-medium text-gray-900">{selectedLog.ip_address.replace('::ffff:', '')}</div>
                                                 </div>
                                                 <div>
-                                                    <div className="text-xs text-gray-500">Location</div>
-                                                    <div className="text-sm font-medium text-gray-900">{selectedLog.location || 'N/A'}</div>
+                                                    <div className="text-xs text-gray-500">Role</div>
+                                                    <div className="text-sm font-medium text-gray-900">{selectedLog.roles}</div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs text-gray-500">Permissions</div>
+                                                    <div className="text-sm font-medium text-gray-900">{selectedLog.permissions}</div>
                                                 </div>
                                                 <div>
                                                     <div className="text-xs text-gray-500">Authentication Method</div>
