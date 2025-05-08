@@ -19,6 +19,7 @@ import Pagination from '../../../../components/common/Pagination';
 import { userService } from '../../../../api/services/users';
 import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const page = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,6 +33,7 @@ const page = () => {
   const [recentSearches, setRecentSearches] = useState<string[]>([
     'admin', 'inactive', 'new york'
   ]);
+  const navigate = useNavigate();
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -67,62 +69,6 @@ const page = () => {
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  const handleDeleteUser = async (userId: string) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      setIsLoading(true);
-      try {
-        await userService.deleteUser(userId);
-        toast.success('User deleted successfully');
-        fetchUsers();
-      } catch (err) {
-        console.error('Failed to delete user:', err);
-        toast.error('Failed to delete user');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const filterOptions = [
-    {
-      id: 'role',
-      label: 'Role',
-      type: 'select' as const,
-      options: [
-        { value: 'Admin', label: 'Admin' },
-        { value: 'Moderator', label: 'Moderator' },
-        { value: 'User', label: 'User' }
-      ]
-    },
-    {
-      id: 'status',
-      label: 'Status',
-      type: 'multiselect' as const,
-      options: [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' },
-        { value: 'pending', label: 'Pending' },
-        { value: 'blocked', label: 'Blocked' },
-        { value: 'processing', label: 'Processing' }
-      ]
-    },
-    {
-      id: 'joinDate',
-      label: 'Join Date',
-      type: 'daterange' as const
-    },
-    {
-      id: 'transactions',
-      label: 'Transactions',
-      type: 'number' as const
-    },
-    {
-      id: 'verified',
-      label: 'Verified Email',
-      type: 'boolean' as const
-    }
-  ];
 
   const columns = [
     {
@@ -214,39 +160,14 @@ const page = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View user"
+            onClick={() => navigate(`/admin/users/user-details/${value}`)}
           >
             <Eye size={16} strokeWidth={1.8} />
-          </motion.button>
-          <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Edit user"
-            onClick={() => handleEditUser(row)}
-          >
-            <Edit size={16} strokeWidth={1.8} />
-          </motion.button>
-          <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-red-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Delete user"
-            onClick={() => handleDeleteUser(value)}
-          >
-            <Trash2 size={16} strokeWidth={1.8} />
           </motion.button>
         </div>
       )
     }
   ];
-
-  const handleEditUser = (user: any) => {
-    console.log('Edit user:', user);
-  };
-
-  const handleAddUser = () => {
-    console.log('Add new user');
-  };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -359,34 +280,17 @@ const page = () => {
       >
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">Users</h1>
-          <p className="text-gray-500 mt-1">Manage user accounts and permissions</p>
+          <p className="text-gray-500 mt-1">Manage user accounts</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-            whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
-            whileTap={{ y: 0 }}
-          >
-            <Upload size={16} className="mr-2" strokeWidth={1.8} />
-            Import
-          </motion.button>
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-            whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
-            whileTap={{ y: 0 }}
-            onClick={handleExport}
-          >
-            <Download size={16} className="mr-2" strokeWidth={1.8} />
-            Export
-          </motion.button>
           <motion.button
             className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0 }}
-            onClick={handleAddUser}
+            onClick={handleExport}
           >
             <UserPlus size={16} className="mr-2" strokeWidth={1.8} />
-            Add User
+            Export
           </motion.button>
         </div>
       </motion.div>
@@ -409,7 +313,7 @@ const page = () => {
         <div className="md:col-span-1">
           <FilterPanel
             title="User Filters"
-            filters={filterOptions}
+            filters={[]}
             onApplyFilters={handleApplyFilters}
             onResetFilters={handleResetFilters}
             initialExpanded={false}

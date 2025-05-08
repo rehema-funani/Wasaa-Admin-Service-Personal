@@ -6,6 +6,7 @@ const Dashboard = lazy(() => import('./app/dashboard/page'));
 const ErrorPage = lazy(() => import('./app/error/error-page'));
 
 const UserDetails = lazy(() => import('./app/admin/users/user-details/page'));
+const Userdetail = lazy(() => import('./app/admin/users/user-details/userdetail'));
 const CountrywiseUsers = lazy(() => import('./app/admin/users/countrywise-Analysis/page'));
 const ReportedUsers = lazy(() => import('./app/admin/users/reported-user-list/page'));
 const CountryDetailPage = lazy(() => import('./app/admin/users/countrywise-Analysis/CountryDetailPage'));
@@ -15,6 +16,7 @@ const GroupDetailPage = lazy(() => import('./app/admin/Group/all-group-list/grou
 const ReportedGroups = lazy(() => import('./app/admin/Group/all-reported-group-list/page'));
 
 const RolesPage = lazy(() => import('./app/admin/roles/roles'));
+const RoleDetail = lazy(() => import('./app/admin/roles/roledetail'));
 const SystemUsers = lazy(() => import('./app/admin/roles/user-settings'));
 
 const AllLivestreams = lazy(() => import('./app/admin/livestreams/all-livestreams/page'));
@@ -28,6 +30,7 @@ const ReportedStreams = lazy(() => import('./app/admin/livestreams/reported/page
 
 const Transactions = lazy(() => import('./app/admin/finance/transactions/page'));
 const UserWallets = lazy(() => import('./app/admin/finance/user-wallets/page'));
+const WalletDetail = lazy(() => import('./app/admin/finance/user-wallets/walletdetail'));
 const Withdrawals = lazy(() => import('./app/admin/finance/withdrawals/page'));
 const TopUps = lazy(() => import('./app/admin/finance/top-ups/page'));
 const PaymentMethods = lazy(() => import('./app/admin/finance/payment-methods/page'));
@@ -98,6 +101,7 @@ const AppRouter: React.FC = () => {
                     <Route index element={<Dashboard />} />
 
                     <Route path="admin/users/user-details" element={<UserDetails />} />
+                    <Route path="admin/users/user-details/:id" element={<Userdetail />} />
                     <Route path="admin/users/countrywise-Analysis" element={<CountrywiseUsers />} />
                     <Route path="admin/users/countrywise-Analysis/:id" element={<CountryDetailPage />} />
                     <Route path="admin/users/reported-user-list" element={<ReportedUsers />} />
@@ -107,6 +111,7 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/Group/all-reported-group-list" element={<ReportedGroups />} />
 
                     <Route path="admin/system/roles" element={<RolesPage />} />
+                    <Route path="admin/system/roles/:id" element={<RoleDetail />} />
                     <Route path='admin/system/users' element={<SystemUsers />} />
 
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />
@@ -120,6 +125,7 @@ const AppRouter: React.FC = () => {
 
                     <Route path="admin/finance/transactions" element={<Transactions />} />
                     <Route path="admin/finance/user-wallets" element={<UserWallets />} />
+                    <Route path="admin/finance/user-wallets/:id" element={<WalletDetail />} />
                     <Route path="admin/finance/withdrawals" element={<Withdrawals />} />
                     <Route path="admin/finance/top-ups" element={<TopUps />} />
                     <Route path="admin/finance/payment-methods" element={<PaymentMethods />} />

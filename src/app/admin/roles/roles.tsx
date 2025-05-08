@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-    Download,
-    Upload,
     Eye,
-    Edit,
-    Trash2,
     Plus,
     Clock,
     CalendarDays,
@@ -79,50 +75,6 @@ const roles = () => {
         fetchRoles();
     }, []);
 
-    const handleDeleteRole = async (roleId: string) => {
-        if (window.confirm('Are you sure you want to delete this role?')) {
-            setIsLoading(true);
-            try {
-                await roleService.deleteRole(roleId);
-                toast.success('Role deleted successfully');
-                // Refresh the role list
-                fetchRoles();
-            } catch (err) {
-                console.error('Failed to delete role:', err);
-                toast.error('Failed to delete role');
-            } finally {
-                setIsLoading(false);
-            }
-        }
-    };
-
-    const filterOptions = [
-        {
-            id: 'status',
-            label: 'Status',
-            type: 'multiselect' as const,
-            options: [
-                { value: 'active', label: 'Active' },
-                { value: 'inactive', label: 'Inactive' }
-            ]
-        },
-        {
-            id: 'userCount',
-            label: 'User Count',
-            type: 'number' as const
-        },
-        {
-            id: 'createdAt',
-            label: 'Created Date',
-            type: 'daterange' as const
-        },
-        {
-            id: 'permissionCount',
-            label: 'Has Permissions',
-            type: 'boolean' as const
-        }
-    ];
-
     const columns = [
         {
             id: 'title',
@@ -142,18 +94,6 @@ const roles = () => {
             )
         },
         {
-            id: 'permissions',
-            header: 'Permissions',
-            accessor: (row: Role) => row.permissions.length,
-            sortable: true,
-            width: '120px',
-            cell: (value: number) => (
-                <span className="inline-flex px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700">
-                    {value} permission{value !== 1 ? 's' : ''}
-                </span>
-            )
-        },
-        {
             id: 'status',
             header: 'Status',
             accessor: (row: Role) => row.status,
@@ -161,25 +101,6 @@ const roles = () => {
             width: '120px',
             cell: (value: string) => (
                 <StatusBadge status={value as any} size="sm" withIcon withDot={value === 'active'} />
-            )
-        },
-        {
-            id: 'userCount',
-            header: 'Users',
-            accessor: (row: Role) => row.userCount,
-            sortable: true,
-            width: '100px',
-            cell: (value: number) => (
-                <span className={`
-          px-2 py-1 rounded-md text-xs font-medium
-          ${value === 0
-                        ? 'bg-gray-100 text-gray-500'
-                        : value > 10
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-blue-50 text-blue-700'}
-        `}>
-                    {value}
-                </span>
             )
         },
         {
@@ -223,40 +144,15 @@ const roles = () => {
                     >
                         <Eye size={16} strokeWidth={1.8} />
                     </motion.button>
-                    <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        aria-label="Edit role"
-                        onClick={() => handleEditRole(row)}
-                    >
-                        <Edit size={16} strokeWidth={1.8} />
-                    </motion.button>
-                    <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-red-600"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        aria-label="Delete role"
-                        onClick={() => handleDeleteRole(value)}
-                    >
-                        <Trash2 size={16} strokeWidth={1.8} />
-                    </motion.button>
                 </div>
             )
         }
     ];
 
-    // View role details
     const handleViewRole = (role: Role) => {
-        navigate(`/roles/${role.id}`);
+        navigate(`/admin/system/roles/${role.id}`);
     };
 
-    // Edit role
-    const handleEditRole = (role: Role) => {
-        navigate(`/roles/edit/${role.id}`);
-    };
-
-    // Add role
     const handleAddRole = () => {
         navigate('/roles/create');
     };
@@ -333,16 +229,14 @@ const roles = () => {
         }
 
         setFilteredRoles(filtered);
-        setCurrentPage(1); // Reset to first page
+        setCurrentPage(1);
     };
 
-    // Reset all filters
     const handleResetFilters = () => {
         setAppliedFilters({});
         setFilteredRoles(roles);
     };
 
-    // Handle page change
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
@@ -350,10 +244,6 @@ const roles = () => {
     const handleItemsPerPageChange = (perPage: number) => {
         setItemsPerPage(perPage);
         setCurrentPage(1);
-    };
-
-    const handleExport = () => {
-        toast.success('Roles exported successfully');
     };
 
     return (
@@ -369,23 +259,6 @@ const roles = () => {
                     <p className="text-gray-500 mt-1">Manage user roles and associated permissions</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                    <motion.button
-                        className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-                        whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
-                        whileTap={{ y: 0 }}
-                    >
-                        <Upload size={16} className="mr-2" strokeWidth={1.8} />
-                        Import
-                    </motion.button>
-                    <motion.button
-                        className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-                        whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
-                        whileTap={{ y: 0 }}
-                        onClick={handleExport}
-                    >
-                        <Download size={16} className="mr-2" strokeWidth={1.8} />
-                        Export
-                    </motion.button>
                     <motion.button
                         className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
                         whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
@@ -416,7 +289,7 @@ const roles = () => {
                 <div className="md:col-span-1">
                     <FilterPanel
                         title="Role Filters"
-                        filters={filterOptions}
+                        filters={[]}
                         onApplyFilters={handleApplyFilters}
                         onResetFilters={handleResetFilters}
                         initialExpanded={false}
@@ -446,7 +319,7 @@ const roles = () => {
                     data={filteredRoles}
                     selectable={true}
                     isLoading={isLoading}
-                    emptyMessage="No roles found. Try adjusting your filters or search terms."
+                    emptyMessage="No roles found."
                     defaultRowsPerPage={itemsPerPage}
                 />
             </motion.div>

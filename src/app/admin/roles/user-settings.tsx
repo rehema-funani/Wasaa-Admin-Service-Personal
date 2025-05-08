@@ -440,8 +440,8 @@ const page: React.FC = () => {
                     />
                     <ActionButton
                         icon={<UserPlus size={16} className="mr-2" strokeWidth={1.8} />}
-                        label="Add User"
-                        onClick={handleAddUser}
+                        label="Export"
+                        onClick={handleExport}
                         isPrimary
                     />
                 </div>

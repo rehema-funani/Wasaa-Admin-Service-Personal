@@ -7,7 +7,7 @@ export const roleService = {
   },
 
   getRole: async (id: string) => {
-    const response = await api.get(`/roles/${id}`);
+    const response = await api.get(`/roles/role/${id}`);
     return response.data;
   },
 

@@ -1,27 +1,23 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
   Download,
   Upload,
   Eye,
-  Edit,
-  Trash2,
-  Plus,
   Clock,
-  BarChart3,
-  Shield,
 } from 'lucide-react';
 import StatusBadge from '../../../../components/common/StatusBadge';
 import DataTable from '../../../../components/common/DataTable';
 import Pagination from '../../../../components/common/Pagination';
 import financeService from '../../../../api/services/finance';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [wallets, setWallets] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchWallets = async () => {
     setIsLoading(true);
@@ -80,23 +76,6 @@ const page = () => {
             <p className="font-medium text-gray-800">{value}</p>
             <p className="text-xs text-gray-500">{row.user.email}</p>
           </div>
-        </div>
-      )
-    },
-    {
-      id: 'walletDetails',
-      header: 'Wallet Details',
-      accessor: (row: any) => row.id,
-      sortable: true,
-      cell: (value: string, row: any) => (
-        <div className="flex flex-col">
-          <p className="font-medium text-gray-800">
-            {value}
-            <span className="ml-2 px-2 py-0.5 text-xs rounded-md bg-gray-100 text-gray-600 capitalize">
-              {row.type}
-            </span>
-          </p>
-          <p className="text-xs text-gray-500 mt-0.5">Created: {row.created}</p>
         </div>
       )
     },
@@ -177,33 +156,6 @@ const page = () => {
       )
     },
     {
-      id: 'securityLevel',
-      header: 'Security',
-      accessor: (row: any) => row.securityLevel,
-      sortable: true,
-      width: '120px',
-      cell: (value: string) => {
-        const securityColors: Record<string, string> = {
-          'low': 'bg-red-100 text-red-700',
-          'medium': 'bg-yellow-100 text-yellow-700',
-          'high': 'bg-green-100 text-green-700'
-        };
-        return (
-          <div className="flex items-center">
-            <Shield size={14} className={`mr-1.5 ${value === 'high' ? 'text-green-500' :
-              value === 'medium' ? 'text-yellow-500' : 'text-red-500'
-              }`} strokeWidth={1.8} />
-            <span className={`
-            px-2 py-0.5 rounded-md text-xs font-medium capitalize
-            ${securityColors[value] || 'bg-gray-100 text-gray-700'}
-          `}>
-              {value}
-            </span>
-          </div>
-        );
-      }
-    },
-    {
       id: 'actions',
       header: 'Actions',
       accessor: (row: any) => row.id,
@@ -211,38 +163,12 @@ const page = () => {
       width: '140px',
       cell: (value: string) => (
         <div className="flex items-center space-x-1">
-          <motion.button
+          <button
             className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="View wallet"
+            onClick={() => navigate(`/admin/finance/user-wallets/${value}`)}
           >
             <Eye size={16} strokeWidth={1.8} />
-          </motion.button>
-          <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Edit wallet"
-          >
-            <Edit size={16} strokeWidth={1.8} />
-          </motion.button>
-          <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-green-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="View transactions"
-          >
-            <BarChart3 size={16} strokeWidth={1.8} />
-          </motion.button>
-          <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-red-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Freeze wallet"
-          >
-            <Trash2 size={16} strokeWidth={1.8} />
-          </motion.button>
+          </button>
         </div>
       )
     }
@@ -263,42 +189,32 @@ const page = () => {
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto">
-      <motion.div
+      <div
         className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
       >
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">User Wallets</h1>
           <p className="text-gray-500 mt-1">Manage balances and wallet security settings</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <motion.button
+          <button
             className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-            whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
-            whileTap={{ y: 0 }}
           >
             <Upload size={16} className="mr-2" strokeWidth={1.8} />
             Import
-          </motion.button>
-          <motion.button
+          </button>
+          <button
             className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
-            whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
-            whileTap={{ y: 0 }}
             onClick={handleExport}
           >
             <Download size={16} className="mr-2" strokeWidth={1.8} />
             Export
-          </motion.button>
+          </button>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
+      <div
         className="mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
       >
         <DataTable
           columns={columns}
@@ -308,12 +224,9 @@ const page = () => {
           emptyMessage="No wallets found. Try adjusting your filters or search terms."
           defaultRowsPerPage={itemsPerPage}
         />
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.3 }}
+      <div
       >
         <Pagination
           totalItems={wallets.length}
@@ -325,7 +238,7 @@ const page = () => {
           itemsPerPageOptions={[10, 25, 50, 100]}
           showSummary={true}
         />
-      </motion.div>
+      </div>
     </div>
   );
 };
