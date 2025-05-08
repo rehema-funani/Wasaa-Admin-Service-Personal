@@ -14,6 +14,18 @@ export const groupService = {
     }
   },
 
+  async getGroupById(groupId: string): Promise<any> {
+    try {
+      const response = await api.get(`/groups/${groupId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get group');
+      }
+      throw new Error('Failed to get group. Please check your network connection.');
+    }
+  },
+
   async getReportedGroups(): Promise<any> {
     try {
       const response = await api.get('/groups/reported-groups');

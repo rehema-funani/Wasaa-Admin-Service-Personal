@@ -287,13 +287,13 @@ const Sidebar: React.FC<SidebarProps> = () => {
                   className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-blue-200/10 to-indigo-200/5 blur-sm -z-10"
                 />
               </div>
-              <div
+              {/* <div
                 className="ml-2 hidden lg:block"
               >
                 <span className="text-base font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500">
                   Wasaa
                 </span>
-              </div>
+              </div> */}
             </NavLink>
           </div>
         </div>

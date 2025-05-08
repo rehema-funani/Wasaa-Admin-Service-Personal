@@ -11,7 +11,7 @@ const ReportedUsers = lazy(() => import('./app/admin/users/reported-user-list/pa
 const CountryDetailPage = lazy(() => import('./app/admin/users/countrywise-Analysis/CountryDetailPage'));
 
 const GroupList = lazy(() => import('./app/admin/Group/all-group-list/page'));
-const GroupDetailPage = lazy(() => import('./app/admin/Group/all-group-list/GroupDetailPage'));
+const GroupDetailPage = lazy(() => import('./app/admin/Group/all-group-list/groupdetail'));
 const ReportedGroups = lazy(() => import('./app/admin/Group/all-reported-group-list/page'));
 
 const RolesPage = lazy(() => import('./app/admin/roles/roles'));

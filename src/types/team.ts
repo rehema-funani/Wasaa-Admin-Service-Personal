@@ -17,8 +17,7 @@ export interface Team {
 }
 
 export interface TeamFormData {
-  name: string;
-  description: string;
+  title: string;
   level: string;
   members: Array<any>;
 }
@@ -40,6 +39,15 @@ export interface Ticket {
   escalated: boolean;
   escalationLevel?: number;
   escalationReason?: string;
+   attachments?: {
+        filename: string;
+        url: string;
+    }[];
+    ticket_number?: string;
+    customer?: any;
+    category?: any;
+    source?: any;
+    user?: any;
 }
 
 export interface TicketFormData {
@@ -56,6 +64,8 @@ export interface TicketComment {
   createdAt: string;
   createdBy: string;
   isInternal: boolean;
+  user?: any;
+  comments?: any;
 }
 
 export interface TicketCommentFormData {

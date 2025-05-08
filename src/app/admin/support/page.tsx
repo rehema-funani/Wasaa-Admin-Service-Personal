@@ -10,7 +10,6 @@ import {
     CheckCircle2,
     MessageSquare,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Card, CardContent, CardFooter, CardHeader } from '../../../components/common/Card';
 import { Avatar } from '../../../components/common/Avatar';
 import { Button } from '../../../components/common/Button';
@@ -77,7 +76,7 @@ const stats = [
         value: 24,
         trend: '+12%',
         trendUp: true,
-        icon: <MessageSquare size={20} className="text-blue-600" />,
+        icon: <MessageSquare size={18} className="text-blue-600" />,
         color: 'blue'
     },
     {
@@ -85,7 +84,7 @@ const stats = [
         value: '1.4d',
         trend: '-8%',
         trendUp: false,
-        icon: <Clock size={20} className="text-purple-600" />,
+        icon: <Clock size={18} className="text-purple-600" />,
         color: 'purple'
     },
     {
@@ -93,7 +92,7 @@ const stats = [
         value: '94%',
         trend: '+2%',
         trendUp: true,
-        icon: <CheckCircle2 size={20} className="text-green-600" />,
+        icon: <CheckCircle2 size={18} className="text-green-600" />,
         color: 'green'
     },
     {
@@ -101,12 +100,12 @@ const stats = [
         value: 7,
         trend: '+3',
         trendUp: true,
-        icon: <AlertTriangle size={20} className="text-red-600" />,
+        icon: <AlertTriangle size={18} className="text-red-600" />,
         color: 'red'
     }
 ];
 
-const page:React.FC = () => {
+const page: React.FC = () => {
     const [chartLoaded, setChartLoaded] = useState(false);
 
     useEffect(() => {
@@ -119,30 +118,30 @@ const page:React.FC = () => {
 
     return (
         <>
-            <div className="p-6">
-                <div className="mb-6">
-                    <h1 className="text-2xl font-semibold text-gray-900">Support Dashboard</h1>
-                    <p className="text-gray-500 mt-1">Overview of support activities and metrics</p>
+            <div className="p-5">
+                <div className="mb-5">
+                    <h1 className="text-xl font-semibold text-gray-900">Support Dashboard</h1>
+                    <p className="text-gray-500 text-sm mt-1">Overview of support activities and metrics</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
                     {stats.map((stat) => (
-                        <Card key={stat.title}>
-                            <div className="flex items-start justify-between">
+                        <Card key={stat.title} className="bg-white/90 backdrop-blur-sm border border-gray-100/70 shadow-sm hover:shadow transition-all duration-200">
+                            <div className="flex items-start justify-between p-4">
                                 <div>
-                                    <p className="text-sm text-gray-500">{stat.title}</p>
-                                    <h3 className="text-2xl font-semibold text-gray-900 mt-1">{stat.value}</h3>
+                                    <p className="text-xs text-gray-500 font-medium">{stat.title}</p>
+                                    <h3 className="text-xl font-semibold text-gray-900 mt-1">{stat.value}</h3>
                                 </div>
-                                <div className={`p-2 rounded-lg bg-${stat.color}-100`}>
+                                <div className={`p-2 rounded-lg bg-${stat.color}-50/80 backdrop-blur-sm ring-1 ring-${stat.color}-100/50`}>
                                     {stat.icon}
                                 </div>
                             </div>
-                            <div className="mt-4 flex items-center">
+                            <div className="px-4 pb-4 flex items-center">
                                 <span className={`text-xs font-medium ${stat.trendUp ? 'text-green-600' : 'text-red-600'}`}>
                                     {stat.trend}
                                 </span>
                                 <ArrowUpRight
-                                    size={14}
+                                    size={12}
                                     className={`ml-1 ${stat.trendUp ? 'text-green-600' : 'text-red-600 transform rotate-90'}`}
                                 />
                                 <span className="text-xs text-gray-500 ml-1">vs. last week</span>
@@ -151,50 +150,50 @@ const page:React.FC = () => {
                     ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <Card className="lg:col-span-2">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <Card className="lg:col-span-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 shadow-sm">
                         <CardHeader>
                             <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-medium text-gray-900">Ticket Trends</h2>
+                                <h2 className="text-base font-medium text-gray-900">Ticket Trends</h2>
                                 <div className="flex space-x-2">
-                                    <Badge className="primary">This Month</Badge>
-                                    <Badge className="default">Previous</Badge>
+                                    <Badge className="bg-blue-50 text-blue-700 border border-blue-100/70">This Month</Badge>
+                                    <Badge className="bg-gray-50 text-gray-700 border border-gray-100/70">Previous</Badge>
                                 </div>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="h-64 w-full">
+                            <div className="h-60 w-full">
                                 {chartLoaded ? (
-                                    <div className="w-full h-full bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg flex items-center justify-center">
-                                        <BarChart4 size={64} className="text-blue-200" />
-                                        <span className="ml-4 text-gray-400">Chart visualization would be rendered here</span>
+                                    <div className="w-full h-full bg-gradient-to-r from-blue-50/70 to-blue-50/30 rounded-lg flex items-center justify-center border border-blue-100/20">
+                                        <BarChart4 size={48} className="text-blue-200" />
+                                        <span className="ml-4 text-gray-400 text-sm">Chart visualization would be rendered here</span>
                                     </div>
                                 ) : (
-                                    <div className="w-full h-full animate-pulse bg-gray-100 rounded-lg"></div>
+                                    <div className="w-full h-full animate-pulse bg-gray-100/70 rounded-lg"></div>
                                 )}
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card>
+                    <Card className="bg-white/90 backdrop-blur-sm border border-gray-100/70 shadow-sm">
                         <CardHeader>
                             <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-medium text-gray-900">Support Teams</h2>
-                                <Badge>{mockTeams.length}</Badge>
+                                <h2 className="text-base font-medium text-gray-900">Support Teams</h2>
+                                <Badge className="bg-gray-50 text-gray-700 border border-gray-100/70">{mockTeams.length}</Badge>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 {mockTeams.map((team) => (
-                                    <div key={team.id} className="p-3 border border-gray-100 rounded-lg hover:bg-gray-50">
+                                    <div key={team.id} className="p-3 border border-gray-100/70 rounded-lg hover:bg-blue-50/30 transition-all duration-200 hover:border-blue-100/50 group">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center">
-                                                <div className="bg-blue-100 p-2 rounded-lg">
-                                                    <Users size={16} className="text-blue-600" />
+                                                <div className="bg-blue-50/80 p-1.5 rounded-lg ring-1 ring-blue-100/50">
+                                                    <Users size={14} className="text-blue-600" />
                                                 </div>
-                                                <h3 className="ml-2 font-medium text-gray-900">{team.name}</h3>
+                                                <h3 className="ml-2 font-medium text-gray-900 text-sm group-hover:text-blue-600 transition-colors duration-200">{team.name}</h3>
                                             </div>
-                                            <Badge className="default" size="sm">{team.members.length}</Badge>
+                                            <Badge className="bg-gray-50 text-gray-600 border border-gray-100/70 text-xs" size="sm">{team.members.length}</Badge>
                                         </div>
                                         <div className="mt-2 flex -space-x-2">
                                             {team.members.slice(0, 3).map((member) => (
@@ -208,7 +207,7 @@ const page:React.FC = () => {
                                                 />
                                             ))}
                                             {team.members.length > 3 && (
-                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 border-2 border-white text-xs text-gray-600 font-medium">
+                                                <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 border-2 border-white text-xs text-gray-600 font-medium">
                                                     +{team.members.length - 3}
                                                 </div>
                                             )}
@@ -221,8 +220,8 @@ const page:React.FC = () => {
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="w-full"
-                                rightIcon={<ChevronRight size={16} />}
+                                className="w-full text-xs text-blue-600 border-blue-100 hover:bg-blue-50 transition-colors duration-200"
+                                rightIcon={<ChevronRight size={14} />}
                             >
                                 View All Teams
                             </Button>
@@ -230,15 +229,16 @@ const page:React.FC = () => {
                     </Card>
                 </div>
 
-                <div className="mt-6">
-                    <Card>
+                <div className="mt-5">
+                    <Card className="bg-white/90 backdrop-blur-sm border border-gray-100/70 shadow-sm">
                         <CardHeader>
                             <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-medium text-gray-900">Recent Tickets</h2>
+                                <h2 className="text-base font-medium text-gray-900">Recent Tickets</h2>
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    rightIcon={<ChevronRight size={16} />}
+                                    className="text-blue-600 hover:bg-blue-50 transition-colors duration-200 text-xs"
+                                    rightIcon={<ChevronRight size={14} />}
                                 >
                                     View All
                                 </Button>
@@ -249,68 +249,69 @@ const page:React.FC = () => {
                                 <table className="w-full">
                                     <thead>
                                         <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <th className="px-4 py-3">Ticket</th>
-                                            <th className="px-4 py-3">Status</th>
-                                            <th className="px-4 py-3">Priority</th>
-                                            <th className="px-4 py-3">Created</th>
-                                            <th className="px-4 py-3">Actions</th>
+                                            <th className="px-3 py-2.5">Ticket</th>
+                                            <th className="px-3 py-2.5">Status</th>
+                                            <th className="px-3 py-2.5">Priority</th>
+                                            <th className="px-3 py-2.5">Created</th>
+                                            <th className="px-3 py-2.5">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-100">
+                                    <tbody className="divide-y divide-gray-100/70">
                                         {mockTickets.map((ticket) => (
-                                            <motion.tr
+                                            <tr
                                                 key={ticket.id}
-                                                whileHover={{ backgroundColor: 'rgba(243, 244, 246, 0.5)' }}
-                                                className="text-sm text-gray-900"
+                                                className="text-sm text-gray-900 hover:bg-blue-50/30 transition-colors duration-200"
                                             >
-                                                <td className="px-4 py-3">
+                                                <td className="px-3 py-2.5">
                                                     <div className="flex items-center">
                                                         {ticket.escalated ? (
-                                                            <AlertTriangle size={16} className="text-red-500 mr-2" />
+                                                            <AlertTriangle size={14} className="text-red-500 mr-2" />
                                                         ) : (
-                                                            <FileText size={16} className="text-gray-400 mr-2" />
+                                                            <FileText size={14} className="text-gray-400 mr-2" />
                                                         )}
-                                                        <span className="font-medium truncate max-w-xs">{ticket.title}</span>
+                                                        <span className="font-medium truncate max-w-xs text-xs">{ticket.title}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-4 py-3">
+                                                <td className="px-3 py-2.5">
                                                     <Badge
-                                                        className={
-                                                            ticket.status === 'open' ? 'bg-gray-200 text-gray-800' :
-                                                                ticket.status === 'in-progress' ? 'bg-blue-200 text-blue-800' :
-                                                                    ticket.status === 'pending' ? 'bg-yellow-200 text-yellow-800' :
-                                                                        'bg-green-200 text-green-800'
-                                                        }
+                                                        className={`text-xs ${ticket.status === 'open' ? 'bg-gray-50 text-gray-700 border border-gray-200/70' :
+                                                                ticket.status === 'in-progress' ? 'bg-blue-50 text-blue-700 border border-blue-200/70' :
+                                                                    ticket.status === 'pending' ? 'bg-yellow-50 text-yellow-700 border border-yellow-200/70' :
+                                                                        'bg-green-50 text-green-700 border border-green-200/70'
+                                                            }`}
                                                         size="sm"
                                                     >
                                                         {ticket.status.replace('-', ' ')}
                                                     </Badge>
                                                 </td>
-                                                <td className="px-4 py-3">
+                                                <td className="px-3 py-2.5">
                                                     <Badge
-                                                        className={
-                                                            ticket.priority === 'low' ? 'bg-gray-200 text-gray-800' :
-                                                                ticket.priority === 'medium' ? 'bg-blue-200 text-blue-800' :
-                                                                    ticket.priority === 'high' ? 'bg-yellow-200 text-yellow-800' :
-                                                                        'bg-red-200 text-red-800'
-                                                        }
+                                                        className={`text-xs ${ticket.priority === 'low' ? 'bg-gray-50 text-gray-700 border border-gray-200/70' :
+                                                                ticket.priority === 'medium' ? 'bg-blue-50 text-blue-700 border border-blue-200/70' :
+                                                                    ticket.priority === 'high' ? 'bg-yellow-50 text-yellow-700 border border-yellow-200/70' :
+                                                                        'bg-red-50 text-red-700 border border-red-200/70'
+                                                            }`}
                                                         size="sm"
                                                     >
                                                         {ticket.priority}
                                                     </Badge>
                                                 </td>
-                                                <td className="px-4 py-3 text-gray-500">
+                                                <td className="px-3 py-2.5 text-gray-500 text-xs">
                                                     {new Date(ticket.createdAt).toLocaleTimeString([], {
                                                         hour: '2-digit',
                                                         minute: '2-digit'
                                                     })}
                                                 </td>
-                                                <td className="px-4 py-3">
-                                                    <Button variant="ghost" size="sm">
+                                                <td className="px-3 py-2.5">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-blue-600 hover:bg-blue-50 text-xs transition-colors duration-200"
+                                                    >
                                                         View
                                                     </Button>
                                                 </td>
-                                            </motion.tr>
+                                            </tr>
                                         ))}
                                     </tbody>
                                 </table>
@@ -319,6 +320,14 @@ const page:React.FC = () => {
                     </Card>
                 </div>
             </div>
+
+            <style>{`
+                /* iOS 18-like glass morphism */
+                .backdrop-blur-sm {
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                }
+            `}</style>
         </>
     );
 };

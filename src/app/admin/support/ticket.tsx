@@ -40,7 +40,7 @@ const TicketsIndexPage: React.FC = () => {
     };
 
     const handleViewTicket = (id: string) => {
-        navigate(`/support/tickets/${id}`);
+        navigate(`/admin/support/tickets/${id}`);
     };
 
     const handleCreateTicket = async (data: TicketFormData) => {

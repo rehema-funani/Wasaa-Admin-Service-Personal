@@ -32,8 +32,8 @@ export const teamService = {
     return response.data;
   },
 
-  addTeamMember: async (teamId: string, member: Omit<TeamMember, 'id'>): Promise<TeamMember> => {
-    const response = await supportaxios.post(`/teams/${teamId}/members`, member);
+  addTeamMember: async (teamId: string, user_id: string): Promise<TeamMember> => {
+    const response = await supportaxios.post(`/teams/${teamId}/members/${user_id}`);
     return response.data;
   },
 

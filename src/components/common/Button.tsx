@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger';
@@ -45,8 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
     const fullWidthStyles = fullWidth ? 'w-full' : '';
 
     return (
-        <motion.button
-            whileTap={{ scale: 0.98 }}
+        <button
             className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${fullWidthStyles} ${className}`}
             disabled={disabled || isLoading}
             {...props}
@@ -61,6 +59,6 @@ export const Button: React.FC<ButtonProps> = ({
             {!isLoading && rightIcon && (
                 <span className="ml-2">{rightIcon}</span>
             )}
-        </motion.button>
+        </button>
     );
 };

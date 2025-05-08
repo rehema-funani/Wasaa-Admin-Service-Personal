@@ -34,17 +34,24 @@ export const ticketService = {
     await supportaxios.delete(`/tickets/${id}`);
   },
 
-  // Ticket Assignments
-  assignTicket: async (
-    ticketId: string, 
-    assignment: { teamId?: string; userId?: string }
+  assignTicketToTeam: async (
+    ticketId: any,
+    teamId: any,
   ): Promise<TicketAssignment> => {
-    const response = await supportaxios.post(`/tickets/${ticketId}/assign`, assignment);
+    const response = await supportaxios.get(`/tickets/${ticketId}/assign-team/${teamId}`);
+    return response.data;
+  },
+
+  assignTicketToUser: async (
+    ticketId: string,
+    userId: string,
+  ): Promise<TicketAssignment> => {
+    const response = await supportaxios.get(`/tickets/${ticketId}/assign-user/${userId}`);
     return response.data;
   },
 
   getTicketAssignments: async (params?: Record<string, any>): Promise<TicketAssignment[]> => {
-    const response = await supportaxios.get('/assignments', { params });
+    const response = await supportaxios.get('/ticket-assignments', { params });
     return response.data;
   },
 
@@ -52,12 +59,11 @@ export const ticketService = {
     await supportaxios.delete(`/assignments/${assignmentId}`);
   },
 
-  // Ticket Escalations
   escalateTicket: async (
     ticketId: string,
-    escalation: TicketEscalationFormData
-  ): Promise<TicketEscalation> => {
-    const response = await supportaxios.post(`/tickets/${ticketId}/escalate`, escalation);
+    escalation: any
+  ): Promise<any> => {
+    const response = await supportaxios.put(`/tickets/${ticketId}/escalate`, escalation);
     return response.data;
   },
 
@@ -72,10 +78,10 @@ export const ticketService = {
   },
 
   createTicketComment: async (
-    ticketId: string, 
-    comment: TicketCommentFormData
+    ticketId: string,
+    data: any
   ): Promise<TicketComment> => {
-    const response = await supportaxios.post(`/tickets/${ticketId}/comments`, comment);
+    const response = await supportaxios.post(`/tickets/${ticketId}/comments`, data);
     return response.data;
   },
 

@@ -1,684 +1,463 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import {
-  Download,
-  Eye,
-  Edit,
-  Trash2,
-  Users,
-  Plus,
-  UsersRound,
-  Ban,
-  AlertCircle,
-  Check,
-  X,
-  Clock,
-  Shield
-} from 'lucide-react';
-import SearchBox from '../../../../components/common/SearchBox';
-import DataTable from '../../../../components/common/DataTable';
-import Pagination from '../../../../components/common/Pagination';
+import React, { useEffect, useState } from 'react';
+import { Calendar, Eye, X, SortAsc, SortDesc, Check } from 'lucide-react';
 import groupService from '../../../../api/services/groups';
 import { useNavigate } from 'react-router-dom';
 
-interface Group {
+type Group = {
   id: string;
-  name: string;
-  description?: string;
-  memberCount: number;
-  admin: string;
-  adminId: string;
-  icon?: string;
-  status: 'active' | 'inactive' | 'blocked';
+  title: string;
+  description: string;
+  icon: string | null;
+  type: string;
+  status: string;
+  created_by: string | null;
+  last_message: string | null;
+  last_message_sender: string | null;
+  last_message_time: string | null;
+  last_message_type: string;
   createdAt: string;
-}
+  updatedAt: string;
+  deletedAt: string | null;
+};
+
+type ApiResponse = {
+  groups: Group[];
+  meta: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+  };
+};
+
+const generateGroupColor = (title: string) => {
+  const colors = [
+    'bg-blue-100 text-blue-600',
+    'bg-purple-100 text-purple-600',
+    'bg-green-100 text-green-600',
+    'bg-yellow-100 text-yellow-600',
+    'bg-pink-100 text-pink-600',
+    'bg-indigo-100 text-indigo-600',
+  ];
+
+  const sum = title.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return colors[sum % colors.length];
+};
+
+const getInitials = (title: string) => {
+  return title
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2);
+};
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return '';
+
+  try {
+    const date = new Date(dateString);
+    return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()}`;
+  } catch (error) {
+    return dateString;
+  }
+};
 
 const page = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [groups, setGroups] = useState<Group[]>([]);
-  const [filteredGroups, setFilteredGroups] = useState<Group[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [recentSearches, setRecentSearches] = useState<string[]>([
-    'marketing', 'design', 'active'
-  ]);
-  const [actionInProgress, setActionInProgress] = useState<string | null>(null);
-  const [showConfirmation, setShowConfirmation] = useState<{ id: string, action: string } | null>(null);
+  const [metadata, setMetadata] = useState({ currentPage: 1, totalPages: 1, totalItems: 0 });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const groupStats = React.useMemo(() => {
-    const totalGroups = groups.length;
-    const activeGroups = groups.filter(group => group.status === 'active').length;
-    const inactiveGroups = groups.filter(group => group.status === 'inactive').length;
-    const blockedGroups = groups.filter(group => group.status === 'blocked').length;
-    const totalMembers = groups.reduce((sum, group) => sum + group.memberCount, 0);
 
+  // Sorting states
+  const [sortedColumn, setSortedColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-    return {
-      totalGroups,
-      activeGroups,
-      inactiveGroups,
-      blockedGroups,
-      totalMembers
-    };
-  }, [groups]);
+  // Selection states
+  const [selectedRows, setSelectedRows] = useState<Record<string, boolean>>({});
+  const [isAllSelected, setIsAllSelected] = useState(false);
+
+  const fetchGroups = async (page = 1) => {
+    try {
+      setLoading(true);
+      // Assuming groupService.getGroups accepts pagination params
+      const response: ApiResponse = await groupService.getGroups({ page });
+      setGroups(response.groups);
+      setMetadata(response.meta);
+    } catch (error) {
+      console.error('Failed to fetch groups:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        setIsLoading(true);
-        const response = await groupService.getGroups();
-
-        const groupsData = response?.data?.groups || [];
-
-        setGroups(groupsData);
-        setFilteredGroups(groupsData);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching groups:', err);
-        setError('Failed to load groups. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchGroups();
   }, []);
 
-  // Table columns definition
-  const columns = [
-    {
-      id: 'name',
-      header: 'Group',
-      accessor: (row: Group) => row.name,
-      sortable: true,
-      cell: (value: string, row: Group) => (
-        <div className="flex items-center">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center font-medium text-sm mr-3">
-            <UsersRound size={18} strokeWidth={1.8} />
-          </div>
-          <div>
-            <p className="font-medium text-gray-800">{value}</p>
-            <p className="text-xs text-gray-500">{row.description || 'No description'}</p>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: 'memberCount',
-      header: 'Members',
-      accessor: (row: Group) => row.memberCount,
-      sortable: true,
-      width: '120px',
-      cell: (value: number) => (
-        <div className="flex items-center">
-          <Users size={14} className="text-indigo-400 mr-1.5" strokeWidth={1.8} />
-          <span className="font-medium">{value}</span>
-        </div>
-      )
-    },
-    {
-      id: 'admin',
-      header: 'Admin',
-      accessor: (row: Group) => row.admin,
-      sortable: true,
-      width: '160px',
-      cell: (value: string) => (
-        <div className="flex items-center">
-          <Shield size={14} className="text-purple-400 mr-1.5" strokeWidth={1.8} />
-          <span className="font-medium text-gray-700">{value}</span>
-        </div>
-      )
-    },
-    {
-      id: 'createdAt',
-      header: 'Created',
-      accessor: (row: Group) => row.createdAt,
-      sortable: true,
-      width: '120px',
-      cell: (value: string) => {
-        // Format date if needed
-        try {
-          const date = new Date(value);
-          const formattedDate = date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-          });
-          return (
-            <div className="flex items-center">
-              <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-              <span>{formattedDate}</span>
-            </div>
-          );
-        } catch (e) {
-          return (
-            <div className="flex items-center">
-              <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-              <span>{value}</span>
-            </div>
-          );
-        }
+  const filteredGroups = groups.filter(group =>
+    group.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    group.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const sortedData = React.useMemo(() => {
+    if (!sortedColumn) return filteredGroups;
+
+    return [...filteredGroups].sort((a, b) => {
+      let valueA, valueB;
+
+      switch (sortedColumn) {
+        case 'title':
+          valueA = a.title;
+          valueB = b.title;
+          break;
+        case 'type':
+          valueA = a.type;
+          valueB = b.type;
+          break;
+        case 'status':
+          valueA = a.status;
+          valueB = b.status;
+          break;
+        case 'created':
+          valueA = new Date(a.createdAt).getTime();
+          valueB = new Date(b.createdAt).getTime();
+          break;
+        default:
+          return 0;
       }
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      accessor: (row: Group) => row.status,
-      sortable: true,
-      width: '120px',
-      cell: (value: string) => {
-        let color = '';
-        let bgColor = '';
-        let icon = null;
 
-        switch (value) {
-          case 'active':
-            color = 'text-green-700';
-            bgColor = 'bg-green-50';
-            icon = <Check size={14} className="mr-1.5 text-green-500" strokeWidth={2} />;
-            break;
-          case 'inactive':
-            color = 'text-amber-700';
-            bgColor = 'bg-amber-50';
-            icon = <Clock size={14} className="mr-1.5 text-amber-500" strokeWidth={2} />;
-            break;
-          case 'blocked':
-            color = 'text-red-700';
-            bgColor = 'bg-red-50';
-            icon = <Ban size={14} className="mr-1.5 text-red-500" strokeWidth={2} />;
-            break;
-          default:
-            color = 'text-gray-700';
-            bgColor = 'bg-gray-50';
-            icon = <AlertCircle size={14} className="mr-1.5 text-gray-500" strokeWidth={2} />;
-        }
+      if (valueA === valueB) return 0;
 
-        return (
-          <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${bgColor} ${color} capitalize`}>
-            {icon}
-            {value}
-          </span>
-        );
+      if (sortDirection === 'asc') {
+        return valueA < valueB ? -1 : 1;
+      } else {
+        return valueA > valueB ? -1 : 1;
       }
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      accessor: (row: Group) => row.id,
-      sortable: false,
-      width: '180px',
-      cell: (value: string, row: Group) => (
-        <div className="flex items-center space-x-1">
-          <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="View group"
-            onClick={() => handleViewGroup(row.id)}
-            disabled={actionInProgress === row.id}
-          >
-            <Eye size={16} strokeWidth={1.8} />
-          </motion.button>
-          <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Edit group"
-            onClick={() => handleEditGroup(row.id)}
-            disabled={actionInProgress === row.id}
-          >
-            <Edit size={16} strokeWidth={1.8} />
-          </motion.button>
-          {row.status === 'active' && (
-            <motion.button
-              className="p-1.5 rounded-lg text-gray-500 hover:bg-amber-100 hover:text-amber-600"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Deactivate group"
-              onClick={() => handleConfirmAction(row.id, 'deactivate')}
-              disabled={actionInProgress === row.id}
-            >
-              <Ban size={16} strokeWidth={1.8} />
-            </motion.button>
-          )}
-          {row.status === 'inactive' && (
-            <motion.button
-              className="p-1.5 rounded-lg text-gray-500 hover:bg-green-100 hover:text-green-600"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Activate group"
-              onClick={() => handleConfirmAction(row.id, 'activate')}
-              disabled={actionInProgress === row.id}
-            >
-              <Check size={16} strokeWidth={1.8} />
-            </motion.button>
-          )}
-          {row.status === 'blocked' && (
-            <motion.button
-              className="p-1.5 rounded-lg text-gray-500 hover:bg-green-100 hover:text-green-600"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Unblock group"
-              onClick={() => handleConfirmAction(row.id, 'unblock')}
-              disabled={actionInProgress === row.id}
-            >
-              <Check size={16} strokeWidth={1.8} />
-            </motion.button>
-          )}
-          <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-red-100 hover:text-red-600"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Delete group"
-            onClick={() => handleConfirmAction(row.id, 'delete')}
-            disabled={actionInProgress === row.id}
-          >
-            <Trash2 size={16} strokeWidth={1.8} />
-          </motion.button>
-        </div>
-      )
-    }
-  ];
+    });
+  }, [filteredGroups, sortedColumn, sortDirection]);
 
-  // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-
-    if (query.trim() === '') {
-      setFilteredGroups(groups);
-      return;
-    }
-
-    const lowercasedQuery = query.toLowerCase();
-
-    // Filter by name, description, or admin
-    const filtered = groups.filter(group =>
-      group.name.toLowerCase().includes(lowercasedQuery) ||
-      (group.description && group.description.toLowerCase().includes(lowercasedQuery)) ||
-      group.admin.toLowerCase().includes(lowercasedQuery)
-    );
-
-    setFilteredGroups(filtered);
-
-    // Add to recent searches
-    if (query.trim() !== '' && !recentSearches.includes(query)) {
-      setRecentSearches(prev => [query, ...prev.slice(0, 4)]);
-    }
-
-    setCurrentPage(1); // Reset to first page
+  const changePage = (page: number) => {
+    if (page < 1 || page > metadata.totalPages) return;
+    fetchGroups(page);
   };
 
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  // Handle items per page change
-  const handleItemsPerPageChange = (perPage: number) => {
-    setItemsPerPage(perPage);
-    setCurrentPage(1); // Reset to first page
-  };
-
-  // Export as CSV (placeholder)
-  const handleExport = () => {
-    alert('Export functionality would go here');
-  };
-
-  const handleViewGroup = (id: string) => {
-    navigate(`/admin/groups/${id}`);
-  };
-
-  const handleEditGroup = (id: string) => {
-    navigate(`/admin/groups/${id}/edit`);
-  };
-
-  const handleConfirmAction = (id: string, action: string) => {
-    setShowConfirmation({ id, action });
-  };
-
-  const handleCancelAction = () => {
-    setShowConfirmation(null);
-  };
-
-  const handleActivateGroup = async (id: string) => {
-    try {
-      setActionInProgress(id);
-      await groupService.updateGroupStatus(id, 'active');
-
-      setGroups(prev => prev.map(group =>
-        group.id === id ? { ...group, status: 'active' } : group
-      ));
-      setFilteredGroups(prev => prev.map(group =>
-        group.id === id ? { ...group, status: 'active' } : group
-      ));
-
-      setShowConfirmation(null);
-    } catch (error) {
-      console.error('Error activating group:', error);
-      alert('Failed to activate group. Please try again.');
-    } finally {
-      setActionInProgress(null);
+  const handleSort = (columnId: string) => {
+    if (sortedColumn === columnId) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortedColumn(columnId);
+      setSortDirection('asc');
     }
   };
 
-  const handleDeactivateGroup = async (id: string) => {
-    try {
-      setActionInProgress(id);
-      await groupService.updateGroupStatus(id, 'inactive');
-
-      setGroups(prev => prev.map(group =>
-        group.id === id ? { ...group, status: 'inactive' } : group
-      ));
-      setFilteredGroups(prev => prev.map(group =>
-        group.id === id ? { ...group, status: 'inactive' } : group
-      ));
-
-      setShowConfirmation(null);
-    } catch (error) {
-      console.error('Error deactivating group:', error);
-      alert('Failed to deactivate group. Please try again.');
-    } finally {
-      setActionInProgress(null);
-    }
+  const handleSelectRow = (id: string) => {
+    setSelectedRows(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+    updateAllSelectedState(!selectedRows[id]);
   };
 
-  const handleUnblockGroup = async (id: string) => {
-    try {
-      setActionInProgress(id);
-      await groupService.updateGroupStatus(id, 'active');
+  const handleSelectAll = () => {
+    const newSelectAllState = !isAllSelected;
+    setIsAllSelected(newSelectAllState);
 
-      setGroups(prev => prev.map(group =>
-        group.id === id ? { ...group, status: 'active' } : group
-      ));
-      setFilteredGroups(prev => prev.map(group =>
-        group.id === id ? { ...group, status: 'active' } : group
-      ));
-
-      setShowConfirmation(null);
-    } catch (error) {
-      console.error('Error unblocking group:', error);
-      alert('Failed to unblock group. Please try again.');
-    } finally {
-      setActionInProgress(null);
-    }
+    const newSelectedRows: Record<string, boolean> = {};
+    sortedData.forEach(row => {
+      newSelectedRows[row.id] = newSelectAllState;
+    });
+    setSelectedRows(newSelectedRows);
   };
 
-  const handleDeleteGroup = async (id: string) => {
-    try {
-      setActionInProgress(id);
-      await groupService.deleteGroup(id);
-
-      setGroups(prev => prev.filter(group => group.id !== id));
-      setFilteredGroups(prev => prev.filter(group => group.id !== id));
-
-      setShowConfirmation(null);
-    } catch (error) {
-      console.error('Error deleting group:', error);
-      alert('Failed to delete group. Please try again.');
-    } finally {
-      setActionInProgress(null);
-    }
+  const updateAllSelectedState = (isSelected: boolean) => {
+    const allSelected = sortedData.every(row => selectedRows[row.id] || (row.id === isSelected));
+    setIsAllSelected(allSelected);
   };
 
-  const handleConfirmationAction = () => {
-    if (!showConfirmation) return;
-
-    const { id, action } = showConfirmation;
-
-    switch (action) {
-      case 'activate':
-        handleActivateGroup(id);
-        break;
-      case 'deactivate':
-        handleDeactivateGroup(id);
-        break;
-      case 'unblock':
-        handleUnblockGroup(id);
-        break;
-      case 'delete':
-        handleDeleteGroup(id);
-        break;
-      default:
-        setShowConfirmation(null);
-    }
+  const handleViewGroup = (groupId: string) => {
+    navigate(`/admin/Group/all-group-list/${groupId}`);
   };
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto">
-      <motion.div
-        className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Groups</h1>
-          <p className="text-gray-500 mt-1">Manage user groups and communities</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-            whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
-            whileTap={{ y: 0 }}
-            onClick={handleExport}
-          >
-            <Download size={16} className="mr-2" strokeWidth={1.8} />
-            Export
-          </motion.button>
-          <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
-            whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
-            whileTap={{ y: 0 }}
-            onClick={() => navigate('/admin/groups/create')}
-          >
-            <Plus size={16} className="mr-2" strokeWidth={1.8} />
-            Create Group
-          </motion.button>
-        </div>
-      </motion.div>
+    <div className="min-h-screen bg-gray-50 text-gray-900">
 
-      <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4"
-          whileHover={{ y: -3, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
-        >
-          <div className="flex justify-between items-start mb-3">
-            <div className="bg-indigo-50 rounded-xl p-2">
-              <UsersRound size={20} className="text-indigo-500" strokeWidth={1.8} />
-            </div>
-            <div className="flex items-center">
-              <div className="px-2 py-0.5 bg-indigo-50 rounded-full text-xs text-indigo-600 font-medium">
-                {groupStats.activeGroups} active
+      {/* Table */}
+      <div className="max-w-7xl mx-auto p-4">
+        {/* Using the DataTable style */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            {loading ? (
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50/70">
+                    <th className="w-10 px-4 py-4">
+                      <div className="w-5 h-5 bg-gray-200 rounded animate-pulse"></div>
+                    </th>
+                    <th className="px-4 py-4 text-left" style={{ width: '40%' }}>
+                      <div className="h-5 bg-gray-200 rounded animate-pulse"></div>
+                    </th>
+                    <th className="px-4 py-4 text-left" style={{ width: '15%' }}>
+                      <div className="h-5 bg-gray-200 rounded animate-pulse"></div>
+                    </th>
+                    <th className="px-4 py-4 text-left" style={{ width: '15%' }}>
+                      <div className="h-5 bg-gray-200 rounded animate-pulse"></div>
+                    </th>
+                    <th className="px-4 py-4 text-left" style={{ width: '15%' }}>
+                      <div className="h-5 bg-gray-200 rounded animate-pulse"></div>
+                    </th>
+                    <th className="px-4 py-4 text-left" style={{ width: '15%' }}>
+                      <div className="h-5 bg-gray-200 rounded animate-pulse"></div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Array.from({ length: 5 }).map((_, rowIndex) => (
+                    <tr key={rowIndex} className="border-b border-gray-100 last:border-0">
+                      <td className="px-4 py-4">
+                        <div className="w-5 h-5 bg-gray-100 rounded animate-pulse"></div>
+                      </td>
+                      {Array.from({ length: 5 }).map((_, colIndex) => (
+                        <td key={`${rowIndex}-${colIndex}`} className="px-4 py-4">
+                          <div className="h-5 bg-gray-100 rounded animate-pulse"></div>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : sortedData.length === 0 ? (
+              <div className="p-6 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                  <X size={24} className="text-gray-400" strokeWidth={1.5} />
+                </div>
+                <p className="text-gray-500">No groups found matching your search.</p>
               </div>
-            </div>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50/80 backdrop-blur-sm">
+                    <th className="w-10 px-4 py-3">
+                      <div
+                        className="w-5 h-5 rounded-md border border-gray-300 flex items-center justify-center cursor-pointer hover:border-indigo-600"
+                        onClick={handleSelectAll}
+                      >
+                        {isAllSelected && (
+                          <Check size={14} className="text-indigo-600" />
+                        )}
+                      </div>
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-600 tracking-wider cursor-pointer"
+                      onClick={() => handleSort('title')}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Group</span>
+                        <div className="ml-1 opacity-30">
+                          {sortedColumn === 'title' ? (
+                            sortDirection === 'asc' ? (
+                              <SortAsc size={14} className="text-indigo-600" />
+                            ) : (
+                              <SortDesc size={14} className="text-indigo-600" />
+                            )
+                          ) : (
+                            <SortAsc size={14} className="text-gray-400" />
+                          )}
+                        </div>
+                      </div>
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-600 tracking-wider cursor-pointer"
+                      onClick={() => handleSort('type')}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Type</span>
+                        <div className="ml-1 opacity-30">
+                          {sortedColumn === 'type' ? (
+                            sortDirection === 'asc' ? (
+                              <SortAsc size={14} className="text-indigo-600" />
+                            ) : (
+                              <SortDesc size={14} className="text-indigo-600" />
+                            )
+                          ) : (
+                            <SortAsc size={14} className="text-gray-400" />
+                          )}
+                        </div>
+                      </div>
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-600 tracking-wider cursor-pointer"
+                      onClick={() => handleSort('status')}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Status</span>
+                        <div className="ml-1 opacity-30">
+                          {sortedColumn === 'status' ? (
+                            sortDirection === 'asc' ? (
+                              <SortAsc size={14} className="text-indigo-600" />
+                            ) : (
+                              <SortDesc size={14} className="text-indigo-600" />
+                            )
+                          ) : (
+                            <SortAsc size={14} className="text-gray-400" />
+                          )}
+                        </div>
+                      </div>
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-medium text-gray-600 tracking-wider cursor-pointer"
+                      onClick={() => handleSort('created')}
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Created</span>
+                        <div className="ml-1 opacity-30">
+                          {sortedColumn === 'created' ? (
+                            sortDirection === 'asc' ? (
+                              <SortAsc size={14} className="text-indigo-600" />
+                            ) : (
+                              <SortDesc size={14} className="text-indigo-600" />
+                            )
+                          ) : (
+                            <SortAsc size={14} className="text-gray-400" />
+                          )}
+                        </div>
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedData.map((group, index) => (
+                    <tr
+                      key={group.id}
+                      className={`
+                        border-b border-gray-50 last:border-0 
+                        hover:bg-gray-50/50 cursor-pointer
+                        ${selectedRows[group.id] ? 'bg-indigo-50/50' : ''}
+                      `}
+                    >
+                      <td
+                        className="px-4 py-3.5"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectRow(group.id);
+                        }}
+                      >
+                        <div
+                          className={`
+                            w-5 h-5 rounded-md border flex items-center justify-center cursor-pointer hover:border-indigo-600
+                            ${selectedRows[group.id] ? 'border-indigo-600 bg-indigo-50' : 'border-gray-300'}
+                          `}
+                        >
+                          {selectedRows[group.id] && (
+                            <Check size={14} className="text-indigo-600" />
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5 text-sm">
+                        <div className="flex items-center space-x-3">
+                          <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${generateGroupColor(group.title)}`}>
+                            {getInitials(group.title)}
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-gray-900">{group.title}</h3>
+                            <p className="text-xs text-gray-500 truncate max-w-xs">{group.description}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5 text-sm">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${group.type === 'public' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                          }`}>
+                          {group.type}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-sm">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${group.status === 'active' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                          }`}>
+                          {group.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-sm text-gray-700">
+                        <div className="flex items-center">
+                          <Calendar className="h-3 w-3 mr-1" />
+                          {formatDate(group.createdAt)}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5 text-sm">
+                        <div className="flex items-center space-x-1">
+                          <button
+                            className="p-1 rounded-md hover:bg-indigo-50 text-indigo-600"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewGroup(group.id);
+                            }}
+                          >
+                            <Eye size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
-          <h3 className="text-2xl font-semibold text-gray-800 mb-1">
-            {groupStats.totalGroups}
-          </h3>
-          <p className="text-sm text-gray-500">Total Groups</p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4"
-          whileHover={{ y: -3, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
-        >
-          <div className="flex justify-between items-start mb-3">
-            <div className="bg-blue-50 rounded-xl p-2">
-              <Users size={20} className="text-blue-500" strokeWidth={1.8} />
-            </div>
-          </div>
-          <h3 className="text-2xl font-semibold text-gray-800 mb-1">
-            {groupStats.totalMembers.toLocaleString()}
-          </h3>
-          <p className="text-sm text-gray-500">Total Members</p>
-        </motion.div>
-
-        <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4"
-          whileHover={{ y: -3, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
-        >
-          <div className="flex justify-between items-start mb-3">
-            <div className="bg-green-50 rounded-xl p-2">
-              <Check size={20} className="text-green-500" strokeWidth={1.8} />
-            </div>
-          </div>
-          <h3 className="text-2xl font-semibold text-gray-800 mb-1">
-            {groupStats.activeGroups}
-          </h3>
-          <p className="text-sm text-gray-500">Active Groups</p>
-        </motion.div>
-
-        <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4"
-          whileHover={{ y: -3, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
-        >
-          <div className="flex justify-between items-start mb-3">
-            <div className="bg-red-50 rounded-xl p-2">
-              <Ban size={20} className="text-red-500" strokeWidth={1.8} />
+        {/* Pagination */}
+        {metadata.totalPages > 0 && (
+          <div className="mt-4 flex items-center justify-between text-sm">
+            <div className="text-gray-500">
+              Showing {sortedData.length} of {metadata.totalItems} groups
             </div>
             <div className="flex items-center space-x-2">
-              <div className="px-2 py-0.5 bg-amber-50 rounded-full text-xs text-amber-600 font-medium">
-                {groupStats.inactiveGroups} inactive
-              </div>
-              <div className="px-2 py-0.5 bg-red-50 rounded-full text-xs text-red-600 font-medium">
-                {groupStats.blockedGroups} blocked
-              </div>
+              <button
+                className={`px-3 py-1 rounded-lg bg-gray-100 text-gray-600 ${metadata.currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={metadata.currentPage === 1}
+                onClick={() => changePage(metadata.currentPage - 1)}
+              >
+                Previous
+              </button>
+
+              {/* Page Numbers */}
+              {Array.from({ length: Math.min(5, metadata.totalPages) }).map((_, i) => {
+                // Calculate which page numbers to show
+                let pageNum;
+                if (metadata.totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (metadata.currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (metadata.currentPage >= metadata.totalPages - 2) {
+                  pageNum = metadata.totalPages - 4 + i;
+                } else {
+                  pageNum = metadata.currentPage - 2 + i;
+                }
+
+                return (
+                  <button
+                    key={i}
+                    className={`px-3 py-1 rounded-lg ${pageNum === metadata.currentPage ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+                    onClick={() => changePage(pageNum)}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              <button
+                className={`px-3 py-1 rounded-lg bg-gray-100 text-gray-600 ${metadata.currentPage === metadata.totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={metadata.currentPage === metadata.totalPages}
+                onClick={() => changePage(metadata.currentPage + 1)}
+              >
+                Next
+              </button>
             </div>
           </div>
-          <h3 className="text-2xl font-semibold text-gray-800 mb-1">
-            {groupStats.inactiveGroups + groupStats.blockedGroups}
-          </h3>
-          <p className="text-sm text-gray-500">Inactive/Blocked</p>
-        </motion.div>
-      </motion.div>
-
-      <motion.div
-        className="mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        <SearchBox
-          placeholder="Search groups by name, description or admin..."
-          onSearch={handleSearch}
-          suggestions={[
-            'marketing',
-            'design',
-            'active',
-            'blocked'
-          ]}
-          recentSearches={recentSearches}
-          showRecentByDefault={true}
-        />
-      </motion.div>
-
-      <motion.div
-        className="mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
-      >
-        {error ? (
-          <div className="p-4 bg-red-50 text-red-800 rounded-lg">
-            <p>{error}</p>
-            <button
-              className="mt-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-md"
-              onClick={() => window.location.reload()}
-            >
-              Retry
-            </button>
-          </div>
-        ) : (
-          <DataTable
-            columns={columns}
-            data={filteredGroups}
-            selectable={true}
-            isLoading={isLoading}
-            emptyMessage="No groups found. Try adjusting your search terms."
-            defaultRowsPerPage={itemsPerPage}
-          />
         )}
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.3 }}
-      >
-        <Pagination
-          totalItems={filteredGroups.length}
-          itemsPerPage={itemsPerPage}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-          onItemsPerPageChange={handleItemsPerPageChange}
-          showItemsPerPage={true}
-          itemsPerPageOptions={[10, 25, 50, 100]}
-          showSummary={true}
-        />
-      </motion.div>
-
-      {showConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <motion.div
-            className="bg-white rounded-xl p-6 max-w-md w-full mx-4"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-          >
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              {showConfirmation.action === 'delete' ? 'Delete Group' :
-                showConfirmation.action === 'activate' ? 'Activate Group' :
-                  showConfirmation.action === 'deactivate' ? 'Deactivate Group' : 'Unblock Group'}
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {showConfirmation.action === 'delete'
-                ? 'Are you sure you want to delete this group? This action cannot be undone.'
-                : showConfirmation.action === 'activate'
-                  ? 'Are you sure you want to activate this group? This will make it visible to members.'
-                  : showConfirmation.action === 'deactivate'
-                    ? 'Are you sure you want to deactivate this group? This will hide it from members.'
-                    : 'Are you sure you want to unblock this group? This will restore access to members.'}
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
-                onClick={handleCancelAction}
-              >
-                Cancel
-              </button>
-              <button
-                className={`px-4 py-2 rounded-lg text-white
-                  ${showConfirmation.action === 'delete'
-                    ? 'bg-red-600 hover:bg-red-700'
-                    : showConfirmation.action === 'deactivate'
-                      ? 'bg-amber-600 hover:bg-amber-700'
-                      : 'bg-green-600 hover:bg-green-700'}`}
-                onClick={handleConfirmationAction}
-                disabled={actionInProgress !== null}
-              >
-                {actionInProgress === showConfirmation.id ? (
-                  <span className="inline-flex items-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </span>
-                ) : (
-                  <span>Confirm</span>
-                )}
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
