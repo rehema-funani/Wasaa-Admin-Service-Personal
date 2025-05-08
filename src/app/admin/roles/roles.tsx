@@ -154,7 +154,7 @@ const roles = () => {
     };
 
     const handleAddRole = () => {
-        navigate('/roles/create');
+        navigate('/admin/system/roles/create');
     };
 
     const handleSearch = (query: string) => {
@@ -284,15 +284,6 @@ const roles = () => {
                         suggestions={roles.map(role => role.title).slice(0, 5)}
                         recentSearches={recentSearches}
                         showRecentByDefault={true}
-                    />
-                </div>
-                <div className="md:col-span-1">
-                    <FilterPanel
-                        title="Role Filters"
-                        filters={[]}
-                        onApplyFilters={handleApplyFilters}
-                        onResetFilters={handleResetFilters}
-                        initialExpanded={false}
                     />
                 </div>
             </motion.div>

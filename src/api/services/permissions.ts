@@ -2,7 +2,7 @@ import { api } from "../axios";
 
 export const permissionService = {
   getPermissions: async () => {
-    const response = await api.get('/permissions');
+    const response = await api.get('/roles/permissions');
     return response.data;
   },
 

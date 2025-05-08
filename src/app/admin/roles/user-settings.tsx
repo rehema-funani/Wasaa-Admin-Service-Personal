@@ -429,51 +429,23 @@ const page: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <ActionButton
-                        icon={<Upload size={16} className="mr-2" strokeWidth={1.8} />}
-                        label="Import"
-                        onClick={() => { }}
-                    />
-                    <ActionButton
-                        icon={<Download size={16} className="mr-2" strokeWidth={1.8} />}
-                        label="Export"
-                        onClick={handleExport}
-                    />
-                    <ActionButton
                         icon={<UserPlus size={16} className="mr-2" strokeWidth={1.8} />}
-                        label="Export"
-                        onClick={handleExport}
+                        label="Add User"
+                        onClick={handleAddUser}
                         isPrimary
                     />
                 </div>
             </motion.div>
 
-            <motion.div
-                className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-            >
-                <div className="md:col-span-2">
-                    <SearchBox
-                        placeholder="Search users by name, email, role or location..."
-                        onSearch={handleSearch}
-                        suggestions={users.map(user => user.name).slice(0, 5)}
-                        recentSearches={recentSearches}
-                        showRecentByDefault={true}
-                        className="shadow-sm rounded-xl" // Add modern styling to SearchBox
-                    />
-                </div>
-                <div className="md:col-span-1">
-                    <FilterPanel
-                        title="User Filters"
-                        filters={filterOptions}
-                        onApplyFilters={handleApplyFilters}
-                        onResetFilters={handleResetFilters}
-                        initialExpanded={false}
-                        className="rounded-xl shadow-sm" // Add modern styling to FilterPanel
-                    />
-                </div>
-            </motion.div>
+            <SearchBox
+                placeholder="Search users by name, email, role or location..."
+                onSearch={handleSearch}
+                suggestions={users.map(user => user.name).slice(0, 5)}
+                recentSearches={recentSearches}
+                showRecentByDefault={true}
+                className="shadow-sm rounded-xl"
+            />
+            <div className="mb-2 w-full text-white">.</div>
 
             {error && (
                 <motion.div

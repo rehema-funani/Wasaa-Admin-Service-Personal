@@ -1,5 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+
 import AdminLayout from './components/layout/AdminLayout';
 
 const Dashboard = lazy(() => import('./app/dashboard/page'));
@@ -17,6 +19,7 @@ const ReportedGroups = lazy(() => import('./app/admin/Group/all-reported-group-l
 
 const RolesPage = lazy(() => import('./app/admin/roles/roles'));
 const RoleDetail = lazy(() => import('./app/admin/roles/roledetail'));
+const CreateRole = lazy(() => import('./app/admin/roles/createrole'));
 const SystemUsers = lazy(() => import('./app/admin/roles/user-settings'));
 
 const AllLivestreams = lazy(() => import('./app/admin/livestreams/all-livestreams/page'));
@@ -55,6 +58,7 @@ const Login = lazy(() => import('./app/auth/login/page'));
 const VerifyOtp = lazy(() => import('./app/auth/verify/page'));
 const ForgotPassword = lazy(() => import('./app/auth/forgot-password/page'));
 const Reset = lazy(() => import('./app/auth/forgot-password/reset'));
+const Set = lazy(() => import('./app/auth/forgot-password/set'));
 
 const Support = lazy(() => import('./app/admin/support/page'));
 const Teams = lazy(() => import('./app/admin/support/team'));
@@ -72,7 +76,8 @@ const LoadingFallback = () => (
 );
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    const isAuthenticated = true;
+    const authToken = Cookies.get("authToken");
+    const isAuthenticated = !!authToken;
 
     if (!isAuthenticated) {
         return <Navigate to="/auth/login" replace />;
@@ -89,6 +94,8 @@ const AppRouter: React.FC = () => {
                 <Route path="/auth/login/verify-otp" element={<VerifyOtp />} />
                 <Route path="/auth/forgot-password" element={<ForgotPassword />} />
                 <Route path="/auth/reset-password" element={<Reset />} />
+
+                <Route path="/user/set-password" element={<Set />} />
 
                 <Route
                     path="/"
@@ -112,6 +119,7 @@ const AppRouter: React.FC = () => {
 
                     <Route path="admin/system/roles" element={<RolesPage />} />
                     <Route path="admin/system/roles/:id" element={<RoleDetail />} />
+                    <Route path="admin/system/roles/create" element={<CreateRole />} />
                     <Route path='admin/system/users' element={<SystemUsers />} />
 
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />

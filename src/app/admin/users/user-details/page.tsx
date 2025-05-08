@@ -310,15 +310,6 @@ const page = () => {
             showRecentByDefault={true}
           />
         </div>
-        <div className="md:col-span-1">
-          <FilterPanel
-            title="User Filters"
-            filters={[]}
-            onApplyFilters={handleApplyFilters}
-            onResetFilters={handleResetFilters}
-            initialExpanded={false}
-          />
-        </div>
       </motion.div>
 
       {error && (
