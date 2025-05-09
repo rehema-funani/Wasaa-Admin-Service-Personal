@@ -137,7 +137,7 @@ const ListAvatars: React.FC = () => {
 
   return (
     <div className="max-w-8xl mx-auto px-8 py-6">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-16">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Avatars</h1>
           <p className="text-gray-500 text-sm max-w-xl">Personalize user identities with custom profile images</p>
@@ -154,7 +154,7 @@ const ListAvatars: React.FC = () => {
         </div>
       </div>
 
-      <div className="relative mb-14">
+      <div className="relative mb-4">
         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
           <Search size={20} className="text-gray-400" />
         </div>

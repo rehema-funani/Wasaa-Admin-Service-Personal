@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   ChevronDown,
   Home,
   Menu,
   X,
-  ArrowRight
+  ArrowRight,
+  LogOut,
+  Settings,
+  Bell,
+  Moon,
+  Sun,
+  User
 } from 'lucide-react';
-import logo from '../../assets/images/logo-wasaa.png'
+import logo from '../../assets/images/logo-wasaa.png';
 import routes, { LinkRoute, DropdownRoute, SectionRoute } from '../../constants/routes';
 
 type RouteItem = LinkRoute | DropdownRoute | SectionRoute;
@@ -17,19 +23,25 @@ interface SidebarProps {
   setCollapsed?: (collapsed: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = () => {
+const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+
+  // Mock user data - in a real app, this would come from your auth context/provider
+  const user = {
+    name: 'Alex Morgan',
+    email: 'alex@wasaa.finance',
+    avatar: null, // Could be a URL to the user's avatar
+    role: 'Administrator'
+  };
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 720);
-      if (window.innerWidth >= 720) {
-        setMobileOpen(false);
-      }
+      setIsMobile(window.innerWidth < 1024);
     };
 
     handleResize();
@@ -38,10 +50,11 @@ const Sidebar: React.FC<SidebarProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (isMobile) {
-      setMobileOpen(false);
+    // Close dropdowns when route changes
+    if (isMobile && setCollapsed) {
+      setCollapsed(true);
     }
-  }, [location.pathname, isMobile]);
+  }, [location.pathname, isMobile, setCollapsed]);
 
   const toggleDropdown = (key: string) => {
     setOpenDropdowns(prev => ({
@@ -63,6 +76,20 @@ const Sidebar: React.FC<SidebarProps> = () => {
       }
       return false;
     });
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log('Logging out...');
+    // For example: authService.logout();
+    // Then redirect to login page
+    navigate('/login');
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    // You would implement actual dark mode toggle logic here
+    // document.documentElement.classList.toggle('dark');
   };
 
   const renderIcon = (icon: React.FC<React.SVGProps<SVGSVGElement>>, isActivePage: boolean) => {
@@ -91,12 +118,13 @@ const Sidebar: React.FC<SidebarProps> = () => {
             to={item.path}
             onMouseEnter={() => setHoveredItem(itemKey)}
             onMouseLeave={() => setHoveredItem(null)}
+            onClick={() => isMobile && setCollapsed && setCollapsed(true)}
           >
             <div
               className={`
-                flex items-center py-1.5 px-3 rounded-lg transition-all duration-150 relative hover:translate-x-0.5 
+                flex items-center py-2 px-3 rounded-xl transition-all duration-200 relative hover:translate-x-0.5 
                 ${isActivePage
-                  ? 'text-blue-600 font-medium border-0 bg-gradient-to-r from-blue-50/60 to-indigo-50/40'
+                  ? 'text-blue-600 font-medium border-0 bg-gradient-to-r from-blue-50/80 to-indigo-50/60'
                   : 'text-gray-700 hover:text-blue-500'
                 }
               `}
@@ -104,23 +132,23 @@ const Sidebar: React.FC<SidebarProps> = () => {
             >
               {isActivePage && (
                 <div
-                  className="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-indigo-50/30 rounded-lg backdrop-blur-sm ring-1 ring-blue-100/20"
+                  className="absolute inset-0 bg-gradient-to-r from-blue-50/70 to-indigo-50/40 rounded-xl backdrop-blur-sm ring-1 ring-blue-100/30"
                   style={{ zIndex: -1 }}
                 />
               )}
 
               {item.icon && (
                 <div
-                  className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-150 mr-2.5
-                    ${isActivePage ? 'bg-gradient-to-br from-blue-100/80 to-indigo-50/60' : 'bg-gray-50/60'}
-                    ${isHovered && !isActivePage ? 'bg-gradient-to-br from-blue-50/50 to-indigo-50/30' : ''}
+                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 mr-3
+                    ${isActivePage ? 'bg-gradient-to-br from-blue-100/90 to-indigo-50/70' : 'bg-gray-50/80'}
+                    ${isHovered && !isActivePage ? 'bg-gradient-to-br from-blue-50/60 to-indigo-50/40' : ''}
                   `}
                 >
                   {renderIcon(item.icon, isActivePage)}
                 </div>
               )}
               <span
-                className={`text-[13px] transition-all font-medium 
+                className={`text-sm transition-all font-medium 
                   ${isActivePage ? 'text-blue-600' : 'text-gray-600'}
                 `}
               >
@@ -129,15 +157,15 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
               {isHovered && !isActivePage && (
                 <span
-                  className="ml-auto text-blue-400 opacity-70 transition-all duration-150"
+                  className="ml-auto text-blue-400 opacity-80 transition-all duration-200"
                 >
-                  <ArrowRight size={12} />
+                  <ArrowRight size={14} />
                 </span>
               )}
 
               {isActivePage && (
                 <div
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-blue-500 rounded-r-full"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-gradient-to-b from-blue-500 to-indigo-400 rounded-r-full"
                 />
               )}
             </div>
@@ -156,7 +184,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
           <button
             onClick={() => toggleDropdown(item.key)}
             className={`
-              flex items-center justify-between w-full py-1.5 px-3 rounded-lg transition-all duration-150
+              flex items-center justify-between w-full py-2 px-3 rounded-xl transition-all duration-200
               hover:translate-x-0.5 
               ${hasActive || isOpen
                 ? 'text-blue-600 font-medium'
@@ -170,41 +198,41 @@ const Sidebar: React.FC<SidebarProps> = () => {
           >
             {(hasActive || isOpen) && (
               <div
-                className="absolute inset-0 bg-gradient-to-r from-blue-50/40 to-indigo-50/20 rounded-lg backdrop-blur-sm"
+                className="absolute inset-0 bg-gradient-to-r from-blue-50/60 to-indigo-50/30 rounded-xl backdrop-blur-sm"
                 style={{ zIndex: -1 }}
               />
             )}
             <div className="flex items-center">
               {item.icon && (
                 <div
-                  className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-150 mr-2.5
-                    ${hasActive || isOpen ? 'bg-gradient-to-br from-blue-100/80 to-indigo-50/60' : 'bg-gray-50/60'}
-                    ${isHovered && !hasActive && !isOpen ? 'bg-gradient-to-br from-blue-50/50 to-indigo-50/30' : ''}
+                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 mr-3
+                    ${hasActive || isOpen ? 'bg-gradient-to-br from-blue-100/90 to-indigo-50/70' : 'bg-gray-50/80'}
+                    ${isHovered && !hasActive && !isOpen ? 'bg-gradient-to-br from-blue-50/60 to-indigo-50/40' : ''}
                   `}
                 >
                   {renderIcon(item.icon, hasActive || isOpen)}
                 </div>
               )}
               <span
-                className={`text-[13px] font-medium ${hasActive || isOpen ? 'text-blue-600' : 'text-gray-600'}`}
+                className={`text-sm font-medium ${hasActive || isOpen ? 'text-blue-600' : 'text-gray-600'}`}
               >
                 {item.title}
               </span>
             </div>
             <div
-              className={`flex items-center justify-center w-5 h-5 rounded-full transition-all duration-150
+              className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-200
                 ${isOpen ? 'bg-blue-50' : 'bg-transparent'} 
               `}
             >
-              <ChevronDown size={13} className={`transition-transform duration-200 ${isOpen ? "text-blue-500 transform rotate-180" : "text-gray-400"}`} />
+              <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? "text-blue-500 transform rotate-180" : "text-gray-400"}`} />
             </div>
           </button>
 
           <div
-            className={`overflow-hidden transition-all duration-200 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+            className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
           >
             <div
-              className="ml-5 pl-2 border-l border-blue-100/50"
+              className="ml-6 pl-2 border-l border-blue-100/60"
             >
               {item.items.map((subItem: any, idx: number) => (
                 <div
@@ -222,14 +250,14 @@ const Sidebar: React.FC<SidebarProps> = () => {
     if (item.type === 'section') {
       return (
         <div
-          className="mt-4 first:mt-1 mb-1"
+          className="mt-6 first:mt-2 mb-2"
         >
           {level === 0 && (
-            <div className="px-4 py-1">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">{item.title}</span>
+            <div className="px-5 py-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">{item.title}</span>
             </div>
           )}
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             {item.items.map((subItem: any, idx: number) => (
               <div key={idx}>
                 {renderNavItem(subItem, level)}
@@ -243,114 +271,100 @@ const Sidebar: React.FC<SidebarProps> = () => {
     return null;
   };
 
-  const renderMobileMenuButton = () => {
+  const renderUserProfileSection = () => {
     return (
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed bottom-6 right-6 z-50 p-3 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-lg hover:shadow-blue-200/50 transition-all duration-200 backdrop-blur-md"
-        aria-label="Toggle menu"
-      >
-        {mobileOpen ? (
-          <div className="transition-all duration-150">
-            <X size={20} />
+      <div className="mt-auto pt-4 pb-6 px-3">
+        <div className="flex flex-col space-y-3">
+          <div className="flex items-center px-2 py-2 rounded-xl bg-gradient-to-r from-blue-50/80 to-indigo-50/60 backdrop-blur-sm">
+            <div className="flex-shrink-0">
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-white"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium">
+                  {user.name.charAt(0)}
+                </div>
+              )}
+            </div>
+            <div className="ml-3 flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-800 truncate">{user.name}</p>
+              <p className="text-xs text-gray-500 truncate">{user.role}</p>
+            </div>
+            <div className="ml-2">
+              <div className="relative group">
+                <button className="p-1.5 rounded-full hover:bg-white/60 transition-all duration-150 text-gray-500 hover:text-blue-600">
+                  <Settings size={16} />
+                </button>
+                <div className="absolute right-0 bottom-full mb-2 w-32 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="bg-white rounded-lg py-1.5 px-1 text-xs text-gray-700">
+                    Account settings
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        ) : (
-          <div className="transition-all duration-150">
-            <Menu size={20} />
+
+          <div className="grid grid-cols-1 gap-2">
+            <button
+              onClick={handleLogout}
+              className="flex items-center justify-center rounded-xl py-2 px-3 transition-all duration-200 bg-red-50 hover:bg-red-100/80 text-red-600 hover:text-red-700"
+            >
+              <LogOut size={16} className="mr-2" />
+              <span className="text-xs font-medium">Logout</span>
+            </button>
           </div>
-        )}
-      </button>
+        </div>
+      </div>
     );
   };
 
   return (
-    <>
-      <aside
-        className={`
-          flex flex-col h-full bg-white/90 backdrop-blur-xl
-          transition-all duration-300 overflow-hidden border-r border-gray-100/70
-          ${isMobile ? 'hidden' : 'block'}
-        `}
-      >
-        <div className="flex items-center justify-between py-3 px-4 border-b border-gray-100/50">
-          <div>
-            <NavLink to="/" className="flex items-center">
-              <div
-                className="relative transition-all duration-150"
-              >
-                <img
-                  src={logo}
-                  alt="Logo"
-                  className="h-9 w-auto rounded-lg transition-all duration-150"
-                />
-                <div
-                  className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-blue-200/10 to-indigo-200/5 blur-sm -z-10"
-                />
-              </div>
-              {/* <div
-                className="ml-2 hidden lg:block"
-              >
-                <span className="text-base font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500">
-                  Wasaa
-                </span>
-              </div> */}
-            </NavLink>
-          </div>
-        </div>
-
-        <nav
-          className="px-2 py-2 overflow-y-auto h-[calc(100vh-3.5rem)] hide-scrollbar bg-gradient-to-b from-white/90 to-white/70"
-        >
-          {routes.map((item: RouteItem, idx: number) => (
+    <aside
+      className="flex flex-col h-[100vh] bg-white/95 backdrop-blur-xl overflow-y-auto border-r border-gray-100/80 glass-morphism"
+    >
+      <div className="flex items-center justify-between py-4 px-4 border-b border-gray-100/70">
+        <div>
+          <NavLink to="/" className="flex items-center">
             <div
-              key={idx}
+              className="relative transition-all duration-200 group"
             >
-              {renderNavItem(item)}
-            </div>
-          ))}
-        </nav>
-      </aside>
-
-      {mobileOpen && (
-        <aside
-          className="fixed inset-0 bg-white/95 backdrop-blur-xl z-40 lg:hidden overflow-auto"
-          style={{
-            transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
-            transition: 'transform 0.3s ease-in-out'
-          }}
-        >
-          <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100/50">
-            <NavLink to="/" className="flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-medium text-sm shadow-md">
-                W
-              </div>
-              <span className="ml-2 text-base font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-500">
-                Wasaa
-              </span>
-            </NavLink>
-
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="p-1.5 rounded-lg hover:bg-gray-100/50 transition-all duration-150"
-              aria-label="Close menu"
-            >
-              <X size={18} className="text-gray-500" />
-            </button>
-          </div>
-
-          <nav className="p-2 overflow-y-auto max-h-[calc(100vh-3.5rem)]">
-            {routes.map((item: RouteItem, idx: number) => (
+              <img
+                src={logo}
+                alt="Logo"
+                className="h-10 w-auto rounded-xl transition-all duration-200 group-hover:opacity-90"
+              />
               <div
-                key={idx}
-              >
-                {renderNavItem(item)}
-              </div>
-            ))}
-          </nav>
-        </aside>
-      )}
+                className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-blue-200/20 to-indigo-200/10 blur-sm -z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+              />
+            </div>
+          </NavLink>
+        </div>
+        {isMobile && (
+          <button
+            onClick={() => setCollapsed && setCollapsed(true)}
+            className="p-2 rounded-lg hover:bg-gray-100/60 transition-all duration-150"
+          >
+            <X size={18} className="text-gray-500" />
+          </button>
+        )}
+      </div>
 
-      {renderMobileMenuButton()}
+      <nav
+        className="px-3 py-4 overflow-y-auto flex-1 hide-scrollbar bg-gradient-to-b from-white/95 to-white/80"
+      >
+        {routes.map((item: RouteItem, idx: number) => (
+          <div
+            key={idx}
+          >
+            {renderNavItem(item)}
+          </div>
+        ))}
+      </nav>
+
+      {renderUserProfileSection()}
 
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {
@@ -361,12 +375,12 @@ const Sidebar: React.FC<SidebarProps> = () => {
           scrollbar-width: none;
         }
         
-        /* iOS 18-like glass morphism */
+        /* Modern glass morphism */
         .glass-morphism {
-          background: rgba(255, 255, 255, 0.8);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-right: 1px solid rgba(235, 240, 255, 0.2);
         }
         
         /* For dropdown animation - smoother transitions */
@@ -374,7 +388,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
           max-height: 24rem;
         }
       `}</style>
-    </>
+    </aside>
   );
 };
 

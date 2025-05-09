@@ -268,7 +268,7 @@ const routes: Route[] = [
         {
           type: 'link',
           path: '/admin/settings',
-          title: 'Settings',
+          title: 'General',
           icon: Settings,
         },
         {
@@ -288,7 +288,19 @@ const routes: Route[] = [
           path: '/admin/support',
           title: 'Support',
           icon: Globe,
-        }
+        },
+        {
+          type: 'link',
+          path:'/admin/Wallpaper/list-all-wallpaper',
+          title: 'Wallpaper',
+          icon: ImageIcon,
+        },
+        {
+          type: 'link',
+          path:'/admin/Avatar/list-all-avatar',
+          title: 'Avatar',
+          icon: ImageIcon,
+        },
       ],
     },
   ];

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { NavLink } from 'react-router-dom';
 import {
   Bell,
   Search,
@@ -11,10 +12,22 @@ import {
   Mail,
   X,
   Clock,
-  AlertCircle
+  AlertCircle,
+  Settings
 } from 'lucide-react';
+import logo from '../../assets/images/logo-wasaa.png';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  mobileMenuOpen: boolean;
+  toggleMobileMenu: () => void;
+  showSearchOnMobile?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({
+  mobileMenuOpen,
+  toggleMobileMenu,
+  showSearchOnMobile = false
+}) => {
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
@@ -145,13 +158,27 @@ const Header: React.FC = () => {
     }
   };
 
-
   return (
     <header
       className="h-[60px] bg-white/80 backdrop-blur-xl border-b border-gray-50  
-      flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20 transition-width"
+      flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20 transition-all"
     >
-      <div className="relative flex-1 max-w-md">
+      <div className="flex items-center">
+        <NavLink to="/" className="flex md:hidden items-center">
+          <div className="relative transition-all duration-200 group">
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-12 w-auto rounded-xl transition-all duration-200 group-hover:opacity-90"
+            />
+            <div
+              className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-blue-200/20 to-indigo-200/10 blur-sm -z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+            />
+          </div>
+        </NavLink>
+      </div>
+
+      <div className={`relative flex-1 max-w-md mx-4 ${showSearchOnMobile ? 'block' : 'hidden md:block'}`}>
         <div
           className="flex items-center bg-gray-50/80 rounded-xl border border-gray-100 overflow-hidden"
         >
@@ -172,12 +199,15 @@ const Header: React.FC = () => {
           />
           <AnimatePresence>
             {searchValue && (
-              <button
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
                 className="mr-3 text-gray-400 hover:text-gray-600"
                 onClick={clearSearch}
               >
                 <X size={16} strokeWidth={1.8} />
-              </button>
+              </motion.button>
             )}
           </AnimatePresence>
         </div>
@@ -199,19 +229,26 @@ const Header: React.FC = () => {
             <Bell size={20} strokeWidth={1.8} />
             <AnimatePresence>
               {unreadNotifications > 0 && (
-                <div
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
                   className="absolute top-1.5 right-1.5 flex items-center justify-center"
                 >
                   <span className="w-2 h-2 bg-red-500 rounded-full block"></span>
-                </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </button>
 
           <AnimatePresence>
             {notificationsOpen && (
-              <div
-                className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-gray-100 py-2 z-30 overflow-hidden"
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-md rounded-2xl border border-gray-100 py-2 z-30 overflow-hidden"
               >
                 <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
                   <h3 className="font-medium text-gray-800">Notifications</h3>
@@ -271,10 +308,19 @@ const Header: React.FC = () => {
                     View all notifications
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
+
+        {/* Settings button - hidden on small screens */}
+        <button
+          className="p-2 rounded-xl text-gray-400 hover:text-indigo-500 hover:bg-gray-50/80 transition-all hidden sm:block"
+          onMouseEnter={() => setHoveredButton('settings')}
+          onMouseLeave={() => setHoveredButton(null)}
+        >
+          <Settings size={18} strokeWidth={1.8} />
+        </button>
 
         <div className="relative ml-2" ref={userMenuRef}>
           <button
@@ -285,7 +331,7 @@ const Header: React.FC = () => {
             onClick={() => setUserMenuOpen(!userMenuOpen)}
           >
             <div
-              className="w-8 h-8 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center text-white shadow-sm shadow-indigo-200/60"
+              className="w-8 h-8 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center text-white"
             >
               <User size={16} strokeWidth={1.8} />
             </div>
@@ -303,14 +349,18 @@ const Header: React.FC = () => {
 
           <AnimatePresence>
             {userMenuOpen && (
-              <div
-                className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-gray-100 py-2 z-30 overflow-hidden"
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-md rounded-2xl border border-gray-100 py-2 z-30 overflow-hidden"
               >
                 <div
                   className="px-4 py-3 border-b border-gray-100"
                 >
                   <p className="font-medium text-gray-800">Admin User</p>
-                  <p className="text-sm text-gray-500">admin@streampay.com</p>
+                  <p className="text-sm text-gray-500">admin@wasaa.finance</p>
                 </div>
 
                 <div
@@ -346,7 +396,7 @@ const Header: React.FC = () => {
                     <span>Logout</span>
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
@@ -359,6 +409,12 @@ const Header: React.FC = () => {
         .hide-scrollbar {
           -ms-overflow-style: none;
           scrollbar-width: none;
+        }
+        
+        @media (max-width: 768px) {
+          .ml-2 {
+            margin-left: 0.25rem;
+          }
         }
       `}</style>
     </header>
