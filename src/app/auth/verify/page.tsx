@@ -53,7 +53,6 @@ const page: React.FC = () => {
             e.preventDefault();
         }
 
-        // Get the most current OTP value directly from state
         const otpValue = otpValues.join('');
 
         if (!otpValue || otpValue.length < 6) {
@@ -125,13 +124,11 @@ const page: React.FC = () => {
         }
     };
 
-    // Handle keyboard navigation between boxes
     const handleKeyDown = (index: any, e: any) => {
         if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
             inputRefs.current[index - 1]?.focus();
         }
 
-        // Allow arrow navigation between boxes
         if (e.key === 'ArrowLeft' && index > 0) {
             e.preventDefault();
             inputRefs.current[index - 1]?.focus();

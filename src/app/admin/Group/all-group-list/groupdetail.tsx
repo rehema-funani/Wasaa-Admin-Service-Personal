@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import groupService from '../../../../api/services/groups';
 import { useNavigate, useParams } from 'react-router-dom';
+import moment from 'moment';
 
 type Member = {
     id: string;
@@ -437,10 +438,6 @@ const groupdetail: React.FC = () => {
                                 <h2 className="text-lg font-semibold">
                                     Members ({group.members ? group.members.length : 0})
                                 </h2>
-                                <button className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300 flex items-center font-medium">
-                                    <UserPlus size={16} className="mr-2" />
-                                    Invite Member
-                                </button>
                             </div>
                         </div>
 
@@ -461,9 +458,6 @@ const groupdetail: React.FC = () => {
                                             <th className="px-6 py-4 text-left text-xs font-medium text-gray-600 tracking-wider">
                                                 Joined
                                             </th>
-                                            <th className="px-6 py-4 text-right text-xs font-medium text-gray-600 tracking-wider">
-                                                Actions
-                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
@@ -472,10 +466,10 @@ const groupdetail: React.FC = () => {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 mr-3">
-                                                            {member.user ? member.user.name?.charAt(0) : 'M'}
+                                                            {member.user ? member.user.username?.charAt(0) : 'M'}
                                                         </div>
                                                         <div className="text-sm font-medium text-gray-900">
-                                                            {member.user ? member.user.name : 'Member'}
+                                                            {member.user ? member.user.username : 'Member'}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -495,12 +489,7 @@ const groupdetail: React.FC = () => {
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {formatDate(member.createdAt)}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <button className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors duration-300">
-                                                        <MoreHorizontal size={16} />
-                                                    </button>
+                                                    {moment(member.createdAt)?.format('MMM DD, YYYY, h:mm A')}
                                                 </td>
                                             </tr>
                                         ))}

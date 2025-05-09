@@ -8,13 +8,10 @@ import {
   ArrowRight,
   LogOut,
   Settings,
-  Bell,
-  Moon,
-  Sun,
-  User
 } from 'lucide-react';
 import logo from '../../assets/images/logo-wasaa.png';
 import routes, { LinkRoute, DropdownRoute, SectionRoute } from '../../constants/routes';
+import Cookies from 'js-cookie';
 
 type RouteItem = LinkRoute | DropdownRoute | SectionRoute;
 
@@ -30,14 +27,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
 
-  // Mock user data - in a real app, this would come from your auth context/provider
-  const user = {
-    name: 'Alex Morgan',
-    email: 'alex@wasaa.finance',
-    avatar: null, // Could be a URL to the user's avatar
-    role: 'Administrator'
-  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -50,7 +41,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   }, []);
 
   useEffect(() => {
-    // Close dropdowns when route changes
     if (isMobile && setCollapsed) {
       setCollapsed(true);
     }
@@ -79,17 +69,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   };
 
   const handleLogout = () => {
-    // Add your logout logic here
-    console.log('Logging out...');
-    // For example: authService.logout();
-    // Then redirect to login page
-    navigate('/login');
-  };
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    // You would implement actual dark mode toggle logic here
-    // document.documentElement.classList.toggle('dark');
+    Cookies.remove('authToken');
+    Cookies.remove('userData');
+    navigate('/auth/login');
+    window.location.reload();
   };
 
   const renderIcon = (icon: React.FC<React.SVGProps<SVGSVGElement>>, isActivePage: boolean) => {

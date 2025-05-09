@@ -17,7 +17,6 @@ api.interceptors.request.use(
   (config) => {
     try {
       const token = Cookies.get('authToken');
-      console.log(token);
       
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;

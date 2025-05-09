@@ -67,21 +67,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Toggle mobile menu/sidebar function to pass to Header
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
-    // Close floating menu if it's open
     if (floatingMenuOpen) {
       setFloatingMenuOpen(false);
     }
   };
 
-  // Toggle floating menu
   const toggleFloatingMenu = () => {
     setFloatingMenuOpen(!floatingMenuOpen);
   };
 
-  // Floating menu options
   const floatingMenuItems = [
     { icon: Grid, label: "Dashboard", path: "/dashboard" },
     { icon: Wallet, label: "Payments", path: "/payments" },
@@ -90,11 +86,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
     { icon: Settings, label: "Settings", path: "/settings" },
   ];
 
-  // Render floating menu button and menu
   const renderFloatingMenu = () => {
     return (
       <>
-        {/* Main floating button - only visible on mobile */}
         <button
           onClick={floatingMenuOpen ? toggleFloatingMenu : toggleSidebar}
           className={`
@@ -118,7 +112,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
           </motion.div>
         </button>
 
-        {/* Floating menu items - only visible on mobile */}
         <AnimatePresence>
           {floatingMenuOpen && (
             <div className="fixed z-40 bottom-24 right-6 flex flex-col gap-3 items-end lg:hidden">
@@ -132,7 +125,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
                 >
                   <button
                     onClick={() => {
-                      // Handle navigation
                       setFloatingMenuOpen(false);
                     }}
                     className="flex items-center gap-2 bg-white rounded-xl px-4 py-2.5 shadow-md border border-gray-100 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-200"
@@ -171,7 +163,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
         />
       </div>
 
-      <div className="h-[100vh] flex flex-col min-w-0 lg:pl-0">
+      <div className="h-[100vh] flex flex-col w-full lg:pl-0">
         <div className="sticky top-0 z-20">
           <div className="glass-header border-b border-gray-50">
             <Header

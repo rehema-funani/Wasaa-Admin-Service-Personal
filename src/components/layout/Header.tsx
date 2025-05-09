@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Bell,
   Search,
@@ -9,13 +9,13 @@ import {
   ChevronDown,
   CreditCard,
   UserCog,
-  Mail,
   X,
   Clock,
   AlertCircle,
   Settings
 } from 'lucide-react';
 import logo from '../../assets/images/logo-wasaa.png';
+import Cookies from 'js-cookie';
 
 interface HeaderProps {
   mobileMenuOpen: boolean;
@@ -24,8 +24,6 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({
-  mobileMenuOpen,
-  toggleMobileMenu,
   showSearchOnMobile = false
 }) => {
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
@@ -38,6 +36,8 @@ const Header: React.FC<HeaderProps> = ({
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,6 +72,13 @@ const Header: React.FC<HeaderProps> = ({
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
+  };
+
+  const handleLogout = () => {
+    Cookies.remove('authToken');
+    Cookies.remove('userData');
+    navigate('/auth/login');
+    window.location.reload();
   };
 
   const notifications = [
@@ -313,7 +320,6 @@ const Header: React.FC<HeaderProps> = ({
           </AnimatePresence>
         </div>
 
-        {/* Settings button - hidden on small screens */}
         <button
           className="p-2 rounded-xl text-gray-400 hover:text-indigo-500 hover:bg-gray-50/80 transition-all hidden sm:block"
           onMouseEnter={() => setHoveredButton('settings')}
@@ -359,8 +365,8 @@ const Header: React.FC<HeaderProps> = ({
                 <div
                   className="px-4 py-3 border-b border-gray-100"
                 >
-                  <p className="font-medium text-gray-800">Admin User</p>
-                  <p className="text-sm text-gray-500">admin@wasaa.finance</p>
+                  <p className="font-medium text-gray-800">{user?.name}</p>
+                  <p className="text-sm text-gray-500">{user?.email}</p>
                 </div>
 
                 <div
@@ -378,18 +384,13 @@ const Header: React.FC<HeaderProps> = ({
                     <UserCog size={16} className="mr-3 text-gray-500" strokeWidth={1.8} />
                     <span>Account Settings</span>
                   </button>
-                  <button
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center"
-                  >
-                    <Mail size={16} className="mr-3 text-gray-500" strokeWidth={1.8} />
-                    <span>Messages</span>
-                  </button>
                 </div>
 
                 <div
                   className="border-t border-gray-100 mt-1 px-1 py-1"
                 >
                   <button
+                    onClick={() => handleLogout()}
                     className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50/70 text-sm flex items-center text-red-600"
                   >
                     <LogOut size={16} className="mr-3" strokeWidth={1.8} />
@@ -401,7 +402,6 @@ const Header: React.FC<HeaderProps> = ({
           </AnimatePresence>
         </div>
       </div>
-
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;

@@ -72,7 +72,7 @@ const routes: Route[] = [
         {
           type: 'link',
           path: '/admin/users/countrywise-Analysis',
-          title: 'Countrywise Users',
+          title: 'Countrywise',
           icon: Globe,
         },
       ],
@@ -125,7 +125,7 @@ const routes: Route[] = [
         },
         {
           type: 'dropdown',
-          title: 'LS Management',
+          title: 'Livestream Management',
           icon: Video,
           key: 'Livestream Management',
           items: [

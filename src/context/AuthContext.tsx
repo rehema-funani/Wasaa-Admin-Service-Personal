@@ -120,23 +120,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsLoading(true);
         setError(null);
         try {
-            // Call API
             const response = await userService.verifyOtp(payload);
 
-            // Store tokens in cookies with error handling
             try {
-                // Set cookie expiration (default is end of session if not specified)
                 const cookieOptions = {
-                    expires: 7, // 7 days
-                    secure: window.location.protocol === 'https:', // Secure in production
+                    expires: 1,
+                    secure: window.location.protocol === 'https:',
                     sameSite: 'strict' as const
                 };
 
-                // Store tokens
                 Cookies.set('authToken', response.accessToken || '', cookieOptions);
                 Cookies.set('refreshToken', response.refreshToken || '', cookieOptions);
 
-                // Process and store user data if available
                 if (response.user) {
                     const userData: User = {
                         id: response.user.id,
@@ -148,19 +143,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                         permissions: response.user.role?.role_permissions?.map(rp => rp.permissions?.title) || []
                     };
 
-                    // Update user state
                     setUser(userData);
 
-                    // Store user data
                     Cookies.set('userData', JSON.stringify(userData), cookieOptions);
                 }
 
-                // Verify storage worked
                 const tokenCheck = Cookies.get('authToken');
-                console.log('Token stored successfully in cookies:', !!tokenCheck);
 
             } catch (storageError) {
-                // Log storage errors but don't fail the operation
                 console.error('Error storing auth data in cookies:', storageError);
             }
 
