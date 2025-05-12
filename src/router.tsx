@@ -101,7 +101,6 @@ const AppRouter: React.FC = () => {
                 <Route path="/auth/reset-password" element={<Reset />} />
                 <Route path="/user/set-password" element={<Set />} />
 
-                {/* Add an unauthorized page route */}
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
                 <Route
@@ -157,7 +156,6 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
 
-                    {/* Roles Routes with Permission Guards */}
                     <Route path="admin/system/roles" element={
                         <PermissionRouteGuard permissions={PermissionMap.Roles.view}>
                             <RolesPage />
@@ -179,7 +177,6 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
 
-                    {/* Livestream Routes */}
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />
                     <Route path="admin/livestreams/scheduled" element={<ScheduledStreams />} />
                     <Route path="admin/livestreams/settings" element={<StreamSettings />} />
@@ -189,7 +186,6 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/livestreams/moderation" element={<StreamModeration />} />
                     <Route path="admin/livestreams/reported" element={<ReportedStreams />} />
 
-                    {/* Finance Routes */}
                     <Route path="admin/finance/transactions" element={<Transactions />} />
                     <Route path="admin/finance/user-wallets" element={<UserWallets />} />
                     <Route path="admin/finance/user-wallets/:id" element={<WalletDetail />} />
@@ -199,7 +195,6 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/finance/reports" element={<FinancialReports />} />
                     <Route path="admin/finance/gift-history" element={<GiftHistory />} />
 
-                    {/* Media Routes with Permission Guards */}
                     <Route path="admin/Wallpaper/list-all-wallpaper" element={
                         <PermissionRouteGuard permissions={PermissionMap.Media.view}>
                             <WallpaperList />
@@ -221,7 +216,6 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
 
-                    {/* Settings Routes with Permission Guards */}
                     <Route path="admin/settings" element={
                         <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
                             <GeneralSettings />
@@ -238,7 +232,6 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
 
-                    {/* Gift Routes with Permission Guards */}
                     <Route path="admin/gifts/gift-list" element={
                         <PermissionRouteGuard permissions={PermissionMap.Media.view}>
                             <GiftList />
@@ -255,7 +248,6 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
 
-                    {/* Support Routes */}
                     <Route path="admin/support" element={<Support />} />
                     <Route path="/admin/support/teams" element={<Teams />} />
                     <Route path="/admin/support/teams/:id" element={<TeamDetail />} />
@@ -263,7 +255,6 @@ const AppRouter: React.FC = () => {
                     <Route path="/admin/support/tickets/:id" element={<TicketDetail />} />
                     <Route path="/admin/support/assignments" element={<Reassign />} />
 
-                    {/* Logs Route */}
                     <Route path="admin/logs" element={<Logs />} />
                 </Route>
 

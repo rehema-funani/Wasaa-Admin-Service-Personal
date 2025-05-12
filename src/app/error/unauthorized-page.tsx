@@ -1,17 +1,13 @@
-// src/app/error/unauthorized-page.tsx
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     ShieldOff,
     Home,
-    ArrowLeft,
     Mail,
     Lock,
     Shield,
     AlertTriangle,
     User,
-    X,
     ChevronRight
 } from 'lucide-react';
 
@@ -22,37 +18,23 @@ const UnauthorizedPage: React.FC = () => {
     const [mounted, setMounted] = useState(false);
     const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-    // Refs for parallax effect
     const containerRef = useRef<HTMLDivElement>(null);
     const cardRef = useRef<HTMLDivElement>(null);
 
-    // Mock user data
-    const userData = {
-        name: "Alex Morgan",
-        email: "alex.morgan@company.com",
-        role: "Marketing Specialist",
-        avatar: null,
-    };
-
     useEffect(() => {
         setMounted(true);
-
-        // Handle parallax effect on mouse move
         const handleMouseMove = (e: MouseEvent) => {
             if (!containerRef.current || !cardRef.current) return;
 
             const { clientX, clientY } = e;
             const containerRect = containerRef.current.getBoundingClientRect();
 
-            // Calculate mouse position relative to container center
             const centerX = containerRect.left + containerRect.width / 2;
             const centerY = containerRect.top + containerRect.height / 2;
 
-            // Calculate offsets
             const offsetX = (clientX - centerX) / 30;
             const offsetY = (clientY - centerY) / 30;
 
-            // Apply subtle parallax effect to card
             cardRef.current.style.transform = `
         translate3d(${offsetX}px, ${offsetY}px, 0)
         rotateX(${-offsetY * 0.2}deg)
@@ -60,10 +42,8 @@ const UnauthorizedPage: React.FC = () => {
       `;
         };
 
-        // Add event listener
         window.addEventListener('mousemove', handleMouseMove);
 
-        // Animate in button elements with delay
         const buttons = document.querySelectorAll('.action-button');
         buttons.forEach((button, index) => {
             setTimeout(() => {
@@ -91,27 +71,22 @@ const UnauthorizedPage: React.FC = () => {
             ref={containerRef}
             className="min-h-screen w-full flex items-center justify-center perspective-1000 bg-gradient-to-br from-slate-50 via-indigo-50/30 to-blue-50 p-4 overflow-hidden"
         >
-            {/* Animated background elements */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className="absolute top-0 -right-20 w-96 h-96 rounded-full bg-gradient-to-br from-indigo-200/30 to-blue-300/20 blur-3xl animate-float-slow" />
                 <div className="absolute top-1/3 -left-20 w-80 h-80 rounded-full bg-gradient-to-tr from-blue-200/20 to-violet-200/20 blur-3xl animate-float-slower" />
                 <div className="absolute -bottom-40 right-1/3 w-96 h-96 rounded-full bg-gradient-to-tr from-cyan-100/20 to-indigo-200/30 blur-3xl animate-float" />
 
-                {/* Geometric shapes */}
                 <div className="absolute top-20 right-20 w-12 h-12 rounded-lg bg-gradient-to-br from-blue-400/10 to-indigo-400/10 backdrop-blur-md rotate-12 animate-spin-very-slow border border-white/20" />
                 <div className="absolute bottom-20 left-20 w-16 h-16 rounded-full bg-gradient-to-br from-indigo-300/10 to-violet-400/10 backdrop-blur-md animate-float-slow border border-white/20" />
                 <div className="absolute top-1/3 right-1/3 w-10 h-10 rounded-md bg-gradient-to-br from-cyan-300/10 to-blue-400/10 backdrop-blur-md -rotate-12 animate-float border border-white/20" />
             </div>
 
-            {/* Glowing dots */}
             <div className="absolute top-1/4 left-1/4 w-2 h-2 rounded-full bg-blue-400/70 blur-sm animate-pulse" />
             <div className="absolute top-3/4 left-2/3 w-2 h-2 rounded-full bg-indigo-400/70 blur-sm animate-pulse" />
             <div className="absolute top-1/3 right-1/4 w-1.5 h-1.5 rounded-full bg-violet-400/70 blur-sm animate-pulse-slow" />
 
-            {/* Light beam effect */}
             <div className="absolute top-0 left-1/2 w-1/3 h-screen bg-gradient-to-b from-blue-400/5 via-indigo-400/5 to-transparent transform -translate-x-1/2 rotate-15 blur-3xl" />
 
-            {/* Main content container with 3D effect */}
             <div
                 ref={cardRef}
                 className={`relative max-w-lg w-full transition-all duration-1000 ease-out transform style-preserve-3d ${mounted ? 'translate-y-0 opacity-100 rotate-z-0' : 'translate-y-8 opacity-0 rotate-z-2'
