@@ -304,7 +304,7 @@ const createrole: React.FC = () => {
 
             const response = await roleService.createRole(roleData);
             toast.success('Role created successfully');
-            navigate(`/roles/${response.id}`);
+            navigate(`/admin/system/roles`);
         } catch (error) {
             console.error('Failed to create role:', error);
             toast.error('Failed to create role. Please try again.');

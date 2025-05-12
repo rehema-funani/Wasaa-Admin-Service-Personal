@@ -175,7 +175,7 @@ const roledetail: React.FC = () => {
                 await roleService.deleteRole(id);
                 setIsDeleteModalOpen(false);
                 toast.success('Role deleted successfully');
-                navigate('/roles');
+                navigate(-1);
             }
         } catch (error) {
             console.error('Failed to delete role:', error);

@@ -22,7 +22,7 @@ export const roleService = {
   },
 
   deleteRole: async (id: string) => {
-    const response = await api.delete(`/roles/${id}`);
+    const response = await api.delete(`/roles/role/${id}`);
     return response.data;
   }
 };
