@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Trash2, X, Camera, Check } from 'lucide-react';
+import { mediaService } from '../../../../api/services/media';
 
 interface Avatar {
   id: string;
@@ -8,44 +9,11 @@ interface Avatar {
   createdAt: string;
 }
 
-const ListAvatars: React.FC = () => {
-  const [avatars, setAvatars] = useState<Avatar[]>([
-    {
-      id: '1',
-      name: 'Default Blue',
-      imageUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
-      createdAt: '2025-04-10'
-    },
-    {
-      id: '2',
-      name: 'Professional',
-      imageUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
-      createdAt: '2025-04-14'
-    },
-    {
-      id: '3',
-      name: 'Casual',
-      imageUrl: 'https://randomuser.me/api/portraits/men/55.jpg',
-      createdAt: '2025-04-17'
-    },
-    {
-      id: '4',
-      name: 'Artistic',
-      imageUrl: 'https://randomuser.me/api/portraits/women/68.jpg',
-      createdAt: '2025-04-22'
-    },
-    {
-      id: '5',
-      name: 'Modern',
-      imageUrl: 'https://randomuser.me/api/portraits/men/75.jpg',
-      createdAt: '2025-04-28'
-    }
-  ]);
-
-  // Search functionality
+const page: React.FC = () => {
+  const [avatars, setAvatars] = useState<Avatar[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Add avatar modal state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const [newAvatar, setNewAvatar] = useState({
@@ -53,7 +21,25 @@ const ListAvatars: React.FC = () => {
     imageUrl: '/api/placeholder/100/100'
   });
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    fetchAvatars();
+  }, []);
+
+  const fetchAvatars = async () => {
+    try {
+      setIsLoading(true);
+      const data = await mediaService.getAvatars();
+      setAvatars(data);
+    } catch (error) {
+      console.error('Error fetching avatars:', error);
+    } finally {
+      setIsLoading(false);
+      setIsLoaded(true);
+    }
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -63,11 +49,17 @@ const ListAvatars: React.FC = () => {
     avatar.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (confirm("Are you sure you want to delete this avatar?")) {
-      setAvatars(avatars.filter(avatar => avatar.id !== id));
+      try {
+        await mediaService.deleteMedia(id);
+        setAvatars(avatars.filter(avatar => avatar.id !== id));
+      } catch (error) {
+        console.error('Error deleting avatar:', error);
+        alert('Failed to delete avatar. Please try again.');
+      }
     }
   };
 
@@ -77,13 +69,14 @@ const ListAvatars: React.FC = () => {
       name: '',
       imageUrl: '/api/placeholder/100/100'
     });
+    setSelectedFile(null);
+    setUploadStatus('idle');
 
     document.body.style.overflow = 'hidden';
   };
 
   const closeAddModal = () => {
     setIsAddModalOpen(false);
-
     document.body.style.overflow = 'auto';
   };
 
@@ -99,36 +92,50 @@ const ListAvatars: React.FC = () => {
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
       setUploadStatus('uploading');
 
-      setTimeout(() => {
+      // Create a preview of the image
+      const reader = new FileReader();
+      reader.onload = () => {
         setNewAvatar({
           ...newAvatar,
-          imageUrl: '/api/placeholder/100/100'
+          imageUrl: reader.result as string
         });
-
         setUploadStatus('success');
-
-        setTimeout(() => {
-          setUploadStatus('idle');
-        }, 2000);
-      }, 1500);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleAddAvatar = () => {
-    if (!newAvatar.name) return;
+  const handleAddAvatar = async () => {
+    if (!newAvatar.name || !selectedFile) return;
 
-    const avatar: Avatar = {
-      id: Date.now().toString(),
-      name: newAvatar.name,
-      imageUrl: newAvatar.imageUrl,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
+    try {
+      // Create form data to send the file and metadata
+      const formData = new FormData();
+      formData.append('title', newAvatar.name);
+      formData.append('media', selectedFile);
+      formData.append('type', 'avatar');
 
-    setAvatars([...avatars, avatar]);
+      // Send the request
+      const response = await mediaService.createMedia(formData);
 
-    closeAddModal();
+      // Add the new avatar to the list
+      const newAvatarData: Avatar = {
+        id: response.id,
+        name: response.title,
+        imageUrl: response.url,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+
+      setAvatars([...avatars, newAvatarData]);
+      closeAddModal();
+    } catch (error) {
+      console.error('Error creating avatar:', error);
+      alert('Failed to create avatar. Please try again.');
+    }
   };
 
   useEffect(() => {
@@ -167,7 +174,14 @@ const ListAvatars: React.FC = () => {
         />
       </div>
 
-      {filteredAvatars.length > 0 ? (
+      {isLoading ? (
+        <div className="bg-gray-50 rounded-3xl py-16 px-6 text-center">
+          <div className="inline-flex items-center justify-center">
+            <div className="h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="ml-3 text-gray-500">Loading avatars...</p>
+          </div>
+        </div>
+      ) : filteredAvatars.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
           {filteredAvatars.map((avatar, index) => (
             <div
@@ -307,8 +321,8 @@ const ListAvatars: React.FC = () => {
 
               <button
                 onClick={handleAddAvatar}
-                disabled={!newAvatar.name}
-                className={`w-full py-3 rounded-xl text-white font-medium transition-colors ${newAvatar.name
+                disabled={!newAvatar.name || !selectedFile}
+                className={`w-full py-3 rounded-xl text-white font-medium transition-colors ${newAvatar.name && selectedFile
                   ? 'bg-indigo-500 hover:bg-indigo-600'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
@@ -323,4 +337,4 @@ const ListAvatars: React.FC = () => {
   );
 };
 
-export default ListAvatars;
+export default page;

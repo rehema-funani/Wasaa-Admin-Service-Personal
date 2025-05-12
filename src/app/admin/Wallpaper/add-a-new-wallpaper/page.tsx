@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Upload, Image, Save, Check, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { mediaService } from '../../../../api/services/media';
 
 const AddWallpaper: React.FC = () => {
   const navigate = useNavigate();
 
-  // Form state
   const [formData, setFormData] = useState({
     name: '',
-    category: '',
-    imageUrl: '/api/placeholder/400/200' // Default placeholder
+    category: ''
   });
 
-  // Preview state
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const [previewImage, setPreviewImage] = useState('/api/placeholder/400/200');
 
-  // Form validity state
   const [isValid, setIsValid] = useState(false);
 
-  // Upload status
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
 
-  // Handle input change
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState('');
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
@@ -30,53 +30,64 @@ const AddWallpaper: React.FC = () => {
       [name]: value
     });
 
-    // Check if form is valid
     const updatedData = { ...formData, [name]: value };
-    setIsValid(!!updatedData.name && !!updatedData.category);
+    setIsValid(!!updatedData.name && !!updatedData.category && !!selectedFile);
   };
 
-  // Handle file upload (simulated)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      // Simulate a file upload process
+      const file = e.target.files[0];
+      setSelectedFile(file);
       setUploadStatus('uploading');
 
-      // Simulate upload delay
-      setTimeout(() => {
-        setPreviewImage('/api/placeholder/400/200');
-        setFormData({
-          ...formData,
-          imageUrl: '/api/placeholder/400/200'
-        });
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreviewImage(reader.result as string);
         setUploadStatus('success');
 
-        // Reset status after a few seconds
-        setTimeout(() => {
-          setUploadStatus('idle');
-        }, 2000);
-      }, 1500);
+        setIsValid(!!formData.name && !!formData.category && !!file);
+      };
+
+      reader.onerror = () => {
+        setUploadStatus('error');
+        setSelectedFile(null);
+        setIsValid(false);
+      };
+
+      reader.readAsDataURL(file);
     }
   };
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!isValid) return;
+    if (!isValid || !selectedFile) return;
 
-    // Simulate API call delay
-    setTimeout(() => {
-      alert('Wallpaper added successfully!');
-      navigate('/wallpapers');
-    }, 500);
+    try {
+      setIsSubmitting(true);
+      setApiError('');
+
+      const apiFormData = new FormData();
+      apiFormData.append('title', formData.name);
+      apiFormData.append('media', selectedFile);
+      apiFormData.append('type', 'wallpaper');
+
+      apiFormData.append('category', formData.category);
+
+      await mediaService.createMedia(apiFormData);
+
+      navigate('/admin/Wallpaper/list-all-wallpaper', { state: { success: true, message: 'Wallpaper created successfully!' } });
+    } catch (error) {
+      console.error('Error creating wallpaper:', error);
+      setApiError('Failed to create wallpaper. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
-  // Go back to wallpaper list
   const handleBack = () => {
-    navigate('/wallpapers');
+    navigate(-1);
   };
 
-  // Predefined categories
   const categories = [
     'Gradient',
     'Dark',
@@ -88,7 +99,6 @@ const AddWallpaper: React.FC = () => {
     'Urban'
   ];
 
-  // Get upload status content
   const getUploadStatusContent = () => {
     switch (uploadStatus) {
       case 'uploading':
@@ -119,7 +129,6 @@ const AddWallpaper: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-8 py-16">
-      {/* Header - iOS 18 inspired with large typography */}
       <div className="flex items-center mb-16">
         <button
           onClick={handleBack}
@@ -134,6 +143,14 @@ const AddWallpaper: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-14">
+        {/* API Error message */}
+        {apiError && (
+          <div className="flex items-center p-4 text-red-800 bg-red-50 rounded-xl">
+            <AlertCircle size={20} className="mr-2 flex-shrink-0" />
+            <span>{apiError}</span>
+          </div>
+        )}
+
         {/* Unique two-column layout for desktop - Fintech inspired */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left column - Image preview */}
@@ -171,7 +188,9 @@ const AddWallpaper: React.FC = () => {
                     ? 'bg-blue-50 border-blue-100'
                     : uploadStatus === 'success'
                       ? 'bg-green-50 border-green-100'
-                      : 'bg-gray-50 border-gray-100 hover:bg-gray-100'
+                      : uploadStatus === 'error'
+                        ? 'bg-red-50 border-red-100'
+                        : 'bg-gray-50 border-gray-100 hover:bg-gray-100'
                     } transition-colors cursor-pointer`}
                 >
                   <Upload size={24} className={uploadStatus === 'uploading' ? 'text-blue-500 animate-bounce' : ''} />
@@ -240,15 +259,24 @@ const AddWallpaper: React.FC = () => {
         {/* Submit Button - Fintech inspired minimalist */}
         <button
           type="submit"
-          disabled={!isValid}
-          className={`relative w-full py-5 rounded-2xl text-white font-medium text-lg transition-all ${isValid
+          disabled={!isValid || isSubmitting}
+          className={`relative w-full py-5 rounded-2xl text-white font-medium text-lg transition-all ${isValid && !isSubmitting
             ? 'bg-blue-500 hover:bg-blue-600'
             : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
         >
           <span className="flex items-center justify-center">
-            <Save size={20} className="mr-2" />
-            <span>Save Wallpaper</span>
+            {isSubmitting ? (
+              <>
+                <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                <span>Creating Wallpaper...</span>
+              </>
+            ) : (
+              <>
+                <Save size={20} className="mr-2" />
+                <span>Save Wallpaper</span>
+              </>
+            )}
           </span>
         </button>
       </form>

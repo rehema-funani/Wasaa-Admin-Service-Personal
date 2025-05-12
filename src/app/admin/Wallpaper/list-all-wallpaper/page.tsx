@@ -62,19 +62,16 @@ const ListWallpaper: React.FC = () => {
     wallpaper.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Delete wallpaper
   const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to delete this wallpaper?")) {
       setWallpapers(wallpapers.filter(wallpaper => wallpaper.id !== id));
     }
   };
 
-  // Navigate to add wallpaper page
   const navigateToAdd = () => {
-    navigate('/add-wallpaper');
+    navigate('/admin/Wallpaper/add-a-new-wallpaper');
   };
 
-  // Get category color
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
       'Gradient': 'bg-blue-50 text-blue-600',
