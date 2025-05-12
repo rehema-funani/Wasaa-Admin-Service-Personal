@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+// src/components/common/Pagination.tsx
+
+import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface PaginationProps {
     totalItems: number;
     itemsPerPage: number;
     currentPage: number;
     onPageChange: (page: number) => void;
+    onItemsPerPageChange?: (perPage: number) => void;
     showItemsPerPage?: boolean;
     itemsPerPageOptions?: number[];
-    onItemsPerPageChange?: (itemsPerPage: number) => void;
     showSummary?: boolean;
-    className?: string;
-    maxPagesToShow?: number;
+    totalPages?: number;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -20,189 +21,183 @@ const Pagination: React.FC<PaginationProps> = ({
     itemsPerPage,
     currentPage,
     onPageChange,
+    onItemsPerPageChange,
     showItemsPerPage = false,
     itemsPerPageOptions = [10, 25, 50, 100],
-    onItemsPerPageChange,
     showSummary = true,
-    className = '',
-    maxPagesToShow = 5
+    totalPages: providedTotalPages
 }) => {
-    const [inputPage, setInputPage] = useState<string>(currentPage.toString());
-    const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+    // Calculate the total number of pages
+    const totalPages = providedTotalPages || Math.ceil(totalItems / itemsPerPage);
 
-    useEffect(() => {
-        setInputPage(currentPage.toString());
-    }, [currentPage]);
+    // Calculate the range of displayed items
+    const startItem = (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(startItem + itemsPerPage - 1, totalItems);
 
-    const handlePageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputPage(e.target.value);
-    };
-
-    const handlePageInputBlur = () => {
-        const page = parseInt(inputPage);
-        if (!isNaN(page) && page >= 1 && page <= totalPages) {
-            onPageChange(page);
-        } else {
-            setInputPage(currentPage.toString());
-        }
-    };
-
-    const handlePageInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            handlePageInputBlur();
-        }
-    };
-
-    const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        if (onItemsPerPageChange) {
-            onItemsPerPageChange(parseInt(e.target.value));
-        }
-    };
-
-    const startItem = Math.min(totalItems, (currentPage - 1) * itemsPerPage + 1);
-    const endItem = Math.min(totalItems, currentPage * itemsPerPage);
-
-    const getPageNumbers = () => {
-        const pageNumbers: number[] = [];
+    // Generate page numbers to display
+    const generatePageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5; // Show max 5 page numbers at once
 
         if (totalPages <= maxPagesToShow) {
+            // Show all pages if total is less than or equal to maxPagesToShow
             for (let i = 1; i <= totalPages; i++) {
                 pageNumbers.push(i);
             }
-            return pageNumbers;
-        }
+        } else {
+            // Always show first page
+            pageNumbers.push(1);
 
-        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+            let startPage;
+            let endPage;
 
-        if (endPage - startPage + 1 < maxPagesToShow) {
-            startPage = Math.max(1, endPage - maxPagesToShow + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(i);
+            if (currentPage <= 3) {
+                // If near the beginning, show first few pages
+                startPage = 2;
+                endPage = 4;
+                pageNumbers.push(...Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i));
+                pageNumbers.push('ellipsis');
+                pageNumbers.push(totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                // If near the end, show last few pages
+                pageNumbers.push('ellipsis');
+                startPage = totalPages - 3;
+                endPage = totalPages - 1;
+                pageNumbers.push(...Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i));
+                pageNumbers.push(totalPages);
+            } else {
+                // If in the middle, show current page and pages around it
+                pageNumbers.push('ellipsis');
+                startPage = currentPage - 1;
+                endPage = currentPage + 1;
+                pageNumbers.push(...Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i));
+                pageNumbers.push('ellipsis');
+                pageNumbers.push(totalPages);
+            }
         }
 
         return pageNumbers;
     };
 
-    const pageNumbers = getPageNumbers();
+    const pageNumbers = generatePageNumbers();
 
     return (
-        <div className={`flex flex-col sm:flex-row justify-between items-center gap-4 ${className}`}>
-            <div className="flex items-center text-sm text-gray-600 space-x-4">
-                {showItemsPerPage && onItemsPerPageChange && (
-                    <div className="flex items-center">
-                        <span>Rows per page:</span>
-                        <motion.select
-                            className="ml-2 bg-white border border-gray-200 rounded-lg text-sm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                            value={itemsPerPage}
-                            onChange={handleItemsPerPageChange}
-                            whileHover={{ borderColor: '#6366f1' }}
-                        >
-                            {itemsPerPageOptions.map(option => (
-                                <option key={option} value={option}>{option}</option>
-                            ))}
-                        </motion.select>
-                    </div>
-                )}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-2">
+            {/* Summary */}
+            {showSummary && totalItems > 0 && (
+                <div className="text-sm text-gray-500">
+                    Showing <span className="font-medium text-gray-700">{startItem}</span> to{' '}
+                    <span className="font-medium text-gray-700">{endItem}</span> of{' '}
+                    <span className="font-medium text-gray-700">{totalItems}</span> entries
+                </div>
+            )}
 
-                {showSummary && (
-                    <div className="text-gray-500">
-                        {totalItems === 0 ? (
-                            <span>No items</span>
-                        ) : (
-                            <span>
-                                Showing <span className="font-medium text-gray-700">{startItem}</span> to{' '}
-                                <span className="font-medium text-gray-700">{endItem}</span> of{' '}
-                                <span className="font-medium text-gray-700">{totalItems}</span> items
-                            </span>
-                        )}
-                    </div>
-                )}
-            </div>
+            {/* Items per page selector */}
+            {showItemsPerPage && onItemsPerPageChange && (
+                <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-500">Show</span>
+                    <select
+                        value={itemsPerPage}
+                        onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+                        className="px-2 py-1 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    >
+                        {itemsPerPageOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                    <span className="text-sm text-gray-500">per page</span>
+                </div>
+            )}
 
             {/* Pagination controls */}
             <div className="flex items-center">
-                {/* First page button */}
                 <motion.button
-                    className="p-1.5 rounded-lg text-gray-600 disabled:text-gray-300 flex items-center justify-center"
-                    whileHover={{ scale: 1.05, backgroundColor: 'rgba(238, 242, 255, 0.7)' }}
-                    whileTap={{ scale: 0.95 }}
+                    className={`p-1 rounded-lg mr-1 ${currentPage === 1
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-gray-500 hover:bg-gray-100 hover:text-indigo-600'
+                        }`}
+                    onClick={() => currentPage > 1 && onPageChange(1)}
                     disabled={currentPage === 1}
-                    onClick={() => onPageChange(1)}
                     aria-label="First page"
+                    whileHover={currentPage !== 1 ? { scale: 1.1 } : {}}
+                    whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
                 >
-                    <ChevronsLeft size={18} strokeWidth={1.8} />
+                    <ChevronsLeft size={18} />
                 </motion.button>
 
-                {/* Previous page button */}
                 <motion.button
-                    className="p-1.5 rounded-lg text-gray-600 disabled:text-gray-300 flex items-center justify-center"
-                    whileHover={{ scale: 1.05, backgroundColor: 'rgba(238, 242, 255, 0.7)' }}
-                    whileTap={{ scale: 0.95 }}
+                    className={`p-1 rounded-lg mr-2 ${currentPage === 1
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-gray-500 hover:bg-gray-100 hover:text-indigo-600'
+                        }`}
+                    onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    onClick={() => onPageChange(currentPage - 1)}
                     aria-label="Previous page"
+                    whileHover={currentPage !== 1 ? { scale: 1.1 } : {}}
+                    whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
                 >
-                    <ChevronLeft size={18} strokeWidth={1.8} />
+                    <ChevronLeft size={18} />
                 </motion.button>
 
-                {/* Page number buttons */}
-                <div className="flex items-center px-1 space-x-1">
-                    {pageNumbers.map(pageNum => (
-                        <motion.button
-                            key={pageNum}
-                            className={`
-                w-8 h-8 rounded-lg text-sm flex items-center justify-center
-                ${currentPage === pageNum
-                                    ? 'bg-indigo-600 text-white shadow-sm'
-                                    : 'text-gray-600 hover:bg-indigo-50/70'}
-              `}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => onPageChange(pageNum)}
-                        >
-                            {pageNum}
-                        </motion.button>
-                    ))}
+                <div className="flex items-center space-x-1">
+                    {pageNumbers.map((page, index) => {
+                        if (page === 'ellipsis') {
+                            return (
+                                <span key={`ellipsis-${index}`} className="px-2 py-1 text-gray-400">
+                                    ...
+                                </span>
+                            );
+                        }
+
+                        return (
+                            <motion.button
+                                key={`page-${page}`}
+                                className={`min-w-[32px] h-8 flex items-center justify-center rounded-lg text-sm ${currentPage === page
+                                        ? 'bg-indigo-600 text-white'
+                                        : 'text-gray-600 hover:bg-gray-100'
+                                    }`}
+                                onClick={() => page !== currentPage && onPageChange(page as number)}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.2, delay: index * 0.03 }}
+                            >
+                                {page}
+                            </motion.button>
+                        );
+                    })}
                 </div>
 
-                {/* Next page button */}
                 <motion.button
-                    className="p-1.5 rounded-lg text-gray-600 disabled:text-gray-300 flex items-center justify-center"
-                    whileHover={{ scale: 1.05, backgroundColor: 'rgba(238, 242, 255, 0.7)' }}
-                    whileTap={{ scale: 0.95 }}
+                    className={`p-1 rounded-lg ml-2 ${currentPage === totalPages
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-gray-500 hover:bg-gray-100 hover:text-indigo-600'
+                        }`}
+                    onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    onClick={() => onPageChange(currentPage + 1)}
                     aria-label="Next page"
+                    whileHover={currentPage !== totalPages ? { scale: 1.1 } : {}}
+                    whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
                 >
-                    <ChevronRight size={18} strokeWidth={1.8} />
+                    <ChevronRight size={18} />
                 </motion.button>
 
                 <motion.button
-                    className="p-1.5 rounded-lg text-gray-600 disabled:text-gray-300 flex items-center justify-center"
-                    whileHover={{ scale: 1.05, backgroundColor: 'rgba(238, 242, 255, 0.7)' }}
-                    whileTap={{ scale: 0.95 }}
+                    className={`p-1 rounded-lg ml-1 ${currentPage === totalPages
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : 'text-gray-500 hover:bg-gray-100 hover:text-indigo-600'
+                        }`}
+                    onClick={() => currentPage < totalPages && onPageChange(totalPages)}
                     disabled={currentPage === totalPages}
-                    onClick={() => onPageChange(totalPages)}
                     aria-label="Last page"
+                    whileHover={currentPage !== totalPages ? { scale: 1.1 } : {}}
+                    whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
                 >
-                    <ChevronsRight size={18} strokeWidth={1.8} />
+                    <ChevronsRight size={18} />
                 </motion.button>
-
-                <div className="ml-2 flex items-center">
-                    <span className="text-xs text-gray-500 mr-1 hidden sm:inline">Go to:</span>
-                    <motion.input
-                        type="text"
-                        value={inputPage}
-                        onChange={handlePageInput}
-                        onBlur={handlePageInputBlur}
-                        onKeyDown={handlePageInputKeyDown}
-                        className="w-12 text-center py-1 px-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                        whileHover={{ borderColor: '#6366f1' }}
-                    />
-                </div>
             </div>
         </div>
     );

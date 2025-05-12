@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Download,
     Upload,
@@ -13,36 +13,26 @@ import {
     ArrowDown,
     DollarSign,
     Hash,
-    FileText
+    FileText,
+    Calendar,
+    XCircle,
+    CheckCircle,
+    X,
+    ExternalLink,
+    Copy
 } from 'lucide-react';
 import SearchBox from '../../../../components/common/SearchBox';
 import FilterPanel from '../../../../components/common/FilterPanel';
 import DataTable from '../../../../components/common/DataTable';
 import Pagination from '../../../../components/common/Pagination';
 import financeService from '../../../../api/services/finance';
+import TransactionReceiptModal from '../../../../components/finance/TransactionReceiptModal';
+import { Transaction } from '../../../../types/transaction';
 
-interface Transaction {
-    id: string;
-    userWalletId: string;
-    debit: number;
-    credit: number;
-    balance: number;
-    status: string;
-    description: string;
-    external_id: string;
-    createdAt: string;
-    updatedAt: string;
-    UserWallet: {
-        id: string;
-        user_uuid: string;
-        currencyId: string;
-        debit: string;
-        credit: string;
-        balance: string;
-        status: string;
-        createdAt: string;
-        updatedAt: string;
-    };
+interface PaginationData {
+    total: number;
+    page: number;
+    pages: number;
 }
 
 const TransactionsPage = () => {
@@ -50,37 +40,53 @@ const TransactionsPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
+    const [paginationData, setPaginationData] = useState<PaginationData>({
+        total: 0,
+        page: 1,
+        pages: 1
+    });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [recentSearches, setRecentSearches] = useState<string[]>([
         'deposit', 'withdrawal', 'mpesa'
     ]);
+    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+    const [showReceiptModal, setShowReceiptModal] = useState(false);
 
     useEffect(() => {
-        const fetchTransactions = async () => {
-            try {
-                setIsLoading(true);
-                const response = await financeService.getAllTransactions();
+        fetchTransactions(currentPage, itemsPerPage, searchQuery);
+    }, [currentPage, itemsPerPage, searchQuery]);
 
-                if (response?.data?.transactions) {
-                    setTransactions(response.data.transactions);
-                    setFilteredTransactions(response.data.transactions);
-                } else {
-                    throw new Error('Invalid response format');
-                }
+    const fetchTransactions = async (page: number, limit: number, query: string = '') => {
+        try {
+            setIsLoading(true);
+            const filters = {
+                page: currentPage,
+                limit: itemsPerPage,
+                search: searchQuery || undefined
+            };
 
-                setError(null);
-            } catch (err) {
-                console.error('Error fetching transactions:', err);
-                setError('Failed to load transactions. Please try again later.');
-            } finally {
-                setIsLoading(false);
+            const response = await financeService.getAllTransactions(filters);
+
+            if (response?.data?.transactions) {
+                setTransactions(response.data.transactions);
+                setPaginationData({
+                    total: response.data.total || 0,
+                    page: response.data.page || 1,
+                    pages: response.data.pages || 1
+                });
+            } else {
+                throw new Error('Invalid response format');
             }
-        };
 
-        fetchTransactions();
-    }, []);
+            setError(null);
+        } catch (err) {
+            console.error('Error fetching transactions:', err);
+            setError('Failed to load transactions. Please try again later.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const formatDateTime = (dateString: string): { date: string; time: string } => {
         try {
@@ -115,6 +121,16 @@ const TransactionsPage = () => {
 
     const getTransactionAmount = (transaction: Transaction): number => {
         return transaction.debit > 0 ? transaction.debit : transaction.credit;
+    };
+
+    const handleViewTransaction = (transaction: Transaction) => {
+        setSelectedTransaction(transaction);
+        setShowReceiptModal(true);
+    };
+
+    const closeReceiptModal = () => {
+        setShowReceiptModal(false);
+        setTimeout(() => setSelectedTransaction(null), 300);
     };
 
     const columns = [
@@ -180,8 +196,7 @@ const TransactionsPage = () => {
 
                 return (
                     <div className={`font-medium ${color} flex items-center`}>
-                        <DollarSign size={14} strokeWidth={1.8} className="mr-0.5" />
-                        <span>{sign}{value.toFixed(2)}</span>
+                        <span>Kes. {value.toFixed(2)}</span>
                     </div>
                 );
             }
@@ -194,7 +209,7 @@ const TransactionsPage = () => {
             width: '120px',
             cell: (value: number) => (
                 <div className="font-medium text-gray-800">
-                    ${value.toFixed(2)}
+                    Kes. {value.toFixed(2)}
                 </div>
             )
         },
@@ -238,13 +253,14 @@ const TransactionsPage = () => {
             accessor: (row: Transaction) => row.id,
             sortable: false,
             width: '100px',
-            cell: (value: string) => (
+            cell: (value: string, row: Transaction) => (
                 <div className="flex items-center space-x-1">
                     <motion.button
                         className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        aria-label="View transaction"
+                        aria-label="View transaction receipt"
+                        onClick={() => handleViewTransaction(row)}
                     >
                         <Eye size={16} strokeWidth={1.8} />
                     </motion.button>
@@ -271,34 +287,16 @@ const TransactionsPage = () => {
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
-
-        if (query.trim() === '') {
-            setFilteredTransactions(transactions);
-            return;
-        }
-
-        const lowercasedQuery = query.toLowerCase();
-
-        const filtered = transactions.filter(transaction => {
-            return (
-                transaction.id.toLowerCase().includes(lowercasedQuery) ||
-                transaction.description.toLowerCase().includes(lowercasedQuery) ||
-                (transaction.external_id && transaction.external_id.toLowerCase().includes(lowercasedQuery)) ||
-                getTransactionType(transaction).toLowerCase().includes(lowercasedQuery)
-            );
-        });
-
-        setFilteredTransactions(filtered);
+        setCurrentPage(1); // Reset to first page on new search
 
         if (query.trim() !== '' && !recentSearches.includes(query)) {
             setRecentSearches(prev => [query, ...prev.slice(0, 4)]);
         }
-
-        setCurrentPage(1);
     };
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleItemsPerPageChange = (perPage: number) => {
@@ -307,7 +305,7 @@ const TransactionsPage = () => {
     };
 
     const handleExport = () => {
-        if (filteredTransactions.length === 0) {
+        if (transactions.length === 0) {
             alert('No transactions to export');
             return;
         }
@@ -380,7 +378,7 @@ const TransactionsPage = () => {
                         <p>{error}</p>
                         <button
                             className="mt-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-md"
-                            onClick={() => window.location.reload()}
+                            onClick={() => fetchTransactions(currentPage, itemsPerPage, searchQuery)}
                         >
                             Retry
                         </button>
@@ -388,7 +386,7 @@ const TransactionsPage = () => {
                 ) : (
                     <DataTable
                         columns={columns}
-                        data={filteredTransactions}
+                        data={transactions}
                         selectable={true}
                         isLoading={isLoading}
                         emptyMessage="No transactions found. Try adjusting your filters or search terms."
@@ -403,7 +401,7 @@ const TransactionsPage = () => {
                 transition={{ duration: 0.3, delay: 0.3 }}
             >
                 <Pagination
-                    totalItems={filteredTransactions.length}
+                    totalItems={paginationData.total}
                     itemsPerPage={itemsPerPage}
                     currentPage={currentPage}
                     onPageChange={handlePageChange}
@@ -411,8 +409,16 @@ const TransactionsPage = () => {
                     showItemsPerPage={true}
                     itemsPerPageOptions={[10, 25, 50, 100]}
                     showSummary={true}
+                    totalPages={paginationData.pages}
                 />
             </motion.div>
+
+            {showReceiptModal && (
+                <TransactionReceiptModal
+                    transaction={selectedTransaction}
+                    onClose={closeReceiptModal}
+                />
+            )}
         </div>
     );
 };
