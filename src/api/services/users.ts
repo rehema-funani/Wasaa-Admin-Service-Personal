@@ -198,7 +198,7 @@ export const userService = {
 
   async updateUser(userId: string, userData: any): Promise<any> {
     try {
-      const response = await api.put(`/users/${userId}`, userData);
+      const response = await api.put(`/admin/${userId}`, userData);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -266,6 +266,7 @@ export const userService = {
       throw new Error('Failed to update report status. Please check your network connection.');
     }
   },
+
   async reopenReport (userId: string): Promise<any> { 
     try {
       const response = await api.put(`/users/${userId}/reopen-report`);

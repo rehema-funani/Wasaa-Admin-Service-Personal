@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, X, User, Mail, Phone, Lock, MapPin, Edit2, Shield } from 'lucide-react';
+import { AlertCircle, X, User, Mail, Phone, Lock, MapPin, Edit2, Shield, Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import ModalBackdrop from './ModalBackdrop';
 import userService from '../../api/services/users';
@@ -79,7 +79,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
         setError(null);
 
         try {
-            const { confirm_password, ...dataToSend } = formData;
+            const { confirm_password, status, location, ...dataToSend } = formData;
 
             if (!changePassword) {
                 delete (dataToSend as { password?: string }).password;
@@ -105,7 +105,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
         { value: 'blocked', label: 'Blocked' }
     ];
 
-    // iOS-inspired Input Component
     const InputField = ({
         label,
         name,
@@ -166,7 +165,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                             exit={{ scale: 0.9, y: 20, opacity: 0 }}
                             transition={{ type: 'spring', damping: 30, stiffness: 400 }}
                         >
-                            {/* Header with user avatar */}
                             <div className="relative">
                                 <div className="px-6 py-4 border-b border-gray-100 flex items-center bg-gradient-to-r from-blue-50 to-indigo-50">
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center mr-3 shadow-md">
@@ -186,7 +184,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                                     </motion.button>
                                 </div>
 
-                                {/* Tabs */}
                                 <div className="flex border-b border-gray-100">
                                     <motion.button
                                         className={`px-6 py-3 text-sm font-medium ${activeTab === 'basic' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-600 hover:text-gray-800'}`}
@@ -219,7 +216,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
 
                                 <form onSubmit={(e) => e.preventDefault()}>
                                     <AnimatePresence mode="wait">
-                                        {/* Basic Info Tab */}
                                         {activeTab === 'basic' && (
                                             <motion.div
                                                 key="basic"
@@ -270,19 +266,9 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                                                     icon={<Phone size={18} className="text-gray-400" />}
                                                     placeholder="Enter phone number"
                                                 />
-
-                                                <InputField
-                                                    label="Location"
-                                                    name="location"
-                                                    value={formData.location}
-                                                    onChange={handleChange}
-                                                    icon={<MapPin size={18} className="text-gray-400" />}
-                                                    placeholder="Enter location"
-                                                />
                                             </motion.div>
                                         )}
 
-                                        {/* Account Settings Tab */}
                                         {activeTab === 'account' && (
                                             <motion.div
                                                 key="account"
@@ -374,9 +360,9 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                                                             <div className="relative">
                                                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                                                     <div className={`w-2 h-2 rounded-full ${formData.status === 'active' ? 'bg-green-500' :
-                                                                            formData.status === 'inactive' ? 'bg-gray-500' :
-                                                                                formData.status === 'pending' ? 'bg-yellow-500' :
-                                                                                    'bg-red-500'
+                                                                        formData.status === 'inactive' ? 'bg-gray-500' :
+                                                                            formData.status === 'pending' ? 'bg-yellow-500' :
+                                                                                'bg-red-500'
                                                                         }`}></div>
                                                                 </div>
                                                                 <select
@@ -391,6 +377,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                                                                     ))}
                                                                 </select>
                                                             </div>
+                                                            {/* Note: Status is still displayed in the UI but excluded from being sent to the API */}
                                                         </div>
                                                     </div>
                                                 </div>

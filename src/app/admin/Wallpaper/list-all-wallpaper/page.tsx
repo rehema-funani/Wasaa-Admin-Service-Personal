@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Search, Plus, Trash2, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Search, Plus, Trash2, ArrowRight, AlertCircle, Check } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { mediaService } from '../../../../api/services/media';
 
 interface Wallpaper {
   id: string;
@@ -10,48 +11,71 @@ interface Wallpaper {
   createdAt: string;
 }
 
+interface LocationState {
+  success?: boolean;
+  message?: string;
+}
+
 const ListWallpaper: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = location.state as LocationState;
 
-  const [wallpapers, setWallpapers] = useState<Wallpaper[]>([
-    {
-      id: '1',
-      name: 'Gradient Blue',
-      imageUrl: 'https://images.unsplash.com/photo-1668853853439-923e013afff1?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3JhZGllbnQlMjBibHVlfGVufDB8fDB8fHww',
-      category: 'Gradient',
-      createdAt: '2025-04-12'
-    },
-    {
-      id: '2',
-      name: 'Dark Mode',
-      imageUrl: 'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1200',
-      category: 'Dark',
-      createdAt: '2025-04-15'
-    },
-    {
-      id: '3',
-      name: 'Light Minimalist',
-      imageUrl: 'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200',
-      category: 'Light',
-      createdAt: '2025-04-18'
-    },
-    {
-      id: '4',
-      name: 'Geometric Pattern',
-      imageUrl: 'https://images.unsplash.com/photo-1550859492-d5da9d8e45f3?q=80&w=1200',
-      category: 'Pattern',
-      createdAt: '2025-04-20'
-    },
-    {
-      id: '5',
-      name: 'Abstract Art',
-      imageUrl: 'https://images.unsplash.com/photo-1525909002-1b05e0c869d8?q=80&w=1200',
-      category: 'Abstract',
-      createdAt: '2025-04-25'
-    }
-  ]);
+  // Wallpapers state
+  const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
+  // Success message state from navigation
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Search functionality
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Fetch wallpapers from API on component mount
+  useEffect(() => {
+    fetchWallpapers();
+
+    // Check for success message in location state
+    if (locationState?.success && locationState?.message) {
+      setSuccessMessage(locationState.message);
+
+      // Clear the location state
+      window.history.replaceState({}, document.title);
+
+      // Auto-hide success message after 5 seconds
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const fetchWallpapers = async () => {
+    try {
+      setIsLoading(true);
+      setError('');
+
+      const data = await mediaService.getWallpapers();
+
+      // Transform API response to match our Wallpaper interface
+      const formattedWallpapers: Wallpaper[] = data.map((item: any) => ({
+        id: item.id,
+        name: item.title,
+        imageUrl: item.url,
+        category: item.category || 'Unknown', // Default if category is not provided
+        createdAt: new Date(item.createdAt).toISOString().split('T')[0]
+      }));
+
+      setWallpapers(formattedWallpapers);
+    } catch (err) {
+      console.error('Error fetching wallpapers:', err);
+      setError('Failed to load wallpapers. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -62,9 +86,21 @@ const ListWallpaper: React.FC = () => {
     wallpaper.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this wallpaper?")) {
-      setWallpapers(wallpapers.filter(wallpaper => wallpaper.id !== id));
+      try {
+        await mediaService.deleteMedia(id);
+        setWallpapers(wallpapers.filter(wallpaper => wallpaper.id !== id));
+        setSuccessMessage('Wallpaper deleted successfully');
+
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      } catch (err) {
+        console.error('Error deleting wallpaper:', err);
+        alert('Failed to delete wallpaper. Please try again.');
+      }
     }
   };
 
@@ -81,14 +117,49 @@ const ListWallpaper: React.FC = () => {
       'Abstract': 'bg-rose-50 text-rose-600',
       'Minimal': 'bg-amber-50 text-amber-600',
       'Nature': 'bg-green-50 text-green-600',
-      'Urban': 'bg-purple-50 text-purple-600'
+      'Urban': 'bg-purple-50 text-purple-600',
+      'Unknown': 'bg-gray-100 text-gray-600'
     };
 
     return colors[category] || 'bg-blue-50 text-blue-600';
   };
 
+  // Render loading state
+  if (isLoading) {
+    return (
+      <div className="max-w-8xl mx-auto px-8 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-4">
+          <div className="md:col-span-2">
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Wallpapers</h1>
+            <p className="text-gray-500 text-sm">Customizable backgrounds for your chat experience</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <div className="flex flex-col items-center">
+            <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-500">Loading wallpapers...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-8xl mx-auto px-8 py-6">
+      {successMessage && (
+        <div className="mb-6 flex items-center p-4 bg-green-50 text-green-700 rounded-xl">
+          <Check size={20} className="mr-2 flex-shrink-0" />
+          <span>{successMessage}</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-6 flex items-center p-4 bg-red-50 text-red-700 rounded-xl">
+          <AlertCircle size={20} className="mr-2 flex-shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-4">
         <div className="md:col-span-2">
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Wallpapers</h1>
@@ -169,7 +240,9 @@ const ListWallpaper: React.FC = () => {
             <Search size={32} className="text-gray-300" />
           </div>
           <p className="text-xl text-gray-500 font-medium text-center">No wallpapers found</p>
-          <p className="text-gray-400 mt-2 text-center mb-6">Try a different search term or add a new wallpaper</p>
+          <p className="text-gray-400 mt-2 text-center mb-6">
+            {searchQuery ? 'Try a different search term' : 'Add a new wallpaper to get started'}
+          </p>
           <button
             onClick={navigateToAdd}
             className="px-6 py-3 bg-blue-500 text-white rounded-full flex items-center gap-2 hover:bg-blue-600 transition-colors"

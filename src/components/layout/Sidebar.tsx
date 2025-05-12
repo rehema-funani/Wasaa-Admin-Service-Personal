@@ -20,15 +20,102 @@ interface SidebarProps {
   setCollapsed?: (collapsed: boolean) => void;
 }
 
+const getRequiredPermissionsForRoute = (path: string): string[] => {
+  const routePermissionsMap: Record<string, string[]> = {
+    '/': [],
+
+    // User routes
+    '/admin/users/user-details': ['can_list_users', 'can_view_users'],
+    '/admin/users/countrywise-Analysis': ['can_list_users', 'can_view_users'],
+    '/admin/users/reported-user-list': ['can_list_users', 'can_view_users'],
+
+    // Group routes
+    '/admin/Group/all-group-list': ['can_list_users', 'can_view_users'],
+    '/admin/Group/all-reported-group-list': ['can_list_users', 'can_view_users'],
+
+    // User management routes
+    '/admin/system/users': ['can_list_staff', 'can_view_users'],
+    '/admin/system/roles': ['can_list_roles', 'can_view_roles'],
+
+    // Livestream routes
+    '/admin/livestreams/all-livestreams': [],
+    '/admin/livestreams/scheduled': [],
+    '/admin/livestreams/settings': [],
+    '/admin/livestreams/categories': [],
+    '/admin/livestreams/featured': [],
+    '/admin/livestreams/analytics': [],
+    '/admin/livestreams/moderation': [],
+    '/admin/livestreams/reported': [],
+
+    // Finance routes
+    '/admin/finance/transactions': [],
+    '/admin/finance/user-wallets': [],
+    '/admin/finance/withdrawals': [],
+    '/admin/finance/top-ups': [],
+    '/admin/finance/payment-methods': [],
+    '/admin/finance/reports': [],
+    '/admin/finance/gift-history': [],
+
+    // Gift routes
+    '/admin/gifts/add-gift': ['can_create_media'],
+    '/admin/gifts/gift-list': ['can_list_media', 'can_view_media'],
+    '/admin/gifts/gift-categories': ['can_list_media', 'can_view_media'],
+
+    // Settings routes
+    '/admin/settings': ['can_view_settings', 'can_update_settings'],
+    '/admin/languages': ['can_list_languages', 'can_view_languages'],
+    '/admin/logs': [],
+    '/admin/support': [],
+
+    // Media routes
+    '/admin/Wallpaper/list-all-wallpaper': ['can_list_media', 'can_view_media'],
+    '/admin/Avatar/list-all-avatar': ['can_list_media', 'can_view_media'],
+  };
+
+  return routePermissionsMap[path] || [];
+};
+
+const hasPermissionForRoute = (path: string, userPermissions: string[]): boolean => {
+  const requiredPermissions = getRequiredPermissionsForRoute(path);
+
+  if (requiredPermissions.length === 0) {
+    return true;
+  }
+
+  return requiredPermissions.some(permission => userPermissions.includes(permission));
+};
+
+const filterDropdownItems = (items: any[], userPermissions: string[]): any[] => {
+  return items.filter(item => {
+    if (item.type === 'link') {
+      return hasPermissionForRoute(item.path, userPermissions);
+    }
+    return true;
+  });
+};
+
+const shouldShowSection = (section: SectionRoute, userPermissions: string[]): boolean => {
+  const filteredItems = section.items.filter(item => {
+    if (item.type === 'link') {
+      return hasPermissionForRoute(item.path, userPermissions);
+    } else if (item.type === 'dropdown') {
+      const filteredDropdownItems = filterDropdownItems(item.items, userPermissions);
+      return filteredDropdownItems.length > 0;
+    }
+    return false;
+  });
+
+  return filteredItems.length > 0;
+};
+
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
   const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
-
+  const userPermissions = user?.permissions || [];
 
   useEffect(() => {
     const handleResize = () => {
@@ -92,6 +179,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     const itemKey = item.type === 'link' ? item.path : item.type === 'dropdown' ? item.key : item.title;
 
     if (item.type === 'link') {
+      if (!hasPermissionForRoute(item.path, userPermissions)) {
+        return null;
+      }
+
       const isActivePage = isActive(item.path);
       const isHovered = hoveredItem === itemKey;
 
@@ -158,8 +249,14 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     }
 
     if (item.type === 'dropdown') {
+      const filteredItems = filterDropdownItems(item.items, userPermissions);
+
+      if (filteredItems.length === 0) {
+        return null;
+      }
+
       const isOpen = openDropdowns[item.key];
-      const hasActive = hasActiveChild(item.items);
+      const hasActive = hasActiveChild(filteredItems);
       const isHovered = hoveredItem === itemKey;
 
       return (
@@ -217,7 +314,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
             <div
               className="ml-6 pl-2 border-l border-blue-100/60"
             >
-              {item.items.map((subItem: any, idx: number) => (
+              {filteredItems.map((subItem: any, idx: number) => (
                 <div
                   key={idx}
                 >
@@ -231,6 +328,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     }
 
     if (item.type === 'section') {
+      if (!shouldShowSection(item, userPermissions)) {
+        return null;
+      }
+
       return (
         <div
           className="mt-6 first:mt-2 mb-2"

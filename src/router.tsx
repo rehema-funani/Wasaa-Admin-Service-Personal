@@ -3,6 +3,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import AdminLayout from './components/layout/AdminLayout';
+import { PermissionMap } from './utils/permissions';
+import PermissionRouteGuard from './components/PermissionGuard';
+
+
+const UnauthorizedPage = lazy(() => import('./app/error/unauthorized-page'));
 
 const Dashboard = lazy(() => import('./app/dashboard/page'));
 const ErrorPage = lazy(() => import('./app/error/error-page'));
@@ -94,8 +99,10 @@ const AppRouter: React.FC = () => {
                 <Route path="/auth/login/verify-otp" element={<VerifyOtp />} />
                 <Route path="/auth/forgot-password" element={<ForgotPassword />} />
                 <Route path="/auth/reset-password" element={<Reset />} />
-
                 <Route path="/user/set-password" element={<Set />} />
+
+                {/* Add an unauthorized page route */}
+                <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
                 <Route
                     path="/"
@@ -107,21 +114,72 @@ const AppRouter: React.FC = () => {
                 >
                     <Route index element={<Dashboard />} />
 
-                    <Route path="admin/users/user-details" element={<UserDetails />} />
-                    <Route path="admin/users/user-details/:id" element={<Userdetail />} />
-                    <Route path="admin/users/countrywise-Analysis" element={<CountrywiseUsers />} />
-                    <Route path="admin/users/countrywise-Analysis/:id" element={<CountryDetailPage />} />
-                    <Route path="admin/users/reported-user-list" element={<ReportedUsers />} />
+                    <Route path="admin/users/user-details" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                            <UserDetails />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/users/user-details/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                            <Userdetail />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/users/countrywise-Analysis" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                            <CountrywiseUsers />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/users/countrywise-Analysis/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                            <CountryDetailPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/users/reported-user-list" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                            <ReportedUsers />
+                        </PermissionRouteGuard>
+                    } />
 
-                    <Route path="admin/Group/all-group-list" element={<GroupList />} />
-                    <Route path="admin/Group/all-group-list/:id" element={<GroupDetailPage />} />
-                    <Route path="admin/Group/all-reported-group-list" element={<ReportedGroups />} />
+                    {/* Group Routes with Permission Guards */}
+                    <Route path="admin/Group/all-group-list" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                            <GroupList />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/Group/all-group-list/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                            <GroupDetailPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/Group/all-reported-group-list" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                            <ReportedGroups />
+                        </PermissionRouteGuard>
+                    } />
 
-                    <Route path="admin/system/roles" element={<RolesPage />} />
-                    <Route path="admin/system/roles/:id" element={<RoleDetail />} />
-                    <Route path="admin/system/roles/create" element={<CreateRole />} />
-                    <Route path='admin/system/users' element={<SystemUsers />} />
+                    {/* Roles Routes with Permission Guards */}
+                    <Route path="admin/system/roles" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Roles.view}>
+                            <RolesPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/system/roles/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Roles.view}>
+                            <RoleDetail />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/system/roles/create" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Roles.create}>
+                            <CreateRole />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path='admin/system/users' element={
+                        <PermissionRouteGuard permissions={['can_list_staff', 'can_view_users']}>
+                            <SystemUsers />
+                        </PermissionRouteGuard>
+                    } />
 
+                    {/* Livestream Routes */}
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />
                     <Route path="admin/livestreams/scheduled" element={<ScheduledStreams />} />
                     <Route path="admin/livestreams/settings" element={<StreamSettings />} />
@@ -131,6 +189,7 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/livestreams/moderation" element={<StreamModeration />} />
                     <Route path="admin/livestreams/reported" element={<ReportedStreams />} />
 
+                    {/* Finance Routes */}
                     <Route path="admin/finance/transactions" element={<Transactions />} />
                     <Route path="admin/finance/user-wallets" element={<UserWallets />} />
                     <Route path="admin/finance/user-wallets/:id" element={<WalletDetail />} />
@@ -140,20 +199,63 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/finance/reports" element={<FinancialReports />} />
                     <Route path="admin/finance/gift-history" element={<GiftHistory />} />
 
-                    <Route path="admin/Wallpaper/list-all-wallpaper" element={<WallpaperList />} />
-                    <Route path="admin/Wallpaper/add-a-new-wallpaper" element={<AddWallpaper />} />
+                    {/* Media Routes with Permission Guards */}
+                    <Route path="admin/Wallpaper/list-all-wallpaper" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <WallpaperList />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/Wallpaper/add-a-new-wallpaper" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.create}>
+                            <AddWallpaper />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/Avatar/list-all-avatar" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <AvatarList />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/Avatar/add-a-new-avatar" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.create}>
+                            <AddAvatar />
+                        </PermissionRouteGuard>
+                    } />
 
-                    <Route path="admin/Avatar/list-all-avatar" element={<AvatarList />} />
-                    <Route path="admin/Avatar/add-a-new-avatar" element={<AddAvatar />} />
+                    {/* Settings Routes with Permission Guards */}
+                    <Route path="admin/settings" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <GeneralSettings />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/languages" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Languages.view}>
+                            <Languages />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/languages/:id/translations" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Languages.view}>
+                            <Translations />
+                        </PermissionRouteGuard>
+                    } />
 
-                    <Route path="admin/settings" element={<GeneralSettings />} />
-                    <Route path="admin/languages" element={<Languages />} />
-                    <Route path="admin/languages/:id/translations" element={<Translations />} />
+                    {/* Gift Routes with Permission Guards */}
+                    <Route path="admin/gifts/gift-list" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <GiftList />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/gifts/add-gift" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.create}>
+                            <AddGift />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/gifts/gift-categories" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <GiftCategories />
+                        </PermissionRouteGuard>
+                    } />
 
-                    <Route path="admin/gifts/gift-list" element={<GiftList />} />
-                    <Route path="admin/gifts/add-gift" element={<AddGift />} />
-                    <Route path="admin/gifts/gift-categories" element={<GiftCategories />} />
-
+                    {/* Support Routes */}
                     <Route path="admin/support" element={<Support />} />
                     <Route path="/admin/support/teams" element={<Teams />} />
                     <Route path="/admin/support/teams/:id" element={<TeamDetail />} />
@@ -161,8 +263,8 @@ const AppRouter: React.FC = () => {
                     <Route path="/admin/support/tickets/:id" element={<TicketDetail />} />
                     <Route path="/admin/support/assignments" element={<Reassign />} />
 
+                    {/* Logs Route */}
                     <Route path="admin/logs" element={<Logs />} />
-
                 </Route>
 
                 <Route path="*" element={<ErrorPage />} />
