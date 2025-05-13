@@ -32,3 +32,28 @@ finance.interceptors.request.use(
   }
 );
 
+finance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      handleLogout();
+    }
+    
+    if (error.response && 
+        error.response.data && 
+        error.response.data.message === "Authorization token invalid or expired!") {
+      handleLogout();
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
+function handleLogout() {
+  Cookies.remove('authToken');
+  Cookies.remove('user');
+
+  window.location.href = '/auth/login';
+}

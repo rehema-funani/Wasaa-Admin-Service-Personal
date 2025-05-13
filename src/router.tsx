@@ -6,7 +6,6 @@ import AdminLayout from './components/layout/AdminLayout';
 import { PermissionMap } from './utils/permissions';
 import PermissionRouteGuard from './components/PermissionGuard';
 
-
 const UnauthorizedPage = lazy(() => import('./app/error/unauthorized-page'));
 
 const Dashboard = lazy(() => import('./app/dashboard/page'));
@@ -37,6 +36,7 @@ const StreamModeration = lazy(() => import('./app/admin/livestreams/moderation/p
 const ReportedStreams = lazy(() => import('./app/admin/livestreams/reported/page'));
 
 const Transactions = lazy(() => import('./app/admin/finance/transactions/page'));
+const Tarrifs = lazy(() => import('./app/admin/finance/tariffs/page'));
 const UserWallets = lazy(() => import('./app/admin/finance/user-wallets/page'));
 const WalletDetail = lazy(() => import('./app/admin/finance/user-wallets/walletdetail'));
 const Withdrawals = lazy(() => import('./app/admin/finance/withdrawals/page'));
@@ -139,7 +139,6 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
 
-                    {/* Group Routes with Permission Guards */}
                     <Route path="admin/Group/all-group-list" element={
                         <PermissionRouteGuard permissions={PermissionMap.Users.view}>
                             <GroupList />
@@ -187,6 +186,7 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/livestreams/reported" element={<ReportedStreams />} />
 
                     <Route path="admin/finance/transactions" element={<Transactions />} />
+                    <Route path="admin/finance/tariffs" element={<Tarrifs />} />
                     <Route path="admin/finance/user-wallets" element={<UserWallets />} />
                     <Route path="admin/finance/user-wallets/:id" element={<WalletDetail />} />
                     <Route path="admin/finance/withdrawals" element={<Withdrawals />} />
