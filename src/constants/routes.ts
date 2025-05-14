@@ -20,7 +20,11 @@ import {
   Users,
   Key,
   Shield,
-  Languages
+  Languages,
+  DollarSign,
+  Monitor,
+  Banknote,
+  
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -171,6 +175,24 @@ const routes: Route[] = [
           icon: Receipt,
         },
         {
+          type: 'link',
+          path: '/admin/finance/tariffs',
+          icon: DollarSign,
+          title: 'Tariffs',
+        },
+        {
+          type: 'link',
+          path: '/admin/finance/limits',
+          icon: Monitor,
+          title: 'Limits',
+        },
+        {
+          type: 'link',
+          path: '/admin/finance/banks',
+          icon: Banknote,
+          title: 'Banks',
+        },
+        {
           type: 'dropdown',
           title: 'Wallet Management',
           icon: Wallet,
@@ -276,6 +298,12 @@ const routes: Route[] = [
           path: '/admin/languages',
           title: 'Languages',
           icon: Languages,
+        },
+        {
+          type: 'link',
+          path: '/admin/emojis',
+          title: 'Emojis',
+          icon: ImageIcon,
         },
         {
           type: 'link',

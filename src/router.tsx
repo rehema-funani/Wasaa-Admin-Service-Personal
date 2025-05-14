@@ -37,6 +37,8 @@ const ReportedStreams = lazy(() => import('./app/admin/livestreams/reported/page
 
 const Transactions = lazy(() => import('./app/admin/finance/transactions/page'));
 const Tarrifs = lazy(() => import('./app/admin/finance/tariffs/page'));
+const Limits = lazy(() => import('./app/admin/finance/limits/page'));
+const Banks = lazy(() => import('./app/admin/finance/banks/page'));
 const UserWallets = lazy(() => import('./app/admin/finance/user-wallets/page'));
 const WalletDetail = lazy(() => import('./app/admin/finance/user-wallets/walletdetail'));
 const Withdrawals = lazy(() => import('./app/admin/finance/withdrawals/page'));
@@ -52,6 +54,7 @@ const AvatarList = lazy(() => import('./app/admin/Avatar/list-all-avatar/page'))
 const AddAvatar = lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page'));
 
 const GeneralSettings = lazy(() => import('./app/admin/Settings/page'));
+const Emoji = lazy(() => import('./app/admin/Settings/emoji'));
 const Languages = lazy(() => import('./app/admin/languages/all-languages/page'));
 const Translations = lazy(() => import('./app/admin/languages/all-languages/details'));
 
@@ -187,6 +190,8 @@ const AppRouter: React.FC = () => {
 
                     <Route path="admin/finance/transactions" element={<Transactions />} />
                     <Route path="admin/finance/tariffs" element={<Tarrifs />} />
+                    <Route path="admin/finance/limits" element={<Limits />} />
+                    <Route path="admin/finance/banks" element={<Banks />} />
                     <Route path="admin/finance/user-wallets" element={<UserWallets />} />
                     <Route path="admin/finance/user-wallets/:id" element={<WalletDetail />} />
                     <Route path="admin/finance/withdrawals" element={<Withdrawals />} />
@@ -219,6 +224,11 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/settings" element={
                         <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
                             <GeneralSettings />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/emojis" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <Emoji />
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/languages" element={

@@ -429,7 +429,6 @@ const TariffsManagement = () => {
                 : tariff
         ));
 
-        // Close modal and show success message
         setIsModalOpen(false);
         setModalType(null);
         setCurrentTariff(null);
@@ -438,32 +437,25 @@ const TariffsManagement = () => {
         setTimeout(() => setSuccessMessage(null), 3000);
     };
 
-    // Handle adding a range to the form data (when creating/editing a tariff)
     const handleAddFormRange = () => {
-        // Create a temporary ID for the new range
         const tempId = `new-${formData.ranges.length + 1}`;
 
-        // Find highest range to suggest a new min value
         const highestRange = [...formData.ranges].sort((a, b) => (b.max || Infinity) - (a.max || Infinity))[0];
         const suggestedMin = highestRange && highestRange.max !== null ? highestRange.max + 1 : 0;
 
-        // Add new range to form data
         setFormData(prev => ({
             ...prev,
             ranges: [...prev.ranges, { id: tempId, min: suggestedMin, max: null, fee: 0 }].sort((a, b) => a.min - b.min)
         }));
     };
 
-    // Handle removing a range from the form data
     const handleRemoveFormRange = (id: string) => {
-        // Check if this is the last range for a flat rate tariff
         if (formData.type === 'flat' && formData.ranges.length === 1) {
             setSuccessMessage('Cannot delete the last range. A flat rate tariff must have at least one range.');
             setTimeout(() => setSuccessMessage(null), 3000);
             return;
         }
 
-        // Remove range from form data
         setFormData(prev => ({
             ...prev,
             ranges: prev.ranges.filter(range => range.id !== id)
@@ -485,7 +477,6 @@ const TariffsManagement = () => {
             return;
         }
 
-        // Update range in form data
         setFormData(prev => ({
             ...prev,
             ranges: prev.ranges.map(range =>
@@ -496,13 +487,10 @@ const TariffsManagement = () => {
         }));
     };
 
-    // Handle form submission
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validate ranges for flat rate tariffs
         if (formData.type === 'flat') {
-            // Check for overlapping ranges
             const rangeMap = new Map<number, TariffRange>();
             let hasOverlap = false;
 
@@ -510,21 +498,18 @@ const TariffsManagement = () => {
                 const min = range.min;
                 const max = range.max === null ? Infinity : range.max;
 
-                // Check if min is valid
                 if (min < 0) {
                     setSuccessMessage('Minimum value cannot be negative');
                     setTimeout(() => setSuccessMessage(null), 3000);
                     return;
                 }
 
-                // Check if max is valid
                 if (max !== Infinity && max <= min) {
                     setSuccessMessage('Maximum value must be greater than minimum value');
                     setTimeout(() => setSuccessMessage(null), 3000);
                     return;
                 }
 
-                // Check for overlap with existing ranges
                 for (let i = min; i <= (max === Infinity ? min + 1 : max); i++) {
                     if (rangeMap.has(i)) {
                         hasOverlap = true;
@@ -544,9 +529,8 @@ const TariffsManagement = () => {
         }
 
         if (modalType === 'add') {
-            // Add new tariff
             const newTariff: Tariff = {
-                id: Date.now().toString(), // Generate a unique ID
+                id: Date.now().toString(),
                 ...formData,
                 ranges: formData.type === 'flat'
                     ? formData.ranges.map((range, index) => ({ ...range, id: `new-${index + 1}` }))
@@ -557,7 +541,6 @@ const TariffsManagement = () => {
             setTariffs([...tariffs, newTariff]);
             setSuccessMessage('Tariff added successfully');
         } else if (modalType === 'edit' && currentTariff) {
-            // Update existing tariff
             setTariffs(tariffs.map(tariff =>
                 tariff.id === currentTariff.id
                     ? {
@@ -565,7 +548,6 @@ const TariffsManagement = () => {
                         ...formData,
                         ranges: formData.type === 'flat'
                             ? formData.ranges.map(range => {
-                                // Preserve existing IDs for existing ranges, generate new IDs for new ranges
                                 const existingRange = tariff.ranges.find(r => r.id === range.id);
                                 return existingRange
                                     ? { ...range }
@@ -579,36 +561,30 @@ const TariffsManagement = () => {
             setSuccessMessage('Tariff updated successfully');
         }
 
-        // Close modal and reset state
         setIsModalOpen(false);
         setModalType(null);
         setCurrentTariff(null);
 
-        // Hide message after 3 seconds
         setTimeout(() => {
             setSuccessMessage(null);
         }, 3000);
     };
 
-    // Handle tariff deletion
     const handleDeleteTariff = () => {
         if (currentTariff) {
             setTariffs(tariffs.filter(tariff => tariff.id !== currentTariff.id));
             setSuccessMessage('Tariff deleted successfully');
 
-            // Close modal and reset state
             setIsModalOpen(false);
             setModalType(null);
             setCurrentTariff(null);
 
-            // Hide message after 3 seconds
             setTimeout(() => {
                 setSuccessMessage(null);
             }, 3000);
         }
     };
 
-    // Generate modal title based on modalType
     const getModalTitle = () => {
         switch (modalType) {
             case 'add':

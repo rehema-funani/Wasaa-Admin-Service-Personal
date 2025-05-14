@@ -23,7 +23,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const [colorScheme, setColorScheme] = useState<ColorScheme>('blue');
     const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
-    // Function to update the document with the current theme
     const updateThemeClass = (darkMode: boolean) => {
         if (darkMode) {
             document.documentElement.classList.add('dark');
@@ -33,19 +32,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         setIsDarkMode(darkMode);
     };
 
-    // Initialize theme on component mount
     useEffect(() => {
-        // Get stored preferences
         const storedMode = localStorage.getItem('theme-mode') as ThemeMode || 'system';
         const storedColorScheme = localStorage.getItem('color-scheme') as ColorScheme || 'blue';
 
         setMode(storedMode);
         setColorScheme(storedColorScheme);
 
-        // Apply the appropriate theme
         applyTheme(storedMode);
 
-        // Listen for system preference changes if in system mode
         if (storedMode === 'system') {
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -61,44 +56,35 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         }
     }, []);
 
-    // Apply theme based on mode
     const applyTheme = (themeMode: ThemeMode) => {
         if (themeMode === 'dark') {
             updateThemeClass(true);
         } else if (themeMode === 'light') {
             updateThemeClass(false);
         } else {
-            // System mode - check system preference
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             updateThemeClass(prefersDark);
         }
     };
 
-    // Set theme mode and save to localStorage
     const handleSetMode = (newMode: ThemeMode) => {
         localStorage.setItem('theme-mode', newMode);
         setMode(newMode);
         applyTheme(newMode);
     };
 
-    // Set color scheme and save to localStorage
     const handleSetColorScheme = (newColorScheme: ColorScheme) => {
         localStorage.setItem('color-scheme', newColorScheme);
         setColorScheme(newColorScheme);
 
-        // Apply color scheme classes or CSS variables here
-        // This is a placeholder for actual implementation that would
-        // change the CSS variables for your theme colors
         document.documentElement.setAttribute('data-color-scheme', newColorScheme);
     };
 
-    // Toggle between light and dark mode
     const toggleMode = () => {
         const newMode = mode === 'dark' ? 'light' : 'dark';
         handleSetMode(newMode);
     };
 
-    // Create context value
     const value: ThemeContextType = {
         mode,
         colorScheme,
@@ -115,7 +101,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     );
 };
 
-// Custom hook for using theme context
 export const useTheme = (): ThemeContextType => {
     const context = useContext(ThemeContext);
     if (context === undefined) {
