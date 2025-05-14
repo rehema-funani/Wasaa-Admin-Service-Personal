@@ -162,20 +162,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
   const userPermissions = user?.permissions || [];
 
-  // Debug permission check for current route
-  useEffect(() => {
-    const currentPath = location.pathname;
-    const requiredPermissions = getRequiredPermissionsForRoute(currentPath);
-    const hasPermission = hasPermissionForRoute(currentPath, userPermissions);
-
-    console.log({
-      currentPath,
-      requiredPermissions,
-      hasPermission,
-      userPermissions
-    });
-  }, [location.pathname, userPermissions]);
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);

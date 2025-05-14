@@ -1,17 +1,36 @@
+export type TariffType = 'flat' | 'percentage' | 'tiered';
+
+export interface TariffRange {
+    id: string;
+    min: number;
+    max: number | null;
+    fee: number;
+}
+
 export interface Tariff {
     id: string;
-    category: string;
     name: string;
     description: string;
-    minAmount: number;
-    maxAmount: number | null;
-    feeType: 'fixed' | 'percentage' | 'tiered';
-    feeValue: number;
-    minFee?: number;
-    maxFee?: number;
-    currency: string;
-    isActive: boolean;
-    provider: string;
+    type: string;
+    value: number;
+    fixedRanges: any[];
+    percentageRanges: any[];
+    status: string;
     lastUpdated: string;
-    tiers?: { from: number; to: number | null; fee: number }[];
+    category?: string;
+    minAmount?: number;
+    maxAmount?: number | null;
+    feeType?: string;
 }
+
+export type ModalType = 
+    | 'add' 
+    | 'edit' 
+    | 'delete' 
+    | 'addFixedRange' 
+    | 'editFixedRange' 
+    | 'deleteFixedRange'
+    | 'addPercentageRange'
+    | 'editPercentageRange'
+    | 'deletePercentageRange'
+    | null;

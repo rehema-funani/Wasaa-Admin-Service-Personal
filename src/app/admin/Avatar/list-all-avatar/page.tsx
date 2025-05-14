@@ -46,7 +46,7 @@ const page: React.FC = () => {
   };
 
   const filteredAvatars = avatars.filter(avatar =>
-    avatar.name.toLowerCase().includes(searchQuery.toLowerCase())
+    avatar?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase())
   );
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {

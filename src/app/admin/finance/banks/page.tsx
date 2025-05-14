@@ -17,7 +17,7 @@ interface Bank {
 
 type ModalType = 'add' | 'edit' | 'delete' | null;
 
-const BankManagement = () => {
+const page = () => {
     const [banks, setBanks] = useState<Bank[]>([
         {
             id: '1',
@@ -208,7 +208,6 @@ const BankManagement = () => {
             setBanks([...banks, newBank]);
             setSuccessMessage('Bank added successfully');
         } else if (modalType === 'edit' && currentBank) {
-            // Update existing bank
             setBanks(banks.map(bank =>
                 bank.id === currentBank.id
                     ? {
@@ -781,4 +780,4 @@ const BankManagement = () => {
     );
 };
 
-export default BankManagement;
+export default page;

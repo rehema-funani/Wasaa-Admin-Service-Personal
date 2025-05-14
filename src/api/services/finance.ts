@@ -1,6 +1,22 @@
 import axios from 'axios';
 import { finance } from '../finance-axios';
 
+export interface Tariff {
+  id?: string;
+  name: string;
+  description: string;
+  type: 'flat' | 'percentage' | 'tiered';
+  status: 'active' | 'inactive';
+}
+
+export interface FeeRange {
+  id?: string;
+  walletBillingId: string;
+  min: number;
+  max: number | null;
+  fee: number;
+}
+
 export const financeService = {
   // ======== CURRENCY ENDPOINTS ========
   
@@ -345,7 +361,128 @@ export const financeService = {
       }
       throw new Error('Failed to reject top-up. Please check your network connection.');
     }
+  },
+
+// ======== TARIFF ENDPOINTS ========
+
+// Get all tariffs
+async getAllTariffs(): Promise<any[]> {
+  try {
+    const response = await finance.get('/walletBillings');
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get tariffs');
+    }
+    throw new Error('Failed to get tariffs. Please check your network connection.');
   }
+},
+
+// Get a specific tariff
+async getTariff(tariffId: string): Promise<Tariff> {
+  try {
+    const response = await finance.get(`/tariffs/${tariffId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get tariff');
+    }
+    throw new Error('Failed to get tariff. Please check your network connection.');
+  }
+},
+
+// Create a new tariff
+async createTariff(tariffData: Omit<Tariff, 'id'>): Promise<Tariff> {
+  try {
+    const response = await finance.post('/tariffs', tariffData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to create tariff');
+    }
+    throw new Error('Failed to create tariff. Please check your network connection.');
+  }
+},
+
+// Update a tariff
+async updateTariff(tariffId: string, tariffData: Partial<Tariff>): Promise<Tariff> {
+  try {
+    const response = await finance.put(`/tariffs/${tariffId}`, tariffData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to update tariff');
+    }
+    throw new Error('Failed to update tariff. Please check your network connection.');
+  }
+},
+
+// Delete a tariff
+async deleteTariff(tariffId: string): Promise<any> {
+  try {
+    const response = await finance.delete(`/tariffs/${tariffId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to delete tariff');
+    }
+    throw new Error('Failed to delete tariff. Please check your network connection.');
+  }
+},
+
+// ======== FEE RANGE ENDPOINTS ========
+
+// Get fee ranges for a specific tariff
+async getFeeRangesByTariffId(tariffId: string): Promise<FeeRange[]> {
+  try {
+    const response = await finance.get(`/fee-ranges?walletBillingId=${tariffId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get fee ranges');
+    }
+    throw new Error('Failed to get fee ranges. Please check your network connection.');
+  }
+},
+
+// Create a fee range
+async createFeeRange(feeRangeData: Omit<FeeRange, 'id'>): Promise<FeeRange> {
+  try {
+    const response = await finance.post('/fee-ranges', feeRangeData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to create fee range');
+    }
+    throw new Error('Failed to create fee range. Please check your network connection.');
+  }
+},
+
+// Update a fee range
+async updateFeeRange(feeRangeId: string, feeRangeData: Partial<Omit<FeeRange, 'id' | 'walletBillingId'>>): Promise<FeeRange> {
+  try {
+    const response = await finance.put(`/fee-ranges/${feeRangeId}`, feeRangeData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to update fee range');
+    }
+    throw new Error('Failed to update fee range. Please check your network connection.');
+  }
+},
+
+// Delete a fee range
+async deleteFeeRange(feeRangeId: string): Promise<any> {
+  try {
+    const response = await finance.delete(`/fee-ranges/${feeRangeId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to delete fee range');
+    }
+    throw new Error('Failed to delete fee range. Please check your network connection.');
+  }
+},
 };
 
 export default financeService;
