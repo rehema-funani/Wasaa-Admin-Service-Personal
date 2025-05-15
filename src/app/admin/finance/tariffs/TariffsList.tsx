@@ -1,28 +1,7 @@
 import React from 'react';
 import { Search, SlidersHorizontal, Percent, DollarSign, Edit, Trash2, ChevronDown, ChevronRight, Check, Loader, Plus } from 'lucide-react';
-import { Tariff, TariffRange, TariffType } from '../../../../types/finance';
 
-interface TariffsListProps {
-    tariffs: Tariff[];
-    isLoading: boolean;
-    error: string | null;
-    successMessage: string | null;
-    searchQuery: string;
-    setSearchQuery: (query: string) => void;
-    statusFilter: 'all' | 'active' | 'inactive';
-    setStatusFilter: (status: 'all' | 'active' | 'inactive') => void;
-    expandedRows: Record<string, boolean>;
-    toggleRowExpansion: (id: string) => void;
-    handleTypeChange: (id: string, type: TariffType) => void;
-    handleValueChange: (id: string, value: string) => void;
-    openEditModal: (tariff: Tariff) => void;
-    openDeleteModal: (tariff: Tariff) => void;
-    openAddRangeModal: (tariff: Tariff, rangeType: 'fixed' | 'percentage') => void;
-    openEditRangeModal: (tariff: Tariff, range: TariffRange, rangeType: 'fixed' | 'percentage') => void;
-    openDeleteRangeModal: (tariff: Tariff, range: TariffRange, rangeType: 'fixed' | 'percentage') => void;
-}
-
-const TariffsList: React.FC<TariffsListProps> = ({
+const TariffsList = ({
     tariffs,
     isLoading,
     error,
@@ -41,7 +20,7 @@ const TariffsList: React.FC<TariffsListProps> = ({
     openEditRangeModal,
     openDeleteRangeModal
 }) => {
-    const formatRange = (range: TariffRange) => {
+    const formatRange = (range) => {
         if (range.max === null) {
             return `KES ${range.min.toLocaleString()} and above`;
         }
@@ -253,7 +232,7 @@ const TariffsList: React.FC<TariffsListProps> = ({
                                                                 </div>
 
                                                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-                                                                    {tariff.fixedRanges.length > 0 ? (
+                                                                    {tariff.fixedRanges && tariff.fixedRanges.length > 0 ? (
                                                                         tariff.fixedRanges.map((range) => (
                                                                             <div
                                                                                 key={range.id}
@@ -274,7 +253,7 @@ const TariffsList: React.FC<TariffsListProps> = ({
                                                                                             onClick={() => openDeleteRangeModal(tariff, range, 'fixed')}
                                                                                             className="p-1 text-gray-400 hover:text-red-500 rounded-md hover:bg-red-50"
                                                                                             title="Delete Range"
-                                                                                            disabled={isLoading || tariff.fixedRanges.length === 1}
+                                                                                            disabled={isLoading || (tariff.fixedRanges && tariff.fixedRanges.length === 1)}
                                                                                         >
                                                                                             <Trash2 size={14} />
                                                                                         </button>
@@ -310,7 +289,7 @@ const TariffsList: React.FC<TariffsListProps> = ({
                                                                 </div>
 
                                                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                                                    {tariff.percentageRanges.length > 0 ? (
+                                                                    {tariff.percentageRanges && tariff.percentageRanges.length > 0 ? (
                                                                         tariff.percentageRanges.map((range) => (
                                                                             <div
                                                                                 key={range.id}
@@ -331,7 +310,7 @@ const TariffsList: React.FC<TariffsListProps> = ({
                                                                                             onClick={() => openDeleteRangeModal(tariff, range, 'percentage')}
                                                                                             className="p-1 text-gray-400 hover:text-red-500 rounded-md hover:bg-red-50"
                                                                                             title="Delete Range"
-                                                                                            disabled={isLoading || tariff.percentageRanges.length === 1}
+                                                                                            disabled={isLoading || (tariff.percentageRanges && tariff.percentageRanges.length === 1)}
                                                                                         >
                                                                                             <Trash2 size={14} />
                                                                                         </button>

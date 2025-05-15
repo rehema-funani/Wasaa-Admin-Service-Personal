@@ -2,33 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Save, Info, Loader, Plus } from 'lucide-react';
 import financeService from '../../../../api/services/finance';
 import { Modal } from '../../../../components/common/Modal';
-import { ModalType, Tariff, TariffRange } from '../../../../types/finance';
 import TariffsList from './TariffsList';
 import TariffForm from './TariffForm';
 import RangeForm from './RangeForm';
 
 const TariffsManagement = () => {
-    const [tariffs, setTariffs] = useState<any>([]);
+    const [tariffs, setTariffs] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState<string>('');
-    const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalType, setModalType] = useState<ModalType>(null);
-    const [currentTariff, setCurrentTariff] = useState<any>(null);
-    const [currentRange, setCurrentRange] = useState<any>(null);
-    const [expandedRows, setExpandedRows] = useState<any>({});
-    const [formData, setFormData] = useState<{
-        name: string;
-        description: string;
-        type: string;
-        value: number;
-        fixedRanges: { id: string; min: number; max: number | null; fee: number }[];
-        percentageRanges: { id: string; min: number; max: number | null; fee: number }[];
-        status: string;
-    }>({
+    const [modalType, setModalType] = useState(null);
+    const [currentTariff, setCurrentTariff] = useState(null);
+    const [currentRange, setCurrentRange] = useState(null);
+    const [expandedRows, setExpandedRows] = useState({});
+    const [formData, setFormData] = useState({
         name: '',
         description: '',
         type: 'flat',
@@ -38,18 +29,16 @@ const TariffsManagement = () => {
         status: 'active'
     });
 
-    const [rangeFormData, setRangeFormData] = useState<Omit<TariffRange, 'id'>>({
+    const [rangeFormData, setRangeFormData] = useState({
         min: 0,
         max: null,
         fee: 0
     });
 
-    // Load tariffs on component mount
     useEffect(() => {
         fetchTariffs();
     }, []);
 
-    // Fetch all tariffs and their fee ranges
     const fetchTariffs = async () => {
         setIsLoading(true);
         setError(null);
@@ -57,8 +46,7 @@ const TariffsManagement = () => {
             const tariffsData = await financeService.getAllTariffs();
 
             const formattedTariffs = tariffsData?.walletBillings?.map((tariff) => {
-                // Format for our frontend model
-                const formattedTariff: any = {
+                const formattedTariff = {
                     id: tariff.id || '',
                     name: tariff.name,
                     description: tariff.description,
@@ -104,37 +92,18 @@ const TariffsManagement = () => {
         return matchesSearch && matchesStatus;
     });
 
-    const toggleRowExpansion = (id: string) => {
+    const toggleRowExpansion = (id) => {
         setExpandedRows(prev => ({
             ...prev,
             [id]: !prev[id]
         }));
     };
 
-    // Helper function to show success message
-    const showSuccess = (message: string) => {
+    const showSuccess = (message) => {
         setSuccessMessage(message);
         setTimeout(() => setSuccessMessage(null), 3000);
     };
 
-    // Handle saving all changes
-    const handleSave = async () => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            // This could be a bulk update endpoint in your API
-            // For now, we'll just inform the user that changes are saved
-            showSuccess('All tariff changes have been saved successfully');
-        } catch (err) {
-            setError('Failed to save changes. Please try again.');
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Open modal for adding new tariff
     const openAddModal = () => {
         setFormData({
             name: '',
@@ -149,8 +118,7 @@ const TariffsManagement = () => {
         setIsModalOpen(true);
     };
 
-    // Open modal for editing tariff
-    const openEditModal = (tariff: Tariff) => {
+    const openEditModal = (tariff) => {
         setCurrentTariff(tariff);
         setFormData({
             name: tariff.name,
@@ -165,20 +133,17 @@ const TariffsManagement = () => {
         setIsModalOpen(true);
     };
 
-    // Open modal for deleting tariff
-    const openDeleteModal = (tariff: Tariff) => {
+    const openDeleteModal = (tariff) => {
         setCurrentTariff(tariff);
         setModalType('delete');
         setIsModalOpen(true);
     };
 
-    // Open modal for adding range to a tariff
-    const openAddRangeModal = (tariff: Tariff, rangeType: 'fixed' | 'percentage') => {
+    const openAddRangeModal = (tariff: any, rangeType: any) => {
         setCurrentTariff(tariff);
 
         const ranges = rangeType === 'fixed' ? tariff.fixedRanges : tariff.percentageRanges;
 
-        // Find highest range to suggest a new min value
         const highestRange = [...ranges].sort((a, b) => (b.max || Infinity) - (a.max || Infinity))[0];
         const suggestedMin = highestRange && highestRange.max !== null ? highestRange.max + 1 : 0;
 
@@ -192,7 +157,7 @@ const TariffsManagement = () => {
         setIsModalOpen(true);
     };
 
-    const openEditRangeModal = (tariff: Tariff, range: TariffRange, rangeType: 'fixed' | 'percentage') => {
+    const openEditRangeModal = (tariff, range, rangeType) => {
         setCurrentTariff(tariff);
         setCurrentRange(range);
         setRangeFormData({
@@ -204,15 +169,14 @@ const TariffsManagement = () => {
         setIsModalOpen(true);
     };
 
-    const openDeleteRangeModal = (tariff: Tariff, range: TariffRange, rangeType: 'fixed' | 'percentage') => {
+    const openDeleteRangeModal = (tariff: any, range: any, rangeType: any) => {
         setCurrentTariff(tariff);
         setCurrentRange(range);
         setModalType(rangeType === 'fixed' ? 'deleteFixedRange' : 'deletePercentageRange');
         setIsModalOpen(true);
     };
 
-    // Handler for changing tariff type (flat/percentage)
-    const handleTypeChange = async (id: string, type: 'flat' | 'percentage' | 'tiered') => {
+    const handleTypeChange = async (id: any, type: any) => {
         const tariff = tariffs.find(t => t.id === id);
         if (!tariff) return;
 
@@ -220,10 +184,8 @@ const TariffsManagement = () => {
         setError(null);
 
         try {
-            // Update tariff type in the API
             await financeService.updateTariff(id, { type });
 
-            // Update local state
             setTariffs(tariffs.map(t =>
                 t.id === id ? {
                     ...t,
@@ -241,18 +203,15 @@ const TariffsManagement = () => {
         }
     };
 
-    // Handler for changing percentage tariff value
-    const handleValueChange = async (id: string, value: string) => {
+    const handleValueChange = async (id: string, value: any) => {
         const numValue = parseFloat(value) || 0;
 
         setIsLoading(true);
         setError(null);
 
         try {
-            // Update tariff value in the API
-            await financeService.updateTariff(id, { value: numValue } as Partial<Tariff>);
+            await financeService.updateTariff(id, { value: numValue });
 
-            // Update local state
             setTariffs(tariffs.map(tariff =>
                 tariff.id === id ? { ...tariff, value: numValue } : tariff
             ));
@@ -264,7 +223,6 @@ const TariffsManagement = () => {
         }
     };
 
-    // Handle deleting a tariff
     const handleDeleteTariff = async () => {
         if (!currentTariff) return;
 
@@ -291,7 +249,7 @@ const TariffsManagement = () => {
     };
 
     // Handle adding a range (works for both fixed and percentage ranges)
-    const handleAddRange = async (rangeType: 'fixed' | 'percentage') => {
+    const handleAddRange = async (rangeType) => {
         if (!currentTariff) return;
 
         // Validate range
@@ -328,7 +286,7 @@ const TariffsManagement = () => {
 
         try {
             const endpoint = rangeType === 'fixed' ?
-                financeService.createFeeRange :
+                financeService.createFixedRange :
                 financeService.createPercentageRange;
 
             const newRange = await endpoint({
@@ -380,7 +338,7 @@ const TariffsManagement = () => {
     };
 
     // Handle editing a range
-    const handleEditRange = async (rangeType: 'fixed' | 'percentage') => {
+    const handleEditRange = async (rangeType) => {
         if (!currentTariff || !currentRange) return;
 
         // Validate range
@@ -469,7 +427,7 @@ const TariffsManagement = () => {
     };
 
     // Handle deleting a range
-    const handleDeleteRange = async (rangeType: 'fixed' | 'percentage') => {
+    const handleDeleteRange = async (rangeType) => {
         if (!currentTariff || !currentRange) return;
 
         // Check if this is the last range
@@ -584,20 +542,11 @@ const TariffsManagement = () => {
 
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={handleSave}
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all text-sm"
+                                onClick={openAddModal}
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all text-sm"
                                 disabled={isLoading}
                             >
                                 {isLoading ? <Loader size={16} className="animate-spin" /> : <Save size={16} />}
-                                <span>Save Changes</span>
-                            </button>
-
-                            <button
-                                onClick={openAddModal}
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-all text-sm"
-                                disabled={isLoading}
-                            >
-                                <Plus size={16} />
                                 <span>New Tariff</span>
                             </button>
                         </div>
@@ -650,9 +599,9 @@ const TariffsManagement = () => {
                 }}
                 title={getModalTitle()}
                 size={
-                    ['delete', 'deleteFixedRange', 'deletePercentageRange'].includes(modalType || '')
+                    ['delete', 'deleteFixedRange', 'deletePercentageRange'].includes(modalType)
                         ? 'sm'
-                        : ['addFixedRange', 'editFixedRange', 'addPercentageRange', 'editPercentageRange'].includes(modalType || '')
+                        : ['addFixedRange', 'editFixedRange', 'addPercentageRange', 'editPercentageRange'].includes(modalType)
                             ? 'md'
                             : 'lg'
                 }
@@ -673,7 +622,7 @@ const TariffsManagement = () => {
                         setModalType={setModalType}
                         setCurrentTariff={setCurrentTariff}
                     />
-                ) : ['addFixedRange', 'editFixedRange', 'addPercentageRange', 'editPercentageRange'].includes(modalType || '') ? (
+                ) : ['addFixedRange', 'editFixedRange', 'addPercentageRange', 'editPercentageRange'].includes(modalType) ? (
                     <RangeForm
                         rangeFormData={rangeFormData}
                         setRangeFormData={setRangeFormData}
@@ -686,12 +635,12 @@ const TariffsManagement = () => {
                             setCurrentRange(null);
                         }}
                     />
-                ) : ['delete', 'deleteFixedRange', 'deletePercentageRange'].includes(modalType || '') ? (
+                ) : ['delete', 'deleteFixedRange', 'deletePercentageRange'].includes(modalType) ? (
                     <div className="space-y-3">
                         <p className="text-gray-700 text-sm">
                             Are you sure you want to delete {modalType === 'delete' ? 'the tariff ' : 'this range'}
                             {modalType === 'delete' && <span className="font-semibold"> {currentTariff?.name}</span>}?
-                            This action cannot be undone.
+                            This is a dangerous action and cannot be undone. Please confirm to proceed.
                         </p>
                         <div className="flex justify-end gap-2 mt-5">
                             <button

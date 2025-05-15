@@ -1,6 +1,5 @@
 import React from 'react';
 import { Loader } from 'lucide-react';
-import { TariffRange } from '../../../../types/finance';
 
 interface RangeFormProps {
     rangeFormData: any;
@@ -20,7 +19,6 @@ const RangeForm: React.FC<RangeFormProps> = ({
     const handleRangeFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
 
-        // Handle null for max value
         if (name === 'max' && (value === '' || value.toLowerCase() === 'null')) {
             setRangeFormData(prev => ({
                 ...prev,
@@ -62,7 +60,7 @@ const RangeForm: React.FC<RangeFormProps> = ({
                         Maximum Amount (KES)
                     </label>
                     <input
-                        type="text" // Using text to allow "null" value
+                        type="text"
                         id="max"
                         name="max"
                         value={rangeFormData.max === null ? '' : rangeFormData.max}

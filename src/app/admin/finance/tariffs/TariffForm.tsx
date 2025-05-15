@@ -1,30 +1,7 @@
 import React from 'react';
 import { Percent, DollarSign, Plus, X, Loader } from 'lucide-react';
-import { Tariff, TariffRange, TariffType, ModalType } from '../../../../types/finance';
 
-interface TariffFormProps {
-  formData: Omit<Tariff, 'id' | 'lastUpdated'> & {
-    fixedRanges: TariffRange[],
-    percentageRanges: TariffRange[]
-  };
-  setFormData: React.Dispatch<React.SetStateAction<Omit<Tariff, 'id' | 'lastUpdated'> & {
-    fixedRanges: TariffRange[],
-    percentageRanges: TariffRange[]
-  }>>;
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
-  currentTariff: Tariff | null;
-  financeService: any; // Type should be defined properly based on your service
-  tariffs: Tariff[];
-  setTariffs: React.Dispatch<React.SetStateAction<Tariff[]>>;
-  showSuccess: (message: string) => void;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setModalType: React.Dispatch<React.SetStateAction<ModalType>>;
-  setCurrentTariff: React.Dispatch<React.SetStateAction<Tariff | null>>;
-}
-
-const TariffForm: React.FC<TariffFormProps> = ({
+const TariffForm = ({
   formData,
   setFormData,
   isLoading,
@@ -39,7 +16,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
   setModalType,
   setCurrentTariff
 }) => {
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -48,7 +25,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
   };
 
   // Handle form type change
-  const handleFormTypeChange = (type: TariffType) => {
+  const handleFormTypeChange = (type) => {
     setFormData(prev => ({
       ...prev,
       type,
@@ -63,14 +40,14 @@ const TariffForm: React.FC<TariffFormProps> = ({
   };
 
   // Handle form status change
-  const handleFormStatusChange = (status: 'active' | 'inactive') => {
+  const handleFormStatusChange = (status) => {
     setFormData(prev => ({
       ...prev,
       status
     }));
   };
 
-  const handleAddFormRange = (rangeType: 'fixed' | 'percentage') => {
+  const handleAddFormRange = (rangeType) => {
     const ranges = rangeType === 'fixed' ? formData.fixedRanges : formData.percentageRanges;
     const tempId = `new-${ranges.length + 1}`;
 
@@ -92,7 +69,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
     }
   };
 
-  const handleRemoveFormRange = (id: string, rangeType: 'fixed' | 'percentage') => {
+  const handleRemoveFormRange = (id, rangeType) => {
     const ranges = rangeType === 'fixed' ? formData.fixedRanges : formData.percentageRanges;
 
     if (ranges.length === 1) {
@@ -114,7 +91,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
   };
 
   // Handle updating a range in the form data
-  const handleUpdateFormRange = (id: string, field: keyof TariffRange, value: any, rangeType: 'fixed' | 'percentage') => {
+  const handleUpdateFormRange = (id, field, value, rangeType) => {
     // Handle null for max value
     if (field === 'max' && (value === '' || value === 'null')) {
       if (rangeType === 'fixed') {
@@ -160,8 +137,8 @@ const TariffForm: React.FC<TariffFormProps> = ({
     }
   };
 
-  const validateRanges = (ranges: TariffRange[]) => {
-    const rangeMap = new Map<number, TariffRange>();
+  const validateRanges = (ranges) => {
+    const rangeMap = new Map();
     let hasOverlap = false;
 
     for (const range of ranges) {
@@ -197,7 +174,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
     return true;
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     // Validate the appropriate ranges based on tariff type
@@ -214,26 +191,30 @@ const TariffForm: React.FC<TariffFormProps> = ({
 
     try {
       if (!currentTariff) {
-        // Create new tariff in API
+        // Create new tariff in API - only sending required fields in the correct format
         const tariffToCreate = {
           name: formData.name,
           description: formData.description,
           type: formData.type,
-          value: formData.value,
           status: formData.status
         };
+
+        // Only include value if it's a percentage type
+        if (formData.type === 'percentage') {
+          tariffToCreate.value = formData.value;
+        }
 
         const createdTariff = await financeService.createTariff(tariffToCreate);
 
         // Create ranges based on tariff type
-        let createdFixedRanges: TariffRange[] = [];
-        let createdPercentageRanges: TariffRange[] = [];
+        let createdFixedRanges = [];
+        let createdPercentageRanges = [];
 
         if (formData.type === 'flat') {
           createdFixedRanges = await Promise.all(
             formData.fixedRanges.map(async (range) => {
               const rangeToCreate = {
-                walletBillingId: createdTariff.id!,
+                walletBillingId: createdTariff.id,
                 min: range.min,
                 max: range.max,
                 fee: range.fee
@@ -253,7 +234,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
           createdPercentageRanges = await Promise.all(
             formData.percentageRanges.map(async (range) => {
               const rangeToCreate = {
-                walletBillingId: createdTariff.id!,
+                walletBillingId: createdTariff.id,
                 min: range.min,
                 max: range.max,
                 fee: range.fee
@@ -272,11 +253,11 @@ const TariffForm: React.FC<TariffFormProps> = ({
         }
 
         // Add new tariff to local state
-        const newTariff: Tariff = {
-          id: createdTariff.id!,
+        const newTariff = {
+          id: createdTariff.id,
           name: createdTariff.name,
           description: createdTariff.description,
-          type: createdTariff.type as TariffType,
+          type: createdTariff.type,
           value: createdTariff.value || 0,
           fixedRanges: createdFixedRanges,
           percentageRanges: createdPercentageRanges,
@@ -287,19 +268,21 @@ const TariffForm: React.FC<TariffFormProps> = ({
         setTariffs([...tariffs, newTariff]);
         showSuccess('Tariff added successfully');
       } else {
-        // Update existing tariff
         const tariffToUpdate = {
           name: formData.name,
           description: formData.description,
           type: formData.type,
-          value: formData.value,
           status: formData.status
         };
+
+        if (formData.type === 'percentage') {
+          tariffToUpdate.value = formData.value;
+        }
 
         await financeService.updateTariff(currentTariff.id, tariffToUpdate);
 
         // Handle fixed ranges
-        let updatedFixedRanges: TariffRange[] = [];
+        let updatedFixedRanges = [];
         if (formData.type === 'flat') {
           // Get existing range IDs
           const existingRangeIds = currentTariff.fixedRanges.map(r => r.id);
@@ -347,7 +330,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
         }
 
         // Handle percentage ranges
-        let updatedPercentageRanges: TariffRange[] = [];
+        let updatedPercentageRanges = [];
         if (formData.type === 'percentage') {
           // Get existing range IDs
           const existingRangeIds = currentTariff.percentageRanges.map(r => r.id);
@@ -469,7 +452,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
               type="button"
               onClick={() => handleFormTypeChange('flat')}
               className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.type === 'flat'
-                ? 'bg-white  text-gray-800 font-medium'
+                ? 'bg-white text-gray-800 font-medium'
                 : 'text-gray-500'
                 }`}
               disabled={isLoading}
@@ -481,7 +464,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
               type="button"
               onClick={() => handleFormTypeChange('percentage')}
               className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.type === 'percentage'
-                ? 'bg-white  text-gray-800 font-medium'
+                ? 'bg-white text-gray-800 font-medium'
                 : 'text-gray-500'
                 }`}
               disabled={isLoading}
@@ -702,7 +685,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
               type="button"
               onClick={() => handleFormStatusChange('active')}
               className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.status === 'active'
-                ? 'bg-white  text-gray-800 font-medium'
+                ? 'bg-white text-gray-800 font-medium'
                 : 'text-gray-500'
                 }`}
               disabled={isLoading}
@@ -713,7 +696,7 @@ const TariffForm: React.FC<TariffFormProps> = ({
               type="button"
               onClick={() => handleFormStatusChange('inactive')}
               className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.status === 'inactive'
-                ? 'bg-white  text-gray-800 font-medium'
+                ? 'bg-white text-gray-800 font-medium'
                 : 'text-gray-500'
                 }`}
               disabled={isLoading}

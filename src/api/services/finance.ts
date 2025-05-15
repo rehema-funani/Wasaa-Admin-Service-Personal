@@ -20,7 +20,6 @@ export interface FeeRange {
 export const financeService = {
   // ======== CURRENCY ENDPOINTS ========
   
-  // Get all currencies
   async getAllCurrencies(): Promise<any> {
     try {
       const response = await finance.get('/currencies');
@@ -45,7 +44,6 @@ export const financeService = {
     }
   },
 
-  // Create a new currency
   async createCurrency(currencyData: any): Promise<any> {
     try {
       const response = await finance.post('/currencies', currencyData);
@@ -58,7 +56,6 @@ export const financeService = {
     }
   },
 
-  // Update a currency
   async updateCurrency(currencyId: string, currencyData: any): Promise<any> {
     try {
       const response = await finance.put(`/currencies/${currencyId}`, currencyData);
@@ -71,7 +68,6 @@ export const financeService = {
     }
   },
 
-  // Delete a currency
   async deleteCurrency(currencyId: string): Promise<any> {
     try {
       const response = await finance.delete(`/currencies/${currencyId}`);
@@ -86,7 +82,6 @@ export const financeService = {
 
   // ======== PAYMENT METHOD ENDPOINTS ========
 
-  // Get all payment methods
   async getAllPaymentMethods(): Promise<any> {
     try {
       const response = await finance.get('/paymentMethods');
@@ -99,7 +94,6 @@ export const financeService = {
     }
   },
 
-  // Get a specific payment method
   async getPaymentMethod(id: string): Promise<any> {
     try {
       const response = await finance.get(`/paymentMethods/${id}`);
@@ -112,7 +106,6 @@ export const financeService = {
     }
   },
 
-  // Create a new payment method
   async createPaymentMethod(methodData: any): Promise<any> {
     try {
       const response = await finance.post('/payment-methods', methodData);
@@ -125,7 +118,6 @@ export const financeService = {
     }
   },
 
-  // Update a payment method
   async updatePaymentMethod(methodId: string, methodData: any): Promise<any> {
     try {
       const response = await finance.put(`/payment-methods/${methodId}`, methodData);
@@ -138,7 +130,6 @@ export const financeService = {
     }
   },
 
-  // Delete a payment method
   async deletePaymentMethod(methodId: string): Promise<any> {
     try {
       const response = await finance.delete(`/payment-methods/${methodId}`);
@@ -151,7 +142,6 @@ export const financeService = {
     }
   },
 
-  // Toggle payment method status (active/inactive)
   async togglePaymentMethodStatus(methodId: string): Promise<any> {
     try {
       const response = await finance.patch(`/payment-methods/${methodId}/toggle-status`);
@@ -166,7 +156,6 @@ export const financeService = {
 
   // ======== USER WALLET ENDPOINTS ========
 
-  // Get all user wallets
   async getAllWallets(filters = {}): Promise<any> {
     try {
       const response = await finance.get('/userWallets', { params: filters });
@@ -179,7 +168,6 @@ export const financeService = {
     }
   },
 
-  // Get a specific user wallet
   async getWallet(walletId: string): Promise<any> {
     try {
       const response = await finance.get(`/wallets/${walletId}`);
@@ -379,7 +367,7 @@ async getAllTariffs(): Promise<any[]> {
 },
 
 // Get a specific tariff
-async getTariff(tariffId: string): Promise<Tariff> {
+async getTariff(tariffId: string): Promise<any> {
   try {
     const response = await finance.get(`/tariffs/${tariffId}`);
     return response.data;
@@ -391,8 +379,7 @@ async getTariff(tariffId: string): Promise<Tariff> {
   }
 },
 
-// Create a new tariff
-async createTariff(tariffData: Omit<Tariff, 'id'>): Promise<Tariff> {
+async createTariff(tariffData: Omit<any, 'id'>): Promise<any> {
   try {
     const response = await finance.post('/tariffs', tariffData);
     return response.data;
@@ -404,10 +391,9 @@ async createTariff(tariffData: Omit<Tariff, 'id'>): Promise<Tariff> {
   }
 },
 
-// Update a tariff
-async updateTariff(tariffId: string, tariffData: Partial<Tariff>): Promise<Tariff> {
+async updateTariff(tariffId: string, tariffData: Partial<any>): Promise<any> {
   try {
-    const response = await finance.put(`/tariffs/${tariffId}`, tariffData);
+    const response = await finance.put(`/walletBillings/${tariffId}`, tariffData);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -417,7 +403,6 @@ async updateTariff(tariffId: string, tariffData: Partial<Tariff>): Promise<Tarif
   }
 },
 
-// Delete a tariff
 async deleteTariff(tariffId: string): Promise<any> {
   try {
     const response = await finance.delete(`/tariffs/${tariffId}`);
@@ -432,8 +417,7 @@ async deleteTariff(tariffId: string): Promise<any> {
 
 // ======== FEE RANGE ENDPOINTS ========
 
-// Get fee ranges for a specific tariff
-async getFeeRangesByTariffId(tariffId: string): Promise<FeeRange[]> {
+async getFeeRangesByTariffId(tariffId: string): Promise<any[]> {
   try {
     const response = await finance.get(`/fee-ranges?walletBillingId=${tariffId}`);
     return response.data;
@@ -445,8 +429,7 @@ async getFeeRangesByTariffId(tariffId: string): Promise<FeeRange[]> {
   }
 },
 
-// Create a fee range
-async createFeeRange(feeRangeData: Omit<FeeRange, 'id'>): Promise<FeeRange> {
+async createFeeRange(feeRangeData: Omit<any, 'id'>): Promise<any> {
   try {
     const response = await finance.post('/fee-ranges', feeRangeData);
     return response.data;
@@ -458,8 +441,7 @@ async createFeeRange(feeRangeData: Omit<FeeRange, 'id'>): Promise<FeeRange> {
   }
 },
 
-// Update a fee range
-async updateFeeRange(feeRangeId: string, feeRangeData: Partial<Omit<FeeRange, 'id' | 'walletBillingId'>>): Promise<FeeRange> {
+async updateFeeRange(feeRangeId: string, feeRangeData: Partial<Omit<any, 'id' | 'walletBillingId'>>): Promise<any> {
   try {
     const response = await finance.put(`/fee-ranges/${feeRangeId}`, feeRangeData);
     return response.data;
@@ -471,7 +453,6 @@ async updateFeeRange(feeRangeId: string, feeRangeData: Partial<Omit<FeeRange, 'i
   }
 },
 
-// Delete a fee range
 async deleteFeeRange(feeRangeId: string): Promise<any> {
   try {
     const response = await finance.delete(`/fee-ranges/${feeRangeId}`);
