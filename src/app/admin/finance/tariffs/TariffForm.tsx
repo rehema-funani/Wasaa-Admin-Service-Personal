@@ -16,7 +16,7 @@ const TariffForm = ({
   setModalType,
   setCurrentTariff
 }) => {
-  const handleFormChange = (e) => {
+  const handleFormChange = (e: any) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -40,7 +40,7 @@ const TariffForm = ({
   };
 
   // Handle form status change
-  const handleFormStatusChange = (status) => {
+  const handleFormStatusChange = (status: any) => {
     setFormData(prev => ({
       ...prev,
       status
@@ -174,10 +174,9 @@ const TariffForm = ({
     return true;
   };
 
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = async (e: any) => {
     e.preventDefault();
 
-    // Validate the appropriate ranges based on tariff type
     if (formData.type === 'flat' && !validateRanges(formData.fixedRanges)) {
       return;
     }
@@ -191,7 +190,7 @@ const TariffForm = ({
 
     try {
       if (!currentTariff) {
-        // Create new tariff in API - only sending required fields in the correct format
+        // Create tariff without ranges
         const tariffToCreate = {
           name: formData.name,
           description: formData.description,
@@ -206,10 +205,10 @@ const TariffForm = ({
 
         const createdTariff = await financeService.createTariff(tariffToCreate);
 
-        // Create ranges based on tariff type
         let createdFixedRanges = [];
         let createdPercentageRanges = [];
 
+        // Create ranges separately after tariff is created
         if (formData.type === 'flat') {
           createdFixedRanges = await Promise.all(
             formData.fixedRanges.map(async (range) => {
@@ -217,10 +216,11 @@ const TariffForm = ({
                 walletBillingId: createdTariff.id,
                 min: range.min,
                 max: range.max,
-                fee: range.fee
+                fee: range.fee,
+                type: 'fixed' // Adding type to distinguish between fixed and percentage ranges
               };
 
-              const createdRange = await financeService.createFixedRange(rangeToCreate);
+              const createdRange = await financeService.createFeeRange(rangeToCreate);
 
               return {
                 id: createdRange.id,
@@ -237,10 +237,11 @@ const TariffForm = ({
                 walletBillingId: createdTariff.id,
                 min: range.min,
                 max: range.max,
-                fee: range.fee
+                fee: range.fee,
+                type: 'percentage' // Adding type to distinguish between fixed and percentage ranges
               };
 
-              const createdRange = await financeService.createPercentageRange(rangeToCreate);
+              const createdRange = await financeService.createFeeRange(rangeToCreate);
 
               return {
                 id: createdRange.id,
@@ -252,7 +253,6 @@ const TariffForm = ({
           );
         }
 
-        // Add new tariff to local state
         const newTariff = {
           id: createdTariff.id,
           name: createdTariff.name,
@@ -281,19 +281,14 @@ const TariffForm = ({
 
         await financeService.updateTariff(currentTariff.id, tariffToUpdate);
 
-        // Handle fixed ranges
         let updatedFixedRanges = [];
         if (formData.type === 'flat') {
-          // Get existing range IDs
           const existingRangeIds = currentTariff.fixedRanges.map(r => r.id);
-
-          // Process each range in form data
           updatedFixedRanges = await Promise.all(
             formData.fixedRanges.map(async (range) => {
-              // Check if this is an existing range or new one
               if (existingRangeIds.includes(range.id)) {
                 // Update existing range
-                await financeService.updateFixedRange(range.id, {
+                await financeService.updateFeeRange(range.id, {
                   min: range.min,
                   max: range.max,
                   fee: range.fee
@@ -305,10 +300,11 @@ const TariffForm = ({
                   walletBillingId: currentTariff.id,
                   min: range.min,
                   max: range.max,
-                  fee: range.fee
+                  fee: range.fee,
+                  type: 'fixed' // Adding type to distinguish between fixed and percentage ranges
                 };
 
-                const createdRange = await financeService.createFixedRange(rangeToCreate);
+                const createdRange = await financeService.createFeeRange(rangeToCreate);
 
                 return {
                   id: createdRange.id,
@@ -325,23 +321,19 @@ const TariffForm = ({
           const rangesToDelete = currentTariff.fixedRanges.filter(r => !formRangeIds.includes(r.id));
 
           await Promise.all(
-            rangesToDelete.map(range => financeService.deleteFixedRange(range.id))
+            rangesToDelete.map(range => financeService.deleteFeeRange(range.id))
           );
         }
 
-        // Handle percentage ranges
         let updatedPercentageRanges = [];
         if (formData.type === 'percentage') {
-          // Get existing range IDs
           const existingRangeIds = currentTariff.percentageRanges.map(r => r.id);
 
-          // Process each range in form data
           updatedPercentageRanges = await Promise.all(
-            formData.percentageRanges.map(async (range) => {
-              // Check if this is an existing range or new one
+            formData.percentageRanges.map(async (range: any) => {
               if (existingRangeIds.includes(range.id)) {
                 // Update existing range
-                await financeService.updatePercentageRange(range.id, {
+                await financeService.updateFeeRange(range.id, {
                   min: range.min,
                   max: range.max,
                   fee: range.fee
@@ -353,10 +345,11 @@ const TariffForm = ({
                   walletBillingId: currentTariff.id,
                   min: range.min,
                   max: range.max,
-                  fee: range.fee
+                  fee: range.fee,
+                  type: 'percentage' // Adding type to distinguish between fixed and percentage ranges
                 };
 
-                const createdRange = await financeService.createPercentageRange(rangeToCreate);
+                const createdRange = await financeService.createFeeRange(rangeToCreate);
 
                 return {
                   id: createdRange.id,
@@ -373,7 +366,7 @@ const TariffForm = ({
           const rangesToDelete = currentTariff.percentageRanges.filter(r => !formRangeIds.includes(r.id));
 
           await Promise.all(
-            rangesToDelete.map(range => financeService.deletePercentageRange(range.id))
+            rangesToDelete.map(range => financeService.deleteFeeRange(range.id))
           );
         }
 

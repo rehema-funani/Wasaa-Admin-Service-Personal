@@ -6,7 +6,7 @@ import TariffsList from './TariffsList';
 import TariffForm from './TariffForm';
 import RangeForm from './RangeForm';
 
-const TariffsManagement = () => {
+const page = () => {
     const [tariffs, setTariffs] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -285,16 +285,21 @@ const TariffsManagement = () => {
         setError(null);
 
         try {
-            const endpoint = rangeType === 'fixed' ?
-                financeService.createFixedRange :
-                financeService.createPercentageRange;
-
-            const newRange = await endpoint({
+            // Create range data object
+            const rangeData = {
                 walletBillingId: currentTariff.id,
                 min: rangeFormData.min,
                 max: rangeFormData.max,
                 fee: rangeFormData.fee
-            });
+            };
+
+            // Use the appropriate endpoint based on range type
+            let newRange;
+            if (rangeType === 'fixed') {
+                newRange = await financeService.createFeeRange(rangeData);
+            } else {
+                newRange = await financeService.createPercentageFeeRange(rangeData);
+            }
 
             // Add range to tariff in local state
             setTariffs(tariffs.map(tariff =>
@@ -337,11 +342,9 @@ const TariffsManagement = () => {
         }
     };
 
-    // Handle editing a range
     const handleEditRange = async (rangeType) => {
         if (!currentTariff || !currentRange) return;
 
-        // Validate range
         if (rangeFormData.min < 0) {
             showSuccess('Minimum value cannot be negative');
             return;
@@ -352,7 +355,6 @@ const TariffsManagement = () => {
             return;
         }
 
-        // Check for overlapping ranges (excluding the current range)
         const ranges = rangeType === 'fixed' ? currentTariff.fixedRanges : currentTariff.percentageRanges;
 
         const overlapping = ranges.some(range => {
@@ -363,7 +365,6 @@ const TariffsManagement = () => {
             const newMin = rangeFormData.min;
             const newMax = rangeFormData.max === null ? Infinity : rangeFormData.max;
 
-            // Check for overlap
             return (newMin <= rangeMax && newMax >= rangeMin);
         });
 
@@ -376,18 +377,14 @@ const TariffsManagement = () => {
         setError(null);
 
         try {
-            // Update range in API
-            const endpoint = rangeType === 'fixed' ?
-                financeService.updateFixedRange :
-                financeService.updatePercentageRange;
-
-            await endpoint(currentRange.id, {
+            const updateData = {
                 min: rangeFormData.min,
                 max: rangeFormData.max,
                 fee: rangeFormData.fee
-            });
+            };
 
-            // Update range in local state
+            await financeService.updateFeeRange(currentRange.id, updateData);
+
             setTariffs(tariffs.map(tariff =>
                 tariff.id === currentTariff.id
                     ? {
@@ -425,12 +422,9 @@ const TariffsManagement = () => {
             setCurrentRange(null);
         }
     };
-
-    // Handle deleting a range
-    const handleDeleteRange = async (rangeType) => {
+    const handleDeleteRange = async (rangeType: any) => {
         if (!currentTariff || !currentRange) return;
 
-        // Check if this is the last range
         const ranges = rangeType === 'fixed' ? currentTariff.fixedRanges : currentTariff.percentageRanges;
 
         if (ranges.length === 1) {
@@ -442,14 +436,8 @@ const TariffsManagement = () => {
         setError(null);
 
         try {
-            // Delete range from API
-            const endpoint = rangeType === 'fixed' ?
-                financeService.deleteFixedRange :
-                financeService.deletePercentageRange;
+            await financeService.deleteFeeRange(currentRange.id);
 
-            await endpoint(currentRange.id);
-
-            // Remove range from local state
             setTariffs(tariffs.map(tariff =>
                 tariff.id === currentTariff.id
                     ? {
@@ -671,4 +659,4 @@ const TariffsManagement = () => {
     );
 };
 
-export default TariffsManagement;
+export default page;

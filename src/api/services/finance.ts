@@ -366,7 +366,6 @@ async getAllTariffs(): Promise<any[]> {
   }
 },
 
-// Get a specific tariff
 async getTariff(tariffId: string): Promise<any> {
   try {
     const response = await finance.get(`/tariffs/${tariffId}`);
@@ -381,7 +380,7 @@ async getTariff(tariffId: string): Promise<any> {
 
 async createTariff(tariffData: Omit<any, 'id'>): Promise<any> {
   try {
-    const response = await finance.post('/tariffs', tariffData);
+    const response = await finance.post('/walletBillings', tariffData);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -438,6 +437,18 @@ async createFeeRange(feeRangeData: Omit<any, 'id'>): Promise<any> {
       throw new Error(error.response.data.message || 'Failed to create fee range');
     }
     throw new Error('Failed to create fee range. Please check your network connection.');
+  }
+},
+
+async createPercentageFeeRange(feeRangeData: Omit<any, 'id'>): Promise<any> {
+  try {
+    const response = await finance.post('/walletBillingPercentageRanges', feeRangeData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to create percentage fee range');
+    }
+    throw new Error('Failed to create percentage fee range. Please check your network connection.');
   }
 },
 
