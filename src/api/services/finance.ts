@@ -17,9 +17,7 @@ export interface FeeRange {
   fee: number;
 }
 
-export const financeService = {
-  // ======== CURRENCY ENDPOINTS ========
-  
+export const financeService = {  
   async getAllCurrencies(): Promise<any> {
     try {
       const response = await finance.get('/currencies');

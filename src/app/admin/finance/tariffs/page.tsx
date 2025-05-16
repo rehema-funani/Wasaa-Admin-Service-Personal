@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Info, Loader, Plus } from 'lucide-react';
+import { Save, Info, Loader, Plus, Trash2, AlertTriangle } from 'lucide-react';
 import financeService from '../../../../api/services/finance';
 import { Modal } from '../../../../components/common/Modal';
 import TariffsList from './TariffsList';
@@ -19,6 +19,7 @@ const page = () => {
     const [currentTariff, setCurrentTariff] = useState(null);
     const [currentRange, setCurrentRange] = useState(null);
     const [expandedRows, setExpandedRows] = useState({});
+    const [deleteConfirmed, setDeleteConfirmed] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -133,9 +134,10 @@ const page = () => {
         setIsModalOpen(true);
     };
 
-    const openDeleteModal = (tariff) => {
+    const openDeleteModal = (tariff: any) => {
         setCurrentTariff(tariff);
         setModalType('delete');
+        setDeleteConfirmed(false);
         setIsModalOpen(true);
     };
 
@@ -157,7 +159,7 @@ const page = () => {
         setIsModalOpen(true);
     };
 
-    const openEditRangeModal = (tariff, range, rangeType) => {
+    const openEditRangeModal = (tariff: any, range: any, rangeType: any) => {
         setCurrentTariff(tariff);
         setCurrentRange(range);
         setRangeFormData({
@@ -169,10 +171,11 @@ const page = () => {
         setIsModalOpen(true);
     };
 
-    const openDeleteRangeModal = (tariff: any, range: any, rangeType: any) => {
+    const openDeleteRangeModal = (tariff, range, rangeType) => {
         setCurrentTariff(tariff);
         setCurrentRange(range);
         setModalType(rangeType === 'fixed' ? 'deleteFixedRange' : 'deletePercentageRange');
+        setDeleteConfirmed(false);
         setIsModalOpen(true);
     };
 
@@ -595,32 +598,82 @@ const page = () => {
                         }}
                     />
                 ) : ['delete', 'deleteFixedRange', 'deletePercentageRange'].includes(modalType) ? (
-                    <div className="space-y-3">
-                        <p className="text-gray-700 text-sm">
-                            Are you sure you want to delete {modalType === 'delete' ? 'the tariff ' : 'this range'}
-                            {modalType === 'delete' && <span className="font-semibold"> {currentTariff?.name}</span>}?
-                            This is a dangerous action and cannot be undone. Please confirm to proceed.
-                        </p>
-                        <div className="flex justify-end gap-2 mt-5">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-center w-full">
+                            <div className="bg-red-100 p-3 rounded-full">
+                                <AlertTriangle size={28} className="text-red-600" />
+                            </div>
+                        </div>
+
+                        <div className="text-center">
+                            <h3 className="text-lg font-bold text-red-700 mb-1">Critical Operation</h3>
+
+                            {modalType === 'delete' ? (
+                                <p className="text-gray-700">
+                                    You are about to <span className="font-bold text-red-600">permanently delete</span> the tariff:
+                                    <div className="text-lg font-semibold mt-2 mb-2 text-gray-900 border-y border-red-100 py-2">
+                                        {currentTariff?.name}
+                                    </div>
+                                </p>
+                            ) : (
+                                <p className="text-gray-700">
+                                    You are about to <span className="font-bold text-red-600">permanently delete</span> this range
+                                    from the <span className="font-semibold">{currentTariff?.name}</span> tariff.
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-md">
+                            <p className="text-sm text-red-800">
+                                <span className="font-bold">CAUTION:</span> {modalType === 'delete' ?
+                                    "Deleting this tariff will remove all associated pricing tiers and may impact active transactions. Users currently charged under this tariff may be affected." :
+                                    "Deleting this range will remove the pricing tier. Any transactions that would have fallen in this range may be charged differently or fail."
+                                }
+                            </p>
+                        </div>
+
+                        <div className="mt-2">
+                            <label className="inline-flex items-center">
+                                <input
+                                    type="checkbox"
+                                    className="rounded border-red-300 text-red-600 focus:ring-red-500 h-4 w-4"
+                                    onChange={(e) => setDeleteConfirmed(e.target.checked)}
+                                    disabled={isLoading}
+                                />
+                                <span className="ml-2 text-sm text-gray-700">
+                                    I understand that this action cannot be undone
+                                </span>
+                            </label>
+                        </div>
+
+                        <div className="flex justify-between gap-2 mt-5 pt-3 border-t border-gray-200">
                             <button
                                 onClick={() => {
                                     setIsModalOpen(false);
                                     setModalType(null);
                                     setCurrentTariff(null);
                                     setCurrentRange(null);
+                                    setDeleteConfirmed(false);
                                 }}
-                                className="px-3 py-1.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
+                                className="flex-1 px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium text-sm transition-colors"
                                 disabled={isLoading}
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleModalSubmit}
-                                className="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm flex items-center gap-1.5"
-                                disabled={isLoading}
+                                disabled={isLoading || !deleteConfirmed}
+                                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5
+                ${deleteConfirmed && !isLoading
+                                        ? 'bg-red-600 hover:bg-red-700 text-white'
+                                        : 'bg-red-300 text-white cursor-not-allowed'}`}
                             >
-                                {isLoading && <Loader size={14} className="animate-spin" />}
-                                Delete
+                                {isLoading ? (
+                                    <Loader size={14} className="animate-spin mr-1.5" />
+                                ) : (
+                                    <Trash2 size={16} className="mr-1" />
+                                )}
+                                {isLoading ? "Processing..." : "Delete Permanently"}
                             </button>
                         </div>
                     </div>
