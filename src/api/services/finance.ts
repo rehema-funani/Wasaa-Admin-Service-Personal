@@ -428,9 +428,9 @@ async getFeeRangesByTariffId(tariffId: string): Promise<any[]> {
   }
 },
 
-async createFeeRange(feeRangeData: Omit<any, 'id'>): Promise<any> {
+async createFixedRange(feeRangeData: Omit<any, 'id'>): Promise<any> {
   try {
-    const response = await finance.post('/fee-ranges', feeRangeData);
+    const response = await finance.post('/walletBillingFixedRanges', feeRangeData);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -452,21 +452,33 @@ async createPercentageFeeRange(feeRangeData: Omit<any, 'id'>): Promise<any> {
   }
 },
 
-async updateFeeRange(feeRangeId: string, feeRangeData: Partial<Omit<any, 'id' | 'walletBillingId'>>): Promise<any> {
+async updateFixedRange (feeRangeId: string, feeRangeData: Partial<Omit<any, 'id' | 'walletBillingId'>>): Promise<any> {
   try {
-    const response = await finance.put(`/fee-ranges/${feeRangeId}`, feeRangeData);
+    const response = await finance.put(`/walletBillingFixedRanges/${feeRangeId}`, feeRangeData);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Failed to update fee range');
+      throw new Error(error.response.data.message || 'Failed to update fixed range');
     }
-    throw new Error('Failed to update fee range. Please check your network connection.');
+    throw new Error('Failed to update fixed range. Please check your network connection.');
   }
 },
 
-async deleteFeeRange(feeRangeId: string): Promise<any> {
+async updatePercentageFeeRange(feeRangeId: string, feeRangeData: Partial<Omit<any, 'id' | 'walletBillingId'>>): Promise<any> {
   try {
-    const response = await finance.delete(`/fee-ranges/${feeRangeId}`);
+    const response = await finance.put(`/walletBillingPercentageRanges/${feeRangeId}`, feeRangeData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to update percentage fee range');
+    }
+    throw new Error('Failed to update percentage fee range. Please check your network connection.');
+  }
+},
+
+async deleteFixedRange(feeRangeId: string): Promise<any> {
+  try {
+    const response = await finance.delete(`/walletBillingFixedRanges/${feeRangeId}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -475,6 +487,18 @@ async deleteFeeRange(feeRangeId: string): Promise<any> {
     throw new Error('Failed to delete fee range. Please check your network connection.');
   }
 },
+
+async deletePercentageFeeRange(feeRangeId: string): Promise<any> {
+  try {
+    const response = await finance.delete(`/walletBillingPercentageRanges/${feeRangeId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to delete percentage fee range');
+    }
+    throw new Error('Failed to delete percentage fee range. Please check your network connection.');
+  }
+  },
 };
 
 export default financeService;

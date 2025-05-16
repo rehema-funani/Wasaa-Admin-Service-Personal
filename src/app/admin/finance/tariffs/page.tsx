@@ -230,10 +230,7 @@ const page = () => {
         setError(null);
 
         try {
-            // Delete tariff from API
             await financeService.deleteTariff(currentTariff.id);
-
-            // Remove tariff from local state
             setTariffs(tariffs.filter(tariff => tariff.id !== currentTariff.id));
 
             showSuccess('Tariff deleted successfully');
@@ -248,11 +245,9 @@ const page = () => {
         }
     };
 
-    // Handle adding a range (works for both fixed and percentage ranges)
-    const handleAddRange = async (rangeType) => {
+    const handleAddRange = async (rangeType: any) => {
         if (!currentTariff) return;
 
-        // Validate range
         if (rangeFormData.min < 0) {
             showSuccess('Minimum value cannot be negative');
             return;
@@ -263,7 +258,6 @@ const page = () => {
             return;
         }
 
-        // Check for overlapping ranges
         const ranges = rangeType === 'fixed' ? currentTariff.fixedRanges : currentTariff.percentageRanges;
 
         const overlapping = ranges.some(range => {
@@ -271,8 +265,6 @@ const page = () => {
             const rangeMax = range.max === null ? Infinity : range.max;
             const newMin = rangeFormData.min;
             const newMax = rangeFormData.max === null ? Infinity : rangeFormData.max;
-
-            // Check for overlap
             return (newMin <= rangeMax && newMax >= rangeMin);
         });
 
@@ -285,7 +277,6 @@ const page = () => {
         setError(null);
 
         try {
-            // Create range data object
             const rangeData = {
                 walletBillingId: currentTariff.id,
                 min: rangeFormData.min,
@@ -293,42 +284,14 @@ const page = () => {
                 fee: rangeFormData.fee
             };
 
-            // Use the appropriate endpoint based on range type
             let newRange;
             if (rangeType === 'fixed') {
-                newRange = await financeService.createFeeRange(rangeData);
+                newRange = await financeService.createFixedRange(rangeData);
             } else {
                 newRange = await financeService.createPercentageFeeRange(rangeData);
             }
 
-            // Add range to tariff in local state
-            setTariffs(tariffs.map(tariff =>
-                tariff.id === currentTariff.id
-                    ? {
-                        ...tariff,
-                        ...(rangeType === 'fixed'
-                            ? {
-                                fixedRanges: [...tariff.fixedRanges, {
-                                    id: newRange.id,
-                                    min: newRange.min,
-                                    max: newRange.max,
-                                    fee: newRange.fee
-                                }].sort((a, b) => a.min - b.min)
-                            }
-                            : {
-                                percentageRanges: [...tariff.percentageRanges, {
-                                    id: newRange.id,
-                                    min: newRange.min,
-                                    max: newRange.max,
-                                    fee: newRange.fee
-                                }].sort((a, b) => a.min - b.min)
-                            }
-                        ),
-                        lastUpdated: new Date().toISOString().split('T')[0]
-                    }
-                    : tariff
-            ));
-
+            fetchTariffs();
             showSuccess('Range added successfully');
         } catch (err) {
             setError('Failed to add range. Please try again.');
@@ -383,7 +346,11 @@ const page = () => {
                 fee: rangeFormData.fee
             };
 
-            await financeService.updateFeeRange(currentRange.id, updateData);
+            if (rangeType === 'fixed') {
+                await financeService.updateFixedRange(currentRange.id, updateData);
+            } else {
+                await financeService.updatePercentageFeeRange(currentRange.id, updateData);
+            }
 
             setTariffs(tariffs.map(tariff =>
                 tariff.id === currentTariff.id
@@ -395,7 +362,7 @@ const page = () => {
                                     range.id === currentRange.id
                                         ? { ...range, ...rangeFormData }
                                         : range
-                                ).sort((a, b) => a.min - b.min)
+                                ).sort((a: any, b: any) => a.min - b.min)
                             }
                             : {
                                 percentageRanges: tariff.percentageRanges.map(range =>
@@ -422,7 +389,8 @@ const page = () => {
             setCurrentRange(null);
         }
     };
-    const handleDeleteRange = async (rangeType: any) => {
+
+    const handleDeleteRange = async (rangeType) => {
         if (!currentTariff || !currentRange) return;
 
         const ranges = rangeType === 'fixed' ? currentTariff.fixedRanges : currentTariff.percentageRanges;
@@ -436,7 +404,11 @@ const page = () => {
         setError(null);
 
         try {
-            await financeService.deleteFeeRange(currentRange.id);
+            if (rangeType === 'fixed') {
+                await financeService.deleteFixedRange(currentRange.id);
+            } else {
+                await financeService.deletePercentageFeeRange(currentRange.id);
+            }
 
             setTariffs(tariffs.map(tariff =>
                 tariff.id === currentTariff.id
@@ -561,7 +533,6 @@ const page = () => {
                     />
                 </div>
 
-                {/* Info Card */}
                 <div className="mt-6 bg-blue-50/70 rounded-xl p-3 border border-blue-100 backdrop-blur-sm">
                     <div className="flex items-start gap-2">
                         <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
