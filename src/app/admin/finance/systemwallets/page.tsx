@@ -554,7 +554,6 @@ const page: React.FC = () => {
                     )}
                 </div>
 
-                {/* Summary Statistics */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-5">
                         <h2 className="text-lg font-medium text-gray-800">System Wallets Summary</h2>

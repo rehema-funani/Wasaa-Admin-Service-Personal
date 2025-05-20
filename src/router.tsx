@@ -5,6 +5,11 @@ import Cookies from 'js-cookie';
 import AdminLayout from './components/layout/AdminLayout';
 import { PermissionMap } from './utils/permissions';
 import PermissionRouteGuard from './components/PermissionGuard';
+import MediaDashboard from './app/admin/media';
+import VideoModeration from './app/admin/media/moderation';
+import ReportsPage from './app/admin/media/reports';
+import CommentsPage from './app/admin/media/comments';
+import HashtagsPage from './app/admin/media/hashtags';
 
 const UnauthorizedPage = lazy(() => import('./app/error/unauthorized-page'));
 
@@ -259,6 +264,113 @@ const AppRouter: React.FC = () => {
                             <GiftCategories />
                         </PermissionRouteGuard>
                     } />
+
+                    {/* Shorts Video Module */}
+                    <Route path="admin/media/shorts" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <MediaDashboard />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/moderation" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <VideoModeration />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/moderation/:videoId" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <VideoModeration />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/reports" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <ReportsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/reports/:reportId" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <ReportsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/comments" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <CommentsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/comments/:videoId" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <CommentsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/hashtags" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <HashtagsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/hashtags/blocked" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <HashtagsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/hashtags/trending" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <HashtagsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    {/* <Route path="admin/media/shorts/creators" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <CreatorsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/creators/:creatorId" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <CreatorDetail />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/promotion" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <PromotionPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/promotion/trending" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <PromotionPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/promotion/featured" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <PromotionPage />
+                        </PermissionRouteGuard>
+                    } /> */}
+                    {/* <Route path="admin/media/shorts/analytics" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <AnalyticsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/analytics/videos" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <AnalyticsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/analytics/moderation" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <AnalyticsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/notifications" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <NotificationsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/notifications/templates" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                            <NotificationsPage />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/media/shorts/settings" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <ShortsSettings />
+                        </PermissionRouteGuard>
+                    } /> */}
 
                     <Route path="admin/support" element={<Support />} />
                     <Route path="/admin/support/teams" element={<Teams />} />
