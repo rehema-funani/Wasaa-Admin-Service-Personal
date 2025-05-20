@@ -10,6 +10,12 @@ import VideoModeration from './app/admin/media/moderation';
 import ReportsPage from './app/admin/media/reports';
 import CommentsPage from './app/admin/media/comments';
 import HashtagsPage from './app/admin/media/hashtags';
+import CreatorsPage from './app/admin/media/creators';
+import CreatorDetail from './app/admin/media/creatordetail';
+import PromotionPage from './app/admin/media/promotion';
+import AnalyticsPage from './app/admin/media/analytics';
+import NotificationsPage from './app/admin/media/notifications';
+import ShortsSettings from './app/admin/media/settings';
 
 const UnauthorizedPage = lazy(() => import('./app/error/unauthorized-page'));
 
@@ -316,7 +322,7 @@ const AppRouter: React.FC = () => {
                             <HashtagsPage />
                         </PermissionRouteGuard>
                     } />
-                    {/* <Route path="admin/media/shorts/creators" element={
+                    <Route path="admin/media/shorts/creators" element={
                         <PermissionRouteGuard permissions={PermissionMap.Media.view}>
                             <CreatorsPage />
                         </PermissionRouteGuard>
@@ -340,8 +346,8 @@ const AppRouter: React.FC = () => {
                         <PermissionRouteGuard permissions={PermissionMap.Media.view}>
                             <PromotionPage />
                         </PermissionRouteGuard>
-                    } /> */}
-                    {/* <Route path="admin/media/shorts/analytics" element={
+                    } />
+                    <Route path="admin/media/shorts/analytics" element={
                         <PermissionRouteGuard permissions={PermissionMap.Media.view}>
                             <AnalyticsPage />
                         </PermissionRouteGuard>
@@ -370,7 +376,7 @@ const AppRouter: React.FC = () => {
                         <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
                             <ShortsSettings />
                         </PermissionRouteGuard>
-                    } /> */}
+                    } />
 
                     <Route path="admin/support" element={<Support />} />
                     <Route path="/admin/support/teams" element={<Teams />} />
