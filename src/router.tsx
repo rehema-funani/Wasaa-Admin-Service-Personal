@@ -49,6 +49,7 @@ const ReportedStreams = lazy(() => import('./app/admin/livestreams/reported/page
 const Transactions = lazy(() => import('./app/admin/finance/transactions/page'));
 const Tarrifs = lazy(() => import('./app/admin/finance/tariffs/page'));
 const Limits = lazy(() => import('./app/admin/finance/limits/page'));
+const Compliance = lazy(() => import('./app/admin/finance/systemwallets/amlcompliance'));
 const Verification = lazy(() => import('./app/admin/finance/limits/verification'));
 const Wallets = lazy(() => import('./app/admin/finance/systemwallets/page'));
 const ReversalRequests = lazy(() => import('./app/admin/finance/systemwallets/reversalrequests'));
@@ -205,6 +206,7 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/finance/transactions" element={<Transactions />} />
                     <Route path="admin/finance/tariffs" element={<Tarrifs />} />
                     <Route path="admin/finance/limits" element={<Limits />} />
+                    <Route path="admin/finance/compliance" element={<Compliance />} />
                     <Route path="admin/finance/limits/verification" element={<Verification />} />
                     <Route path="admin/finance/wallets" element={<Wallets />} />
                     <Route path="admin/finance/wallets/reversal-requests" element={<ReversalRequests />} />
