@@ -49,7 +49,9 @@ const ReportedStreams = lazy(() => import('./app/admin/livestreams/reported/page
 const Transactions = lazy(() => import('./app/admin/finance/transactions/page'));
 const Tarrifs = lazy(() => import('./app/admin/finance/tariffs/page'));
 const Limits = lazy(() => import('./app/admin/finance/limits/page'));
+const Verification = lazy(() => import('./app/admin/finance/limits/verification'));
 const Wallets = lazy(() => import('./app/admin/finance/systemwallets/page'));
+const ReversalRequests = lazy(() => import('./app/admin/finance/systemwallets/reversalrequests'));
 const Banks = lazy(() => import('./app/admin/finance/banks/page'));
 const UserWallets = lazy(() => import('./app/admin/finance/user-wallets/page'));
 const WalletDetail = lazy(() => import('./app/admin/finance/user-wallets/walletdetail'));
@@ -203,7 +205,9 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/finance/transactions" element={<Transactions />} />
                     <Route path="admin/finance/tariffs" element={<Tarrifs />} />
                     <Route path="admin/finance/limits" element={<Limits />} />
+                    <Route path="admin/finance/limits/verification" element={<Verification />} />
                     <Route path="admin/finance/wallets" element={<Wallets />} />
+                    <Route path="admin/finance/wallets/reversal-requests" element={<ReversalRequests />} />
                     <Route path="admin/finance/banks" element={<Banks />} />
                     <Route path="admin/finance/user-wallets" element={<UserWallets />} />
                     <Route path="admin/finance/user-wallets/:id" element={<WalletDetail />} />
@@ -271,7 +275,6 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
 
-                    {/* Shorts Video Module */}
                     <Route path="admin/media/shorts" element={
                         <PermissionRouteGuard permissions={PermissionMap.Media.view}>
                             <MediaDashboard />
