@@ -1,4 +1,3 @@
-// components/support/tickets/TicketCard.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -13,6 +12,7 @@ import { Ticket } from '../../types/team';
 
 interface TicketCardProps {
     ticket: Ticket;
+    viewMode?: 'grid' | 'list';
     onClick: (ticketId: string) => void;
 }
 

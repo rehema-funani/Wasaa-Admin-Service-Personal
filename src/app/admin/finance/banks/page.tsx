@@ -337,35 +337,7 @@ const page = () => {
                             </button>
                         </div>
 
-                        <div className="bg-white shadow-sm border border-gray-200 rounded-lg p-1 flex">
-                            <button
-                                onClick={() => setOperationFilter('all')}
-                                className={`px-3 py-1.5 rounded text-sm transition-all ${operationFilter === 'all' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
-                            >
-                                All Operations
-                            </button>
-                            <button
-                                onClick={() => setOperationFilter('withdrawal')}
-                                className={`px-3 py-1.5 rounded text-sm transition-all ${operationFilter === 'withdrawal' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
-                            >
-                                Withdrawals
-                            </button>
-                            <button
-                                onClick={() => setOperationFilter('topup')}
-                                className={`px-3 py-1.5 rounded text-sm transition-all ${operationFilter === 'topup' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
-                            >
-                                Top-ups
-                            </button>
-                        </div>
-
                         <div className="flex gap-2">
-                            <button
-                                onClick={handleSave}
-                                className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            >
-                                <Save size={16} className="mr-2" />
-                                Save Changes
-                            </button>
                             <button
                                 onClick={openAddModal}
                                 className="inline-flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
