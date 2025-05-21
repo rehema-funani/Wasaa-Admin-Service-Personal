@@ -12,15 +12,41 @@ import {
   X,
   Clock,
   AlertCircle,
-  Settings
+  Settings,
+  ArrowRight,
+  Layout,
+  Users,
+  FileText,
+  Film,
+  Video,
+  Gift,
+  Wallet,
+  Languages,
+  MessageSquare,
+  Hash,
+  Award,
+  BarChart3,
+  MonitorPlay,
+  Group,
+  ImageIcon,
+  LifeBuoy
 } from 'lucide-react';
 import logo from '../../assets/images/logo-wasaa.png';
 import Cookies from 'js-cookie';
+import routes, { DropdownItem } from '../../constants/routes';
 
 interface HeaderProps {
   mobileMenuOpen: boolean;
   toggleMobileMenu: () => void;
   showSearchOnMobile?: boolean;
+}
+
+interface SearchResult {
+  title: string;
+  path: string;
+  category: string;
+  icon?: React.FC<React.SVGProps<SVGSVGElement>>;
+  description?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -32,10 +58,14 @@ const Header: React.FC<HeaderProps> = ({
   const [unreadNotifications, setUnreadNotifications] = useState<number>(3);
   const [searchValue, setSearchValue] = useState<string>('');
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [selectedResultIndex, setSelectedResultIndex] = useState<number>(-1);
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchResultsRef = useRef<HTMLDivElement>(null);
   const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
   const navigate = useNavigate();
 
@@ -46,6 +76,10 @@ const Header: React.FC<HeaderProps> = ({
       }
       if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
         setNotificationsOpen(false);
+      }
+      if (searchResultsRef.current && !searchResultsRef.current.contains(event.target as Node) &&
+        searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
+        setShowSearchResults(false);
       }
     };
 
@@ -59,19 +93,167 @@ const Header: React.FC<HeaderProps> = ({
     }
   }, [searchOpen]);
 
-  const handleSearchFocus = () => {
-    setSearchOpen(true);
+  const getAllSearchableRoutes = (): SearchResult[] => {
+    const searchableRoutes: SearchResult[] = [];
+
+    const processRoutes = (items: any[], category: string = '') => {
+      items.forEach(item => {
+        if (item.type === 'section') {
+          processRoutes(item.items, item.title);
+        } else if (item.type === 'link') {
+          searchableRoutes.push({
+            title: item.title,
+            path: item.path,
+            category: category,
+            icon: item.icon
+          });
+        } else if (item.type === 'dropdown') {
+          searchableRoutes.push({
+            title: item.title,
+            path: item.items[0]?.path || '',
+            category: category,
+            icon: item.icon,
+            description: 'Menu'
+          });
+
+          item.items.forEach((subItem: DropdownItem) => {
+            searchableRoutes.push({
+              title: subItem.title,
+              path: subItem.path,
+              category: item.title,
+              icon: item.icon
+            });
+          });
+        }
+      });
+    };
+
+    processRoutes(routes);
+    return searchableRoutes;
+  };
+
+  const performSearch = (searchTerm: string) => {
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
+      setSelectedResultIndex(-1);
+      return;
+    }
+
+    const allRoutes = getAllSearchableRoutes();
+    const term = searchTerm.toLowerCase();
+
+    const filteredResults = allRoutes.filter(route =>
+      route.title.toLowerCase().includes(term) ||
+      route.category.toLowerCase().includes(term) ||
+      route.path.toLowerCase().includes(term)
+    );
+
+    const sortedResults = filteredResults.sort((a, b) => {
+      const aExactMatch = a.title.toLowerCase() === term ? -1 : 0;
+      const bExactMatch = b.title.toLowerCase() === term ? -1 : 0;
+
+      if (aExactMatch !== bExactMatch) return aExactMatch - bExactMatch;
+
+      if (a.category !== b.category) {
+        return a.category.localeCompare(b.category);
+      }
+
+      return a.title.localeCompare(b.title);
+    });
+
+    setSearchResults(sortedResults.slice(0, 8));
+    setSelectedResultIndex(-1);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
+    const value = e.target.value;
+    setSearchValue(value);
+    performSearch(value);
+
+    if (value.trim()) {
+      setShowSearchResults(true);
+    } else {
+      setShowSearchResults(false);
+    }
+  };
+
+  const handleSearchFocus = () => {
+    setSearchOpen(true);
+    if (searchValue.trim()) {
+      setShowSearchResults(true);
+      performSearch(searchValue);
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSearchResults || searchResults.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedResultIndex(prev => (prev < searchResults.length - 1 ? prev + 1 : prev));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedResultIndex(prev => (prev > 0 ? prev - 1 : 0));
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedResultIndex >= 0 && selectedResultIndex < searchResults.length) {
+          handleResultClick(searchResults[selectedResultIndex]);
+        } else if (searchResults.length > 0) {
+          handleResultClick(searchResults[0]);
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        setShowSearchResults(false);
+        break;
+    }
+  };
+
+  const handleResultClick = (result: SearchResult) => {
+    navigate(result.path);
+    setSearchValue('');
+    setShowSearchResults(false);
+    setSearchResults([]);
   };
 
   const clearSearch = () => {
     setSearchValue('');
+    setSearchResults([]);
+    setShowSearchResults(false);
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    const iconMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
+      'Dashboard': Layout,
+      'User Management': Users,
+      'Groups': Group,
+      'Media': Film,
+      'Livestreams': MonitorPlay,
+      'Finance': Wallet,
+      'Gifts': Gift,
+      'Customization': ImageIcon,
+      'Support': LifeBuoy,
+      'Settings': Settings,
+      'Audit': FileText,
+      'Languages': Languages,
+      'Analytics': BarChart3,
+      'Hashtags': Hash,
+      'Promotion': Award,
+      'Management': Video,
+      'Notifications': Bell,
+      'Reports': FileText,
+      'Comments': MessageSquare,
+      'System Wallets': Wallet,
+      'User Wallets': Wallet
+    };
+
+    return iconMap[category] || FileText;
   };
 
   const handleLogout = () => {
@@ -80,6 +262,14 @@ const Header: React.FC<HeaderProps> = ({
     navigate('/auth/login');
     window.location.reload();
   };
+
+  const groupedResults = searchResults.reduce((acc, result) => {
+    if (!acc[result.category]) {
+      acc[result.category] = [];
+    }
+    acc[result.category].push(result);
+    return acc;
+  }, {} as Record<string, SearchResult[]>);
 
   const notifications = [
     {
@@ -165,6 +355,15 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const getResultIcon = (result: SearchResult) => {
+    if (result.icon) {
+      return <result.icon width={16} height={16} className="text-indigo-500" />;
+    }
+
+    const CategoryIcon = getCategoryIcon(result.category);
+    return <CategoryIcon width={16} height={16} className="text-indigo-500" />;
+  };
+
   return (
     <header
       className="h-[60px] bg-white/80 backdrop-blur-xl border-b border-gray-50  
@@ -185,13 +384,14 @@ const Header: React.FC<HeaderProps> = ({
         </NavLink>
       </div>
 
-      <div className={`relative flex-1 max-w-md mx-4 ${showSearchOnMobile ? 'block' : 'hidden md:block'}`}>
+      <div className={`relative flex-1 max-w-xl mx-4 ${showSearchOnMobile ? 'block' : 'hidden md:block'}`}>
         <div
-          className="flex items-center bg-gray-50/80 rounded-xl border border-gray-100 overflow-hidden"
+          className={`
+            flex items-center bg-gray-50/80 rounded-xl border ${showSearchResults ? 'border-indigo-200 shadow-sm' : 'border-gray-100'} 
+            overflow-hidden transition-all
+          `}
         >
-          <span
-            className="mx-3 text-gray-400"
-          >
+          <span className="mx-3 text-gray-400">
             <Search size={18} strokeWidth={1.8} />
           </span>
           <input
@@ -199,10 +399,10 @@ const Header: React.FC<HeaderProps> = ({
             type="text"
             value={searchValue}
             onChange={handleSearchChange}
-            placeholder="Search..."
+            onKeyDown={handleSearchKeyDown}
+            placeholder="Search for anything in the system..."
             className="flex-1 py-2.5 bg-transparent outline-none border-gray-100 text-sm text-gray-700 rounded-r-xl"
             onFocus={handleSearchFocus}
-            onBlur={() => setTimeout(() => setSearchOpen(false), 100)}
           />
           <AnimatePresence>
             {searchValue && (
@@ -218,6 +418,106 @@ const Header: React.FC<HeaderProps> = ({
             )}
           </AnimatePresence>
         </div>
+
+        <AnimatePresence>
+          {showSearchResults && searchResults.length > 0 && (
+            <motion.div
+              ref={searchResultsRef}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-0 right-0 mt-2 bg-white/95 backdrop-blur-md rounded-xl border border-gray-100 shadow-lg z-30 max-h-[70vh] overflow-auto"
+            >
+              <div className="p-4">
+                <div className="text-xs text-gray-500 mb-3">
+                  {searchResults.length} results found for "{searchValue}"
+                </div>
+
+                <div className="space-y-4">
+                  {Object.entries(groupedResults).map(([category, results]) => (
+                    <div key={category}>
+                      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
+                        {React.createElement(getCategoryIcon(category), { width: 14, className: "inline mr-1 text-gray-400" })}
+                        {category}
+                      </div>
+                      <div className="space-y-1">
+                        {results.map((result, index) => {
+                          const globalIndex = searchResults.findIndex(r =>
+                            r.title === result.title && r.path === result.path && r.category === result.category
+                          );
+                          const isSelected = globalIndex === selectedResultIndex;
+
+                          return (
+                            <div
+                              key={`${result.path}-${index}`}
+                              onClick={() => handleResultClick(result)}
+                              onMouseEnter={() => setSelectedResultIndex(globalIndex)}
+                              className={`
+                                cursor-pointer p-2 rounded-lg transition-all duration-150 flex items-center
+                                ${isSelected ? 'bg-indigo-50/80 text-indigo-700' : 'hover:bg-gray-50/80'}
+                              `}
+                            >
+                              <div className={`
+                                p-1.5 rounded-lg mr-2
+                                ${isSelected ? 'bg-indigo-100' : 'bg-gray-50'}
+                              `}>
+                                {getResultIcon(result)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium text-sm truncate">
+                                  {result.title}
+                                </div>
+                                <div className="text-xs text-gray-500 truncate">
+                                  {result.path}
+                                </div>
+                              </div>
+                              <div className={`
+                                ml-2 p-1 rounded-full
+                                ${isSelected ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400'}
+                              `}>
+                                <ArrowRight size={14} />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500 flex items-center justify-between">
+                  <span>
+                    Press <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">↑</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">↓</kbd>
+                    to navigate
+                  </span>
+                  <span>
+                    Press <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">Enter</kbd>
+                    to select
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {showSearchResults && searchValue && searchResults.length === 0 && (
+            <motion.div
+              ref={searchResultsRef}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-0 right-0 mt-2 bg-white/95 backdrop-blur-md rounded-xl border border-gray-100 shadow-lg z-30"
+            >
+              <div className="p-8 text-center">
+                <Search size={32} className="text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-700 font-medium">No results found</p>
+                <p className="text-gray-500 text-sm mt-1">Try searching with different keywords</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="flex items-center space-x-1 sm:space-x-2">
@@ -415,6 +715,12 @@ const Header: React.FC<HeaderProps> = ({
           .ml-2 {
             margin-left: 0.25rem;
           }
+        }
+
+        kbd {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+          font-size: 0.75rem;
+          font-weight: 500;
         }
       `}</style>
     </header>
