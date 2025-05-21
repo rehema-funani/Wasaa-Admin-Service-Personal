@@ -184,6 +184,116 @@ export const userService = {
     }
   },
 
+
+  // tbd 
+  async getAdminUserbyId (id: string): Promise<any> {
+    try {
+      const response = await api.get(`/admin/${id}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get user by email');
+      }
+      throw new Error('Failed to get user by email. Please check your network connection.');
+    }
+  },
+
+  async getUserSessions (userId: string): Promise<any> {
+    try {
+      const response = await api.get(`/admin/${userId}/sessions`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get user sessions');
+      }
+      throw new Error('Failed to get user sessions. Please check your network connection.');
+    }
+  },
+
+  async getUserLoginHistory (userId: string): Promise<any> {
+    try {
+      const response = await api.get(`/admin/${userId}/login-history`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get user login history');
+      }
+      throw new Error('Failed to get user login history. Please check your network connection.');
+    }
+  },
+
+  async getUserConnectedApps (userId: string): Promise<any> {
+    try {
+      const response = await api.get(`/admin/${userId}/connected-apps`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get user connected apps');
+      }
+      throw new Error('Failed to get user connected apps. Please check your network connection.');
+    }
+  },
+
+  async terminateUserSession (userId: string, sessionId: string): Promise<any> {
+    try {
+      const response = await api.delete(`/admin/${userId}/sessions/${sessionId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to terminate user session');
+      }
+      throw new Error('Failed to terminate user session. Please check your network connection.');
+    }
+  },
+
+  async terminateAllUserSessions (userId: string): Promise<any> {
+    try {
+      const response = await api.delete(`/admin/${userId}/sessions`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to terminate all user sessions');
+      }
+      throw new Error('Failed to terminate all user sessions. Please check your network connection.');
+    }
+  },
+
+  async updateUserStatus (userId: string, status: string): Promise<any> {
+    try {
+      const response = await api.put(`/admin/${userId}/status`, { status });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to update user status');
+      }
+      throw new Error('Failed to update user status. Please check your network connection.');
+    }
+  },
+
+  async revokeUserApp (userId: string, appId: string): Promise<any> {
+    try {
+      const response = await api.delete(`/admin/${userId}/connected-apps/${appId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to revoke user app');
+      }
+      throw new Error('Failed to revoke user app. Please check your network connection.');
+    }
+  },
+
+  async resetUserMFA (userId: string): Promise<any> {
+    try {
+      const response = await api.post(`/admin/${userId}/reset-mfa`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to reset user MFA');
+      }
+      throw new Error('Failed to reset user MFA. Please check your network connection.');
+    }
+  },
+
   async getUser (userId: string): Promise<any> {
     try {
       const response = await api.get(`/users/${userId}`);

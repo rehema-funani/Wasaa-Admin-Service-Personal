@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     Download,
     Upload,
@@ -23,7 +24,6 @@ import Pagination from '../../../components/common/Pagination';
 import {
     CreateUserModal,
     EditUserModal,
-    ViewUserModal,
     DeleteUserModal,
     UserRoleModal
 } from '../../../components/users';
@@ -52,7 +52,8 @@ interface Role {
     permissions: string[];
 }
 
-const page: React.FC = () => {
+const UserManagementPage: React.FC = () => {
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -67,7 +68,6 @@ const page: React.FC = () => {
 
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
-    const [viewModalOpen, setViewModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [roleModalOpen, setRoleModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -276,8 +276,8 @@ const page: React.FC = () => {
     ];
 
     const handleViewUser = (user: User) => {
-        setSelectedUser(user);
-        setViewModalOpen(true);
+        // Navigate to user details page instead of opening modal
+        navigate(`/admin/users/${user.id}`);
     };
 
     const handleEditUser = (user: User) => {
@@ -488,11 +488,10 @@ const page: React.FC = () => {
                     showItemsPerPage={true}
                     itemsPerPageOptions={[10, 25, 50, 100]}
                     showSummary={true}
-                    className="rounded-xl shadow-sm" // Add modern styling to Pagination
                 />
             </motion.div>
 
-            {/* Modals */}
+            {/* Modals - Remove ViewUserModal as it's been replaced by a standalone page */}
             <AnimatePresence>
                 {createModalOpen && (
                     <CreateUserModal
@@ -510,14 +509,6 @@ const page: React.FC = () => {
                         onSuccess={handleModalSuccess}
                         user={selectedUser}
                         roles={roles}
-                    />
-                )}
-
-                {viewModalOpen && selectedUser && (
-                    <ViewUserModal
-                        isOpen={viewModalOpen}
-                        onClose={() => setViewModalOpen(false)}
-                        user={selectedUser}
                     />
                 )}
 
@@ -545,4 +536,4 @@ const page: React.FC = () => {
     );
 };
 
-export default page;
+export default UserManagementPage;

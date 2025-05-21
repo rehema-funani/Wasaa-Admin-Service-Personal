@@ -36,6 +36,7 @@ const RolesPage = lazy(() => import('./app/admin/roles/roles'));
 const RoleDetail = lazy(() => import('./app/admin/roles/roledetail'));
 const CreateRole = lazy(() => import('./app/admin/roles/createrole'));
 const SystemUsers = lazy(() => import('./app/admin/roles/user-settings'));
+const AdminUserDetails = lazy(() => import('./app/admin/roles/userdetail'));
 
 const AllLivestreams = lazy(() => import('./app/admin/livestreams/all-livestreams/page'));
 const ScheduledStreams = lazy(() => import('./app/admin/livestreams/scheduled/page'));
@@ -191,6 +192,12 @@ const AppRouter: React.FC = () => {
                     <Route path='admin/system/users' element={
                         <PermissionRouteGuard permissions={['can_list_staff', 'can_view_users']}>
                             <SystemUsers />
+                        </PermissionRouteGuard>
+                    } />
+
+                    <Route path='admin/users/:id' element={
+                        <PermissionRouteGuard permissions={['can_list_staff', 'can_view_users']}>
+                            <AdminUserDetails />
                         </PermissionRouteGuard>
                     } />
 
