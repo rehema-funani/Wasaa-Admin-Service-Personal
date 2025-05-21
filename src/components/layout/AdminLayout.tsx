@@ -54,7 +54,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      // On large screens, we don't want the sidebar to be collapsed
       if (window.innerWidth >= 1024) {
         setSidebarCollapsed(false);
       } else {
@@ -152,17 +151,21 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
 
       <div
         className={`
-          w-[300px] lg:static lg:flex h-full z-40 transition-all duration-300
+          fixed lg:relative flex-none w-[300px] min-w-[300px] max-w-[300px] 
+          h-full z-40 transition-all duration-300 overflow-hidden
           ${sidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
         `}
+        style={{ flexBasis: '300px' }}
       >
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          setCollapsed={setSidebarCollapsed}
-        />
+        <div className="w-[300px] min-w-[300px] max-w-[300px] h-full overflow-hidden">
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            setCollapsed={setSidebarCollapsed}
+          />
+        </div>
       </div>
 
-      <div className="h-[100vh] flex flex-col w-full">
+      <div className="h-[100vh] flex flex-col w-full lg:w-[calc(100%-300px)]">
         <div className="sticky top-0 z-20">
           <div className="glass-header border-b border-gray-50">
             <Header
