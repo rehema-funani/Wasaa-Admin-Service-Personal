@@ -8,6 +8,10 @@ import {
   ArrowRight,
   LogOut,
   Settings,
+  Sun,
+  Moon,
+  Bell,
+  HelpCircle,
 } from 'lucide-react';
 import logo from '../../assets/images/logo-wasaa.png';
 import routes, { LinkRoute, DropdownRoute, SectionRoute } from '../../constants/routes';
@@ -20,6 +24,7 @@ interface SidebarProps {
   setCollapsed?: (collapsed: boolean) => void;
 }
 
+// Permission logic functions - unchanged
 const getRequiredPermissionsForRoute = (path: string): string[] => {
   const routePermissionsMap: Record<string, string[]> = {
     // Dashboard - visible to all authenticated users
@@ -65,7 +70,7 @@ const getRequiredPermissionsForRoute = (path: string): string[] => {
     // Settings routes
     '/admin/settings': ['can_view_settings', 'can_update_settings'],
     '/admin/languages': ['can_list_languages', 'can_view_languages'],
-    '/admin/logs': [], // Typically would require some admin permissions
+    '/admin/logs': [],
     '/admin/support': [],
 
     // Media routes
@@ -159,6 +164,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<number>(3);
   const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
   const userPermissions = user?.permissions || [];
 
@@ -207,13 +214,18 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     window.location.reload();
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    // Implement actual dark mode logic here
+  };
+
   const renderIcon = (icon: React.FC<React.SVGProps<SVGSVGElement>>, isActivePage: boolean) => {
     const IconComponent = icon || Home;
     return (
       <IconComponent
         width={16}
         height={16}
-        className={`${isActivePage ? 'text-blue-600' : 'text-gray-500'} transition-colors`}
+        className={`${isActivePage ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-500'} transition-colors`}
         strokeWidth={1.8}
       />
     );
@@ -232,7 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       const isHovered = hoveredItem === itemKey;
 
       return (
-        <div className="my-1">
+        <div className="my-1.5 group">
           <NavLink
             to={item.path}
             onMouseEnter={() => setHoveredItem(itemKey)}
@@ -241,26 +253,27 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
           >
             <div
               className={`
-                flex items-center py-2 px-3 rounded-xl transition-all duration-200 relative hover:translate-x-0.5 
+                flex items-center py-2.5 px-3 rounded-xl transition-all duration-300 relative 
+                hover:translate-x-0.5 group/item
                 ${isActivePage
-                  ? 'text-blue-600 font-medium border-0 bg-gradient-to-r from-blue-50/80 to-indigo-50/60'
-                  : 'text-gray-700 hover:text-blue-500'
+                  ? 'text-indigo-600 font-medium border-0 bg-gradient-to-r from-indigo-50/80 to-blue-50/60'
+                  : 'text-gray-700 hover:text-indigo-500'
                 }
               `}
               style={{ paddingLeft }}
             >
               {isActivePage && (
                 <div
-                  className="absolute inset-0 bg-gradient-to-r from-blue-50/70 to-indigo-50/40 rounded-xl backdrop-blur-sm ring-1 ring-blue-100/30"
+                  className="absolute inset-0 bg-gradient-to-r from-indigo-50/70 via-blue-50/50 to-indigo-50/40 rounded-xl backdrop-blur-sm 
+                  ring-1 ring-indigo-100/30 shadow-sm"
                   style={{ zIndex: -1 }}
                 />
               )}
 
               {item.icon && (
                 <div
-                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 mr-3
-                    ${isActivePage ? 'bg-gradient-to-br from-blue-100/90 to-indigo-50/70' : 'bg-gray-50/80'}
-                    ${isHovered && !isActivePage ? 'bg-gradient-to-br from-blue-50/60 to-indigo-50/40' : ''}
+                  className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 mr-3.5
+                    ${isActivePage ? 'bg-gradient-to-br from-indigo-100/90 to-blue-50/70 shadow-sm shadow-indigo-100/60' : 'bg-gray-50/80 group-hover/item:bg-gradient-to-br group-hover/item:from-indigo-50/60 group-hover/item:to-blue-50/40'}
                   `}
                 >
                   {renderIcon(item.icon, isActivePage)}
@@ -268,15 +281,16 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
               )}
               <span
                 className={`text-sm transition-all font-medium 
-                  ${isActivePage ? 'text-blue-600' : 'text-gray-600'}
+                  ${isActivePage ? 'text-indigo-600' : 'text-gray-600 group-hover/item:text-indigo-500'}
                 `}
               >
                 {item.title}
               </span>
 
-              {isHovered && !isActivePage && (
+              {(isHovered || isActivePage) && (
                 <span
-                  className="ml-auto text-blue-400 opacity-80 transition-all duration-200"
+                  className={`ml-auto text-indigo-400 opacity-0 group-hover/item:opacity-100 transition-all duration-300 
+                    ${isActivePage ? 'opacity-70' : ''}`}
                 >
                   <ArrowRight size={14} />
                 </span>
@@ -284,7 +298,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
               {isActivePage && (
                 <div
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-gradient-to-b from-blue-500 to-indigo-400 rounded-r-full"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-gradient-to-b from-indigo-500 via-blue-500 to-indigo-400 
+                  rounded-r-full shadow-md shadow-indigo-200"
                 />
               )}
             </div>
@@ -305,17 +320,17 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       const isHovered = hoveredItem === itemKey;
 
       return (
-        <div className="my-1">
+        <div className="my-1.5 group">
           <button
             onClick={() => toggleDropdown(item.key)}
             className={`
-              flex items-center justify-between w-full py-2 px-3 rounded-xl transition-all duration-200
+              flex items-center justify-between w-full py-2.5 px-3 rounded-xl transition-all duration-300
               hover:translate-x-0.5 
               ${hasActive || isOpen
-                ? 'text-blue-600 font-medium'
-                : 'text-gray-700 hover:text-blue-500'
+                ? 'text-indigo-600 font-medium'
+                : 'text-gray-700 hover:text-indigo-500'
               }
-              relative
+              relative group/dropdown
             `}
             style={{ paddingLeft }}
             onMouseEnter={() => setHoveredItem(itemKey)}
@@ -323,45 +338,51 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
           >
             {(hasActive || isOpen) && (
               <div
-                className="absolute inset-0 bg-gradient-to-r from-blue-50/60 to-indigo-50/30 rounded-xl backdrop-blur-sm"
+                className="absolute inset-0 bg-gradient-to-r from-indigo-50/60 to-blue-50/30 rounded-xl backdrop-blur-sm ring-1 ring-indigo-100/30"
                 style={{ zIndex: -1 }}
               />
             )}
             <div className="flex items-center">
               {item.icon && (
                 <div
-                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 mr-3
-                    ${hasActive || isOpen ? 'bg-gradient-to-br from-blue-100/90 to-indigo-50/70' : 'bg-gray-50/80'}
-                    ${isHovered && !hasActive && !isOpen ? 'bg-gradient-to-br from-blue-50/60 to-indigo-50/40' : ''}
+                  className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 mr-3.5
+                    ${hasActive || isOpen ? 'bg-gradient-to-br from-indigo-100/90 to-blue-50/70 shadow-sm' : 'bg-gray-50/80 group-hover/dropdown:bg-gradient-to-br group-hover/dropdown:from-indigo-50/60 group-hover/dropdown:to-blue-50/40'}
                   `}
                 >
                   {renderIcon(item.icon, hasActive || isOpen)}
                 </div>
               )}
               <span
-                className={`text-sm font-medium ${hasActive || isOpen ? 'text-blue-600' : 'text-gray-600'}`}
+                className={`text-sm font-medium ${hasActive || isOpen ? 'text-indigo-600' : 'text-gray-600 group-hover/dropdown:text-indigo-500'}`}
               >
                 {item.title}
               </span>
             </div>
             <div
-              className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-200
-                ${isOpen ? 'bg-blue-50' : 'bg-transparent'} 
+              className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300
+                ${isOpen ? 'bg-indigo-50 rotate-180' : 'bg-transparent group-hover/dropdown:bg-indigo-50/50'} 
               `}
             >
-              <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? "text-blue-500 transform rotate-180" : "text-gray-400"}`} />
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-300 
+                  ${isOpen ? "text-indigo-500 transform rotate-180" : "text-gray-400 group-hover/dropdown:text-indigo-400"}`}
+              />
             </div>
           </button>
 
           <div
-            className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+            className={`overflow-hidden transition-all duration-300 ease-in-out 
+              ${isOpen ? 'max-h-96 opacity-100 my-1' : 'max-h-0 opacity-0'}`}
           >
             <div
-              className="ml-6 pl-2 border-l border-blue-100/60"
+              className="ml-7 pl-3 border-l-2 border-indigo-100/60"
             >
               {filteredItems.map((subItem: any, idx: number) => (
                 <div
                   key={idx}
+                  className="animate-fadeIn"
+                  style={{ animationDelay: `${idx * 50}ms` }}
                 >
                   {renderNavItem(subItem, level + 1)}
                 </div>
@@ -379,16 +400,24 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
       return (
         <div
-          className="mt-6 first:mt-2 mb-2"
+          className="mt-7 first:mt-3 mb-2"
         >
           {level === 0 && (
-            <div className="px-5 py-1">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">{item.title}</span>
+            <div className="px-5 py-1.5 relative mb-2">
+              <div className="flex items-center">
+                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-400 to-blue-400 mr-2.5"></div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-500/90">{item.title}</span>
+              </div>
+              <div className="absolute bottom-0 left-5 right-5 h-px bg-gradient-to-r from-indigo-100/50 via-blue-100/30 to-transparent"></div>
             </div>
           )}
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {item.items.map((subItem: any, idx: number) => (
-              <div key={idx}>
+              <div
+                key={idx}
+                className="animate-slideIn"
+                style={{ animationDelay: `${idx * 30}ms` }}
+              >
                 {renderNavItem(subItem, level)}
               </div>
             ))}
@@ -402,33 +431,36 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
   const renderUserProfileSection = () => {
     return (
-      <div className="mt-auto pt-4 pb-6 px-3">
+      <div className="mt-auto pt-4 pb-6 px-3 w-full">
         <div className="flex flex-col space-y-3">
-          <div className="flex items-center px-2 py-2 rounded-xl bg-gradient-to-r from-blue-50/80 to-indigo-50/60 backdrop-blur-sm">
-            <div className="flex-shrink-0">
+          <div className="flex items-center p-1.5 rounded-xl bg-gradient-to-r from-indigo-50/90 to-blue-50/70 backdrop-blur-sm shadow-sm ring-1 ring-indigo-100/50">
+            <div className="flex-shrink-0 relative">
               {user.avatar ? (
                 <img
                   src={user.avatar}
                   alt={user.name}
-                  className="w-10 h-10 rounded-full object-cover border-2 border-white"
+                  className="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-sm"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-medium text-xl shadow-md">
                   {user.name.charAt(0)}
                 </div>
               )}
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
             </div>
             <div className="ml-3 flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-800 truncate">{user.name}</p>
-              <p className="text-xs text-gray-500 truncate">{user.role}</p>
+              <div className="flex items-center">
+                <p className="text-[9px] font-medium text-indigo-700 lowercase tracking-wide">{user.role}</p>
+              </div>
             </div>
             <div className="ml-2">
               <div className="relative group">
-                <button className="p-1.5 rounded-full hover:bg-white/60 transition-all duration-150 text-gray-500 hover:text-blue-600">
+                <button className="p-2 rounded-lg bg-white/60 backdrop-blur-sm shadow-sm hover:bg-white transition-all duration-150 text-gray-500 hover:text-indigo-600 hover:shadow-md hover:scale-105">
                   <Settings size={16} />
                 </button>
-                <div className="absolute right-0 bottom-full mb-2 w-32 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <div className="bg-white rounded-lg py-1.5 px-1 text-xs text-gray-700">
+                <div className="absolute right-0 bottom-full mb-2 w-32 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                  <div className="bg-white rounded-lg py-1.5 px-2 text-xs text-gray-700 shadow-md">
                     Account settings
                   </div>
                 </div>
@@ -436,15 +468,15 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-2">
-            <button
-              onClick={handleLogout}
-              className="flex items-center justify-center rounded-xl py-2 px-3 transition-all duration-200 bg-red-50 hover:bg-red-100/80 text-red-600 hover:text-red-700"
-            >
-              <LogOut size={16} className="mr-2" />
-              <span className="text-xs font-medium">Logout</span>
-            </button>
-          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center rounded-xl py-3 px-3 transition-all duration-300 
+              bg-gradient-to-r from-rose-50 to-red-50 hover:from-rose-100/80 hover:to-red-100/80 
+              text-rose-600 hover:text-red-700 shadow-sm hover:shadow group"
+          >
+            <LogOut size={18} className="mr-2 group-hover:translate-x-0.5 transition-transform duration-300" />
+            <span className="text-sm font-medium">Logout</span>
+          </button>
         </div>
       </div>
     );
@@ -452,8 +484,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
   return (
     <aside
-      className="flex flex-col h-[100vh] bg-white/95 backdrop-blur-xl overflow-y-auto border-r border-gray-100/80 glass-morphism"
+      className="w-full flex flex-col h-[100vh] bg-white/95 backdrop-blur-xl overflow-y-auto border-r border-gray-100/80 glass-morphism relative"
     >
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-indigo-100/20 to-transparent rounded-full blur-3xl -z-10"></div>
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-blue-100/20 to-transparent rounded-full blur-3xl -z-10"></div>
+
       <div className="flex items-center justify-between py-4 px-4 border-b border-gray-100/70">
         <div>
           <NavLink to="/" className="flex items-center">
@@ -463,10 +498,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
               <img
                 src={logo}
                 alt="Logo"
-                className="h-10 w-auto rounded-xl transition-all duration-200 group-hover:opacity-90"
+                className="h-11 w-auto rounded-xl transition-all duration-300 group-hover:opacity-90 group-hover:scale-105"
               />
               <div
-                className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-blue-200/20 to-indigo-200/10 blur-sm -z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+                className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-indigo-200/20 to-blue-200/10 blur-sm -z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
               />
             </div>
           </NavLink>
@@ -474,7 +509,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         {isMobile && (
           <button
             onClick={() => setCollapsed && setCollapsed(true)}
-            className="p-2 rounded-lg hover:bg-gray-100/60 transition-all duration-150"
+            className="p-2 rounded-lg bg-gray-50/80 hover:bg-gray-100/60 transition-all duration-150 hover:shadow-sm"
           >
             <X size={18} className="text-gray-500" />
           </button>
@@ -487,6 +522,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         {routes.map((item: RouteItem, idx: number) => (
           <div
             key={idx}
+            className={`${idx > 0 ? 'animate-fadeIn' : ''}`}
+            style={{ animationDelay: `${idx * 50}ms` }}
           >
             {renderNavItem(item)}
           </div>
@@ -507,9 +544,29 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         /* Modern glass morphism */
         .glass-morphism {
           background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border-right: 1px solid rgba(235, 240, 255, 0.2);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-right: 1px solid rgba(235, 240, 255, 0.3);
+          box-shadow: 0 8px 32px rgba(15, 23, 42, 0.03);
+        }
+        
+        /* Animation keyframes */
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(-5px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        .animate-slideIn {
+          animation: slideIn 0.25s ease-out forwards;
         }
         
         /* For dropdown animation - smoother transitions */

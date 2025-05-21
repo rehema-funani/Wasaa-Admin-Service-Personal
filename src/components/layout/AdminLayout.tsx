@@ -152,9 +152,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
 
       <div
         className={`
-          fixed lg:static lg:flex h-full z-40 transition-all duration-300
+          w-[300px] lg:static lg:flex h-full z-40 transition-all duration-300
           ${sidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
-          lg:w-[350px]
         `}
       >
         <Sidebar
@@ -163,7 +162,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = () => {
         />
       </div>
 
-      <div className="h-[100vh] flex flex-col w-full lg:pl-0">
+      <div className="h-[100vh] flex flex-col w-full">
         <div className="sticky top-0 z-20">
           <div className="glass-header border-b border-gray-50">
             <Header

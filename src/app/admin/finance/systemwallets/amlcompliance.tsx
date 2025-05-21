@@ -27,9 +27,9 @@ import {
     Bell
 } from 'lucide-react';
 import { Modal } from '../../../../components/common/Modal';
-// import AMLRulesConfiguration from './AMLRulesConfiguration';
 import BlacklistWhitelistManager from './blacklistwhitelistmanager';
 import SuspiciousActivityMonitor from './suspiciousactivitymonitor';
+import AMLRulesConfiguration from './amlrulesconfiguration';
 
 // Types for AML alerts
 interface AMLAlert {
@@ -477,7 +477,7 @@ const AMLComplianceDashboard: React.FC = () => {
             case 'activity':
                 return <SuspiciousActivityMonitor />;
             case 'rules':
-                // return <AMLRulesConfiguration />;
+                return <AMLRulesConfiguration />;
             default:
                 return renderDashboard();
         }
