@@ -45,7 +45,6 @@ interface ListEntry {
 }
 
 const BlacklistWhitelistManager: React.FC = () => {
-    // State management
     const [entries, setEntries] = useState<ListEntry[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [activeTab, setActiveTab] = useState<'blacklist' | 'whitelist'>('blacklist');
@@ -59,7 +58,6 @@ const BlacklistWhitelistManager: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<'view' | 'add' | 'edit' | 'delete' | null>(null);
 
-    // Form state for add/edit
     const [formData, setFormData] = useState({
         entityType: 'user',
         value: '',
@@ -68,7 +66,6 @@ const BlacklistWhitelistManager: React.FC = () => {
         notes: ''
     });
 
-    // Mock data for blacklist/whitelist entries
     const mockEntries: ListEntry[] = [
         {
             id: 'bl-001',
@@ -180,16 +177,12 @@ const BlacklistWhitelistManager: React.FC = () => {
         }
     ];
 
-    // Load blacklist/whitelist data
     useEffect(() => {
-        // Simulating API call
         const fetchListEntries = async () => {
             setIsLoading(true);
             try {
-                // In a real implementation, this would be:
                 // const entries = await amlService.getBlacklistWhitelist();
 
-                // For now, using mock data with a timeout for loading simulation
                 setTimeout(() => {
                     setEntries(mockEntries);
                     setIsLoading(false);
@@ -204,7 +197,6 @@ const BlacklistWhitelistManager: React.FC = () => {
         fetchListEntries();
     }, []);
 
-    // Filter entries based on active tab, search, entity type and status
     const filteredEntries = entries.filter(entry => {
         const matchesTab = entry.type === activeTab;
 

@@ -7,26 +7,86 @@ import {
     Users,
     FileText,
     X,
-    ExternalLink
+    ExternalLink,
+    AlertTriangle,
+    Clock,
+    CheckCircle
 } from 'lucide-react';
-import { Team, TicketAssignment } from '../../../types/team';
-import { ticketService } from '../../../api/services/ticket';
-import { teamService } from '../../../api/services/team';
 import { Card, CardContent, CardHeader } from '../../../components/common/Card';
 import { Avatar } from '../../../components/common/Avatar';
 import { Button } from '../../../components/common/Button';
+import { Badge } from '../../../components/common/Badge';
+import { ticketService } from '../../../api/services/ticket';
+import userService from '../../../api/services/users';
+
+// Updated types to match the API response
+interface User {
+    id: string;
+    name: string;
+    avatar?: string;
+}
+
+interface Team {
+    id: string;
+    title: string;
+    level: string;
+    members: string[];
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+}
+
+interface Ticket {
+    id: string;
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string;
+    title: string;
+    description: string;
+    ticketType: string;
+    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+    status: 'OPEN' | 'PENDING' | 'RESOLVED' | 'CLOSED';
+    communicationChannel: string;
+    assignedTo: string;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+}
+
+interface TicketAssignment {
+    id: string;
+    ticket_id: string;
+    assigned_to: string; // This is the team ID
+    assigned_at: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: null;
+    ticket: Ticket;
+    team: Team;
+}
+
+interface TicketAssignmentResponse {
+    ticketAssignments: TicketAssignment[];
+    meta: {
+        totalPages: number;
+        currentPage: number;
+        pageSize: number;
+        totalAssignments: number;
+    };
+}
 
 const AssignmentsPage: React.FC = () => {
     const navigate = useNavigate();
     const [assignments, setAssignments] = useState<TicketAssignment[]>([]);
-    const [teams, setTeams] = useState<Team[]>([]);
+    const [users, setUsers] = useState<Record<string, User>>({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterTeam, setFilterTeam] = useState<string>('all');
-    const [filterUser, setFilterUser] = useState<string>('all');
+    const [filterStatus, setFilterStatus] = useState<string>('all');
+    const [filterPriority, setFilterPriority] = useState<string>('all');
 
-    // Fetch data on component mount
     useEffect(() => {
         fetchData();
     }, []);
@@ -36,13 +96,49 @@ const AssignmentsPage: React.FC = () => {
         setError(null);
 
         try {
-            const [assignmentsData, teamsData] = await Promise.all([
-                ticketService.getTicketAssignments(),
-                teamService.getTeams()
-            ]);
+            // Get ticket assignments
+            const assignmentsResponse = await ticketService.getTicketAssignments();
+            setAssignments(assignmentsResponse.ticketAssignments);
 
-            setAssignments(assignmentsData);
-            setTeams(teamsData);
+            // Collect all user IDs from teams and tickets
+            const userIds = new Set<string>();
+            assignmentsResponse.ticketAssignments.forEach(assignment => {
+                // Add team members
+                assignment.team.members.forEach(memberId => userIds.add(memberId));
+
+                // Add assigned user from ticket
+                if (assignment.ticket.assignedTo) {
+                    userIds.add(assignment.ticket.assignedTo);
+                }
+
+                // Add ticket creator
+                if (assignment.ticket.createdBy) {
+                    userIds.add(assignment.ticket.createdBy);
+                }
+            });
+
+            // Fetch user details for all collected IDs
+            const userDetails: Record<string, User> = {};
+            await Promise.all(
+                Array.from(userIds).map(async (userId) => {
+                    try {
+                        const user = await userService.getUserById(userId);
+                        userDetails[userId] = {
+                            id: user.id,
+                            name: user.name ?? 'Unknown User',
+                            avatar: user.avatar,
+                        };
+                    } catch (err) {
+                        // Handle user not found
+                        userDetails[userId] = {
+                            id: userId,
+                            name: 'Unknown User',
+                        };
+                    }
+                })
+            );
+
+            setUsers(userDetails);
         } catch (err) {
             setError('Failed to fetch assignments data. Please try again later.');
             console.error(err);
@@ -51,32 +147,14 @@ const AssignmentsPage: React.FC = () => {
         }
     };
 
-    // Get team name by ID
-    const getTeamName = (teamId: string): string => {
-        const team = teams.find(t => t.id === teamId);
-        return team?.name || 'Unknown Team';
-    };
-
-    // Get user name by ID from team members
+    // Get user name by ID
     const getUserName = (userId: string): string => {
-        for (const team of teams) {
-            const member = team.members.find(m => m.id === userId);
-            if (member) {
-                return member.name;
-            }
-        }
-        return 'Unknown User';
+        return users[userId]?.name || 'Unknown User';
     };
 
-    // Get user avatar by ID from team members
+    // Get user avatar by ID
     const getUserAvatar = (userId: string): string | undefined => {
-        for (const team of teams) {
-            const member = team.members.find(m => m.id === userId);
-            if (member) {
-                return member.avatar;
-            }
-        }
-        return undefined;
+        return users[userId]?.avatar;
     };
 
     // Handle deleting an assignment
@@ -96,27 +174,62 @@ const AssignmentsPage: React.FC = () => {
         }
     };
 
+    // Get status badge color
+    const getStatusBadge = (status: string) => {
+        switch (status) {
+            case 'OPEN':
+                return <Badge variant="warning">Open</Badge>;
+            case 'PENDING':
+                return <Badge variant="info">Pending</Badge>;
+            case 'RESOLVED':
+                return <Badge variant="success">Resolved</Badge>;
+            case 'CLOSED':
+                return <Badge variant="secondary">Closed</Badge>;
+            default:
+                return <Badge variant="default">{status}</Badge>;
+        }
+    };
+
+    // Get priority badge
+    const getPriorityBadge = (priority: string) => {
+        switch (priority) {
+            case 'LOW':
+                return <Badge variant="default">Low</Badge>;
+            case 'MEDIUM':
+                return <Badge variant="info">Medium</Badge>;
+            case 'HIGH':
+                return <Badge variant="warning">High</Badge>;
+            case 'URGENT':
+                return <Badge variant="danger">Urgent</Badge>;
+            default:
+                return <Badge variant="default">{priority}</Badge>;
+        }
+    };
+
     // Filter assignments based on search and filters
     const filteredAssignments = assignments.filter(assignment => {
-        // Search by ticket ID
-        const matchesSearch = assignment.ticketId.toLowerCase().includes(searchQuery.toLowerCase());
+        const ticketMatches =
+            assignment.ticket.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            assignment.ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            assignment.ticket.customerName.toLowerCase().includes(searchQuery.toLowerCase());
 
-        // Filter by team
-        const matchesTeam = filterTeam === 'all' || assignment.teamId === filterTeam;
+        const teamMatches = filterTeam === 'all' || assignment.assigned_to === filterTeam;
+        const statusMatches = filterStatus === 'all' || assignment.ticket.status === filterStatus;
+        const priorityMatches = filterPriority === 'all' || assignment.ticket.priority === filterPriority;
 
-        // Filter by user
-        const matchesUser = filterUser === 'all' || assignment.userId === filterUser;
-
-        // Filter by escalated only - we would need additional data for this
-        // In a real implementation, we would have the ticket details included in the assignment
-        // For now, we'll assume escalated status is determined elsewhere
-
-        return matchesSearch && matchesTeam && matchesUser;
+        return ticketMatches && teamMatches && statusMatches && priorityMatches;
     });
 
-    // Get unique teams and users for filters
-    const uniqueTeams = Array.from(new Set(assignments.map(a => a.teamId).filter(Boolean) as string[]));
-    const uniqueUsers = Array.from(new Set(assignments.map(a => a.userId).filter(Boolean) as string[]));
+    // Get unique teams for filter
+    const uniqueTeams = Array.from(
+        new Set(assignments.map(a => a.assigned_to))
+    ).map(teamId => {
+        const team = assignments.find(a => a.assigned_to === teamId)?.team;
+        return {
+            id: teamId,
+            title: team?.title || 'Unknown Team'
+        };
+    });
 
     if (isLoading) {
         return (
@@ -156,7 +269,7 @@ const AssignmentsPage: React.FC = () => {
                                     </div>
                                     <input
                                         type="text"
-                                        placeholder="Search by ticket ID..."
+                                        placeholder="Search by ticket ID, title or customer name..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -171,9 +284,9 @@ const AssignmentsPage: React.FC = () => {
                                     className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
                                     <option value="all">All Teams</option>
-                                    {uniqueTeams.map(teamId => (
-                                        <option key={teamId} value={teamId}>
-                                            {getTeamName(teamId)}
+                                    {uniqueTeams.map(team => (
+                                        <option key={team.id} value={team.id}>
+                                            {team.title}
                                         </option>
                                     ))}
                                 </select>
@@ -181,18 +294,31 @@ const AssignmentsPage: React.FC = () => {
 
                             <div>
                                 <select
-                                    value={filterUser}
-                                    onChange={(e) => setFilterUser(e.target.value)}
+                                    value={filterStatus}
+                                    onChange={(e) => setFilterStatus(e.target.value)}
                                     className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
-                                    <option value="all">All Users</option>
-                                    {uniqueUsers.map(userId => (
-                                        <option key={userId} value={userId}>
-                                            {getUserName(userId)}
-                                        </option>
-                                    ))}
+                                    <option value="all">All Statuses</option>
+                                    <option value="OPEN">Open</option>
+                                    <option value="PENDING">Pending</option>
+                                    <option value="RESOLVED">Resolved</option>
+                                    <option value="CLOSED">Closed</option>
                                 </select>
                             </div>
+                        </div>
+
+                        <div className="mt-4">
+                            <select
+                                value={filterPriority}
+                                onChange={(e) => setFilterPriority(e.target.value)}
+                                className="w-full md:w-1/4 px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                                <option value="all">All Priorities</option>
+                                <option value="LOW">Low</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="HIGH">High</option>
+                                <option value="URGENT">Urgent</option>
+                            </select>
                         </div>
                     </CardContent>
                 </Card>
@@ -202,7 +328,7 @@ const AssignmentsPage: React.FC = () => {
                         <ClipboardList size={48} className="text-gray-300 mx-auto mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-1">No Assignments Found</h3>
                         <p className="text-gray-500">
-                            {searchQuery || filterTeam !== 'all' || filterUser !== 'all'
+                            {searchQuery || filterTeam !== 'all' || filterStatus !== 'all' || filterPriority !== 'all'
                                 ? 'Try adjusting your filters to see more results'
                                 : 'There are no ticket assignments in the system yet'}
                         </p>
@@ -223,6 +349,8 @@ const AssignmentsPage: React.FC = () => {
                                     <thead>
                                         <tr className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">
                                             <th className="px-4 py-3">Ticket</th>
+                                            <th className="px-4 py-3">Status</th>
+                                            <th className="px-4 py-3">Priority</th>
                                             <th className="px-4 py-3">Assigned Team</th>
                                             <th className="px-4 py-3">Assigned User</th>
                                             <th className="px-4 py-3">Date Assigned</th>
@@ -233,46 +361,56 @@ const AssignmentsPage: React.FC = () => {
                                         {filteredAssignments.map((assignment) => (
                                             <tr key={assignment.id} className="hover:bg-gray-50">
                                                 <td className="px-4 py-4">
-                                                    <div className="flex items-center">
-                                                        <FileText size={16} className="text-gray-400 mr-2" />
-                                                        <a
-                                                            href={`/support/tickets/${assignment.ticketId}`}
-                                                            className="text-blue-600 hover:underline font-medium"
-                                                        >
-                                                            #{assignment.ticketId}
-                                                        </a>
+                                                    <div>
+                                                        <div className="flex items-center">
+                                                            <FileText size={16} className="text-gray-400 mr-2" />
+                                                            <a
+                                                                href={`/admin/support/tickets/${assignment.ticket_id}`}
+                                                                className="text-blue-600 hover:underline font-medium"
+                                                            >
+                                                                #{assignment.ticket_id.substring(0, 8)}
+                                                            </a>
+                                                        </div>
+                                                        <p className="text-sm text-gray-800 mt-1">{assignment.ticket.title}</p>
+                                                        <p className="text-xs text-gray-500 mt-1">{assignment.ticket.customerName}</p>
                                                     </div>
                                                 </td>
                                                 <td className="px-4 py-4">
-                                                    {assignment.teamId ? (
+                                                    {getStatusBadge(assignment.ticket.status)}
+                                                </td>
+                                                <td className="px-4 py-4">
+                                                    {getPriorityBadge(assignment.ticket.priority)}
+                                                </td>
+                                                <td className="px-4 py-4">
+                                                    {assignment.team ? (
                                                         <div className="flex items-center">
                                                             <div className="bg-blue-100 p-1.5 rounded-lg mr-2">
                                                                 <Users size={14} className="text-blue-600" />
                                                             </div>
-                                                            <span>{getTeamName(assignment.teamId)}</span>
+                                                            <span>{assignment.team.title}</span>
                                                         </div>
                                                     ) : (
                                                         <span className="text-gray-400">Not assigned to a team</span>
                                                     )}
                                                 </td>
                                                 <td className="px-4 py-4">
-                                                    {assignment.userId ? (
+                                                    {assignment.ticket.assignedTo ? (
                                                         <div className="flex items-center">
                                                             <Avatar
-                                                                src={getUserAvatar(assignment.userId)}
-                                                                alt={getUserName(assignment.userId)}
-                                                                initials={getUserName(assignment.userId).charAt(0)}
+                                                                src={getUserAvatar(assignment.ticket.assignedTo)}
+                                                                alt={getUserName(assignment.ticket.assignedTo)}
+                                                                initials={getUserName(assignment.ticket.assignedTo).charAt(0)}
                                                                 size="sm"
                                                                 className="mr-2"
                                                             />
-                                                            <span>{getUserName(assignment.userId)}</span>
+                                                            <span>{getUserName(assignment.ticket.assignedTo)}</span>
                                                         </div>
                                                     ) : (
                                                         <span className="text-gray-400">Not assigned to a user</span>
                                                     )}
                                                 </td>
                                                 <td className="px-4 py-4 text-gray-500">
-                                                    {new Date(assignment.assignedAt).toLocaleDateString()}
+                                                    {new Date(assignment.assigned_at).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-4 py-4">
                                                     <div className="flex items-center space-x-2">
@@ -280,7 +418,7 @@ const AssignmentsPage: React.FC = () => {
                                                             variant="ghost"
                                                             size="sm"
                                                             rightIcon={<ExternalLink size={14} />}
-                                                            onClick={() => navigate(`/support/tickets/${assignment.ticketId}`)}
+                                                            onClick={() => navigate(`/admin/support/tickets/${assignment.ticket_id}`)}
                                                         >
                                                             View
                                                         </Button>

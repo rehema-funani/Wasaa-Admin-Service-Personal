@@ -23,8 +23,22 @@ import {
   Languages,
   DollarSign,
   Monitor,
-  Banknote,
-  
+  TicketIcon,
+  UsersIcon,
+  Film,
+  Hash,
+  MessageSquare,
+  TrendingUp,
+  Award,
+  Bell,
+  Cog,
+  User,
+  Scale,
+  RefreshCw,
+  FileText,
+  HelpCircle,
+  LifeBuoy,
+  Banknote
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -65,7 +79,7 @@ const routes: Route[] = [
     },
     {
       type: 'section',
-      title: 'Users',
+      title: 'User Management',
       items: [
         {
           type: 'link',
@@ -79,16 +93,16 @@ const routes: Route[] = [
           title: 'Countrywise',
           icon: Globe,
         },
-      ],
-    },
-    {
-      type: 'section',
-      title: 'User Management',
-      items: [
+        {
+          type: 'link',
+          path: '/admin/users/reported-user-list',
+          title: 'Reported Users',
+          icon: AlertTriangle,
+        },
         {
           type: 'link',
           path: '/admin/system/users',
-          title: 'User Accounts',
+          title: 'System Users',
           icon: Users,
         },
         {
@@ -108,6 +122,141 @@ const routes: Route[] = [
           path: '/admin/Group/all-group-list',
           title: 'Group List',
           icon: Group,
+        },
+        {
+          type: 'link',
+          path: '/admin/Group/all-reported-group-list',
+          title: 'Reported Groups',
+          icon: AlertTriangle,
+        },
+      ],
+    },
+    {
+      type: 'section',
+      title: 'Media',
+      items: [
+        {
+          type: 'link',
+          path: '/admin/media/shorts',
+          title: 'Shorts Dashboard',
+          icon: Film,
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/moderation',
+          title: 'Video Moderation',
+          icon: ShieldCheck,
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/reports',
+          title: 'Reports',
+          icon: AlertTriangle,
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/comments',
+          title: 'Comments',
+          icon: MessageSquare,
+        },
+        {
+          type: 'dropdown',
+          title: 'Hashtags',
+          icon: Hash,
+          key: 'hashtags',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/media/shorts/hashtags',
+              title: 'All Hashtags',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/hashtags/blocked',
+              title: 'Blocked Hashtags',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/hashtags/trending',
+              title: 'Trending Hashtags',
+            },
+          ],
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/creators',
+          title: 'Creators',
+          icon: User,
+        },
+        {
+          type: 'dropdown',
+          title: 'Promotion',
+          icon: Award,
+          key: 'promotion',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/media/shorts/promotion',
+              title: 'All Promotions',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/promotion/trending',
+              title: 'Trending',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/promotion/featured',
+              title: 'Featured',
+            },
+          ],
+        },
+        {
+          type: 'dropdown',
+          title: 'Analytics',
+          icon: BarChart3,
+          key: 'shorts-analytics',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/media/shorts/analytics',
+              title: 'Overview',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/analytics/videos',
+              title: 'Videos',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/analytics/moderation',
+              title: 'Moderation',
+            },
+          ],
+        },
+        {
+          type: 'dropdown',
+          title: 'Notifications',
+          icon: Bell,
+          key: 'shorts-notifications',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/media/shorts/notifications',
+              title: 'All Notifications',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/notifications/templates',
+              title: 'Templates',
+            },
+          ],
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/settings',
+          title: 'Shorts Settings',
+          icon: Cog,
         },
       ],
     },
@@ -129,9 +278,9 @@ const routes: Route[] = [
         },
         {
           type: 'dropdown',
-          title: 'Livestream Management',
+          title: 'Management',
           icon: Video,
-          key: 'Livestream Management',
+          key: 'livestream-management',
           items: [
             {
               type: 'link',
@@ -162,6 +311,12 @@ const routes: Route[] = [
           title: 'Moderation',
           icon: ShieldCheck,
         },
+        {
+          type: 'link',
+          path: '/admin/livestreams/reported',
+          title: 'Reported Streams',
+          icon: AlertTriangle,
+        },
       ],
     },
     {
@@ -177,31 +332,55 @@ const routes: Route[] = [
         {
           type: 'link',
           path: '/admin/finance/tariffs',
-          icon: DollarSign,
           title: 'Tariffs',
+          icon: DollarSign,
         },
         {
           type: 'link',
           path: '/admin/finance/limits',
-          icon: Monitor,
           title: 'Limits',
+          icon: Monitor,
+        },
+        {
+          type: 'link',
+          path: '/admin/finance/compliance',
+          title: 'Compliance',
+          icon: Scale,
+        },
+        {
+          type: 'dropdown',
+          title: 'System Wallets',
+          icon: Wallet,
+          key: 'system-wallets',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/finance/wallets',
+              title: 'Wallets',
+            },
+            {
+              type: 'link',
+              path: '/admin/finance/wallets/reversal-requests',
+              title: 'Reversal Requests',
+            },
+          ],
         },
         {
           type: 'link',
           path: '/admin/finance/banks',
-          icon: Banknote,
           title: 'Banks',
+          icon: Banknote,
         },
         {
           type: 'dropdown',
-          title: 'Wallet Management',
+          title: 'User Wallets',
           icon: Wallet,
-          key: 'Wallet Management',
+          key: 'user-wallets',
           items: [
             {
               type: 'link',
               path: '/admin/finance/user-wallets',
-              title: 'User Wallets',
+              title: 'All Wallets',
             },
             {
               type: 'link',
@@ -237,19 +416,19 @@ const routes: Route[] = [
     },
     {
       type: 'section',
-      title:'Gifts',
+      title: 'Gifts',
       items: [
+        {
+          type: 'link',
+          path: '/admin/gifts/gift-list',
+          title: 'Gift List',
+          icon: Gift,
+        },
         {
           type: 'link',
           path: '/admin/gifts/add-gift',
           title: 'Add Gift',
           icon: ImageIcon,
-        },
-         {
-          type: 'link',
-          path: '/admin/gifts/gift-list',
-          title: 'Gift List',
-          icon: Gift,
         },
         {
           type: 'link',
@@ -261,25 +440,61 @@ const routes: Route[] = [
     },
     {
       type: 'section',
-      title: 'Reports',
+      title: 'Customization',
       items: [
         {
           type: 'link',
-          path: '/admin/users/reported-user-list',
-          title: 'Reported Users',
-          icon: AlertTriangle,
+          path: '/admin/Wallpaper/list-all-wallpaper',
+          title: 'Wallpapers',
+          icon: ImageIcon,
         },
         {
           type: 'link',
-          path: '/admin/Group/all-reported-group-list',
-          title: 'Reported Group List',
-          icon: AlertTriangle,
+          path: '/admin/Wallpaper/add-a-new-wallpaper',
+          title: 'Add Wallpaper',
+          icon: ImageIcon,
         },
         {
           type: 'link',
-          path: '/admin/livestreams/reported',
-          title: 'Reported Streams',
-          icon: AlertTriangle,
+          path: '/admin/Avatar/list-all-avatar',
+          title: 'Avatars',
+          icon: UserCircle,
+        },
+        {
+          type: 'link',
+          path: '/admin/Avatar/add-a-new-avatar',
+          title: 'Add Avatar',
+          icon: UserCircle,
+        },
+      ],
+    },
+    {
+      type: 'section',
+      title: 'Support',
+      items: [
+        {
+          type: 'link',
+          path: '/admin/support',
+          title: 'Support Dashboard',
+          icon: LifeBuoy,
+        },
+        {
+          type: 'link',
+          path: '/admin/support/teams',
+          title: 'Support Teams',
+          icon: UsersIcon,
+        },
+        {
+          type: 'link',
+          path: '/admin/support/tickets',
+          title: 'Tickets',
+          icon: TicketIcon,
+        },
+        {
+          type: 'link',
+          path: '/admin/support/assignments',
+          title: 'Ticket Assignments',
+          icon: RefreshCw,
         },
       ],
     },
@@ -290,7 +505,7 @@ const routes: Route[] = [
         {
           type: 'link',
           path: '/admin/settings',
-          title: 'General',
+          title: 'General Settings',
           icon: Settings,
         },
         {
@@ -309,25 +524,7 @@ const routes: Route[] = [
           type: 'link',
           path: '/admin/logs',
           title: 'Audit Logs',
-          icon: Key,
-        },
-        {
-          type: 'link',
-          path: '/admin/support',
-          title: 'Support',
-          icon: Globe,
-        },
-        {
-          type: 'link',
-          path:'/admin/Wallpaper/list-all-wallpaper',
-          title: 'Wallpaper',
-          icon: ImageIcon,
-        },
-        {
-          type: 'link',
-          path:'/admin/Avatar/list-all-avatar',
-          title: 'Avatar',
-          icon: ImageIcon,
+          icon: FileText,
         },
       ],
     },

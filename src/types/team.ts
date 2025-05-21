@@ -9,10 +9,11 @@ export interface TeamMember {
 
 export interface Team {
   id: string;
-  title: string;
+  title?: string;
+  name?: string;
   description: string;
-  createdAt: string;
-  members: TeamMember[];
+  createdAt?: string;
+  members?: TeamMember[];
   level?: string;
 }
 
