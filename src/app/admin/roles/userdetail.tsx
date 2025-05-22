@@ -485,7 +485,6 @@ const UserDetailsPage = () => {
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
-            {/* Header with back button */}
             <div className="mb-6 flex items-center">
                 <motion.button
                     className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 hover:text-gray-800 mr-3"

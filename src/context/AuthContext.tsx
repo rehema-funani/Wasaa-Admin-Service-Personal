@@ -3,7 +3,6 @@ import { getStorageItem, removeStorageItem } from '../utils/storage';
 import userService from '../api/services/users';
 import Cookies from 'js-cookie';
 
-
 type User = {
     id: string;
     name?: string;
@@ -35,6 +34,40 @@ type LoginResponse = {
     };
     refreshToken?: string;
     user_id?: string;
+};
+
+type ApiLoginResponse = {
+    tokens: {
+        access_token: string;
+        refresh_token: string;
+    };
+    user: {
+        id: string;
+        email: string;
+        first_name: string;
+        last_name: string | null;
+        phone_number: string;
+        profile_picture: string | null;
+        role_id: string;
+        last_password_reset: string | null;
+        last_login: string;
+        account_status: string;
+        createdAt: string;
+        updatedAt: string;
+        deletedAt: string | null;
+        role: {
+            id: string;
+            title: string;
+            role_permissions: Array<{
+                id: number;
+                permissions: {
+                    id: string;
+                    title: string;
+                };
+            }>;
+        };
+    };
+    message: string;
 };
 
 type AuthContextType = {
@@ -116,11 +149,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    const normalizeApiResponse = (apiResponse: ApiLoginResponse): LoginResponse => {
+        return {
+            success: true,
+            message: apiResponse.message,
+            accessToken: apiResponse.tokens.access_token,
+            refreshToken: apiResponse.tokens.refresh_token,
+            user: apiResponse.user
+        };
+    };
+
     const verifyOtp = async (payload: { otp: string; user_id: string; source?: string }): Promise<LoginResponse> => {
         setIsLoading(true);
         setError(null);
+
         try {
-            const response = await userService.verifyOtp(payload);
+            const rawResponse: ApiLoginResponse = await userService.verifyOtp(payload);
+
+            const response = normalizeApiResponse(rawResponse);
 
             try {
                 const cookieOptions = {
@@ -129,6 +175,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     sameSite: 'strict' as const
                 };
 
+                // Store tokens using the normalized response
                 Cookies.set('authToken', response.accessToken || '', cookieOptions);
                 Cookies.set('refreshToken', response.refreshToken || '', cookieOptions);
 
@@ -144,17 +191,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     };
 
                     setUser(userData);
-
                     Cookies.set('userData', JSON.stringify(userData), cookieOptions);
                 }
 
-                const tokenCheck = Cookies.get('authToken');
+                // Optional: Log for debugging
+                console.log('Auth tokens stored successfully');
 
             } catch (storageError) {
                 console.error('Error storing auth data in cookies:', storageError);
             }
 
+            // Return the normalized response
             return response;
+
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
@@ -176,6 +225,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } catch (err) {
             console.error('Logout API error:', err);
         } finally {
+            // Clear all auth-related cookies and storage
+            Cookies.remove('authToken');
+            Cookies.remove('refreshToken');
+            Cookies.remove('userData');
             removeStorageItem('authToken');
             setUser(null);
             setIsLoading(false);

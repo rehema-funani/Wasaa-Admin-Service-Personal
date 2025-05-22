@@ -154,23 +154,23 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/users/reported-user-list" element={
-                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                        <PermissionRouteGuard permissions={PermissionMap.ViewReported}>
                             <ReportedUsers />
                         </PermissionRouteGuard>
                     } />
 
                     <Route path="admin/Group/all-group-list" element={
-                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                        <PermissionRouteGuard permissions={PermissionMap.Groups.view}>
                             <GroupList />
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/Group/all-group-list/:id" element={
-                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                        <PermissionRouteGuard permissions={PermissionMap.Groups.view}>
                             <GroupDetailPage />
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/Group/all-reported-group-list" element={
-                        <PermissionRouteGuard permissions={PermissionMap.Users.view}>
+                        <PermissionRouteGuard permissions={PermissionMap.ViewReported}>
                             <ReportedGroups />
                         </PermissionRouteGuard>
                     } />
@@ -191,41 +191,108 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
                     <Route path='admin/system/users' element={
-                        <PermissionRouteGuard permissions={['can_list_staff', 'can_view_users']}>
+                        <PermissionRouteGuard permissions={PermissionMap.Users.viewStaff}>
                             <SystemUsers />
                         </PermissionRouteGuard>
                     } />
-
                     <Route path='admin/users/:id' element={
-                        <PermissionRouteGuard permissions={['can_list_staff', 'can_view_users']}>
+                        <PermissionRouteGuard permissions={PermissionMap.Users.viewStaff}>
                             <AdminUserDetails />
                         </PermissionRouteGuard>
                     } />
 
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />
                     <Route path="admin/livestreams/scheduled" element={<ScheduledStreams />} />
-                    <Route path="admin/livestreams/settings" element={<StreamSettings />} />
+                    <Route path="admin/livestreams/settings" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <StreamSettings />
+                        </PermissionRouteGuard>
+                    } />
                     <Route path="admin/livestreams/categories" element={<StreamCategories />} />
                     <Route path="admin/livestreams/featured" element={<FeaturedStreams />} />
                     <Route path="admin/livestreams/analytics" element={<StreamAnalytics />} />
                     <Route path="admin/livestreams/moderation" element={<StreamModeration />} />
-                    <Route path="admin/livestreams/reported" element={<ReportedStreams />} />
+                    <Route path="admin/livestreams/reported" element={
+                        <PermissionRouteGuard permissions={PermissionMap.ViewReported}>
+                            <ReportedStreams />
+                        </PermissionRouteGuard>
+                    } />
 
-                    <Route path="admin/finance/transactions" element={<Transactions />} />
-                    <Route path="admin/finance/tariffs" element={<Tarrifs />} />
-                    <Route path="admin/finance/limits" element={<Limits />} />
-                    <Route path="admin/finance/compliance" element={<Compliance />} />
-                    <Route path="admin/finance/limits/verification" element={<Verification />} />
-                    <Route path="admin/finance/wallets" element={<Wallets />} />
-                    <Route path="admin/finance/wallets/reversal-requests" element={<ReversalRequests />} />
-                    <Route path="admin/finance/banks" element={<Banks />} />
-                    <Route path="admin/finance/user-wallets" element={<UserWallets />} />
-                    <Route path="admin/finance/user-wallets/:id" element={<WalletDetail />} />
-                    <Route path="admin/finance/withdrawals" element={<Withdrawals />} />
-                    <Route path="admin/finance/top-ups" element={<TopUps />} />
-                    <Route path="admin/finance/payment-methods" element={<PaymentMethods />} />
-                    <Route path="admin/finance/reports" element={<FinancialReports />} />
-                    <Route path="admin/finance/gift-history" element={<GiftHistory />} />
+                    <Route path="admin/finance/transactions" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <Transactions />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/tariffs" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <Tarrifs />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/limits" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <Limits />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/compliance" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <Compliance />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/limits/verification" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <Verification />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/wallets" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Wallets.view}>
+                            <Wallets />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/wallets/reversal-requests" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Wallets.view}>
+                            <ReversalRequests />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/banks" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <Banks />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/user-wallets" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Wallets.view}>
+                            <UserWallets />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/user-wallets/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Wallets.view}>
+                            <WalletDetail />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/withdrawals" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <Withdrawals />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/top-ups" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <TopUps />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/payment-methods" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <PaymentMethods />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/reports" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Finance}>
+                            <FinancialReports />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/gift-history" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <GiftHistory />
+                        </PermissionRouteGuard>
+                    } />
 
                     <Route path="admin/Wallpaper/list-all-wallpaper" element={
                         <PermissionRouteGuard permissions={PermissionMap.Media.view}>
@@ -301,12 +368,12 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/media/shorts/reports" element={
-                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                        <PermissionRouteGuard permissions={PermissionMap.ViewReported}>
                             <ReportsPage />
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/media/shorts/reports/:reportId" element={
-                        <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                        <PermissionRouteGuard permissions={PermissionMap.ViewReported}>
                             <ReportsPage />
                         </PermissionRouteGuard>
                     } />
@@ -398,8 +465,16 @@ const AppRouter: React.FC = () => {
                     <Route path="/admin/support/tickets/:id" element={<TicketDetail />} />
                     <Route path="/admin/support/assignments" element={<Reassign />} />
 
-                    <Route path="admin/logs" element={<Logs />} />
-                    <Route path="admin/audit-logs/:id" element={<AuditDetails />} />
+                    <Route path="admin/logs" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Admin}>
+                            <Logs />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/audit-logs/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Admin}>
+                            <AuditDetails />
+                        </PermissionRouteGuard>
+                    } />
                 </Route>
 
                 <Route path="*" element={<ErrorPage />} />
