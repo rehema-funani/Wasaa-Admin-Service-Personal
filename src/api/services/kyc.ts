@@ -42,9 +42,46 @@ const kycService = {
         }
     },
 
+    async getKycConfigById(id: string): Promise<KycConfig> {
+        try {
+            const response = await finance.get(`/configs/${id}`);
+            const config = response.data;
+            return {
+                id: config.id,
+                level: config.level.toLowerCase(),
+                name: config.name,
+                description: config.description,
+                requirements: (config.requirements || []).map((req: any) => req.name),
+                transactionLimits: config.transactionLimits ? [
+                    {
+                        id: config.transactionLimits.id,
+                        kycConfigId: config.transactionLimits.kycConfigId,
+                        transactionType: config.transactionLimits.transactionType.toLowerCase(),
+                        isDailyLimitEnabled: config.transactionLimits.isDailyLimitEnabled,
+                        dailyLimit: config.transactionLimits.dailyLimit,
+                        isWeeklyLimitEnabled: config.transactionLimits.isWeeklyLimitEnabled,
+                        weeklyLimit: config.transactionLimits.weeklyLimit,
+                        isMonthlyLimitEnabled: config.transactionLimits.isMonthlyLimitEnabled,
+                        monthlyLimit: config.transactionLimits.monthlyLimit,
+                        isPerTransactionMinEnabled: config.transactionLimits.isPerTransactionMinEnabled,
+                        perTransactionMin: config.transactionLimits.perTransactionMin,
+                        isPerTransactionMaxEnabled: config.transactionLimits.isPerTransactionMaxEnabled,
+                        perTransactionMax: config.transactionLimits.perTransactionMax,
+                        isAllowed: config.transactionLimits.isAllowed
+                    }
+                ] : [],
+                status: config.status || 'active',
+                lastUpdated: config.updatedAt
+            };
+        } catch (error) {
+            console.error('Failed to fetch KYC config by ID', error);
+            throw error;
+        }
+    },
+
     async createKycConfig(kycConfig: Omit<KycConfig, 'id' | 'lastUpdated'>): Promise<KycConfig> {
         try {
-            const response = await axios.post(`/configs`, kycConfig);
+            const response = await finance.post(`/kycConfigs`, kycConfig);
             return response.data;
         } catch (error) {
             console.error('Failed to create KYC config', error);

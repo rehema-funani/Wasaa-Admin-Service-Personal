@@ -53,6 +53,8 @@ const Tarrifs = lazy(() => import('./app/admin/finance/tariffs/page'));
 const EditTariff = lazy(() => import('./app/admin/finance/tariffs/edittariff'));
 const AddTarrif = lazy(() => import('./app/admin/finance/tariffs/addtariff'));
 const Limits = lazy(() => import('./app/admin/finance/limits/page'));
+const AddLimit = lazy(() => import('./app/admin/finance/limits/addkyc'));
+const EditLimit = lazy(() => import('./app/admin/finance/limits/editkyc'));
 const Compliance = lazy(() => import('./app/admin/finance/systemwallets/amlcompliance'));
 const Verification = lazy(() => import('./app/admin/finance/limits/verification'));
 const Wallets = lazy(() => import('./app/admin/finance/systemwallets/page'));
@@ -203,7 +205,6 @@ const AppRouter: React.FC = () => {
                             <AdminUserDetails />
                         </PermissionRouteGuard>
                     } />
-
                     <Route path="admin/livestreams/all-livestreams" element={<AllLivestreams />} />
                     <Route path="admin/livestreams/scheduled" element={<ScheduledStreams />} />
                     <Route path="admin/livestreams/settings" element={
@@ -249,6 +250,16 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/finance/limits" element={
                         <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
                             <Limits />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/limits/add" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <AddLimit />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/limits/edit/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <EditLimit />
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/finance/compliance" element={

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Shield } from 'lucide-react';
 import { KycConfig, KycLevel } from '../../types/kyc';
-
+import RequirementsInput from './RequirementsInput';
 
 interface KycConfigFormProps {
     initialData: Omit<KycConfig, 'id' | 'lastUpdated' | 'transactionLimits'>;
@@ -40,89 +40,113 @@ const KycConfigForm: React.FC<KycConfigFormProps> = ({
         }));
     };
 
+    const handleRequirementsChange = (requirements: string[]) => {
+        setFormData(prev => ({
+            ...prev,
+            requirements
+        }));
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Format requirements as an array
-        let requirementsArray: string[] = [];
-
-        if (typeof formData.requirements === 'string') {
-            requirementsArray = (formData.requirements as unknown as string)
-                .split('\n')
-                .map(req => req.trim())
-                .filter(req => req.length > 0);
-        } else {
-            requirementsArray = formData.requirements;
-        }
-
-        onSubmit({
-            ...formData,
-            requirements: requirementsArray
-        });
+        onSubmit(formData);
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-6">
+                {/* KYC Level Selection */}
                 <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                        KYC Level
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                        KYC Level Type
                     </label>
-                    <div className="flex items-center gap-1 bg-gray-50 p-0.5 rounded-lg w-fit">
+                    <div className="flex items-center bg-gray-50 rounded-xl p-1">
                         <button
                             type="button"
                             onClick={() => handleFormLevelChange('basic')}
-                            className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.level === 'basic'
-                                ? 'bg-white shadow-sm text-gray-800 font-medium'
-                                : 'text-gray-500'
+                            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all ${formData.level === 'basic'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
-                            <User size={12} />
-                            <span>Basic</span>
+                            <User size={16} className="mr-2" />
+                            Basic
                         </button>
                         <button
                             type="button"
                             onClick={() => handleFormLevelChange('standard')}
-                            className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.level === 'standard'
-                                ? 'bg-white shadow-sm text-gray-800 font-medium'
-                                : 'text-gray-500'
+                            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all ${formData.level === 'standard'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
-                            <Shield size={12} />
-                            <span>Standard</span>
+                            <Shield size={16} className="mr-2" />
+                            Standard
                         </button>
                         <button
                             type="button"
                             onClick={() => handleFormLevelChange('advanced')}
-                            className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.level === 'advanced'
-                                ? 'bg-white shadow-sm text-gray-800 font-medium'
-                                : 'text-gray-500'
+                            className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all ${formData.level === 'advanced'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
-                            <Shield size={12} />
-                            <span>Advanced</span>
+                            <Shield size={16} className="mr-2" />
+                            Advanced
                         </button>
                     </div>
                 </div>
 
-                <div>
-                    <label htmlFor="name" className="block text-xs font-medium text-gray-700 mb-1">
-                        Level Name
-                    </label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleFormChange}
-                        required
-                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
-                        placeholder="e.g., Basic Verification"
-                    />
+                {/* Name and Status */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                            Level Name *
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleFormChange}
+                            required
+                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                            placeholder="e.g., Basic Verification"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Status
+                        </label>
+                        <div className="flex items-center bg-gray-50 rounded-xl p-1">
+                            <button
+                                type="button"
+                                onClick={() => handleFormStatusChange('active')}
+                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${formData.status === 'active'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                            >
+                                Active
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => handleFormStatusChange('inactive')}
+                                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${formData.status === 'inactive'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                            >
+                                Inactive
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
+                {/* Description */}
                 <div>
-                    <label htmlFor="description" className="block text-xs font-medium text-gray-700 mb-1">
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
                         Description
                     </label>
                     <textarea
@@ -130,73 +154,38 @@ const KycConfigForm: React.FC<KycConfigFormProps> = ({
                         name="description"
                         value={formData.description}
                         onChange={handleFormChange}
-                        rows={2}
-                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
-                        placeholder="Describe the KYC level"
-                    ></textarea>
+                        rows={3}
+                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all resize-none"
+                        placeholder="Describe the purpose and scope of this KYC level..."
+                    />
                 </div>
 
                 <div>
-                    <label htmlFor="requirements" className="block text-xs font-medium text-gray-700 mb-1">
-                        Requirements (one per line)
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Verification Requirements
                     </label>
-                    <textarea
-                        id="requirements"
-                        name="requirements"
-                        value={Array.isArray(formData.requirements) ? formData.requirements.join('\n') : formData.requirements}
-                        onChange={handleFormChange}
-                        rows={4}
-                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
-                        placeholder="Email verification
-Phone number verification
-National ID card
-Proof of address"
-                    ></textarea>
-                    <p className="text-xs text-gray-500 mt-1">Enter each requirement on a new line.</p>
-                </div>
-
-                <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                        Status
-                    </label>
-                    <div className="flex items-center gap-1 bg-gray-50 p-0.5 rounded-lg w-fit">
-                        <button
-                            type="button"
-                            onClick={() => handleFormStatusChange('active')}
-                            className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.status === 'active'
-                                ? 'bg-white shadow-sm text-gray-800 font-medium'
-                                : 'text-gray-500'
-                                }`}
-                        >
-                            <span>Active</span>
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleFormStatusChange('inactive')}
-                            className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${formData.status === 'inactive'
-                                ? 'bg-white shadow-sm text-gray-800 font-medium'
-                                : 'text-gray-500'
-                                }`}
-                        >
-                            <span>Inactive</span>
-                        </button>
-                    </div>
+                    <RequirementsInput
+                        value={formData.requirements}
+                        onChange={handleRequirementsChange}
+                        placeholder="Type a verification requirement and press Enter..."
+                    />
                 </div>
             </div>
 
-            <div className="flex justify-end gap-2 mt-5 pt-3 border-t border-gray-100">
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="px-3 py-1.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-colors"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm"
+                    className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium transition-colors"
                 >
-                    {isAdd ? 'Add KYC Level' : 'Update KYC Level'}
+                    {isAdd ? 'Create KYC Level' : 'Update KYC Level'}
                 </button>
             </div>
         </form>
