@@ -49,7 +49,6 @@ const EditTariffPage = () => {
     const [originalTariff, setOriginalTariff] = useState<any>(null);
 
     useEffect(() => {
-        // Get tariff data from navigation state or fetch from API
         const tariff = location.state?.tariff;
         if (tariff) {
             setOriginalTariff(tariff);
@@ -265,101 +264,14 @@ const EditTariffPage = () => {
         setIsLoading(true);
 
         try {
-            // Update basic tariff info
             const tariffToUpdate = {
                 name: formData.name,
                 description: formData.description,
                 type: formData.type,
-                status: formData.status,
-                ...(formData.type === 'percentage' && { value: formData.value })
+                status: formData.status
             };
 
             await financeService.updateTariff(originalTariff.id, tariffToUpdate);
-
-            // Handle ranges
-            if (formData.type === 'flat') {
-                const existingRangeIds = originalTariff.fixedRanges?.map((r: any) => r.id) || [];
-
-                // Update/create ranges
-                await Promise.all(
-                    formData.fixedRanges.map(async (range) => {
-                        if (existingRangeIds.includes(range.id)) {
-                            // Update existing range
-                            await financeService.updateFixedRange(range.id, {
-                                min: range.min,
-                                max: range.max,
-                                fee: range.fee
-                            });
-                        } else if (!range.id.startsWith('new-')) {
-                            // This is a new range with a real ID, update it
-                            await financeService.updateFixedRange(range.id, {
-                                min: range.min,
-                                max: range.max,
-                                fee: range.fee
-                            });
-                        } else {
-                            // Create new range
-                            await financeService.createFixedRange({
-                                walletBillingId: originalTariff.id,
-                                min: range.min,
-                                max: range.max,
-                                fee: range.fee
-                            });
-                        }
-                    })
-                );
-
-                // Delete ranges that were removed
-                const formRangeIds = formData.fixedRanges.map(r => r.id);
-                const rangesToDelete = originalTariff.fixedRanges?.filter((r: any) =>
-                    !formRangeIds.includes(r.id)
-                ) || [];
-
-                await Promise.all(
-                    rangesToDelete.map((range: any) => financeService.deleteFixedRange(range.id))
-                );
-            } else {
-                const existingRangeIds = originalTariff.percentageRanges?.map((r: any) => r.id) || [];
-
-                // Update/create ranges
-                await Promise.all(
-                    formData.percentageRanges.map(async (range) => {
-                        if (existingRangeIds.includes(range.id)) {
-                            // Update existing range
-                            await financeService.updatePercentageFeeRange(range.id, {
-                                min: range.min,
-                                max: range.max,
-                                fee: range.fee
-                            });
-                        } else if (!range.id.startsWith('new-')) {
-                            // This is a new range with a real ID, update it
-                            await financeService.updatePercentageFeeRange(range.id, {
-                                min: range.min,
-                                max: range.max,
-                                fee: range.fee
-                            });
-                        } else {
-                            // Create new range
-                            await financeService.createPercentageFeeRange({
-                                walletBillingId: originalTariff.id,
-                                min: range.min,
-                                max: range.max,
-                                fee: range.fee
-                            });
-                        }
-                    })
-                );
-
-                // Delete ranges that were removed
-                const formRangeIds = formData.percentageRanges.map(r => r.id);
-                const rangesToDelete = originalTariff.percentageRanges?.filter((r: any) =>
-                    !formRangeIds.includes(r.id)
-                ) || [];
-
-                await Promise.all(
-                    rangesToDelete.map((range: any) => financeService.deletePercentageFeeRange(range.id))
-                );
-            }
 
             toast.success('Tariff updated successfully!', {
                 style: {
@@ -496,8 +408,8 @@ const EditTariffPage = () => {
                                                         type="button"
                                                         onClick={() => handleStatusChange('active')}
                                                         className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${formData.status === 'active'
-                                                                ? 'bg-white text-gray-900 shadow-sm'
-                                                                : 'text-gray-600 hover:text-gray-900'
+                                                            ? 'bg-white text-gray-900 shadow-sm'
+                                                            : 'text-gray-600 hover:text-gray-900'
                                                             }`}
                                                         disabled={isLoading}
                                                     >
@@ -507,8 +419,8 @@ const EditTariffPage = () => {
                                                         type="button"
                                                         onClick={() => handleStatusChange('inactive')}
                                                         className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${formData.status === 'inactive'
-                                                                ? 'bg-white text-gray-900 shadow-sm'
-                                                                : 'text-gray-600 hover:text-gray-900'
+                                                            ? 'bg-white text-gray-900 shadow-sm'
+                                                            : 'text-gray-600 hover:text-gray-900'
                                                             }`}
                                                         disabled={isLoading}
                                                     >
@@ -548,8 +460,8 @@ const EditTariffPage = () => {
                                                     type="button"
                                                     onClick={() => handleTypeChange('flat')}
                                                     className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all ${formData.type === 'flat'
-                                                            ? 'bg-white text-gray-900 shadow-sm'
-                                                            : 'text-gray-600 hover:text-gray-900'
+                                                        ? 'bg-white text-gray-900 shadow-sm'
+                                                        : 'text-gray-600 hover:text-gray-900'
                                                         }`}
                                                     disabled={isLoading}
                                                 >
@@ -560,8 +472,8 @@ const EditTariffPage = () => {
                                                     type="button"
                                                     onClick={() => handleTypeChange('percentage')}
                                                     className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all ${formData.type === 'percentage'
-                                                            ? 'bg-white text-gray-900 shadow-sm'
-                                                            : 'text-gray-600 hover:text-gray-900'
+                                                        ? 'bg-white text-gray-900 shadow-sm'
+                                                        : 'text-gray-600 hover:text-gray-900'
                                                         }`}
                                                     disabled={isLoading}
                                                 >
