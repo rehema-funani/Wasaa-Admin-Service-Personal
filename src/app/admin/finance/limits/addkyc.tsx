@@ -89,7 +89,6 @@ const AddKycConfigPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50/50">
-            {/* Header */}
             <div className="bg-white/70 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-10">
                 <div className="max-w-4xl mx-auto px-6 py-6">
                     <div className="flex items-center justify-between">
@@ -313,7 +312,6 @@ const AddKycConfigPage: React.FC = () => {
                     </div>
                 </motion.div>
 
-                {/* Info Card */}
                 <motion.div
                     className="mt-6 bg-amber-50/70 backdrop-blur-sm rounded-2xl p-6 border border-amber-100"
                     initial={{ opacity: 0, y: 20 }}
