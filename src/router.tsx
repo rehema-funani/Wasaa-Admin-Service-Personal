@@ -48,6 +48,7 @@ const StreamModeration = lazy(() => import('./app/admin/livestreams/moderation/p
 const ReportedStreams = lazy(() => import('./app/admin/livestreams/reported/page'));
 
 const Transactions = lazy(() => import('./app/admin/finance/transactions/page'));
+const Receipt = lazy(() => import('./app/admin/finance/transactions/receipt'));
 const Tarrifs = lazy(() => import('./app/admin/finance/tariffs/page'));
 const Limits = lazy(() => import('./app/admin/finance/limits/page'));
 const Compliance = lazy(() => import('./app/admin/finance/systemwallets/amlcompliance'));
@@ -221,6 +222,11 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/finance/transactions" element={
                         <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
                             <Transactions />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/transactions/receipt/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <Receipt />
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/finance/tariffs" element={

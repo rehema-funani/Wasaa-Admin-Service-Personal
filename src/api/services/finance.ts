@@ -232,6 +232,19 @@ export const financeService = {
     }
   },
 
+  // Get a specific transaction
+  async getTransaction(transactionId: string): Promise<any> {
+    try {
+      const response = await finance.get(`/userWalletTransactions/${transactionId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get transaction');
+      }
+      throw new Error('Failed to get transaction. Please check your network connection.');
+    }
+  },
+
   // Get all withdrawal requests
   async getAllWithdrawalRequests(filters = {}): Promise<any> {
     try {

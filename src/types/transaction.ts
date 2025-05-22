@@ -9,16 +9,6 @@ export interface Transaction {
     external_id: string;
     createdAt: string;
     updatedAt: string;
-    UserWallet: {
-        id: string;
-        user_uuid: string;
-        currencyId: string;
-        debit: string;
-        credit: string;
-        balance: string;
-        status: string;
-        createdAt: string;
-        updatedAt: string;
-    };
+    UserWallet: any;
     user?: any;
 }

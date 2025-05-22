@@ -1,32 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
     Download,
     Upload,
     Eye,
-    Edit,
-    Trash2,
-    Plus,
-    Clock,
     ArrowDownUp,
     ArrowUp,
     ArrowDown,
-    DollarSign,
     Hash,
     FileText,
-    Calendar,
-    XCircle,
-    CheckCircle,
-    X,
-    ExternalLink,
-    Copy
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    Search,
+    Filter,
+    MoreHorizontal,
+    TrendingUp,
+    TrendingDown,
+    Minus
 } from 'lucide-react';
-import SearchBox from '../../../../components/common/SearchBox';
-import FilterPanel from '../../../../components/common/FilterPanel';
-import DataTable from '../../../../components/common/DataTable';
-import Pagination from '../../../../components/common/Pagination';
 import financeService from '../../../../api/services/finance';
-import TransactionReceiptModal from '../../../../components/finance/TransactionReceiptModal';
 import { Transaction } from '../../../../types/transaction';
 
 interface PaginationData {
@@ -35,7 +30,8 @@ interface PaginationData {
     pages: number;
 }
 
-const TransactionsPage = () => {
+const page = () => {
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -47,11 +43,7 @@ const TransactionsPage = () => {
     });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [recentSearches, setRecentSearches] = useState<string[]>([
-        'deposit', 'withdrawal', 'mpesa'
-    ]);
-    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
-    const [showReceiptModal, setShowReceiptModal] = useState(false);
+    const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
 
     useEffect(() => {
         fetchTransactions(currentPage, itemsPerPage, searchQuery);
@@ -61,9 +53,9 @@ const TransactionsPage = () => {
         try {
             setIsLoading(true);
             const filters = {
-                page: currentPage,
-                limit: itemsPerPage,
-                search: searchQuery || undefined
+                page: page,
+                limit: limit,
+                search: query || undefined
             };
 
             const response = await financeService.getAllTransactions(filters);
@@ -93,17 +85,17 @@ const TransactionsPage = () => {
             const date = new Date(dateString);
             return {
                 date: date.toLocaleDateString('en-US', {
-                    year: 'numeric',
                     month: 'short',
                     day: 'numeric'
                 }),
                 time: date.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
                 })
             };
         } catch (error) {
-            return { date: 'Invalid Date', time: '--:--' };
+            return { date: 'Invalid', time: '--' };
         }
     };
 
@@ -124,303 +116,324 @@ const TransactionsPage = () => {
     };
 
     const handleViewTransaction = (transaction: Transaction) => {
-        setSelectedTransaction(transaction);
-        setShowReceiptModal(true);
+        navigate(`/admin/finance/transactions/receipt/${transaction.id}`, {
+            state: { transaction }
+        });
     };
-
-    const closeReceiptModal = () => {
-        setShowReceiptModal(false);
-        setTimeout(() => setSelectedTransaction(null), 300);
-    };
-
-    const columns = [
-        {
-            id: 'id',
-            header: 'Transaction ID',
-            accessor: (row: Transaction) => row.id,
-            sortable: true,
-            width: '150px',
-            cell: (value: string) => (
-                <div className="flex items-center">
-                    <Hash size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-                    <span className="font-medium text-gray-800 text-sm">{value.substring(0, 8)}...</span>
-                </div>
-            )
-        },
-        {
-            id: 'type',
-            header: 'Type',
-            accessor: (row: Transaction) => getTransactionType(row),
-            sortable: true,
-            width: '120px',
-            cell: (value: string, row: Transaction) => {
-                let icon;
-                let color;
-
-                switch (value) {
-                    case 'Deposit':
-                        icon = <ArrowDown size={16} className="mr-1.5" strokeWidth={2} />;
-                        color = 'text-green-600 bg-green-50';
-                        break;
-                    case 'Withdrawal':
-                        icon = <ArrowUp size={16} className="mr-1.5" strokeWidth={2} />;
-                        color = 'text-red-600 bg-red-50';
-                        break;
-                    case 'Transfer':
-                        icon = <ArrowDownUp size={16} className="mr-1.5" strokeWidth={2} />;
-                        color = 'text-blue-600 bg-blue-50';
-                        break;
-                    default:
-                        icon = <ArrowDownUp size={16} className="mr-1.5" strokeWidth={2} />;
-                        color = 'text-gray-600 bg-gray-50';
-                }
-
-                return (
-                    <div className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${color}`}>
-                        {icon}
-                        {value}
-                    </div>
-                );
-            }
-        },
-        {
-            id: 'amount',
-            header: 'Amount',
-            accessor: (row: Transaction) => getTransactionAmount(row),
-            sortable: true,
-            width: '120px',
-            cell: (value: number, row: Transaction) => {
-                const isDebit = row.debit > 0;
-                const color = isDebit ? 'text-green-600' : 'text-red-600';
-                const sign = isDebit ? '+' : '-';
-
-                return (
-                    <div className={`font-medium ${color} flex items-center`}>
-                        <span>Kes. {value.toFixed(2)}</span>
-                    </div>
-                );
-            }
-        },
-        {
-            id: 'balance',
-            header: 'Balance',
-            accessor: (row: Transaction) => row.balance,
-            sortable: true,
-            width: '120px',
-            cell: (value: number) => (
-                <div className="font-medium text-gray-800">
-                    Kes. {value.toFixed(2)}
-                </div>
-            )
-        },
-        {
-            id: 'description',
-            header: 'Description',
-            accessor: (row: Transaction) => row.description,
-            sortable: true,
-            cell: (value: string, row: Transaction) => (
-                <div className="flex items-start">
-                    <FileText size={14} className="text-gray-400 mr-1.5 mt-0.5" strokeWidth={1.8} />
-                    <div className="flex flex-col">
-                        <p className="text-gray-800">{value}</p>
-                        {row.external_id && (
-                            <p className="text-xs text-gray-500">Ref: {row.external_id}</p>
-                        )}
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'date',
-            header: 'Date & Time',
-            accessor: (row: Transaction) => row.createdAt,
-            sortable: true,
-            width: '150px',
-            cell: (value: string) => {
-                const { date, time } = formatDateTime(value);
-
-                return (
-                    <div className="flex flex-col">
-                        <div className="text-gray-800">{date}</div>
-                        <div className="text-gray-500 text-sm">{time}</div>
-                    </div>
-                );
-            }
-        },
-        {
-            id: 'actions',
-            header: 'Actions',
-            accessor: (row: Transaction) => row.id,
-            sortable: false,
-            width: '100px',
-            cell: (value: string, row: Transaction) => (
-                <div className="flex items-center space-x-1">
-                    <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        aria-label="View transaction receipt"
-                        onClick={() => handleViewTransaction(row)}
-                    >
-                        <Eye size={16} strokeWidth={1.8} />
-                    </motion.button>
-                    <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        aria-label="Edit transaction"
-                    >
-                        <Edit size={16} strokeWidth={1.8} />
-                    </motion.button>
-                    <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-red-600"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        aria-label="Delete transaction"
-                    >
-                        <Trash2 size={16} strokeWidth={1.8} />
-                    </motion.button>
-                </div>
-            )
-        }
-    ];
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
-        setCurrentPage(1); // Reset to first page on new search
-
-        if (query.trim() !== '' && !recentSearches.includes(query)) {
-            setRecentSearches(prev => [query, ...prev.slice(0, 4)]);
-        }
-    };
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const handleItemsPerPageChange = (perPage: number) => {
-        setItemsPerPage(perPage);
         setCurrentPage(1);
     };
 
-    const handleExport = () => {
-        if (transactions.length === 0) {
-            alert('No transactions to export');
-            return;
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= paginationData.pages) {
+            setCurrentPage(page);
         }
-        alert('Export functionality would go here');
     };
 
-    return (
-        <div className="p-6 max-w-[1600px] mx-auto">
-            <motion.div
-                className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-            >
-                <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Transactions</h1>
-                    <p className="text-gray-500 mt-1">Track and manage your financial transactions</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    <motion.button
-                        className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-                        whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
-                        whileTap={{ y: 0 }}
-                    >
-                        <Upload size={16} className="mr-2" strokeWidth={1.8} />
-                        Import
-                    </motion.button>
-                    <motion.button
-                        className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
-                        whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
-                        whileTap={{ y: 0 }}
-                        onClick={handleExport}
-                    >
-                        <Download size={16} className="mr-2" strokeWidth={1.8} />
-                        Export
-                    </motion.button>
-                </div>
-            </motion.div>
+    const toggleTransactionSelection = (transactionId: string) => {
+        setSelectedTransactions(prev =>
+            prev.includes(transactionId)
+                ? prev.filter(id => id !== transactionId)
+                : [...prev, transactionId]
+        );
+    };
 
-            <motion.div
-                className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-            >
-                <div className="md:col-span-2">
-                    <SearchBox
-                        placeholder="Search by ID, description, reference..."
-                        onSearch={handleSearch}
-                        suggestions={[
-                            'Deposit',
-                            'Withdrawal',
-                            'Mpesa',
-                            'Transfer'
-                        ]}
-                        recentSearches={recentSearches}
-                        showRecentByDefault={true}
-                    />
-                </div>
-            </motion.div>
+    const renderTransactionIcon = (transaction: Transaction) => {
+        const type = getTransactionType(transaction);
+        const isDebit = transaction.debit > 0;
 
-            <motion.div
-                className="mb-6"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-            >
-                {error ? (
-                    <div className="p-4 bg-red-50 text-red-800 rounded-lg">
-                        <p>{error}</p>
+        let icon;
+        let bgColor;
+        let iconColor;
+
+        switch (type) {
+            case 'Deposit':
+                icon = <TrendingUp size={16} strokeWidth={2.5} />;
+                bgColor = 'bg-emerald-500/10';
+                iconColor = 'text-emerald-600';
+                break;
+            case 'Withdrawal':
+                icon = <TrendingDown size={16} strokeWidth={2.5} />;
+                bgColor = 'bg-red-500/10';
+                iconColor = 'text-red-600';
+                break;
+            case 'Transfer':
+                icon = <ArrowDownUp size={16} strokeWidth={2.5} />;
+                bgColor = 'bg-blue-500/10';
+                iconColor = 'text-blue-600';
+                break;
+            default:
+                icon = <Minus size={16} strokeWidth={2.5} />;
+                bgColor = 'bg-gray-500/10';
+                iconColor = 'text-gray-600';
+        }
+
+        return (
+            <div className={`w-10 h-10 rounded-full ${bgColor} flex items-center justify-center ${iconColor}`}>
+                {icon}
+            </div>
+        );
+    };
+
+    const renderAmount = (transaction: Transaction) => {
+        const amount = getTransactionAmount(transaction);
+        const isDebit = transaction.debit > 0;
+        const type = getTransactionType(transaction);
+
+        let textColor = 'text-gray-900';
+        let prefix = '';
+
+        if (type === 'Deposit') {
+            textColor = 'text-emerald-600';
+            prefix = '+';
+        } else if (type === 'Withdrawal') {
+            textColor = 'text-red-600';
+            prefix = '-';
+        }
+
+        return (
+            <div className={`font-semibold text-right ${textColor}`}>
+                <div className="text-base">
+                    {prefix}KES {amount.toLocaleString()}
+                </div>
+                <div className="text-xs text-gray-500 font-normal">
+                    Bal: {transaction.balance.toLocaleString()}
+                </div>
+            </div>
+        );
+    };
+
+    const renderPagination = () => {
+        const startItem = (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, paginationData.total);
+
+        return (
+            <div className="flex items-center justify-between px-6 py-4 bg-white/70 backdrop-blur-xl border-t border-gray-100">
+                <div className="text-sm text-gray-600">
+                    {startItem}–{endItem} of {paginationData.total.toLocaleString()}
+                </div>
+
+                <div className="flex items-center space-x-2">
+                    <select
+                        value={itemsPerPage}
+                        onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                        className="px-3 py-1.5 text-sm border-0 bg-gray-100 rounded-full focus:ring-2 focus:ring-indigo-500/30 focus:bg-white transition-all"
+                    >
+                        <option value={10}>10 rows</option>
+                        <option value={25}>25 rows</option>
+                        <option value={50}>50 rows</option>
+                        <option value={100}>100 rows</option>
+                    </select>
+
+                    <div className="flex items-center space-x-1 ml-4">
                         <button
-                            className="mt-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-800 rounded-md"
-                            onClick={() => fetchTransactions(currentPage, itemsPerPage, searchQuery)}
+                            onClick={() => handlePageChange(1)}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                         >
-                            Retry
+                            <ChevronsLeft size={16} />
+                        </button>
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                        >
+                            <ChevronLeft size={16} />
+                        </button>
+
+                        <div className="px-4 py-2 text-sm font-medium text-gray-900">
+                            {currentPage} of {paginationData.pages}
+                        </div>
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === paginationData.pages}
+                            className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                        >
+                            <ChevronRight size={16} />
+                        </button>
+                        <button
+                            onClick={() => handlePageChange(paginationData.pages)}
+                            disabled={currentPage === paginationData.pages}
+                            className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                        >
+                            <ChevronsRight size={16} />
                         </button>
                     </div>
-                ) : (
-                    <DataTable
-                        columns={columns}
-                        data={transactions}
-                        selectable={true}
-                        isLoading={isLoading}
-                        emptyMessage="No transactions found. Try adjusting your filters or search terms."
-                        defaultRowsPerPage={itemsPerPage}
-                    />
-                )}
-            </motion.div>
+                </div>
+            </div>
+        );
+    };
 
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
-            >
-                <Pagination
-                    totalItems={paginationData.total}
-                    itemsPerPage={itemsPerPage}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
-                    onItemsPerPageChange={handleItemsPerPageChange}
-                    showItemsPerPage={true}
-                    itemsPerPageOptions={[10, 25, 50, 100]}
-                    showSummary={true}
-                    totalPages={paginationData.pages}
-                />
-            </motion.div>
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-6">
+                <div className="bg-white/80 backdrop-blur-xl p-8 rounded-2xl border border-gray-200/50 text-center max-w-md">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FileText size={24} className="text-red-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h3>
+                    <p className="text-gray-600 mb-6">{error}</p>
+                    <button
+                        onClick={() => fetchTransactions(currentPage, itemsPerPage, searchQuery)}
+                        className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
-            {showReceiptModal && (
-                <TransactionReceiptModal
-                    transaction={selectedTransaction}
-                    onClose={closeReceiptModal}
-                />
-            )}
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50/50">
+            <div className="bg-white/70 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-10">
+                <div className="max-w-7xl mx-auto px-6 py-6">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">Transactions</h1>
+                            <p className="text-gray-600 mt-1">Monitor all financial activities</p>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                            <motion.button
+                                className="flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <Download size={18} className="mr-2" />
+                                Export
+                            </motion.button>
+                        </div>
+                    </div>
+
+                    {/* Search Bar */}
+                    <div className="mt-6 relative">
+                        <div className="relative">
+                            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Search transactions..."
+                                value={searchQuery}
+                                onChange={(e) => handleSearch(e.target.value)}
+                                className="w-full pl-12 pr-12 py-4 bg-gray-100 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500/30 focus:bg-white transition-all"
+                            />
+                            <button className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-gray-200 rounded-lg transition-colors">
+                                <Filter size={18} className="text-gray-400" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="max-w-7xl mx-auto p-6">
+                <motion.div
+                    className="bg-white/70 backdrop-blur-xl rounded-2xl border border-gray-200/50 overflow-hidden"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                >
+                    {isLoading ? (
+                        <div className="flex flex-col items-center justify-center h-64">
+                            <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+                            <p className="text-gray-500">Loading transactions...</p>
+                        </div>
+                    ) : transactions.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+                            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+                                <FileText size={24} className="text-gray-400" />
+                            </div>
+                            <p className="text-lg font-medium text-gray-900">No transactions found</p>
+                            <p className="text-sm text-gray-500">Try adjusting your search criteria</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="divide-y divide-gray-100">
+                                <AnimatePresence>
+                                    {transactions.map((transaction, index) => {
+                                        const { date, time } = formatDateTime(transaction.createdAt);
+                                        const type = getTransactionType(transaction);
+
+                                        return (
+                                            <motion.div
+                                                key={transaction.id}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -20 }}
+                                                transition={{ duration: 0.3, delay: index * 0.02 }}
+                                                className="group hover:bg-gray-50/50 transition-all duration-200 cursor-pointer"
+                                                onClick={() => handleViewTransaction(transaction)}
+                                            >
+                                                <div className="flex items-center justify-between p-6">
+                                                    <div className="flex items-center space-x-4">
+                                                        {renderTransactionIcon(transaction)}
+
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-center space-x-3">
+                                                                <p className="font-semibold text-gray-900 text-base">{type}</p>
+                                                                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+                                                                    {transaction.status}
+                                                                </span>
+                                                            </div>
+
+                                                            <div className="mt-1 flex items-center space-x-4">
+                                                                {transaction.user ? (
+                                                                    <p className="text-sm text-gray-600">
+                                                                        {transaction.user.first_name} {transaction.user.last_name}
+                                                                    </p>
+                                                                ) : (
+                                                                    <p className="text-sm text-gray-500">System Transaction</p>
+                                                                )}
+
+                                                                <div className="flex items-center text-xs text-gray-500">
+                                                                    <Hash size={12} className="mr-1" />
+                                                                    {transaction.id.substring(0, 8)}
+                                                                </div>
+                                                            </div>
+
+                                                            {transaction.description && (
+                                                                <p className="text-sm text-gray-500 mt-1 truncate max-w-md">
+                                                                    {transaction.description}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center space-x-6">
+                                                        <div className="text-right">
+                                                            <div className="text-sm text-gray-500">{date}</div>
+                                                            <div className="text-xs text-gray-400">{time}</div>
+                                                        </div>
+
+                                                        {renderAmount(transaction)}
+
+                                                        <motion.button
+                                                            className="opacity-0 group-hover:opacity-100 p-2 hover:bg-gray-100 rounded-full transition-all"
+                                                            whileHover={{ scale: 1.1 }}
+                                                            whileTap={{ scale: 0.9 }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleViewTransaction(transaction);
+                                                            }}
+                                                        >
+                                                            <Eye size={16} className="text-gray-400" />
+                                                        </motion.button>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </AnimatePresence>
+                            </div>
+                            {renderPagination()}
+                        </>
+                    )}
+                </motion.div>
+            </div>
         </div>
     );
 };
 
-export default TransactionsPage;
+export default page;
