@@ -46,7 +46,7 @@ const UserDetailsPage = () => {
         lastActive?: string;
         last_login?: string;
         status?: string;
-        role?: string;
+        role?: any;
         mfa_enabled?: boolean;
         phone_number?: string;
         location?: string;
@@ -195,7 +195,7 @@ const UserDetailsPage = () => {
         }
     };
 
-    const handleRevokeApp = async (appId) => {
+    const handleRevokeApp = async (appId: any) => {
         try {
             await userService.revokeUserApp(id, appId);
             toast.success('Application access revoked successfully');
@@ -593,7 +593,7 @@ const UserDetailsPage = () => {
                 <div className="flex mt-4 space-x-3">
                     <div className="flex items-center px-3 py-1.5 rounded-lg text-sm bg-gray-100 text-gray-700">
                         <Shield size={14} className="mr-2 text-indigo-500" />
-                        <span>{user.role || 'No role assigned'}</span>
+                        <span>{user.role.title || 'No role assigned'}</span>
                     </div>
 
                     <StatusBadge status={user.status as any} size="lg" withIcon withDot={user.status === 'active'} />
@@ -625,7 +625,7 @@ const UserDetailsPage = () => {
                             <InfoCard
                                 icon={<Shield size={14} className="text-indigo-500" />}
                                 label="ROLE"
-                                value={user.role || 'No role assigned'}
+                                value={user.role.title || 'No role assigned'}
                             />
 
                             <InfoCard
