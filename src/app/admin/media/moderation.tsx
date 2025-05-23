@@ -4,14 +4,13 @@ import { VideoCard } from '../../../components/media/VideoCard';
 import { VideoPlayer } from '../../../components/media/VideoPlayer';
 import { ModerateActionBar } from '../../../components/media/ModerateActionBar';
 
-// Mock video data
 const mockVideos = Array(12).fill(null).map((_, i) => ({
     id: `vid-${i}`,
     title: `Short video #${i + 1}`,
     creator: `Creator ${i + 1}`,
     creatorId: `user-${i + 1}`,
     uploadDate: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
-    duration: Math.floor(Math.random() * 45) + 15, // 15-60 seconds
+    duration: Math.floor(Math.random() * 45) + 15, 
     views: Math.floor(Math.random() * 100000),
     flags: Math.floor(Math.random() * 5),
     reason: ['NSFW', 'Hate Speech', 'Violence', 'Copyright', 'Spam'][Math.floor(Math.random() * 5)],

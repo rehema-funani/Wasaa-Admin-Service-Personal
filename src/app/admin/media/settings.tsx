@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import {
-    Settings, Save, ShieldCheck, Clock, MaximizeIcon,
-    Languages, Eye, Bell, Upload, Video, Info, Check
+    Save, ShieldCheck,
+    Languages, Video, Info, Check
 } from 'lucide-react';
 
 const ShortsSettings: React.FC = () => {
-    // Settings state
     const [maxDuration, setMaxDuration] = useState(60);
     const [minDuration, setMinDuration] = useState(15);
     const [maxFileSize, setMaxFileSize] = useState(100);
@@ -18,7 +17,6 @@ const ShortsSettings: React.FC = () => {
     const [allowedFormats, setAllowedFormats] = useState(['mp4', 'mov', 'avi']);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
-    // Handle save settings
     const handleSaveSettings = () => {
         // In a real app, save to API
         console.log('Saving settings...');

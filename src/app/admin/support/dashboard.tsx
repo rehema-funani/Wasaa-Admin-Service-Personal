@@ -1,363 +1,300 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-    Users, Clock, AlertTriangle, TrendingUp, MessageCircle,
-    Shield, Settings, BarChart3, PieChart, User, Download,
-    Calendar, CheckCircle, XCircle, ArrowUp, ArrowDown
+    MessageSquare, Users, AlertTriangle, TrendingUp,
+    Clock, CheckCircle, Activity, PieChart,
+    BarChart3, ArrowUpRight, ArrowDownRight,
+    Calendar, Filter
 } from 'lucide-react';
-import {
-    mockTickets,
-    mockUsers,
-    getOpenTicketsCount,
-    getSLABreachedTickets,
-    getEscalatedTickets,
-    getAgentsOnline,
-    categorizeTickets,
-    currentUser
-} from '../../../data/support';
+import { motion } from 'framer-motion';
+import { toast } from 'react-hot-toast';
+import { DashboardStats } from '../../../types/support';
+import support from '../../../api/services/support';
+import LoadingSpinner from '../../../components/support/LoadingSpinner';
+import AgentAvatar from '../../../components/support/AgentAvatar';
 
-const dashboard: React.FC = () => {
-    const [timeFilter, setTimeFilter] = useState('7d');
+const page: React.FC = () => {
+    const navigate = useNavigate();
+    const [stats, setStats] = useState<DashboardStats | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [dateRange, setDateRange] = useState('last7days');
 
-    // Calculate KPIs
-    const openTickets = getOpenTicketsCount();
-    const slaBreaches = getSLABreachedTickets().length;
-    const agentsOnline = getAgentsOnline();
-    const escalatedTickets = getEscalatedTickets().length;
-    const categoryData = categorizeTickets();
+    useEffect(() => {
+        fetchDashboardStats();
+    }, [dateRange]);
 
-    // Mock trend data for charts
-    const ticketTrends = [
-        { date: 'Jan 14', created: 12, resolved: 8 },
-        { date: 'Jan 15', created: 15, resolved: 11 },
-        { date: 'Jan 16', created: 8, resolved: 13 },
-        { date: 'Jan 17', created: 18, resolved: 16 },
-        { date: 'Jan 18', created: 10, resolved: 12 },
-        { date: 'Jan 19', created: 14, resolved: 9 },
-        { date: 'Jan 20', created: 16, resolved: 15 }
-    ];
+    const fetchDashboardStats = async () => {
+        try {
+            setIsLoading(true);
+            const data = await support.getDashboardStats();
+            setStats(data);
+        } catch (error) {
+            toast.error('Failed to load dashboard stats');
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    const agentPerformance = mockUsers
-        .filter(user => user.role === 'agent')
-        .map(agent => ({
-            name: agent.name.split(' ')[0],
-            handled: agent.ticketsHandled || 0,
-            avgResponse: agent.avgResponseTime || '0m',
-            compliance: agent.slaCompliance || 0
-        }))
-        .sort((a, b) => b.compliance - a.compliance);
-
-    const KPICard = ({ title, value, icon: Icon, trend, trendValue, color = 'indigo', onClick }: any) => (
+    const KPICard = ({
+        title,
+        value,
+        icon: Icon,
+        trend,
+        color,
+        onClick
+    }: {
+        title: string;
+        value: number | string;
+        icon: React.ElementType;
+        trend?: { value: number; isPositive: boolean };
+        color: string;
+        onClick?: () => void;
+    }) => (
         <motion.div
-            className={`bg-white/70 backdrop-blur-xl rounded-2xl border border-gray-200/50 p-6 cursor-pointer transition-all hover:shadow-lg hover:border-${color}-300/50`}
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
+            className={`
+        bg-white rounded-2xl p-6 shadow-sm border border-gray-100 
+        ${onClick ? 'cursor-pointer' : ''}
+        transition-all hover:shadow-md
+      `}
         >
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between">
                 <div>
-                    <p className="text-sm font-medium text-gray-600">{title}</p>
-                    <p className={`text-3xl font-bold text-${color}-600 mt-2`}>{value}</p>
+                    <p className="text-sm text-gray-600 font-medium">{title}</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-2">{value}</p>
                     {trend && (
-                        <div className={`flex items-center mt-2 text-xs ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                            {trend === 'up' ? <ArrowUp size={12} className="mr-1" /> : <ArrowDown size={12} className="mr-1" />}
-                            <span>{trendValue}</span>
+                        <div className="flex items-center gap-1 mt-2">
+                            {trend.isPositive ? (
+                                <ArrowUpRight size={16} className="text-green-600" />
+                            ) : (
+                                <ArrowDownRight size={16} className="text-red-600" />
+                            )}
+                            <span className={`text-sm font-medium ${trend.isPositive ? 'text-green-600' : 'text-red-600'
+                                }`}>
+                                {Math.abs(trend.value)}%
+                            </span>
                         </div>
                     )}
                 </div>
-                <div className={`w-12 h-12 bg-${color}-100 rounded-xl flex items-center justify-center`}>
-                    <Icon size={24} className={`text-${color}-600`} />
+                <div className={`
+          w-12 h-12 rounded-xl flex items-center justify-center
+          ${color}
+        `}>
+                    <Icon size={24} className="text-white" />
                 </div>
             </div>
         </motion.div>
     );
 
-    const CategoryCard = ({ category, count, percentage }: any) => (
-        <div className="bg-white/60 rounded-xl p-4 border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-900 capitalize">{category}</span>
-                <span className="text-xs text-gray-500">{percentage}%</span>
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-[#FCFCFD] p-6 flex items-center justify-center">
+                <LoadingSpinner size="large" message="Loading dashboard..." />
             </div>
-            <div className="flex items-center space-x-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
-                    <div
-                        className="bg-indigo-500 h-2 rounded-full"
-                        style={{ width: `${percentage}%` }}
-                    />
-                </div>
-                <span className="text-sm font-semibold text-gray-900">{count}</span>
-            </div>
-        </div>
-    );
+        );
+    }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50/50 p-6">
+        <div className="min-h-screen bg-[#FCFCFD] p-4 md:p-6 font-['Inter',sans-serif]">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">Support Dashboard</h1>
-                            <p className="text-gray-600 mt-1">Welcome back, {currentUser.name}</p>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                            <select
-                                value={timeFilter}
-                                onChange={(e) => setTimeFilter(e.target.value)}
-                                className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-700 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            >
-                                <option value="24h">Last 24 hours</option>
-                                <option value="7d">Last 7 days</option>
-                                <option value="30d">Last 30 days</option>
-                            </select>
-                            <motion.button
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium transition-colors flex items-center space-x-2"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                <Download size={16} />
-                                <span>Export Report</span>
-                            </motion.button>
-                        </div>
+                    <h1 className="text-2xl font-semibold text-gray-900">Support Dashboard</h1>
+                    <p className="text-gray-600 mt-1">Monitor your support operations in real-time</p>
+                </div>
+
+                {/* Date Range Selector */}
+                <div className="flex items-center gap-2 mb-6">
+                    <div className="flex items-center bg-white border border-gray-200 rounded-xl p-0.5">
+                        <button
+                            onClick={() => setDateRange('today')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'today'
+                                    ? 'bg-gray-100 text-gray-900'
+                                    : 'text-gray-600 hover:text-gray-900'
+                                }`}
+                        >
+                            Today
+                        </button>
+                        <button
+                            onClick={() => setDateRange('last7days')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'last7days'
+                                    ? 'bg-gray-100 text-gray-900'
+                                    : 'text-gray-600 hover:text-gray-900'
+                                }`}
+                        >
+                            Last 7 Days
+                        </button>
+                        <button
+                            onClick={() => setDateRange('last30days')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'last30days'
+                                    ? 'bg-gray-100 text-gray-900'
+                                    : 'text-gray-600 hover:text-gray-900'
+                                }`}
+                        >
+                            Last 30 Days
+                        </button>
                     </div>
+                    <button className="p-2 bg-white border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50">
+                        <Calendar size={16} />
+                    </button>
                 </div>
 
                 {/* KPI Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     <KPICard
                         title="Open Tickets"
-                        value={openTickets}
-                        icon={MessageCircle}
-                        trend="up"
-                        trendValue="+12% vs last week"
-                        color="blue"
-                        onClick={() => console.log('Navigate to tickets')}
+                        value={stats?.openTickets || 0}
+                        icon={MessageSquare}
+                        trend={{ value: 12, isPositive: false }}
+                        color="bg-blue-600"
+                        onClick={() => navigate('/admin/support/tickets?status=open')}
                     />
                     <KPICard
                         title="SLA Breaches"
-                        value={slaBreaches}
+                        value={stats?.slaBreaches || 0}
                         icon={AlertTriangle}
-                        trend="down"
-                        trendValue="-8% vs last week"
-                        color="red"
-                        onClick={() => console.log('Navigate to SLA breaches')}
+                        trend={{ value: 25, isPositive: false }}
+                        color="bg-red-600"
+                        onClick={() => navigate('/admin/support/tickets?sla=breached')}
                     />
                     <KPICard
                         title="Agents Online"
-                        value={agentsOnline}
+                        value={stats?.agentsOnline || 0}
                         icon={Users}
-                        color="green"
-                        onClick={() => console.log('Navigate to agents')}
+                        color="bg-green-600"
+                        onClick={() => navigate('/admin/support/agents')}
                     />
                     <KPICard
-                        title="Escalated Tickets"
-                        value={escalatedTickets}
+                        title="Escalated"
+                        value={stats?.escalatedTickets || 0}
                         icon={TrendingUp}
-                        trend="up"
-                        trendValue="+3 since yesterday"
-                        color="amber"
-                        onClick={() => console.log('Navigate to escalations')}
+                        trend={{ value: 8, isPositive: false }}
+                        color="bg-orange-600"
+                        onClick={() => navigate('/admin/support/tickets?status=escalated')}
                     />
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                {/* Charts Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     {/* Ticket Trends Chart */}
-                    <div className="lg:col-span-2 bg-white/70 backdrop-blur-xl rounded-2xl border border-gray-200/50 p-6">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                         <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-900">Ticket Trends</h3>
-                                <p className="text-sm text-gray-600">Created vs Resolved (Last 7 days)</p>
-                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Ticket Trends</h3>
                             <BarChart3 size={20} className="text-gray-400" />
                         </div>
-
-                        <div className="space-y-4">
-                            {ticketTrends.map((day, index) => (
-                                <div key={day.date} className="flex items-center space-x-4">
-                                    <div className="w-16 text-xs text-gray-500 font-medium">{day.date}</div>
-                                    <div className="flex-1 flex items-center space-x-2">
-                                        <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
-                                            <motion.div
-                                                className="absolute left-0 top-0 h-full bg-indigo-500 rounded-full"
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${(day.created / 20) * 100}%` }}
-                                                transition={{ delay: index * 0.1, duration: 0.6 }}
-                                            />
-                                            <motion.div
-                                                className="absolute left-0 top-0 h-full bg-green-500 rounded-full opacity-60"
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${(day.resolved / 20) * 100}%` }}
-                                                transition={{ delay: index * 0.1 + 0.2, duration: 0.6 }}
-                                            />
-                                        </div>
-                                        <div className="text-xs text-gray-600 w-20">
-                                            <span className="text-indigo-600">{day.created}</span> / <span className="text-green-600">{day.resolved}</span>
-                                        </div>
+                        <div className="h-64 flex items-end justify-between gap-2">
+                            {stats?.ticketTrends.dates.map((date, index) => (
+                                <div key={date} className="flex-1 flex flex-col items-center gap-2">
+                                    <div className="w-full flex flex-col gap-1">
+                                        <div
+                                            className="w-full bg-green-500 rounded-t"
+                                            style={{
+                                                height: `${(stats.ticketTrends.resolved[index] / 70) * 200}px`
+                                            }}
+                                        />
+                                        <div
+                                            className="w-full bg-blue-500 rounded-t"
+                                            style={{
+                                                height: `${(stats.ticketTrends.created[index] / 70) * 200}px`
+                                            }}
+                                        />
                                     </div>
+                                    <span className="text-xs text-gray-600">{date}</span>
                                 </div>
                             ))}
                         </div>
-
-                        <div className="flex items-center justify-center space-x-6 mt-6 pt-4 border-t border-gray-100">
-                            <div className="flex items-center space-x-2">
-                                <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
-                                <span className="text-xs text-gray-600">Created</span>
+                        <div className="flex items-center gap-4 mt-4">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                                <span className="text-sm text-gray-600">Created</span>
                             </div>
-                            <div className="flex items-center space-x-2">
-                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                                <span className="text-xs text-gray-600">Resolved</span>
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 bg-green-500 rounded"></div>
+                                <span className="text-sm text-gray-600">Resolved</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Category Distribution */}
-                    <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-gray-200/50 p-6">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                         <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-900">Top Categories</h3>
-                                <p className="text-sm text-gray-600">Ticket distribution</p>
-                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900">Category Distribution</h3>
                             <PieChart size={20} className="text-gray-400" />
                         </div>
-
                         <div className="space-y-4">
-                            {categoryData.map((category, index) => (
-                                <motion.div
-                                    key={category.category}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                >
-                                    <CategoryCard {...category} />
-                                </motion.div>
+                            {stats?.categoryDistribution.map((category) => (
+                                <div key={category.category} className="flex items-center gap-3">
+                                    <div
+                                        className="w-4 h-4 rounded"
+                                        style={{ backgroundColor: category.color }}
+                                    />
+                                    <span className="text-sm text-gray-700 flex-1">{category.category}</span>
+                                    <span className="text-sm font-medium text-gray-900">{category.count}</span>
+                                    <span className="text-sm text-gray-500">({category.percentage}%)</span>
+                                </div>
                             ))}
                         </div>
                     </div>
                 </div>
 
                 {/* Agent Leaderboard */}
-                <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-gray-200/50 p-6">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h3 className="text-lg font-semibold text-gray-900">Agent Performance</h3>
-                            <p className="text-sm text-gray-600">SLA compliance and ticket handling</p>
-                        </div>
-                        <motion.button
-                            className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
-                            whileHover={{ scale: 1.02 }}
+                        <h3 className="text-lg font-semibold text-gray-900">Top Performing Agents</h3>
+                        <button
+                            onClick={() => navigate('/admin/support/agents')}
+                            className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
                         >
-                            View All Agents →
-                        </motion.button>
+                            View All
+                        </button>
                     </div>
-
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-gray-100">
-                                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Agent</th>
-                                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Tickets Handled</th>
-                                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Avg Response</th>
-                                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">SLA Compliance</th>
-                                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <tr className="border-b border-gray-200">
+                                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">Agent</th>
+                                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-700">Tickets Handled</th>
+                                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-700">Avg Resolution Time</th>
+                                    <th className="text-center py-3 px-4 text-sm font-medium text-gray-700">SLA Compliance</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {agentPerformance.map((agent, index) => {
-                                    const user = mockUsers.find(u => u.name.startsWith(agent.name));
-                                    return (
-                                        <motion.tr
-                                            key={agent.name}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: index * 0.1 }}
-                                            className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors"
-                                        >
-                                            <td className="py-4 px-4">
-                                                <div className="flex items-center space-x-3">
-                                                    <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                                                        <User size={16} className="text-indigo-600" />
-                                                    </div>
-                                                    <span className="font-medium text-gray-900">{agent.name}</span>
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-4">
-                                                <span className="text-gray-900 font-medium">{agent.handled}</span>
-                                            </td>
-                                            <td className="py-4 px-4">
-                                                <span className="text-gray-600">{agent.avgResponse}</span>
-                                            </td>
-                                            <td className="py-4 px-4">
-                                                <div className="flex items-center space-x-2">
-                                                    <div className="flex-1 bg-gray-200 rounded-full h-2 w-16">
-                                                        <div
-                                                            className="bg-green-500 h-2 rounded-full"
-                                                            style={{ width: `${agent.compliance}%` }}
-                                                        />
-                                                    </div>
-                                                    <span className="text-sm font-medium text-gray-900">{agent.compliance}%</span>
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-4">
-                                                <div className="flex items-center space-x-2">
-                                                    <div className={`w-2 h-2 rounded-full ${user?.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                                                    <span className="text-xs text-gray-600">{user?.isOnline ? 'Online' : 'Offline'}</span>
-                                                </div>
-                                            </td>
-                                        </motion.tr>
-                                    );
-                                })}
+                                {stats?.agentLeaderboard.map((agent, index) => (
+                                    <tr key={agent.agentId} className="border-b border-gray-100 hover:bg-gray-50">
+                                        <td className="py-3 px-4">
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-sm font-medium text-gray-500 w-6">#{index + 1}</span>
+                                                <AgentAvatar name={agent.name} status="online" size="small" />
+                                                <span className="text-sm font-medium text-gray-900">{agent.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="text-center py-3 px-4">
+                                            <span className="text-sm text-gray-700">{agent.ticketsHandled}</span>
+                                        </td>§
+                                        <td className="text-center py-3 px-4">
+                                            <span className="text-sm text-gray-700">{agent.avgResolutionTime} min</span>
+                                        </td>
+                                        <td className="text-center py-3 px-4">
+                                            <div className="flex items-center justify-center">
+                                                <span className={`text-sm font-medium ${agent.slaCompliance >= 95 ? 'text-green-600' :
+                                                        agent.slaCompliance >= 90 ? 'text-yellow-600' : 'text-red-600'
+                                                    }`}>
+                                                    {agent.slaCompliance}%
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <motion.div
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white cursor-pointer"
-                        whileHover={{ scale: 1.02, y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="font-semibold mb-2">Manage Agents</h3>
-                                <p className="text-indigo-100 text-sm">Add, edit, or deactivate support agents</p>
-                            </div>
-                            <Users size={32} className="text-indigo-200" />
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white cursor-pointer"
-                        whileHover={{ scale: 1.02, y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="font-semibold mb-2">SLA Configuration</h3>
-                                <p className="text-emerald-100 text-sm">Set response and resolution targets</p>
-                            </div>
-                            <Clock size={32} className="text-emerald-200" />
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-6 text-white cursor-pointer"
-                        whileHover={{ scale: 1.02, y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="font-semibold mb-2">System Settings</h3>
-                                <p className="text-amber-100 text-sm">Configure categories and preferences</p>
-                            </div>
-                            <Settings size={32} className="text-amber-200" />
-                        </div>
-                    </motion.div>
                 </div>
             </div>
         </div>
     );
 };
 
-export default dashboard;
+export default page;

@@ -89,12 +89,14 @@ const ForgotPassword = lazy(() => import('./app/auth/forgot-password/page'));
 const Reset = lazy(() => import('./app/auth/forgot-password/reset'));
 const Set = lazy(() => import('./app/auth/forgot-password/set'));
 
-const Support = lazy(() => import('./app/admin/support/page'));
-const Teams = lazy(() => import('./app/admin/support/team'));
-const TeamDetail = lazy(() => import('./app/admin/support/viewteam'));
-const Tickets = lazy(() => import('./app/admin/support/ticket'));
-const TicketDetail = lazy(() => import('./app/admin/support/viewticket'));
-const Reassign = lazy(() => import('./app/admin/support/assignticket'));
+const SupportDashboard = lazy(() => import('./app/admin/support/dashboard'));
+const Tickets = lazy(() => import('./app/admin/support/ticketList'));
+const TicketDetails = lazy(() => import('./app/admin/support/ticketdetail'));
+const Agents = lazy(() => import('./app/admin/support/agentlist'));
+const Categories = lazy(() => import('./app/admin/support/categorymanagement'));
+const CannedResponses = lazy(() => import('./app/admin/support/CannedResponses'));
+const SLA = lazy(() => import('./app/admin/support/SLAManagement'));
+const Analytics = lazy(() => import('./app/admin/support/analytics'));
 
 const Logs = lazy(() => import('./app/admin/audits/page'));
 const AuditDetails = lazy(() => import('./app/admin/audits/auditdetails'));
@@ -487,12 +489,14 @@ const AppRouter: React.FC = () => {
                         </PermissionRouteGuard>
                     } />
 
-                    <Route path="admin/support" element={<Support />} />
-                    <Route path="/admin/support/teams" element={<Teams />} />
-                    <Route path="/admin/support/teams/:id" element={<TeamDetail />} />
+                    <Route path="admin/support" element={<SupportDashboard />} />
                     <Route path="/admin/support/tickets" element={<Tickets />} />
-                    <Route path="/admin/support/tickets/:id" element={<TicketDetail />} />
-                    <Route path="/admin/support/assignments" element={<Reassign />} />
+                    <Route path="/admin/support/tickets/:id" element={<TicketDetails />} />
+                    <Route path="/admin/support/agents" element={<Agents />} />
+                    <Route path="/admin/support/categories/" element={<Categories />} />
+                    <Route path="/admin/support/canned-responses" element={<CannedResponses />} />
+                    <Route path="/admin/support/sla" element={<SLA />} />
+                    <Route path="/admin/support/analytics" element={<Analytics />} />
 
                     <Route path="admin/logs" element={
                         <PermissionRouteGuard permissions={PermissionMap.Admin}>
