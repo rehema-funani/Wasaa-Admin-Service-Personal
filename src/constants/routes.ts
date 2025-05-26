@@ -103,6 +103,7 @@ const routes: Route[] = [
           icon: Receipt,
         },
         {
+
           type: 'dropdown',
           title: 'System Wallets',
           icon: Banknote,
@@ -255,24 +256,24 @@ const routes: Route[] = [
     },
     {
       type: 'section',
-      title: 'Digital Assets',
+      title: 'Gifts & Rewards',
       items: [
         {
           type: 'link',
           path: '/admin/gifts/gift-list',
-          title: 'Digital Assets',
+          title: 'Gifts',
           icon: Gift,
         },
         {
           type: 'link',
           path: '/admin/gifts/add-gift',
-          title: 'Create Asset',
+          title: 'Create Gift',
           icon: CircleDollarSign,
         },
         {
           type: 'link',
           path: '/admin/gifts/gift-categories',
-          title: 'Asset Categories',
+          title: 'Gift Categories',
           icon: FolderClosed,
         },
       ]
