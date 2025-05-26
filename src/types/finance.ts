@@ -34,3 +34,74 @@ export type ModalType =
     | 'editPercentageRange'
     | 'deletePercentageRange'
     | null;
+
+
+export interface Transaction {
+    id: string;
+    walletId: string;
+    walletName: string;
+    type: 'credit' | 'debit';
+    amount: number;
+    reference: string;
+    description: string;
+    status: 'completed' | 'pending' | 'failed' | 'reversed';
+    timestamp: string;
+    relatedEntity?: string;
+}
+
+export interface ReversalRequest {
+    id: string;
+    transactionId: string;
+    userId: string;
+    userName: string;
+    amount: number;
+    currency: string;
+    reason: string;
+    status: 'pending' | 'approved' | 'rejected' | 'completed';
+    requestedBy: string;
+    requestedAt: string;
+    approvedBy?: string;
+    approvedAt?: string;
+    rejectedBy?: string;
+    rejectedAt?: string;
+    completedAt?: string;
+    notes?: string;
+}
+
+export interface RefundRequest {
+    id: string;
+    originalTransactionId: string;
+    userWalletId: string;
+    amount: string;
+    refundReason: string;
+    status: string;
+    processedBy: string | null;
+    createdAt: string;
+    updatedAt: string;
+    OriginalTransaction: {
+        id: string;
+        userWalletId: string;
+        debit: number;
+        credit: number;
+        balance: number;
+        status: string;
+        description: string;
+        external_id: string | null;
+        createdAt: string;
+        updatedAt: string;
+    };
+    UserWallet: {
+        id: string;
+        user_uuid: string;
+        group_uuid: string | null;
+        type: string;
+        purpose: string | null;
+        currencyId: string;
+        debit: string;
+        credit: string;
+        balance: string;
+        status: string;
+        createdAt: string;
+        updatedAt: string;
+    };
+}

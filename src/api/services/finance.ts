@@ -510,6 +510,43 @@ async deletePercentageFeeRange(feeRangeId: string): Promise<any> {
     throw new Error('Failed to delete percentage fee range. Please check your network connection.');
   }
   },
+
+// ======== WALLET REFUND  ========
+async getRefunds(filters = {}): Promise<any> {
+  try {
+    const response = await finance.get('/walletRefunds', {params: filters });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get reversal requests');
+    }
+    throw new Error('Failed to get reversal requests. Please check your network connection.');
+  }
+},
+
+async approveRefund(refundId: string): Promise<any> {
+  try {
+    const response = await finance.put(`/walletRefunds/${refundId}/approve`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to approve refund');
+    }
+    throw new Error('Failed to approve refund. Please check your network connection.');
+  }
+},
+
+async rejectRefund(refundId: string, reason: string): Promise<any> {
+  try {
+    const response = await finance.put(`/walletRefunds/${refundId}/reject`, { reason });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to reject refund');
+    }
+    throw new Error('Failed to reject refund. Please check your network connection.');
+  }
+},
 };
 
 export default financeService;

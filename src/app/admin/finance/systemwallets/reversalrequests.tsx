@@ -8,57 +8,33 @@ import {
     XCircle,
     AlertTriangle,
     Clock,
-    ChevronDown,
     Eye,
-    Download,
-    MoreHorizontal,
-    ArrowUpRight,
-    ArrowDownLeft,
-    Calendar,
-    User,
-    FileText,
     Shield,
+    ArrowLeft,
+    ChevronDown,
+    BadgeDollarSign,
+    ArrowDownUp,
+    Download,
+    Calendar,
+    Info,
+    FileCheck,
+    ChevronsRight,
+    Landmark
 } from 'lucide-react';
 import { Modal } from '../../../../components/common/Modal';
-// import walletService from '../../../../api/services/wallet';
+import financeService from '../../../../api/services/finance';
+import ReversalDetails from '../../../../components/finance/ReversalDetails';
+import ViewRefund from '../../../../components/finance/ViewRefund';
+import ApproveRefund from '../../../../components/finance/ApproveRefund';
+import RejectRefund from '../../../../components/finance/RejectRefund';
+import { RefundRequest, ReversalRequest } from '../../../../types/finance';
+import { Transaction } from '../../../../types/transaction';
+import toast from 'react-hot-toast';
 
-// Types for reversal requests
-interface ReversalRequest {
-    id: string;
-    transactionId: string;
-    userId: string;
-    userName: string;
-    amount: number;
-    currency: string;
-    reason: string;
-    status: 'pending' | 'approved' | 'rejected' | 'completed';
-    requestedBy: string;
-    requestedAt: string;
-    approvedBy?: string;
-    approvedAt?: string;
-    rejectedBy?: string;
-    rejectedAt?: string;
-    completedAt?: string;
-    notes?: string;
-}
-
-// Types for transactions
-interface Transaction {
-    id: string;
-    walletId: string;
-    walletName: string;
-    type: 'credit' | 'debit';
-    amount: number;
-    reference: string;
-    description: string;
-    status: 'completed' | 'pending' | 'failed' | 'reversed';
-    timestamp: string;
-    relatedEntity?: string;
-}
-
-const reversalrequests: React.FC = () => {
+const ReversalRequestsPage: React.FC = () => {
     // State management
     const [reversalRequests, setReversalRequests] = useState<ReversalRequest[]>([]);
+    const [refunds, setRefunds] = useState<RefundRequest[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected' | 'completed'>('all');
@@ -66,197 +42,75 @@ const reversalrequests: React.FC = () => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [selectedRequest, setSelectedRequest] = useState<ReversalRequest | null>(null);
+    const [selectedRefund, setSelectedRefund] = useState<RefundRequest | null>(null);
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState<'view' | 'approve' | 'reject' | 'details' | null>(null);
     const [approvalNote, setApprovalNote] = useState<string>('');
 
-    // Mock data for reversal requests
-    const mockReversalRequests: ReversalRequest[] = [
-        {
-            id: 'rev-001',
-            transactionId: 'tx-001',
-            userId: 'user-001',
-            userName: 'John Doe',
-            amount: 1250.00,
-            currency: 'KES',
-            reason: 'Customer requested refund due to service unavailability',
-            status: 'pending',
-            requestedBy: 'Sarah Admin',
-            requestedAt: '2025-05-19T09:30:00Z',
-        },
-        {
-            id: 'rev-002',
-            transactionId: 'tx-003',
-            userId: 'user-002',
-            userName: 'Alice Smith',
-            amount: 750.00,
-            currency: 'KES',
-            reason: 'Double charge detected on customer account',
-            status: 'approved',
-            requestedBy: 'Mark Support',
-            requestedAt: '2025-05-18T14:15:00Z',
-            approvedBy: 'Finance Manager',
-            approvedAt: '2025-05-18T16:45:00Z',
-        },
-        {
-            id: 'rev-003',
-            transactionId: 'tx-006',
-            userId: 'user-003',
-            userName: 'Bob Johnson',
-            amount: 3000.00,
-            currency: 'KES',
-            reason: 'Transaction was fraudulent - account compromised',
-            status: 'rejected',
-            requestedBy: 'Customer Support',
-            requestedAt: '2025-05-17T11:10:00Z',
-            rejectedBy: 'Compliance Officer',
-            rejectedAt: '2025-05-17T13:25:00Z',
-            notes: 'Investigation found the transaction was legitimate. Customer verified via callback.'
-        },
-        {
-            id: 'rev-004',
-            transactionId: 'tx-005',
-            userId: 'user-004',
-            userName: 'Merchant XYZ',
-            amount: 15000.00,
-            currency: 'KES',
-            reason: 'Incorrect amount sent to merchant',
-            status: 'completed',
-            requestedBy: 'Finance Dept',
-            requestedAt: '2025-05-16T08:20:00Z',
-            approvedBy: 'Senior Finance Officer',
-            approvedAt: '2025-05-16T09:10:00Z',
-            completedAt: '2025-05-16T10:05:00Z'
-        },
-        {
-            id: 'rev-005',
-            transactionId: 'tx-002',
-            userId: 'user-001',
-            userName: 'John Doe',
-            amount: 500.00,
-            currency: 'KES',
-            reason: 'Customer reported unauthorized transaction',
-            status: 'pending',
-            requestedBy: 'John Support',
-            requestedAt: '2025-05-18T13:40:00Z',
-        },
-        {
-            id: 'rev-006',
-            transactionId: 'tx-004',
-            userId: 'user-002',
-            userName: 'Alice Smith',
-            amount: 2000.00,
-            currency: 'KES',
-            reason: 'Service not provided as described',
-            status: 'pending',
-            requestedBy: 'Customer Service',
-            requestedAt: '2025-05-19T07:15:00Z',
-        },
-    ];
+    const fetchReversalRequests = async () => {
+        setIsLoading(true);
+        try {
+            const refundsData = await financeService.getRefunds();
 
-    // Mock transaction data
-    const mockTransactions: Transaction[] = [
-        {
-            id: 'tx-001',
-            walletId: 'wallet-fee-001',
-            walletName: 'Fee Wallet',
-            type: 'credit',
-            amount: 1250.00,
-            reference: 'TRX-23456789',
-            description: 'Commission from transaction ID: 45678',
-            status: 'completed',
-            timestamp: '2025-05-18T14:30:00Z',
-            relatedEntity: 'John Doe (User)'
-        },
-        {
-            id: 'tx-002',
-            walletId: 'wallet-fee-001',
-            walletName: 'Fee Wallet',
-            type: 'debit',
-            amount: 500.00,
-            reference: 'TRX-23456790',
-            description: 'Monthly settlement to operating account',
-            status: 'completed',
-            timestamp: '2025-05-17T10:15:00Z',
-            relatedEntity: 'System Account'
-        },
-        {
-            id: 'tx-003',
-            walletId: 'wallet-refund-001',
-            walletName: 'Refund Wallet',
-            type: 'debit',
-            amount: 750.00,
-            reference: 'TRX-23456791',
-            description: 'Refund for transaction ID: 78901',
-            status: 'pending',
-            timestamp: '2025-05-18T09:45:00Z',
-            relatedEntity: 'Alice Smith (User)'
-        },
-        {
-            id: 'tx-004',
-            walletId: 'wallet-refund-001',
-            walletName: 'Refund Wallet',
-            type: 'credit',
-            amount: 2000.00,
-            reference: 'TRX-23456792',
-            description: 'Top up from main account',
-            status: 'completed',
-            timestamp: '2025-05-16T16:20:00Z',
-            relatedEntity: 'System Account'
-        },
-        {
-            id: 'tx-005',
-            walletId: 'wallet-float-001',
-            walletName: 'Platform Float Wallet',
-            type: 'debit',
-            amount: 15000.00,
-            reference: 'TRX-23456793',
-            description: 'Payout to merchant ID: MER-12345',
-            status: 'completed',
-            timestamp: '2025-05-18T08:30:00Z',
-            relatedEntity: 'Acme Store (Merchant)'
-        },
-        {
-            id: 'tx-006',
-            walletId: 'wallet-promotions-001',
-            walletName: 'Promotions Wallet',
-            type: 'debit',
-            amount: 3000.00,
-            reference: 'TRX-23456794',
-            description: 'Cashback promotion for user ID: USR-78901',
-            status: 'completed',
-            timestamp: '2025-05-17T13:10:00Z',
-            relatedEntity: 'Bob Johnson (User)'
-        }
-    ];
+            if (refundsData && refundsData.refunds) {
+                setRefunds(refundsData.refunds);
 
-    // Load reversal request data
-    useEffect(() => {
-        // Simulating API call
-        const fetchReversalRequests = async () => {
-            setIsLoading(true);
-            try {
-                // In a real implementation, this would be:
-                // const reversals = await walletService.getReversalRequests();
+                const transformedRequests: ReversalRequest[] = refundsData.refunds.map((refund: RefundRequest) => {
+                    let userName = "Client";
+                    if (refund.OriginalTransaction.description) {
+                        const match = refund.OriginalTransaction.description.match(/to\s+(.+)$/);
+                        if (match && match[1]) {
+                            userName = match[1].trim();
+                        }
+                    }
 
-                // For now, using mock data with a timeout for loading simulation
-                setTimeout(() => {
-                    setReversalRequests(mockReversalRequests);
-                    setIsLoading(false);
-                }, 800);
-            } catch (error) {
-                console.error('Failed to fetch reversal requests', error);
-                setErrorMessage('Failed to load reversal requests');
-                setIsLoading(false);
+                    let status: 'pending' | 'approved' | 'rejected' | 'completed' = 'pending';
+                    switch (refund.status) {
+                        case 'INITIATED':
+                            status = 'pending';
+                            break;
+                        case 'APPROVED':
+                            status = 'approved';
+                            break;
+                        case 'COMPLETED':
+                            status = 'completed';
+                            break;
+                        case 'REJECTED':
+                            status = 'rejected';
+                            break;
+                    }
+
+                    return {
+                        id: refund.id,
+                        transactionId: refund.originalTransactionId,
+                        userId: refund.UserWallet.user_uuid,
+                        userName: userName,
+                        amount: parseFloat(refund.amount || '0'),
+                        currency: 'KES',
+                        reason: refund.refundReason,
+                        status: status,
+                        requestedBy: 'System Admin',
+                        requestedAt: refund.createdAt,
+                    };
+                });
+
+                setReversalRequests(transformedRequests);
             }
-        };
 
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Failed to fetch reversal requests', error);
+            setErrorMessage('Failed to load reversal requests');
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchReversalRequests();
     }, []);
 
-    // Filter reversal requests based on search, status and timeframe
     const filteredRequests = reversalRequests.filter(request => {
         const matchesSearch =
             request.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -281,55 +135,76 @@ const reversalrequests: React.FC = () => {
         return matchesSearch && matchesStatus && matchesTimeframe;
     });
 
-    // Find transaction by ID
-    const getTransactionById = (id: string) => {
-        return mockTransactions.find(tx => tx.id === id) || null;
+    const getRefundById = (id: string) => {
+        return refunds.find(refund => refund.id === id);
     };
 
-    // Handle request status update
-    const handleStatusUpdate = (requestId: string, newStatus: 'approved' | 'rejected' | 'completed', note: string = '') => {
-        // In a real implementation, this would call an API
-        // For this prototype, we'll just update the state
+    const handleStatusUpdate = async (requestId: string, newStatus: 'approved' | 'rejected' | 'completed', note: string = '') => {
+        try {
+            setIsLoading(true);
 
-        const updatedRequests = reversalRequests.map(request => {
-            if (request.id === requestId) {
-                const updatedRequest = { ...request, status: newStatus };
+            let response;
 
-                if (newStatus === 'approved') {
-                    updatedRequest.approvedBy = 'Current Admin';
-                    updatedRequest.approvedAt = new Date().toISOString();
-                    if (note) updatedRequest.notes = note;
-                } else if (newStatus === 'rejected') {
-                    updatedRequest.rejectedBy = 'Current Admin';
-                    updatedRequest.rejectedAt = new Date().toISOString();
-                    if (note) updatedRequest.notes = note;
-                } else if (newStatus === 'completed') {
-                    updatedRequest.completedAt = new Date().toISOString();
+            if (newStatus === 'approved') {
+                response = await financeService.approveRefund(requestId);
+                showSuccess('Reversal request successfully approved');
+            } else if (newStatus === 'rejected') {
+                if (!note) {
+                    showError('A rejection reason is required');
+                    setIsLoading(false);
+                    return;
                 }
-
-                return updatedRequest;
+                response = await financeService.rejectRefund(requestId, note);
+                showSuccess('Reversal request successfully rejected');
+            } else {
+                toast.error('Action not supported');
             }
-            return request;
-        });
 
-        setReversalRequests(updatedRequests);
+            const updatedRequests = reversalRequests.map(request => {
+                if (request.id === requestId) {
+                    const updatedRequest = { ...request, status: newStatus };
 
-        const actionText = newStatus === 'approved'
-            ? 'approved'
-            : newStatus === 'rejected'
-                ? 'rejected'
-                : 'completed';
+                    if (newStatus === 'approved') {
+                        updatedRequest.approvedBy = 'Current Admin';
+                        updatedRequest.approvedAt = new Date().toISOString();
+                        if (note) updatedRequest.notes = note;
+                    } else if (newStatus === 'rejected') {
+                        updatedRequest.rejectedBy = 'Current Admin';
+                        updatedRequest.rejectedAt = new Date().toISOString();
+                        if (note) updatedRequest.notes = note;
+                    } else if (newStatus === 'completed') {
+                        updatedRequest.completedAt = new Date().toISOString();
+                    }
 
-        showSuccess(`Reversal request successfully ${actionText}`);
+                    return updatedRequest;
+                }
+                return request;
+            });
 
-        // Reset states
-        setIsModalOpen(false);
-        setModalType(null);
-        setSelectedRequest(null);
-        setApprovalNote('');
+            setReversalRequests(updatedRequests);
+
+            setIsModalOpen(false);
+            setModalType(null);
+            setSelectedRequest(null);
+            setSelectedRefund(null);
+            setApprovalNote('');
+
+            fetchReversalRequests();
+
+        } catch (error) {
+            console.error('Failed to update refund status:', error);
+            let errorMessage = 'Failed to process the request. Please try again.';
+
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+
+            showError(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    // Show success message with a timeout
     const showSuccess = (message: string) => {
         setSuccessMessage(message);
         setErrorMessage(null);
@@ -338,7 +213,6 @@ const reversalrequests: React.FC = () => {
         }, 3000);
     };
 
-    // Show error message with a timeout
     const showError = (message: string) => {
         setErrorMessage(message);
         setSuccessMessage(null);
@@ -347,11 +221,10 @@ const reversalrequests: React.FC = () => {
         }, 3000);
     };
 
-    // Open transaction details modal
-    const openTransactionDetails = (transactionId: string) => {
-        const transaction = getTransactionById(transactionId);
-        if (transaction) {
-            setSelectedTransaction(transaction);
+    const openRefundDetails = (requestId: string) => {
+        const refund = getRefundById(requestId);
+        if (refund) {
+            setSelectedRefund(refund);
             setModalType('details');
             setIsModalOpen(true);
         } else {
@@ -359,40 +232,40 @@ const reversalrequests: React.FC = () => {
         }
     };
 
-    // Open request view modal
     const openRequestViewModal = (request: ReversalRequest) => {
         setSelectedRequest(request);
+        const refund = getRefundById(request.id);
+        if (refund) {
+            setSelectedRefund(refund);
+        }
         setModalType('view');
         setIsModalOpen(true);
     };
 
-    // Open approve request modal
     const openApproveModal = (request: ReversalRequest) => {
         setSelectedRequest(request);
         setModalType('approve');
         setIsModalOpen(true);
     };
 
-    // Open reject request modal
     const openRejectModal = (request: ReversalRequest) => {
         setSelectedRequest(request);
         setModalType('reject');
         setIsModalOpen(true);
     };
 
-    // Format currency
-    const formatCurrency = (amount: number) => {
+    const formatCurrency = (amount: number | string) => {
+        const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
         return new Intl.NumberFormat('en-KE', {
             style: 'currency',
             currency: 'KES',
             minimumFractionDigits: 2
-        }).format(amount);
+        }).format(numAmount);
     };
 
-    // Format date
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleString('en-KE', {
+        return date.toLocaleString('en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
@@ -401,26 +274,26 @@ const reversalrequests: React.FC = () => {
         });
     };
 
-    // Get status badge color
     const getStatusColor = (status: string) => {
-        switch (status) {
+        switch (status.toLowerCase()) {
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800';
+            case 'initiated':
+                return 'bg-warning-50 text-warning-700 border border-warning-200';
             case 'approved':
-                return 'bg-primary-100 text-primary-800';
+                return 'bg-primary-50 text-primary-700 border border-primary-200';
             case 'completed':
-                return 'bg-green-100 text-green-800';
+                return 'bg-success-50 text-success-700 border border-success-200';
             case 'rejected':
-                return 'bg-red-100 text-red-800';
+                return 'bg-danger-50 text-danger-700 border border-danger-200';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-neutral-50 text-neutral-700 border border-neutral-200';
         }
     };
 
-    // Get status icon
     const getStatusIcon = (status: string) => {
-        switch (status) {
+        switch (status.toLowerCase()) {
             case 'pending':
+            case 'initiated':
                 return <Clock className="w-4 h-4" />;
             case 'approved':
                 return <CheckCircle2 className="w-4 h-4" />;
@@ -433,9 +306,18 @@ const reversalrequests: React.FC = () => {
         }
     };
 
-    // Get modal title
+    const getWalletTypeDisplay = (type: string, purpose: string | null) => {
+        if (type === 'system') {
+            if (purpose === 'platform_float_wallet') {
+                return 'Corporate Float Wallet';
+            }
+            return 'System Wallet';
+        }
+        return 'Client Wallet';
+    };
+
     const getModalTitle = () => {
-        if (!selectedRequest && !selectedTransaction) return '';
+        if (!selectedRequest && !selectedRefund) return '';
 
         switch (modalType) {
             case 'view':
@@ -445,25 +327,31 @@ const reversalrequests: React.FC = () => {
             case 'reject':
                 return `Reject Reversal Request`;
             case 'details':
-                return `Transaction Details`;
+                return `Original Transaction Details`;
             default:
                 return '';
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#FCFCFD] p-4 md:p-6 font-['Inter',sans-serif]">
-            <div className="max-w-6xl mx-auto">
+        <div className="min-h-screen p-2">
+            <div className="w-full mx-auto">
                 <div className="mb-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-4">
                         <div>
-                            <h1 className="text-2xl font-medium text-gray-800 tracking-tight">Transaction Reversal Requests</h1>
-                            <p className="text-gray-500 text-sm mt-1">Manage and process transaction reversal requests for customer refunds and error corrections</p>
+                            <div className="inline-block px-3 py-1 bg-primary-50 border border-primary-100 rounded-lg text-primary-600 text-xs font-medium mb-2">
+                                Finance Operations
+                            </div>
+                            <h1 className="text-2xl font-semibold text-neutral-800 tracking-tight flex items-center">
+                                <BadgeDollarSign size={24} className="text-primary-600 mr-2" />
+                                Transaction Reversal Requests
+                            </h1>
+                            <p className="text-neutral-500 text-sm mt-1">Manage and process transaction reversal requests for customer refunds and error corrections</p>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <button
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl shadow-sm hover:bg-gray-50 transition-all text-sm"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-neutral-200 text-neutral-700 rounded-lg shadow-sm hover:bg-neutral-50 transition-all text-sm"
                                 disabled={isLoading}
                                 onClick={() => {
                                     setIsLoading(true);
@@ -473,103 +361,73 @@ const reversalrequests: React.FC = () => {
                                 }}
                             >
                                 <RefreshCw size={16} />
-                                <span>Refresh</span>
+                                <span>Refresh Data</span>
                             </button>
 
                             <button
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white rounded-xl shadow-sm hover:bg-primary-700 transition-all text-sm"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white rounded-lg shadow-button hover:bg-primary-700 transition-all text-sm"
                             >
-                                <ExternalLink size={16} />
-                                <span>View All Transactions</span>
+                                <Download size={16} />
+                                <span>Export Report</span>
                             </button>
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center mb-5">
-                        <div className="relative flex-grow">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Search size={16} className="text-gray-400" />
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3 mb-5">
+                        <div className="relative md:col-span-5">
+                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <Search size={16} className="text-neutral-400" />
                             </div>
                             <input
                                 type="text"
-                                placeholder="Search by transaction ID, user name or reason..."
+                                placeholder="Search by transaction ID, user or reason..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
+                                className="pl-10 pr-3 py-2.5 w-full bg-white border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-transparent text-neutral-700 text-sm shadow-sm"
                             />
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center bg-white border border-gray-200 rounded-xl p-0.5">
-                                <button
-                                    onClick={() => setStatusFilter('all')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${statusFilter === 'all' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    All
-                                </button>
-                                <button
-                                    onClick={() => setStatusFilter('pending')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${statusFilter === 'pending' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    Pending
-                                </button>
-                                <button
-                                    onClick={() => setStatusFilter('approved')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${statusFilter === 'approved' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    Approved
-                                </button>
-                                <button
-                                    onClick={() => setStatusFilter('completed')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${statusFilter === 'completed' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    Completed
-                                </button>
-                                <button
-                                    onClick={() => setStatusFilter('rejected')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${statusFilter === 'rejected' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    Rejected
-                                </button>
+                        <div className="relative md:col-span-3">
+                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <Calendar size={16} className="text-neutral-400" />
                             </div>
-
-                            <div className="flex items-center bg-white border border-gray-200 rounded-xl p-0.5">
-                                <button
-                                    onClick={() => setTimeframeFilter('24h')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${timeframeFilter === '24h' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    24h
-                                </button>
-                                <button
-                                    onClick={() => setTimeframeFilter('7d')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${timeframeFilter === '7d' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    7d
-                                </button>
-                                <button
-                                    onClick={() => setTimeframeFilter('30d')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${timeframeFilter === '30d' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    30d
-                                </button>
-                                <button
-                                    onClick={() => setTimeframeFilter('all')}
-                                    className={`px-3 py-1.5 rounded-lg text-xs transition-all ${timeframeFilter === 'all' ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-500'
-                                        }`}
-                                >
-                                    All
-                                </button>
+                            <select
+                                value={timeframeFilter}
+                                onChange={(e) => setTimeframeFilter(e.target.value as any)}
+                                className="pl-10 pr-10 py-2.5 w-full bg-white border border-neutral-200 rounded-lg appearance-none focus:ring-2 focus:ring-primary-400 focus:border-transparent text-neutral-700 text-sm shadow-sm"
+                            >
+                                <option value="24h">Last 24 Hours</option>
+                                <option value="7d">Last 7 Days</option>
+                                <option value="30d">Last 30 Days</option>
+                                <option value="all">All Time</option>
+                            </select>
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <ChevronDown size={16} className="text-neutral-400" />
                             </div>
+                        </div>
 
-                            <button className="p-2 bg-white border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50">
+                        <div className="relative md:col-span-3">
+                            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                <FileCheck size={16} className="text-neutral-400" />
+                            </div>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value as any)}
+                                className="pl-10 pr-10 py-2.5 w-full bg-white border border-neutral-200 rounded-lg appearance-none focus:ring-2 focus:ring-primary-400 focus:border-transparent text-neutral-700 text-sm shadow-sm"
+                            >
+                                <option value="all">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="completed">Completed</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <ChevronDown size={16} className="text-neutral-400" />
+                            </div>
+                        </div>
+
+                        <div className="md:col-span-1 flex justify-end">
+                            <button className="p-2.5 h-full bg-white border border-neutral-200 rounded-lg text-neutral-500 hover:bg-neutral-50 shadow-sm">
                                 <Filter size={16} />
                             </button>
                         </div>
@@ -577,14 +435,14 @@ const reversalrequests: React.FC = () => {
                 </div>
 
                 {successMessage && (
-                    <div className="mb-5 flex items-center gap-2 p-3 bg-green-50 rounded-xl border border-green-100 text-green-700">
+                    <div className="mb-5 flex items-center gap-2 p-3 bg-success-50 rounded-lg border border-success-200 text-success-700">
                         <CheckCircle2 size={16} className="flex-shrink-0" />
                         <span className="text-sm">{successMessage}</span>
                     </div>
                 )}
 
                 {errorMessage && (
-                    <div className="mb-5 flex items-center gap-2 p-3 bg-red-50 rounded-xl border border-red-100 text-red-700">
+                    <div className="mb-5 flex items-center gap-2 p-3 bg-danger-50 rounded-lg border border-danger-200 text-danger-700">
                         <AlertTriangle size={16} className="flex-shrink-0" />
                         <span className="text-sm">{errorMessage}</span>
                     </div>
@@ -592,200 +450,235 @@ const reversalrequests: React.FC = () => {
 
                 {/* Reversal Requests Summary */}
                 <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div className="bg-white rounded-lg shadow-card border border-neutral-200 p-4">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-yellow-100 rounded-lg">
-                                <Clock size={20} className="text-yellow-600" />
+                            <div className="p-2 bg-warning-100 rounded-lg">
+                                <Clock size={20} className="text-warning-600" />
                             </div>
-                            <h3 className="text-sm font-medium text-gray-800">Pending Requests</h3>
+                            <h3 className="text-sm font-medium text-neutral-800">Pending Requests</h3>
                         </div>
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-2xl font-semibold text-neutral-900 font-finance">
                             {reversalRequests.filter(r => r.status === 'pending').length}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">Awaiting approval</p>
+                        <p className="text-xs text-neutral-500 mt-1">Awaiting approval</p>
                     </div>
 
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div className="bg-white rounded-lg shadow-card border border-neutral-200 p-4">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="p-2 bg-primary-100 rounded-lg">
                                 <CheckCircle2 size={20} className="text-primary-600" />
                             </div>
-                            <h3 className="text-sm font-medium text-gray-800">Approved</h3>
+                            <h3 className="text-sm font-medium text-neutral-800">Approved</h3>
                         </div>
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-2xl font-semibold text-neutral-900 font-finance">
                             {reversalRequests.filter(r => r.status === 'approved').length}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">Pending execution</p>
+                        <p className="text-xs text-neutral-500 mt-1">Pending execution</p>
                     </div>
 
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div className="bg-white rounded-lg shadow-card border border-neutral-200 p-4">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-green-100 rounded-lg">
-                                <CheckCircle2 size={20} className="text-green-600" />
+                            <div className="p-2 bg-success-100 rounded-lg">
+                                <CheckCircle2 size={20} className="text-success-600" />
                             </div>
-                            <h3 className="text-sm font-medium text-gray-800">Completed</h3>
+                            <h3 className="text-sm font-medium text-neutral-800">Completed</h3>
                         </div>
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-2xl font-semibold text-neutral-900 font-finance">
                             {reversalRequests.filter(r => r.status === 'completed').length}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">Successfully processed</p>
+                        <p className="text-xs text-neutral-500 mt-1">Successfully processed</p>
                     </div>
 
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div className="bg-white rounded-lg shadow-card border border-neutral-200 p-4">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-red-100 rounded-lg">
-                                <XCircle size={20} className="text-red-600" />
+                            <div className="p-2 bg-danger-100 rounded-lg">
+                                <XCircle size={20} className="text-danger-600" />
                             </div>
-                            <h3 className="text-sm font-medium text-gray-800">Rejected</h3>
+                            <h3 className="text-sm font-medium text-neutral-800">Rejected</h3>
                         </div>
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-2xl font-semibold text-neutral-900 font-finance">
                             {reversalRequests.filter(r => r.status === 'rejected').length}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">Denied by admins</p>
+                        <p className="text-xs text-neutral-500 mt-1">Denied by administrators</p>
                     </div>
                 </div>
 
                 {/* Reversal Requests Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-                    <div className="p-5 border-b border-gray-200">
-                        <h2 className="text-lg font-medium text-gray-800">Reversal Requests</h2>
+                <div className="bg-white rounded-lg shadow-card border border-neutral-200 overflow-hidden mb-8">
+                    <div className="flex items-center justify-between px-6 py-4 bg-neutral-50 border-b border-neutral-200">
+                        <h2 className="text-base font-medium text-neutral-800 flex items-center">
+                            <ArrowDownUp size={18} className="text-primary-600 mr-2" />
+                            Reversal Request Registry
+                        </h2>
+
+                        <div className="flex items-center text-xs text-neutral-500">
+                            <Clock size={14} className="mr-1" />
+                            <span>Last updated: {new Date().toLocaleString()}</span>
+                        </div>
                     </div>
 
                     {isLoading ? (
                         // Loading skeleton
                         <div className="p-8">
                             <div className="flex justify-center items-center">
-                                <RefreshCw size={24} className="text-gray-400 animate-spin" />
-                                <span className="ml-2 text-gray-500">Loading reversal requests...</span>
+                                <div className="animate-spin w-8 h-8 border-3 border-primary-200 border-t-primary-600 rounded-full mr-3"></div>
+                                <span className="text-neutral-500">Loading reversal requests...</span>
                             </div>
                         </div>
                     ) : filteredRequests.length === 0 ? (
                         <div className="p-8 text-center">
-                            <AlertTriangle size={36} className="mx-auto text-gray-400 mb-3" />
-                            <h3 className="text-lg font-medium text-gray-700 mb-1">No requests found</h3>
-                            <p className="text-gray-500 text-sm">Try adjusting your search or filters to find what you're looking for.</p>
+                            <div className="w-16 h-16 mx-auto bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+                                <AlertTriangle size={24} className="text-neutral-400" />
+                            </div>
+                            <h3 className="text-lg font-medium text-neutral-700 mb-1">No requests found</h3>
+                            <p className="text-neutral-500 text-sm">Try adjusting your search criteria or filters to find what you're looking for.</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                            <table className="min-w-full divide-y divide-neutral-200">
+                                <thead className="bg-neutral-50">
                                     <tr>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request ID</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested By</th>
-                                        <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Request ID</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Original Transaction</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Amount</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Status</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Requested</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Reason</th>
+                                        <th className="px-4 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-200">
-                                    {filteredRequests.map((request) => (
-                                        <tr key={request.id} className="hover:bg-gray-50">
-                                            <td className="px-3 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div>
-                                                        <div className="text-sm font-medium text-gray-900">{request.id}</div>
-                                                        <button
-                                                            className="text-xs text-primary-600 hover:text-primary-800 mt-0.5 flex items-center"
-                                                            onClick={() => openTransactionDetails(request.transactionId)}
-                                                        >
-                                                            <ExternalLink size={12} className="mr-1" />
-                                                            {request.transactionId}
-                                                        </button>
+                                <tbody className="divide-y divide-neutral-200">
+                                    {filteredRequests.map((request) => {
+                                        const refund = getRefundById(request.id);
+                                        const walletType = refund ? getWalletTypeDisplay(refund.UserWallet.type, refund.UserWallet.purpose) : '';
+
+                                        return (
+                                            <tr key={request.id} className="hover:bg-primary-50/20 transition-colors">
+                                                <td className="px-4 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center">
+                                                        <div>
+                                                            <div className="text-sm font-medium text-neutral-900 font-mono">{request.id.substring(0, 8)}...</div>
+                                                            <div className="text-xs text-neutral-500">{walletType}</div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-3 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900">{request.userName}</div>
-                                                <div className="text-xs text-gray-500">ID: {request.userId}</div>
-                                            </td>
-                                            <td className="px-3 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900">
-                                                    {formatCurrency(request.amount)}
-                                                </div>
-                                            </td>
-                                            <td className="px-3 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
-                                                    {getStatusIcon(request.status)}
-                                                    {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                                                </span>
-                                            </td>
-                                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {formatDate(request.requestedAt)}
-                                            </td>
-                                            <td className="px-3 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900">{request.requestedBy}</div>
-                                            </td>
-                                            <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div className="flex items-center justify-end gap-2">
+                                                </td>
+                                                <td className="px-4 py-4 whitespace-nowrap">
                                                     <button
-                                                        className="text-primary-600 hover:text-primary-900 p-1"
-                                                        onClick={() => openRequestViewModal(request)}
+                                                        className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center"
+                                                        onClick={() => openRefundDetails(request.id)}
                                                     >
-                                                        <Eye size={18} />
+                                                        <span className="font-mono">{request.transactionId.substring(0, 8)}...</span>
+                                                        <ExternalLink size={14} className="ml-1" />
                                                     </button>
-
-                                                    {request.status === 'pending' && (
-                                                        <>
-                                                            <button
-                                                                className="text-green-600 hover:text-green-900 p-1"
-                                                                onClick={() => openApproveModal(request)}
-                                                            >
-                                                                <CheckCircle2 size={18} />
-                                                            </button>
-                                                            <button
-                                                                className="text-red-600 hover:text-red-900 p-1"
-                                                                onClick={() => openRejectModal(request)}
-                                                            >
-                                                                <XCircle size={18} />
-                                                            </button>
-                                                        </>
+                                                    <div className="text-xs text-neutral-500 mt-1">
+                                                        {refund?.OriginalTransaction.description || 'No description'}
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-4 whitespace-nowrap">
+                                                    <div className="text-sm font-medium text-neutral-900">
+                                                        {formatCurrency(request.amount)}
+                                                    </div>
+                                                    {refund && (
+                                                        <div className="text-xs text-neutral-500">
+                                                            Balance: {formatCurrency(refund.UserWallet.balance)}
+                                                        </div>
                                                     )}
-
-                                                    {request.status === 'approved' && (
+                                                </td>
+                                                <td className="px-4 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium ${getStatusColor(request.status)}`}>
+                                                        {getStatusIcon(request.status)}
+                                                        {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                                    {formatDate(request.requestedAt)}
+                                                </td>
+                                                <td className="px-4 py-4">
+                                                    <div className="text-sm text-neutral-700 max-w-xs truncate">
+                                                        {request.reason}
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-4 whitespace-nowrap text-right">
+                                                    <div className="flex items-center justify-end gap-2">
                                                         <button
-                                                            className="text-green-600 hover:text-green-900 p-1"
-                                                            onClick={() => handleStatusUpdate(request.id, 'completed')}
+                                                            className="text-primary-600 hover:text-primary-700 p-1 hover:bg-primary-50 rounded-lg transition-colors"
+                                                            onClick={() => openRequestViewModal(request)}
+                                                            title="View Details"
                                                         >
-                                                            <CheckCircle2 size={18} />
+                                                            <Eye size={16} />
                                                         </button>
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+
+                                                        {request.status === 'pending' && (
+                                                            <>
+                                                                <button
+                                                                    className="text-success-600 hover:text-success-700 p-1 hover:bg-success-50 rounded-lg transition-colors"
+                                                                    onClick={() => openApproveModal(request)}
+                                                                    title="Approve"
+                                                                >
+                                                                    <CheckCircle2 size={16} />
+                                                                </button>
+                                                                <button
+                                                                    className="text-danger-600 hover:text-danger-700 p-1 hover:bg-danger-50 rounded-lg transition-colors"
+                                                                    onClick={() => openRejectModal(request)}
+                                                                    title="Reject"
+                                                                >
+                                                                    <XCircle size={16} />
+                                                                </button>
+                                                            </>
+                                                        )}
+
+                                                        {request.status === 'approved' && (
+                                                            <button
+                                                                className="text-success-600 hover:text-success-700 p-1 hover:bg-success-50 rounded-lg transition-colors"
+                                                                onClick={() => handleStatusUpdate(request.id, 'completed')}
+                                                                title="Mark as Completed"
+                                                            >
+                                                                <CheckCircle2 size={16} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
                     )}
 
-                    <div className="p-4 border-t border-gray-200 flex items-center justify-between">
-                        <div className="text-sm text-gray-500">
-                            Showing {filteredRequests.length} of {reversalRequests.length} requests
+                    <div className="px-6 py-4 flex items-center justify-between border-t border-neutral-200 bg-neutral-50/70">
+                        <div className="text-sm text-neutral-600">
+                            Showing {filteredRequests.length} of {reversalRequests.length} reversal requests
                         </div>
                         <div className="flex items-center gap-2">
                             <button
-                                className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-gray-600 text-sm disabled:opacity-50"
+                                className="p-2 rounded-lg border border-neutral-200 text-neutral-300 cursor-not-allowed"
                                 disabled
                             >
-                                Previous
+                                <ArrowLeft size={16} />
+                                <span className="sr-only">Previous</span>
                             </button>
+
+                            <div className="px-4 py-2 rounded-lg bg-primary-600 text-white text-sm font-medium">
+                                1
+                            </div>
+
                             <button
-                                className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-gray-600 text-sm disabled:opacity-50"
+                                className="p-2 rounded-lg border border-neutral-200 text-neutral-300 cursor-not-allowed"
                                 disabled
                             >
-                                Next
+                                <ChevronsRight size={16} />
+                                <span className="sr-only">Next</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 {/* Info Box */}
-                <div className="mt-6 bg-primary-50/70 rounded-xl p-4 border border-primary-100 backdrop-blur-sm">
+                <div className="mt-6 bg-primary-50/70 rounded-lg p-4 border border-primary-100 shadow-sm">
                     <div className="flex items-start gap-3">
                         <div className="p-2 bg-primary-100 rounded-lg flex-shrink-0">
-                            <Shield size={20} className="text-primary-600" />
+                            <Landmark size={20} className="text-primary-600" />
                         </div>
                         <div>
                             <h3 className="text-sm font-medium text-primary-700">About Transaction Reversals</h3>
@@ -799,341 +692,84 @@ const reversalrequests: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                <div className="mt-4 text-xs text-neutral-500 flex items-center justify-between">
+                    <div className="flex items-center">
+                        <Info size={14} className="mr-1" />
+                        <span>All reversal operations are recorded in the audit log for compliance purposes</span>
+                    </div>
+                    <div className="flex items-center">
+                        <Shield size={14} className="mr-1 text-primary-600" />
+                        <span>Financial Operations Department</span>
+                    </div>
+                </div>
             </div>
 
-            {/* Modals */}
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => {
                     setIsModalOpen(false);
                     setModalType(null);
                     setSelectedRequest(null);
+                    setSelectedRefund(null);
                     setSelectedTransaction(null);
                     setApprovalNote('');
                 }}
                 title={getModalTitle()}
                 size={modalType === 'details' ? 'md' : 'md'}
             >
-                {modalType === 'view' && selectedRequest && (
-                    <div className="space-y-4 p-1">
-                        <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2">
-                                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(selectedRequest.status)}`}>
-                                        {getStatusIcon(selectedRequest.status)}
-                                        {selectedRequest.status.charAt(0).toUpperCase() + selectedRequest.status.slice(1)}
-                                    </span>
-                                    <span className="text-sm text-gray-500">Request ID: {selectedRequest.id}</span>
-                                </div>
-                                <div className="text-sm font-medium text-gray-700">
-                                    {formatCurrency(selectedRequest.amount)}
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3 text-sm">
-                                <div>
-                                    <div className="text-gray-500">Transaction ID:</div>
-                                    <div className="font-medium text-gray-800 flex items-center">
-                                        {selectedRequest.transactionId}
-                                        <button
-                                            className="ml-1 text-primary-600 hover:text-primary-800"
-                                            onClick={() => openTransactionDetails(selectedRequest.transactionId)}
-                                        >
-                                            <ExternalLink size={14} />
-                                        </button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-gray-500">User:</div>
-                                    <div className="font-medium text-gray-800">{selectedRequest.userName} ({selectedRequest.userId})</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 className="text-sm font-medium text-gray-700 mb-2">Reversal Reason</h3>
-                            <div className="p-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700">
-                                {selectedRequest.reason}
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">Request Timeline</h3>
-                                <div className="space-y-3">
-                                    <div className="flex items-start gap-2">
-                                        <div className="p-1.5 bg-primary-100 rounded-full">
-                                            <FileText size={14} className="text-primary-600" />
-                                        </div>
-                                        <div>
-                                            <div className="text-xs font-medium text-gray-800">Requested</div>
-                                            <div className="text-xs text-gray-500 mt-0.5">
-                                                {formatDate(selectedRequest.requestedAt)} by {selectedRequest.requestedBy}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {selectedRequest.approvedBy && selectedRequest.approvedAt && (
-                                        <div className="flex items-start gap-2">
-                                            <div className="p-1.5 bg-green-100 rounded-full">
-                                                <CheckCircle2 size={14} className="text-green-600" />
-                                            </div>
-                                            <div>
-                                                <div className="text-xs font-medium text-gray-800">Approved</div>
-                                                <div className="text-xs text-gray-500 mt-0.5">
-                                                    {formatDate(selectedRequest.approvedAt)} by {selectedRequest.approvedBy}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {selectedRequest.rejectedBy && selectedRequest.rejectedAt && (
-                                        <div className="flex items-start gap-2">
-                                            <div className="p-1.5 bg-red-100 rounded-full">
-                                                <XCircle size={14} className="text-red-600" />
-                                            </div>
-                                            <div>
-                                                <div className="text-xs font-medium text-gray-800">Rejected</div>
-                                                <div className="text-xs text-gray-500 mt-0.5">
-                                                    {formatDate(selectedRequest.rejectedAt)} by {selectedRequest.rejectedBy}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {selectedRequest.completedAt && (
-                                        <div className="flex items-start gap-2">
-                                            <div className="p-1.5 bg-green-100 rounded-full">
-                                                <CheckCircle2 size={14} className="text-green-600" />
-                                            </div>
-                                            <div>
-                                                <div className="text-xs font-medium text-gray-800">Completed</div>
-                                                <div className="text-xs text-gray-500 mt-0.5">
-                                                    {formatDate(selectedRequest.completedAt)}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">Notes</h3>
-                                {selectedRequest.notes ? (
-                                    <div className="p-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 min-h-[100px]">
-                                        {selectedRequest.notes}
-                                    </div>
-                                ) : (
-                                    <div className="p-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-500 min-h-[100px] italic">
-                                        No additional notes provided.
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-4 mt-5 border-t border-gray-200">
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-                            >
-                                Close
-                            </button>
-
-                            {selectedRequest.status === 'pending' && (
-                                <>
-                                    <button
-                                        onClick={() => openRejectModal(selectedRequest)}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700"
-                                    >
-                                        Reject
-                                    </button>
-                                    <button
-                                        onClick={() => openApproveModal(selectedRequest)}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700"
-                                    >
-                                        Approve
-                                    </button>
-                                </>
-                            )}
-
-                            {selectedRequest.status === 'approved' && (
-                                <button
-                                    onClick={() => handleStatusUpdate(selectedRequest.id, 'completed')}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700"
-                                >
-                                    Mark as Completed
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                {modalType === 'view' && selectedRequest && selectedRefund && (
+                    <ViewRefund
+                        selectedRequest={selectedRequest}
+                        selectedRefund={selectedRefund}
+                        setIsModalOpen={setIsModalOpen}
+                        getStatusColor={getStatusColor}
+                        formatCurrency={formatCurrency}
+                        formatDate={formatDate}
+                        getWalletTypeDisplay={getWalletTypeDisplay}
+                        getStatusIcon={getStatusIcon}
+                        openRefundDetails={openRefundDetails}
+                        openRejectModal={openRejectModal}
+                        openApproveModal={openApproveModal}
+                        handleStatusUpdate={handleStatusUpdate}
+                    />
                 )}
 
                 {modalType === 'approve' && selectedRequest && (
-                    <div className="space-y-4 p-1">
-                        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-md">
-                            <div className="flex">
-                                <div className="flex-shrink-0">
-                                    <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                                </div>
-                                <div className="ml-3">
-                                    <p className="text-sm text-yellow-700">
-                                        You are about to approve a reversal of {formatCurrency(selectedRequest.amount)} for {selectedRequest.userName}.
-                                        This action requires dual approval and will be logged for audit purposes.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Approval Note (Optional)</label>
-                            <textarea
-                                value={approvalNote}
-                                onChange={(e) => setApprovalNote(e.target.value)}
-                                placeholder="Add any additional notes or justification for approving this reversal..."
-                                rows={4}
-                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
-                            />
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-4 mt-5 border-t border-gray-200">
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => handleStatusUpdate(selectedRequest.id, 'approved', approvalNote)}
-                                className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700"
-                            >
-                                Confirm Approval
-                            </button>
-                        </div>
-                    </div>
+                    <ApproveRefund
+                        selectedRequest={selectedRequest}
+                        setIsModalOpen={setIsModalOpen}
+                        handleStatusUpdate={handleStatusUpdate}
+                        formatCurrency={formatCurrency}
+                        approvalNote={approvalNote}
+                        setApprovalNote={setApprovalNote}
+                    />
                 )}
 
                 {modalType === 'reject' && selectedRequest && (
-                    <div className="space-y-4 p-1">
-                        <div className="bg-red-50 border-l-4 border-red-400 p-3 rounded-md">
-                            <div className="flex">
-                                <div className="flex-shrink-0">
-                                    <AlertTriangle className="h-5 w-5 text-red-400" />
-                                </div>
-                                <div className="ml-3">
-                                    <p className="text-sm text-red-700">
-                                        You are about to reject a reversal of {formatCurrency(selectedRequest.amount)} for {selectedRequest.userName}.
-                                        Rejection must include a reason and will be logged for audit purposes.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Rejection Reason <span className="text-red-500">*</span></label>
-                            <textarea
-                                value={approvalNote}
-                                onChange={(e) => setApprovalNote(e.target.value)}
-                                placeholder="Provide a detailed reason for rejecting this reversal request..."
-                                rows={4}
-                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
-                                required
-                            />
-                            {approvalNote.length === 0 && (
-                                <p className="mt-1 text-sm text-red-600">A rejection reason is required</p>
-                            )}
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-4 mt-5 border-t border-gray-200">
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={() => handleStatusUpdate(selectedRequest.id, 'rejected', approvalNote)}
-                                disabled={approvalNote.length === 0}
-                                className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Confirm Rejection
-                            </button>
-                        </div>
-                    </div>
+                    <RejectRefund
+                        selectedRequest={selectedRequest}
+                        setIsModalOpen={setIsModalOpen}
+                        handleStatusUpdate={handleStatusUpdate}
+                        formatCurrency={formatCurrency}
+                        approvalNote={approvalNote}
+                        setApprovalNote={setApprovalNote}
+                    />
                 )}
 
-                {modalType === 'details' && selectedTransaction && (
-                    <div className="space-y-4 p-1">
-                        <div className="bg-gray-50 p-4 rounded-lg mb-2">
-                            <div className="flex justify-between items-center mb-4">
-                                <div>
-                                    <div className="text-sm text-gray-500">Transaction ID</div>
-                                    <div className="text-lg font-medium text-gray-900">{selectedTransaction.id}</div>
-                                </div>
-                                <div>
-                                    <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedTransaction.status)}`}>
-                                        {selectedTransaction.status.charAt(0).toUpperCase() + selectedTransaction.status.slice(1)}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <div className="text-sm text-gray-500">Amount</div>
-                                    <div className={`text-xl font-semibold ${selectedTransaction.type === 'credit' ? 'text-green-600' : 'text-primary-600'}`}>
-                                        {selectedTransaction.type === 'credit' ? '+' : '-'}{formatCurrency(selectedTransaction.amount)}
-                                    </div>
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <div className="text-sm text-gray-500">Date & Time</div>
-                                    <div className="text-sm font-medium text-gray-900">{formatDate(selectedTransaction.timestamp)}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">Transaction Details</h3>
-                                <div className="space-y-3">
-                                    <div className="flex justify-between text-sm">
-                                        <div className="text-gray-500">Type:</div>
-                                        <div className="font-medium text-gray-800 capitalize">{selectedTransaction.type}</div>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <div className="text-gray-500">Reference:</div>
-                                        <div className="font-medium text-gray-800">{selectedTransaction.reference}</div>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <div className="text-gray-500">Wallet:</div>
-                                        <div className="font-medium text-gray-800">{selectedTransaction.walletName}</div>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <div className="text-gray-500">Related Entity:</div>
-                                        <div className="font-medium text-gray-800">{selectedTransaction.relatedEntity || 'N/A'}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className="text-sm font-medium text-gray-700 mb-2">Description</h3>
-                                <div className="p-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700">
-                                    {selectedTransaction.description}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-4 mt-5 border-t border-gray-200">
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
+                {modalType === 'details' && selectedRefund && (
+                    <ReversalDetails
+                        selectedRefund={selectedRefund}
+                        setIsModalOpen={setIsModalOpen}
+                        getStatusColor={getStatusColor}
+                        formatCurrency={formatCurrency}
+                        formatDate={formatDate}
+                        getWalletTypeDisplay={getWalletTypeDisplay}
+                     />
                 )}
             </Modal>
         </div>
     );
 };
 
-export default reversalrequests;
+export default ReversalRequestsPage;

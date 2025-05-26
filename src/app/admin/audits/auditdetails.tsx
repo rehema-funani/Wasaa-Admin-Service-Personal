@@ -153,7 +153,7 @@ const AuditLogDetailsPage: React.FC = () => {
     };
 
     const handleGoBack = () => {
-        navigate('/admin/audit-logs');
+        navigate(-1);
     };
 
     const handleExportJson = () => {

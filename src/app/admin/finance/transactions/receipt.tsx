@@ -384,7 +384,7 @@ const TransactionReceiptPage: React.FC = () => {
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-sm font-medium text-neutral-500 mb-2">Description</p>
-                                        <p className="text-neutral-900 leading-relaxed">
+                                        <p className="text-neutral-900 text-[12px] leading-relaxed">
                                             {transaction.description || 'No description provided for this transaction'}
                                         </p>
                                     </div>
@@ -537,7 +537,7 @@ const TransactionReceiptPage: React.FC = () => {
                 <div className="px-8 py-6 bg-neutral-50/50 border-t border-neutral-100 print:hidden mt-6 rounded-b-lg">
                     <div className="flex items-center justify-between">
                         <p className="text-sm text-neutral-500">
-                            Receipt generated on {new Date().toLocaleDateString('en-US', {
+                            Receipt generated on {new Date(transaction.createdAt).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',

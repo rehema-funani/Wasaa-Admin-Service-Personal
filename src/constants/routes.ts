@@ -103,7 +103,6 @@ const routes: Route[] = [
           icon: Receipt,
         },
         {
-
           type: 'dropdown',
           title: 'System Wallets',
           icon: Banknote,
@@ -256,18 +255,18 @@ const routes: Route[] = [
     },
     {
       type: 'section',
-      title: 'Gifts & Rewards',
+      title: 'Digital Assets',
       items: [
         {
           type: 'link',
           path: '/admin/gifts/gift-list',
-          title: 'Gifts',
+          title: 'Gift List',
           icon: Gift,
         },
         {
           type: 'link',
           path: '/admin/gifts/add-gift',
-          title: 'Create Gift',
+          title: 'Add Gift',
           icon: CircleDollarSign,
         },
         {
@@ -320,22 +319,132 @@ const routes: Route[] = [
         },
       ],
     },
-    // Keeping these sections but moving them lower in priority
     {
       type: 'section',
-      title: 'Media Library',
+      title: 'Media Management',
       items: [
         {
           type: 'link',
-          path: '/admin/Wallpaper/list-all-wallpaper',
-          title: 'Brand Assets',
-          icon: ImageIcon,
+          path: '/admin/media/shorts',
+          title: 'Shorts Dashboard',
+          icon: Film,
         },
         {
           type: 'link',
-          path: '/admin/Avatar/list-all-avatar',
-          title: 'User Icons',
-          icon: UserCircle,
+          path: '/admin/media/shorts/moderation',
+          title: 'Video Moderation',
+          icon: ShieldCheck,
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/reports',
+          title: 'Reports',
+          icon: AlertTriangle,
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/comments',
+          title: 'Comments',
+          icon: MessageSquare,
+        },
+        {
+          type: 'dropdown',
+          title: 'Hashtags',
+          icon: Hash,
+          key: 'hashtags',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/media/shorts/hashtags',
+              title: 'All Hashtags',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/hashtags/blocked',
+              title: 'Blocked Hashtags',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/hashtags/trending',
+              title: 'Trending Hashtags',
+            },
+          ],
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/creators',
+          title: 'Creators',
+          icon: User,
+        },
+        {
+          type: 'dropdown',
+          title: 'Promotion',
+          icon: Award,
+          key: 'promotion',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/media/shorts/promotion',
+              title: 'All Promotions',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/promotion/trending',
+              title: 'Trending',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/promotion/featured',
+              title: 'Featured',
+            },
+          ],
+        },
+        {
+          type: 'dropdown',
+          title: 'Analytics',
+          icon: BarChart3,
+          key: 'shorts-analytics',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/media/shorts/analytics',
+              title: 'Overview',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/analytics/videos',
+              title: 'Videos',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/analytics/moderation',
+              title: 'Moderation',
+            },
+          ],
+        },
+        {
+          type: 'dropdown',
+          title: 'Notifications',
+          icon: Bell,
+          key: 'shorts-notifications',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/media/shorts/notifications',
+              title: 'All Notifications',
+            },
+            {
+              type: 'link',
+              path: '/admin/media/shorts/notifications/templates',
+              title: 'Templates',
+            },
+          ],
+        },
+        {
+          type: 'link',
+          path: '/admin/media/shorts/settings',
+          title: 'Shorts Settings',
+          icon: Cog,
         },
       ],
     },
@@ -351,6 +460,35 @@ const routes: Route[] = [
         },
         {
           type: 'link',
+          path: '/admin/livestreams/scheduled',
+          title: 'Scheduled',
+          icon: Clock,
+        },
+        {
+          type: 'dropdown',
+          title: 'Management',
+          icon: Video,
+          key: 'livestream-management',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/livestreams/settings',
+              title: 'Settings',
+            },
+            {
+              type: 'link',
+              path: '/admin/livestreams/categories',
+              title: 'Categories',
+            },
+            {
+              type: 'link',
+              path: '/admin/livestreams/featured',
+              title: 'Featured Streams',
+            },
+          ],
+        },
+        {
+          type: 'link',
           path: '/admin/livestreams/analytics',
           title: 'Analytics',
           icon: BarChart,
@@ -360,6 +498,72 @@ const routes: Route[] = [
           path: '/admin/livestreams/moderation',
           title: 'Moderation',
           icon: ShieldCheck,
+        },
+        {
+          type: 'link',
+          path: '/admin/livestreams/reported',
+          title: 'Reported Streams',
+          icon: AlertTriangle,
+        },
+      ],
+    },
+    {
+      type: 'section',
+      title: 'Customization',
+      items: [
+        {
+          type: 'link',
+          path: '/admin/Wallpaper/list-all-wallpaper',
+          title: 'Wallpapers',
+          icon: ImageIcon,
+        },
+        {
+          type: 'link',
+          path: '/admin/Wallpaper/add-a-new-wallpaper',
+          title: 'Add Wallpaper',
+          icon: ImageIcon,
+        },
+        {
+          type: 'link',
+          path: '/admin/Avatar/list-all-avatar',
+          title: 'Avatars',
+          icon: UserCircle,
+        },
+        {
+          type: 'link',
+          path: '/admin/Avatar/add-a-new-avatar',
+          title: 'Add Avatar',
+          icon: UserCircle,
+        },
+      ],
+    },
+    {
+      type: 'section',
+      title: 'Support',
+      items: [
+        {
+          type: 'link',
+          path: '/admin/support',
+          title: 'Support Dashboard',
+          icon: LifeBuoy,
+        },
+        {
+          type: 'link',
+          path: '/admin/support/teams',
+          title: 'Support Teams',
+          icon: UsersIcon,
+        },
+        {
+          type: 'link',
+          path: '/admin/support/tickets',
+          title: 'Tickets',
+          icon: TicketIcon,
+        },
+        {
+          type: 'link',
+          path: '/admin/support/assignments',
+          title: 'Ticket Assignments',
+          icon: RefreshCw,
         },
       ],
     },
