@@ -120,7 +120,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                             exit={{ scale: 0.9, y: 20, opacity: 0 }}
                             transition={{ type: 'spring', damping: 30, stiffness: 400 }}
                         >
-                            <div className="relative h-32 bg-gradient-to-r from-indigo-500 to-blue-600 p-6 flex items-end">
+                            <div className="relative h-32 bg-gradient-to-r from-primary-500 to-primary-600 p-6 flex items-end">
                                 <motion.button
                                     onClick={onClose}
                                     className="absolute top-4 right-4 text-white bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full p-2 focus:outline-none"
@@ -134,7 +134,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                                     initial={{ scale: 0.8, y: 20, opacity: 0 }}
                                     animate={{ scale: 1, y: 0, opacity: 1 }}
                                     transition={{ delay: 0.2, type: 'spring' }}
-                                    className="absolute -bottom-10 left-6 w-20 h-20 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg border-4 border-white"
+                                    className="absolute -bottom-10 left-6 w-20 h-20 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg border-4 border-white"
                                 >
                                     {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : '??'}
                                 </motion.div>
@@ -182,7 +182,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                                                 className={`flex items-center px-3 py-1.5 rounded-lg text-sm font-medium 
                                                 ${isSendingReset
                                                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                                        : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+                                                        : "bg-primary-50 text-primary-600 hover:bg-primary-100"
                                                     }`}
                                             >
                                                 {isSendingReset ? (
@@ -213,7 +213,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                                     <div className="grid grid-cols-2 gap-4">
                                         <motion.div variants={itemVariants}>
                                             <InfoCard
-                                                icon={<Shield size={14} className="text-indigo-500" />}
+                                                icon={<Shield size={14} className="text-primary-500" />}
                                                 label="ROLE"
                                                 value={user.role || 'No role assigned'}
                                             />
@@ -221,7 +221,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
 
                                         <motion.div variants={itemVariants}>
                                             <InfoCard
-                                                icon={<UserCheck size={14} className="text-indigo-500" />}
+                                                icon={<UserCheck size={14} className="text-primary-500" />}
                                                 label="STATUS"
                                                 value={<StatusBadge status={user.status as any} size="md" withIcon />}
                                             />
@@ -256,7 +256,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                                     <div className="grid grid-cols-2 gap-4">
                                         <motion.div variants={itemVariants}>
                                             <InfoCard
-                                                icon={<Clock size={14} className="text-indigo-500" />}
+                                                icon={<Clock size={14} className="text-primary-500" />}
                                                 label="LAST ACTIVE"
                                                 value={
                                                     <div className="text-sm flex items-center">
@@ -268,7 +268,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
 
                                         <motion.div variants={itemVariants}>
                                             <InfoCard
-                                                icon={<CalendarDays size={14} className="text-indigo-500" />}
+                                                icon={<CalendarDays size={14} className="text-primary-500" />}
                                                 label="JOINED"
                                                 value={
                                                     <div className="text-sm">
@@ -282,14 +282,14 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                                     {/* Transactions */}
                                     <motion.div variants={itemVariants}>
                                         <InfoCard
-                                            icon={<CreditCard size={14} className="text-indigo-500" />}
+                                            icon={<CreditCard size={14} className="text-primary-500" />}
                                             label="TRANSACTIONS"
                                             value={
                                                 <div className="flex items-center">
                                                     <span className="text-lg font-semibold mr-2">{user.transactions_count}</span>
                                                     <div className="h-2.5 flex-1 bg-gray-200 rounded-full overflow-hidden">
                                                         <motion.div
-                                                            className="h-full bg-gradient-to-r from-indigo-500 to-blue-500"
+                                                            className="h-full bg-gradient-to-r from-primary-500 to-primary-500"
                                                             initial={{ width: 0 }}
                                                             animate={{ width: `${Math.min(user.transactions_count * 2, 100)}%` }}
                                                             transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
@@ -306,19 +306,19 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                                         className="bg-gray-50 rounded-xl border border-gray-100 p-4"
                                     >
                                         <h3 className="text-sm font-medium text-gray-800 mb-3 flex items-center">
-                                            <Activity size={14} className="text-indigo-500 mr-2" />
+                                            <Activity size={14} className="text-primary-500 mr-2" />
                                             Activity Timeline
                                         </h3>
                                         <div className="relative pl-4 border-l border-gray-200 space-y-3">
                                             <div className="relative">
-                                                <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-indigo-500"></div>
+                                                <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-primary-500"></div>
                                                 <p className="text-xs font-medium text-gray-700">Account Created</p>
                                                 <p className="text-xs text-gray-500">{user.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'Unknown'}</p>
                                             </div>
 
                                             {user.last_login && (
                                                 <div className="relative">
-                                                    <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                                                    <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-primary-500"></div>
                                                     <p className="text-xs font-medium text-gray-700">Last Login</p>
                                                     <p className="text-xs text-gray-500">{format(new Date(user.last_login), 'MMM d, yyyy, h:mm a')}</p>
                                                 </div>
@@ -348,7 +348,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                                         className="bg-gray-50 rounded-xl border border-gray-100 p-4"
                                     >
                                         <h3 className="text-sm font-medium text-gray-800 mb-3 flex items-center">
-                                            <KeyRound size={14} className="text-indigo-500 mr-2" />
+                                            <KeyRound size={14} className="text-primary-500 mr-2" />
                                             Security
                                         </h3>
 
@@ -372,7 +372,7 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
                                                         className={`px-2.5 py-1.5 rounded-lg text-xs font-medium 
                                                         ${isSendingReset
                                                                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                                                : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+                                                                : "bg-primary-50 text-primary-600 hover:bg-primary-100"
                                                             }`}
                                                     >
                                                         {isSendingReset ? "Sending..." : "Send reset"}

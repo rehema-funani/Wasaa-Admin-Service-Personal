@@ -172,7 +172,7 @@ const DataTable: React.FC<DataTableProps> = ({
                                         onClick={handleSelectAll}
                                     >
                                         {isAllSelected && (
-                                            <Check size={14} className="text-indigo-600" />
+                                            <Check size={14} className="text-primary-600" />
                                         )}
                                     </motion.div>
                                 </th>
@@ -193,9 +193,9 @@ const DataTable: React.FC<DataTableProps> = ({
                                             >
                                                 {sortedColumn === column.id ? (
                                                     sortDirection === 'asc' ? (
-                                                        <SortAsc size={14} className="text-indigo-600" />
+                                                        <SortAsc size={14} className="text-primary-600" />
                                                     ) : (
-                                                        <SortDesc size={14} className="text-indigo-600" />
+                                                        <SortDesc size={14} className="text-primary-600" />
                                                     )
                                                 ) : (
                                                     <SortAsc size={14} className="text-gray-400" />
@@ -215,7 +215,7 @@ const DataTable: React.FC<DataTableProps> = ({
                                     className={`
                     border-b border-gray-50 last:border-0 
                     ${onRowClick ? 'cursor-pointer hover:bg-gray-50/50' : ''}
-                    ${selectedRows[row.id] ? 'bg-indigo-50/50' : ''}
+                    ${selectedRows[row.id] ? 'bg-primary-50/50' : ''}
                   `}
                                     onClick={() => onRowClick && onRowClick(row)}
                                     initial={{ opacity: 0, y: 10 }}
@@ -232,13 +232,13 @@ const DataTable: React.FC<DataTableProps> = ({
                                             <motion.div
                                                 className={`
                           w-5 h-5 rounded-md border flex items-center justify-center cursor-pointer
-                          ${selectedRows[row.id] ? 'border-indigo-600 bg-indigo-50' : 'border-gray-300'}
+                          ${selectedRows[row.id] ? 'border-primary-600 bg-primary-50' : 'border-gray-300'}
                         `}
                                                 whileHover={{ scale: 1.1, borderColor: '#6366f1' }}
                                                 whileTap={{ scale: 0.95 }}
                                             >
                                                 {selectedRows[row.id] && (
-                                                    <Check size={14} className="text-indigo-600" />
+                                                    <Check size={14} className="text-primary-600" />
                                                 )}
                                             </motion.div>
                                         </td>

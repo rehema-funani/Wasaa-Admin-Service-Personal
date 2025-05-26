@@ -290,7 +290,7 @@ const CountryUsersPage = () => {
       sortable: true,
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
             <Globe size={16} strokeWidth={1.8} />
           </div>
           <div>
@@ -308,7 +308,7 @@ const CountryUsersPage = () => {
       width: '130px',
       cell: (value: number) => (
         <div className="flex items-center">
-          <Users size={14} className="text-indigo-400 mr-1.5" strokeWidth={1.8} />
+          <Users size={14} className="text-primary-400 mr-1.5" strokeWidth={1.8} />
           <span className="font-medium">{value.toLocaleString()}</span>
         </div>
       )
@@ -327,7 +327,7 @@ const CountryUsersPage = () => {
           </div>
           <div className="w-full bg-gray-100 rounded-full h-1.5">
             <div
-              className="h-1.5 rounded-full bg-gradient-to-r from-indigo-400 to-blue-500"
+              className="h-1.5 rounded-full bg-gradient-to-r from-primary-400 to-primary-500"
               style={{ width: `${value}%` }}
             ></div>
           </div>
@@ -396,7 +396,7 @@ const CountryUsersPage = () => {
       cell: (value: string) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View country details"
@@ -404,7 +404,7 @@ const CountryUsersPage = () => {
             <Eye size={16} strokeWidth={1.8} />
           </motion.button>
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View country analytics"
@@ -568,7 +568,7 @@ const CountryUsersPage = () => {
             Export
           </motion.button>
           <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0 }}
           >
@@ -596,12 +596,12 @@ const CountryUsersPage = () => {
           >
             <div className="flex justify-between items-start mb-3">
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-blue-500 text-white flex items-center justify-center mr-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-500 text-white flex items-center justify-center mr-2">
                   <MapPin size={14} strokeWidth={1.8} />
                 </div>
                 <h3 className="font-medium text-gray-700">{region.region}</h3>
               </div>
-              <span className="text-xs px-2 py-1 bg-indigo-50 text-indigo-600 rounded-full">
+              <span className="text-xs px-2 py-1 bg-primary-50 text-primary-600 rounded-full">
                 {region.countries} countries
               </span>
             </div>
@@ -621,13 +621,13 @@ const CountryUsersPage = () => {
 
             <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2">
               <div
-                className="h-1.5 rounded-full bg-gradient-to-r from-indigo-400 to-blue-500"
+                className="h-1.5 rounded-full bg-gradient-to-r from-primary-400 to-primary-500"
                 style={{ width: `${region.activePercentage}%` }}
               ></div>
             </div>
 
             <motion.button
-              className="w-full mt-3 text-xs text-indigo-600 font-medium flex items-center justify-center"
+              className="w-full mt-3 text-xs text-primary-600 font-medium flex items-center justify-center"
               whileHover={{ x: 3 }}
             >
               View Details <ChevronRight size={14} className="ml-1" />

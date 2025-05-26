@@ -444,7 +444,7 @@ const verification: React.FC = () => {
     const getDocumentTypeIcon = (type: string) => {
         switch (type) {
             case 'national_id':
-                return <FileCheck className="w-4 h-4 text-blue-600" />;
+                return <FileCheck className="w-4 h-4 text-primary-600" />;
             case 'passport':
                 return <FileText className="w-4 h-4 text-purple-600" />;
             case 'drivers_license':
@@ -524,7 +524,7 @@ const verification: React.FC = () => {
                             </button>
 
                             <button
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 text-white rounded-xl shadow-sm hover:bg-indigo-700 transition-all text-sm"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white rounded-xl shadow-sm hover:bg-primary-700 transition-all text-sm"
                             >
                                 <Download size={16} />
                                 <span>Export Report</span>
@@ -542,7 +542,7 @@ const verification: React.FC = () => {
                                 placeholder="Search by name, email, phone or ID..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                         </div>
 
@@ -589,7 +589,7 @@ const verification: React.FC = () => {
                                 <select
                                     value={countryFilter}
                                     onChange={(e) => setCountryFilter(e.target.value)}
-                                    className="appearance-none pl-3 pr-8 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                    className="appearance-none pl-3 pr-8 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 >
                                     <option value="all">All Countries</option>
                                     {countries.map(country => (
@@ -782,14 +782,14 @@ const verification: React.FC = () => {
                                             <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
-                                                        className="text-indigo-600 hover:text-indigo-900 p-1"
+                                                        className="text-primary-600 hover:text-primary-900 p-1"
                                                         onClick={() => openVerificationViewModal(verification)}
                                                     >
                                                         <Eye size={18} />
                                                     </button>
 
                                                     <button
-                                                        className="text-blue-600 hover:text-blue-900 p-1"
+                                                        className="text-primary-600 hover:text-primary-900 p-1"
                                                         onClick={() => openDocumentsModal(verification)}
                                                     >
                                                         <FileText size={18} />
@@ -842,14 +842,14 @@ const verification: React.FC = () => {
                 </div>
 
                 {/* Info Box */}
-                <div className="mt-6 bg-blue-50/70 rounded-xl p-4 border border-blue-100 backdrop-blur-sm">
+                <div className="mt-6 bg-primary-50/70 rounded-xl p-4 border border-primary-100 backdrop-blur-sm">
                     <div className="flex items-start gap-3">
-                        <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                            <Shield size={20} className="text-blue-600" />
+                        <div className="p-2 bg-primary-100 rounded-lg flex-shrink-0">
+                            <Shield size={20} className="text-primary-600" />
                         </div>
                         <div>
-                            <h3 className="text-sm font-medium text-blue-700">About KYC Verification</h3>
-                            <p className="text-blue-600 text-xs mt-1 leading-relaxed">
+                            <h3 className="text-sm font-medium text-primary-700">About KYC Verification</h3>
+                            <p className="text-primary-600 text-xs mt-1 leading-relaxed">
                                 KYC (Know Your Customer) verifications help ensure platform safety and regulatory compliance.
                                 <br />• <strong>Pending:</strong> New verification requests awaiting review
                                 <br />• <strong>Verified:</strong> Approved identities with full transaction privileges
@@ -946,8 +946,8 @@ const verification: React.FC = () => {
                                 <h3 className="text-sm font-medium text-gray-700 mb-2">Status Timeline</h3>
                                 <div className="space-y-3">
                                     <div className="flex items-start gap-2">
-                                        <div className="p-1.5 bg-blue-100 rounded-full">
-                                            <Upload size={14} className="text-blue-600" />
+                                        <div className="p-1.5 bg-primary-100 rounded-full">
+                                            <Upload size={14} className="text-primary-600" />
                                         </div>
                                         <div>
                                             <div className="text-xs font-medium text-gray-800">Submitted</div>
@@ -1023,7 +1023,7 @@ const verification: React.FC = () => {
 
                             <button
                                 onClick={() => openDocumentsModal(selectedVerification)}
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                             >
                                 View Documents
                             </button>
@@ -1116,7 +1116,7 @@ const verification: React.FC = () => {
                                 onChange={(e) => setVerificationNote(e.target.value)}
                                 placeholder="Add any additional notes about this verification..."
                                 rows={3}
-                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                         </div>
 
@@ -1160,7 +1160,7 @@ const verification: React.FC = () => {
                                 onChange={(e) => setRejectionReason(e.target.value)}
                                 placeholder="Provide a detailed reason for rejecting this verification..."
                                 rows={4}
-                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 required
                             />
                             {rejectionReason.length === 0 && (
@@ -1251,7 +1251,7 @@ const verification: React.FC = () => {
                                     )}
                                 </div>
                                 <div className="flex justify-end mt-2">
-                                    <button className="flex items-center text-xs text-indigo-600 hover:text-indigo-800">
+                                    <button className="flex items-center text-xs text-primary-600 hover:text-primary-800">
                                         <Download size={14} className="mr-1" />
                                         Download Document
                                     </button>
@@ -1277,7 +1277,7 @@ const verification: React.FC = () => {
                                     )}
                                 </div>
                                 <div className="flex justify-end mt-2">
-                                    <button className="flex items-center text-xs text-indigo-600 hover:text-indigo-800">
+                                    <button className="flex items-center text-xs text-primary-600 hover:text-primary-800">
                                         <Download size={14} className="mr-1" />
                                         Download Photo
                                     </button>
@@ -1295,10 +1295,10 @@ const verification: React.FC = () => {
                                             <div className="w-32 h-3 bg-gray-200 rounded-full mr-2 overflow-hidden">
                                                 <div
                                                     className={`h-full rounded-full ${selectedVerification.verificationScore && selectedVerification.verificationScore > 0.9
-                                                            ? 'bg-green-500'
-                                                            : selectedVerification.verificationScore && selectedVerification.verificationScore > 0.7
-                                                                ? 'bg-yellow-500'
-                                                                : 'bg-red-500'
+                                                        ? 'bg-green-500'
+                                                        : selectedVerification.verificationScore && selectedVerification.verificationScore > 0.7
+                                                            ? 'bg-yellow-500'
+                                                            : 'bg-red-500'
                                                         }`}
                                                     style={{ width: `${selectedVerification.verificationScore ? selectedVerification.verificationScore * 100 : 75}%` }}
                                                 ></div>

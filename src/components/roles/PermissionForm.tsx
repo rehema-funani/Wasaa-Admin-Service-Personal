@@ -171,11 +171,11 @@ const PermissionForm: React.FC<PermissionFormProps> = ({ isEdit = false }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
             >
-                <div className="p-4 bg-blue-50 border-b border-blue-100 rounded-t-xl flex gap-3 items-start">
-                    <InfoIcon size={20} className="text-blue-500 mt-0.5 flex-shrink-0" />
+                <div className="p-4 bg-primary-50 border-b border-primary-100 rounded-t-xl flex gap-3 items-start">
+                    <InfoIcon size={20} className="text-primary-500 mt-0.5 flex-shrink-0" />
                     <div>
-                        <h3 className="text-sm font-medium text-blue-700">Permission Naming Guidelines</h3>
-                        <p className="text-sm text-blue-600 mt-1">
+                        <h3 className="text-sm font-medium text-primary-700">Permission Naming Guidelines</h3>
+                        <p className="text-sm text-primary-600 mt-1">
                             Use descriptive names with action and resource (e.g., "create_users", "view_reports").
                             Permissions should clearly indicate what action they allow on what resource.
                         </p>
@@ -194,7 +194,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({ isEdit = false }) => {
                                 name="name"
                                 value={permission.name}
                                 onChange={handleInputChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 placeholder="e.g., create_users"
                                 required
                                 disabled={isLoading}
@@ -213,7 +213,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({ isEdit = false }) => {
                                 name="category"
                                 value={permission.category}
                                 onChange={handleInputChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 disabled={isLoading}
                             >
                                 {categoryOptions.map(option => (
@@ -235,7 +235,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({ isEdit = false }) => {
                             value={permission.description}
                             onChange={handleInputChange}
                             rows={4}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Describe what this permission allows users to do"
                             disabled={isLoading}
                         />
@@ -250,7 +250,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({ isEdit = false }) => {
                             name="status"
                             value={permission.status}
                             onChange={handleInputChange}
-                            className="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             disabled={isLoading}
                         >
                             {statusOptions.map(option => (
@@ -276,7 +276,7 @@ const PermissionForm: React.FC<PermissionFormProps> = ({ isEdit = false }) => {
 
                         <motion.button
                             type="submit"
-                            className="flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none disabled:opacity-50"
+                            className="flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none disabled:opacity-50"
                             whileHover={{ y: -1 }}
                             whileTap={{ y: 0 }}
                             disabled={isSaving || isLoading}

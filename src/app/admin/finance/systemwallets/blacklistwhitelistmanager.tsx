@@ -386,9 +386,9 @@ const BlacklistWhitelistManager: React.FC = () => {
             case 'email':
                 return <Mail className="w-4 h-4 text-purple-600" />;
             case 'phone':
-                return <Smartphone className="w-4 h-4 text-blue-600" />;
+                return <Smartphone className="w-4 h-4 text-primary-600" />;
             case 'ip_address':
-                return <Network className="w-4 h-4 text-indigo-600" />;
+                return <Network className="w-4 h-4 text-primary-600" />;
             case 'device_id':
                 return <Smartphone className="w-4 h-4 text-green-600" />;
             case 'account':
@@ -532,7 +532,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={openAddModal}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm"
                         >
                             <PlusCircle size={16} />
                             <span>Add Entry</span>
@@ -550,7 +550,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                             placeholder={`Search ${activeTab}...`}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                            className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                         />
                     </div>
 
@@ -660,13 +660,13 @@ const BlacklistWhitelistManager: React.FC = () => {
                                         <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex items-center justify-end gap-1">
                                                 <button
-                                                    className="text-indigo-600 hover:text-indigo-900 p-1"
+                                                    className="text-primary-600 hover:text-primary-900 p-1"
                                                     onClick={() => openViewModal(entry)}
                                                 >
                                                     <FileText size={16} />
                                                 </button>
                                                 <button
-                                                    className="text-blue-600 hover:text-blue-900 p-1"
+                                                    className="text-primary-600 hover:text-primary-900 p-1"
                                                     onClick={() => openEditModal(entry)}
                                                 >
                                                     <PlusCircle size={16} />
@@ -714,14 +714,14 @@ const BlacklistWhitelistManager: React.FC = () => {
             </div>
 
             {/* Info Box */}
-            <div className="mt-6 bg-blue-50/70 rounded-xl p-4 border border-blue-100 backdrop-blur-sm">
+            <div className="mt-6 bg-primary-50/70 rounded-xl p-4 border border-primary-100 backdrop-blur-sm">
                 <div className="flex items-start gap-3">
-                    <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                        <Shield size={20} className="text-blue-600" />
+                    <div className="p-2 bg-primary-100 rounded-lg flex-shrink-0">
+                        <Shield size={20} className="text-primary-600" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-medium text-blue-700">About Blacklist & Whitelist</h3>
-                        <p className="text-blue-600 text-xs mt-1 leading-relaxed">
+                        <h3 className="text-sm font-medium text-primary-700">About Blacklist & Whitelist</h3>
+                        <p className="text-primary-600 text-xs mt-1 leading-relaxed">
                             {activeTab === 'blacklist' ? (
                                 <>
                                     Blacklisting restricts specific entities from accessing the platform:
@@ -799,7 +799,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                                             {selectedEntry.value}
                                         </span>
                                         <button
-                                            className="text-indigo-600 hover:text-indigo-800 p-1"
+                                            className="text-primary-600 hover:text-primary-800 p-1"
                                             onClick={() => {
                                                 navigator.clipboard.writeText(selectedEntry.value);
                                                 showSuccess('Value copied to clipboard');
@@ -870,8 +870,8 @@ const BlacklistWhitelistManager: React.FC = () => {
                                         {selectedEntry.riskScore !== undefined && (
                                             <div className="text-xs mt-1">
                                                 Risk Score: <span className={`font-medium ${selectedEntry.riskScore > 75 ? 'text-red-600' :
-                                                        selectedEntry.riskScore > 50 ? 'text-orange-600' :
-                                                            'text-yellow-600'
+                                                    selectedEntry.riskScore > 50 ? 'text-orange-600' :
+                                                        'text-yellow-600'
                                                     }`}>{selectedEntry.riskScore}</span>
                                             </div>
                                         )}
@@ -890,7 +890,7 @@ const BlacklistWhitelistManager: React.FC = () => {
 
                             <button
                                 onClick={() => openEditModal(selectedEntry)}
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                             >
                                 Edit
                             </button>
@@ -901,13 +901,13 @@ const BlacklistWhitelistManager: React.FC = () => {
                 {(modalType === 'add' || modalType === 'edit') && (
                     <div className="space-y-4 p-1">
                         {modalType === 'add' ? (
-                            <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-md mb-4">
+                            <div className="bg-primary-50 border-l-4 border-primary-400 p-3 rounded-md mb-4">
                                 <div className="flex">
                                     <div className="flex-shrink-0">
-                                        <AlertTriangle className="h-5 w-5 text-blue-400" />
+                                        <AlertTriangle className="h-5 w-5 text-primary-400" />
                                     </div>
                                     <div className="ml-3">
-                                        <p className="text-sm text-blue-700">
+                                        <p className="text-sm text-primary-700">
                                             You are adding a new entry to the {activeTab}. This action will be logged for audit purposes.
                                         </p>
                                     </div>
@@ -933,7 +933,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                             <select
                                 value={formData.entityType}
                                 onChange={(e) => setFormData({ ...formData, entityType: e.target.value })}
-                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             >
                                 <option value="user">User</option>
                                 <option value="email">Email</option>
@@ -951,7 +951,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                                 value={formData.value}
                                 onChange={(e) => setFormData({ ...formData, value: e.target.value })}
                                 placeholder={`Enter ${formData.entityType} value...`}
-                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 required
                             />
                         </div>
@@ -963,7 +963,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                                 placeholder={`Why is this entity being ${activeTab === 'blacklist' ? 'blacklisted' : 'whitelisted'}?`}
                                 rows={3}
-                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 required
                             />
                         </div>
@@ -974,7 +974,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                                 type="datetime-local"
                                 value={formData.expiresAt}
                                 onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
-                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                             <p className="text-xs text-gray-500 mt-1">Leave blank for no expiration (permanent).</p>
                         </div>
@@ -986,7 +986,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                                 placeholder="Any additional information about this entry..."
                                 rows={3}
-                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                         </div>
 
@@ -1005,7 +1005,7 @@ const BlacklistWhitelistManager: React.FC = () => {
                             <button
                                 onClick={modalType === 'add' ? handleAddEntry : handleUpdateEntry}
                                 disabled={!formData.value || !formData.reason}
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {modalType === 'add' ? 'Add' : 'Update'} Entry
                             </button>

@@ -124,11 +124,11 @@ const page = () => {
                 },
                 {
                     id: '2-2',
-                    name: 'Blue Heart',
+                    name: 'primary Heart',
                     value: '💙',
                     category: 'standard',
                     type: 'unicode',
-                    tags: ['heart', 'blue', 'love'],
+                    tags: ['heart', 'primary', 'love'],
                     isFeatured: false,
                     status: 'active',
                     usageCount: 789,
@@ -697,7 +697,7 @@ const page = () => {
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={handleSave}
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-500 text-white rounded-xl shadow-sm hover:bg-blue-600 transition-all text-sm"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-500 text-white rounded-xl shadow-sm hover:bg-primary-600 transition-all text-sm"
                             >
                                 <Save size={16} />
                                 <span>Save Changes</span>
@@ -724,7 +724,7 @@ const page = () => {
                                 placeholder="Search emojis by name or tag..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                         </div>
 
@@ -810,7 +810,7 @@ const page = () => {
                                     onClick={() => toggleRowExpansion(category.id)}
                                 >
                                     <div className="flex items-center gap-2">
-                                        <div className={`p-1.5 rounded-lg ${category.type === 'standard' ? 'bg-blue-50 text-blue-500' :
+                                        <div className={`p-1.5 rounded-lg ${category.type === 'standard' ? 'bg-primary-50 text-primary-500' :
                                             category.type === 'custom' ? 'bg-purple-50 text-purple-500' :
                                                 category.type === 'animated' ? 'bg-green-50 text-green-500' :
                                                     'bg-amber-50 text-amber-500'
@@ -840,7 +840,7 @@ const page = () => {
                                                 e.stopPropagation();
                                                 openAddEmojiModal(category);
                                             }}
-                                            className="p-1.5 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-blue-50"
+                                            className="p-1.5 text-gray-400 hover:text-primary-500 rounded-lg hover:bg-primary-50"
                                             title="Add Emoji"
                                         >
                                             <PlusCircle size={16} />
@@ -851,7 +851,7 @@ const page = () => {
                                                 e.stopPropagation();
                                                 openEditCategoryModal(category);
                                             }}
-                                            className="p-1.5 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-blue-50"
+                                            className="p-1.5 text-gray-400 hover:text-primary-500 rounded-lg hover:bg-primary-50"
                                             title="Edit Category"
                                         >
                                             <Edit size={16} />
@@ -907,7 +907,7 @@ const page = () => {
                                                         <div className="mt-2 pt-2 border-t border-gray-200 w-full flex justify-center gap-1">
                                                             <button
                                                                 onClick={() => openEditEmojiModal(category, emoji)}
-                                                                className="p-1 text-gray-400 hover:text-blue-500 rounded-md hover:bg-blue-50"
+                                                                className="p-1 text-gray-400 hover:text-primary-500 rounded-md hover:bg-primary-50"
                                                                 title="Edit"
                                                             >
                                                                 <Edit size={14} />
@@ -946,12 +946,12 @@ const page = () => {
                 </div>
 
                 {/* Info Card */}
-                <div className="mt-6 bg-blue-50/70 rounded-xl p-3 border border-blue-100 backdrop-blur-sm">
+                <div className="mt-6 bg-primary-50/70 rounded-xl p-3 border border-primary-100 backdrop-blur-sm">
                     <div className="flex items-start gap-2">
-                        <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
+                        <Info size={16} className="text-primary-500 mt-0.5 flex-shrink-0" />
                         <div>
-                            <h3 className="text-sm font-medium text-blue-700">About Emoji Management</h3>
-                            <p className="text-blue-600 text-xs mt-0.5 leading-relaxed">
+                            <h3 className="text-sm font-medium text-primary-700">About Emoji Management</h3>
+                            <p className="text-primary-600 text-xs mt-0.5 leading-relaxed">
                                 Manage emoji categories and individual emojis for your chat platform. You can add standard unicode emojis, custom image-based emojis, and animated emojis.
                                 Featured emojis (marked with an orange dot) will appear in the quick-selection menu for users.
                             </p>
@@ -1092,7 +1092,7 @@ const page = () => {
                                     value={categoryFormData.name}
                                     onChange={handleCategoryFormChange}
                                     required
-                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                                     placeholder="e.g., Smileys & Emotions"
                                 />
                             </div>
@@ -1107,7 +1107,7 @@ const page = () => {
                                     value={categoryFormData.description}
                                     onChange={handleCategoryFormChange}
                                     rows={2}
-                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                                     placeholder="Describe the category..."
                                 ></textarea>
                             </div>
@@ -1156,7 +1156,7 @@ const page = () => {
                             <button
                                 type="button"
                                 onClick={handleCategoryFormSubmit}
-                                className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm"
+                                className="px-3 py-1.5 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm"
                             >
                                 {modalType === 'addCategory' ? 'Add Category' : 'Update Category'}
                             </button>
@@ -1176,7 +1176,7 @@ const page = () => {
                                     value={emojiFormData.name}
                                     onChange={handleEmojiFormChange}
                                     required
-                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                                     placeholder="e.g., Smiling Face"
                                 />
                             </div>
@@ -1192,7 +1192,7 @@ const page = () => {
                                     value={emojiFormData.value}
                                     onChange={handleEmojiFormChange}
                                     required
-                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                                     placeholder={emojiFormData.type === 'unicode' ? 'e.g., 😊 or U+1F60A' : 'e.g., /images/emojis/smile.png'}
                                 />
                                 {emojiFormData.type !== 'unicode' && (
@@ -1221,7 +1221,7 @@ const page = () => {
                                     name="tags"
                                     value={emojiFormData.tags}
                                     onChange={handleEmojiFormChange}
-                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                                    className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                                     placeholder="e.g., smile, happy, friendly"
                                 />
                             </div>
@@ -1233,7 +1233,7 @@ const page = () => {
                                         name="isFeatured"
                                         checked={emojiFormData.isFeatured}
                                         onChange={handleEmojiFeaturedChange}
-                                        className="rounded text-blue-500 focus:ring-blue-500 h-4 w-4"
+                                        className="rounded text-primary-500 focus:ring-primary-500 h-4 w-4"
                                     />
                                     <span className="ml-2 text-sm text-gray-700">Feature in quick selection</span>
                                 </label>
@@ -1282,7 +1282,7 @@ const page = () => {
                             <button
                                 type="button"
                                 onClick={handleEmojiFormSubmit}
-                                className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm"
+                                className="px-3 py-1.5 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm"
                             >
                                 {modalType === 'add' ? 'Add Emoji' : 'Update Emoji'}
                             </button>

@@ -30,7 +30,7 @@ const mockCategories = [
     name: 'Basic',
     description: 'Simple, affordable gifts for everyone',
     giftsCount: 8,
-    color: '#3B82F6', // blue
+    color: '#3B82F6', // primary
     isActive: true,
     createdAt: '2024-12-01T08:30:00Z',
     updatedAt: '2025-01-15T14:45:20Z'
@@ -303,7 +303,7 @@ const page = () => {
   };
 
   // Handle page change
-  const handlePageChange = (page:any) => {
+  const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
 
@@ -368,7 +368,7 @@ const page = () => {
       width: '100px',
       cell: (value) => (
         <div className="flex items-center">
-          <Gift size={14} className="text-indigo-500 mr-1.5" strokeWidth={1.8} />
+          <Gift size={14} className="text-primary-500 mr-1.5" strokeWidth={1.8} />
           <span className="font-medium">{value}</span>
         </div>
       )
@@ -419,7 +419,7 @@ const page = () => {
       cell: (value, row) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View category details"
@@ -428,7 +428,7 @@ const page = () => {
             <Eye size={16} strokeWidth={1.8} />
           </motion.button>
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-blue-100 hover:text-blue-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-primary-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Edit category"
@@ -469,7 +469,7 @@ const page = () => {
         </div>
         <div className="flex flex-wrap gap-2">
           <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)' }}
             whileTap={{ y: 0 }}
             onClick={handleCreateCategory}
@@ -499,8 +499,8 @@ const page = () => {
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center"
           whileHover={{ y: -4, boxShadow: '0 10px 20px rgba(0, 0, 0, 0.05)' }}
         >
-          <div className="mr-4 p-2 bg-indigo-50 rounded-lg">
-            <Tag size={20} className="text-indigo-500" strokeWidth={1.8} />
+          <div className="mr-4 p-2 bg-primary-50 rounded-lg">
+            <Tag size={20} className="text-primary-500" strokeWidth={1.8} />
           </div>
           <div>
             <p className="text-gray-500 text-xs">Total Categories</p>
@@ -702,7 +702,7 @@ const page = () => {
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <div className="text-xs text-gray-500 mb-1">Gifts</div>
                         <div className="font-medium flex items-center">
-                          <Gift size={16} className="text-indigo-500 mr-1" strokeWidth={1.8} />
+                          <Gift size={16} className="text-primary-500 mr-1" strokeWidth={1.8} />
                           {selectedCategory.giftsCount}
                         </div>
                       </div>
@@ -725,7 +725,7 @@ const page = () => {
                     <div className="pt-4 border-t border-gray-100">
                       <div className="flex justify-end space-x-3">
                         <button
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
                           onClick={() => {
                             setModalType('edit');
                             setFormData({
@@ -763,7 +763,7 @@ const page = () => {
                         required
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Enter category name"
                       />
                     </div>
@@ -778,7 +778,7 @@ const page = () => {
                         rows={3}
                         value={formData.description}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Describe this category"
                       />
                     </div>
@@ -814,7 +814,7 @@ const page = () => {
                         type="checkbox"
                         checked={formData.isActive}
                         onChange={handleChange}
-                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                       />
                       <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700">
                         Active (visible to users)
@@ -832,7 +832,7 @@ const page = () => {
                         </button>
                         <button
                           type="submit"
-                          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700"
                         >
                           <Save size={16} className="inline mr-2" strokeWidth={1.8} />
                           {modalType === 'edit' ? 'Update' : 'Create'}

@@ -53,14 +53,14 @@ const CreatorsPage: React.FC = () => {
                             placeholder="Search creators..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                            className="pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                         />
                     </div>
 
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className="py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                        className="py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                     >
                         <option value="all">All Creators</option>
                         <option value="active">Active</option>
@@ -129,7 +129,7 @@ const CreatorsPage: React.FC = () => {
                                         }
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <Link to={`/admin/media/shorts/creators/${creator.id}`} className="text-indigo-600 hover:text-indigo-900">
+                                        <Link to={`/admin/media/shorts/creators/${creator.id}`} className="text-primary-600 hover:text-primary-900">
                                             View Details
                                         </Link>
                                     </td>

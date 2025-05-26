@@ -161,7 +161,7 @@ const TicketDetail: React.FC = () => {
                     <p className="text-gray-600 mb-4">The ticket you're looking for doesn't exist.</p>
                     <button
                         onClick={() => navigate('/admin/support/tickets')}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
+                        className="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700"
                     >
                         Back to Tickets
                     </button>
@@ -234,7 +234,7 @@ const TicketDetail: React.FC = () => {
                                                 <div className={`
                           rounded-2xl px-4 py-3 
                           ${message.senderType === 'agent'
-                                                        ? 'bg-indigo-600 text-white'
+                                                        ? 'bg-primary-600 text-white'
                                                         : 'bg-white border border-gray-200'
                                                     }
                         `}>
@@ -281,7 +281,7 @@ const TicketDetail: React.FC = () => {
                                             }
                                         }}
                                         placeholder="Type your reply..."
-                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white resize-none"
+                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500 focus:bg-white resize-none"
                                         rows={3}
                                     />
                                     <div className="flex items-center justify-between mt-3">
@@ -302,7 +302,7 @@ const TicketDetail: React.FC = () => {
                                         <motion.button
                                             onClick={handleSendReply}
                                             disabled={!replyContent.trim() || isReplying}
-                                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                         >
@@ -511,10 +511,10 @@ const TicketDetail: React.FC = () => {
                     {/* AI Suggestions */}
                     <div className="mb-6">
                         <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <Sparkles size={16} className="text-indigo-600" />
+                            <Sparkles size={16} className="text-primary-600" />
                             AI Suggestions
                         </h3>
-                        <div className="bg-indigo-50 rounded-xl p-3 text-sm text-indigo-700">
+                        <div className="bg-primary-50 rounded-xl p-3 text-sm text-primary-700">
                             Based on similar tickets, consider checking the user's wallet transaction history for any pending operations.
                         </div>
                     </div>

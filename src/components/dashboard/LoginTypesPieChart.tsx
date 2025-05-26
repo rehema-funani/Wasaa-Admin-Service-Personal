@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 
 const LoginTypesPieChart: React.FC = () => {
     const data = [
-        { name: 'Mobile', value: 68, color: '#3b82f6' }, // blue-500
-        { name: 'Desktop', value: 26, color: '#6366f1' }, // indigo-500
+        { name: 'Mobile', value: 68, color: '#3b82f6' }, // primary-500
+        { name: 'Desktop', value: 26, color: '#6366f1' }, // primary-500
         { name: 'Tablet', value: 6, color: '#8b5cf6' }  // violet-500
     ];
 

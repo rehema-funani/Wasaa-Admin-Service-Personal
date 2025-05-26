@@ -179,14 +179,14 @@ const UserRoleAssignment: React.FC<UserRoleAssignmentProps> = ({
 
                 {isLoading ? (
                     <div className="flex justify-center py-12">
-                        <Loader2 size={32} className="animate-spin text-indigo-500" />
+                        <Loader2 size={32} className="animate-spin text-primary-500" />
                     </div>
                 ) : (
                     <>
                         {user && (
                             <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <div className="flex items-center mb-4">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
                                         <User size={20} strokeWidth={2} />
                                     </div>
                                     <div>
@@ -198,7 +198,7 @@ const UserRoleAssignment: React.FC<UserRoleAssignmentProps> = ({
                                 <div className="flex items-center text-sm text-gray-600">
                                     <span className="font-medium mr-2">Current Role:</span>
                                     {user.role_id ? (
-                                        <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-md">
+                                        <span className="bg-primary-100 text-primary-700 px-2 py-1 rounded-md">
                                             {roles.find(role => role.id === user.role_id)?.title || 'Unknown Role'}
                                         </span>
                                     ) : (
@@ -219,7 +219,7 @@ const UserRoleAssignment: React.FC<UserRoleAssignmentProps> = ({
                                 placeholder="Search roles..."
                                 value={searchQuery}
                                 onChange={handleSearchChange}
-                                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             />
                         </div>
 
@@ -237,13 +237,13 @@ const UserRoleAssignment: React.FC<UserRoleAssignmentProps> = ({
                                         className={`
                       flex items-start p-4 rounded-lg border cursor-pointer transition-all duration-150
                       ${selectedRoleId === role.id
-                                                ? 'border-indigo-200 bg-indigo-50'
+                                                ? 'border-primary-200 bg-primary-50'
                                                 : 'border-gray-200 hover:bg-gray-50'}
                     `}
                                         onClick={() => handleRoleSelect(role.id)}
                                     >
                                         <div className="flex-shrink-0 mt-1">
-                                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 text-white flex items-center justify-center">
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-primary-500 text-white flex items-center justify-center">
                                                 <ShieldCheck size={16} strokeWidth={2} />
                                             </div>
                                         </div>
@@ -255,14 +255,14 @@ const UserRoleAssignment: React.FC<UserRoleAssignmentProps> = ({
                                                     type="radio"
                                                     checked={selectedRoleId === role.id}
                                                     onChange={() => { }}
-                                                    className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                                                    className="h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
                                                 />
                                             </div>
                                             {role.description && (
                                                 <p className="text-xs text-gray-500 mt-1">{role.description}</p>
                                             )}
                                             {role.permissions.length > 0 && (
-                                                <p className="text-xs text-indigo-600 mt-2">
+                                                <p className="text-xs text-primary-600 mt-2">
                                                     {role.permissions.length} permission{role.permissions.length !== 1 ? 's' : ''}
                                                 </p>
                                             )}
@@ -291,7 +291,7 @@ const UserRoleAssignment: React.FC<UserRoleAssignmentProps> = ({
                 <motion.button
                     type="button"
                     onClick={handleSubmit}
-                    className="flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none disabled:opacity-50"
+                    className="flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none disabled:opacity-50"
                     whileHover={{ y: -1 }}
                     whileTap={{ y: 0 }}
                     disabled={isSaving || isLoading || !selectedRoleId}

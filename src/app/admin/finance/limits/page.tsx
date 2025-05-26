@@ -121,7 +121,7 @@ const KycManagementPage: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <motion.button
                                 onClick={handleAddKycConfig}
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 disabled={isLoading}
@@ -142,7 +142,7 @@ const KycManagementPage: React.FC = () => {
                                 placeholder="Search KYC levels..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                         </div>
 
@@ -195,12 +195,12 @@ const KycManagementPage: React.FC = () => {
                     openAddLimitModal={handleAddTransactionLimit}
                 />
 
-                <div className="mt-6 bg-blue-50/70 rounded-xl p-3 border border-blue-100 backdrop-blur-sm">
+                <div className="mt-6 bg-primary-50/70 rounded-xl p-3 border border-primary-100 backdrop-blur-sm">
                     <div className="flex items-start gap-2">
-                        <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
+                        <Info size={16} className="text-primary-500 mt-0.5 flex-shrink-0" />
                         <div>
-                            <h3 className="text-sm font-medium text-blue-700">About KYC Levels</h3>
-                            <p className="text-blue-600 text-xs mt-0.5 leading-relaxed">
+                            <h3 className="text-sm font-medium text-primary-700">About KYC Levels</h3>
+                            <p className="text-primary-600 text-xs mt-0.5 leading-relaxed">
                                 KYC (Know Your Customer) levels determine what transactions users can perform and their associated limits.
                                 Higher verification levels typically allow for higher transaction limits and more transaction types.
                                 Configure requirements, limits, and enabled transaction types for each KYC level.
@@ -263,9 +263,9 @@ const KycManagementPage: React.FC = () => {
                             </div>
 
                             {/* Recommendation */}
-                            <div className="bg-blue-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-blue-100">
-                                <h4 className="font-semibold text-blue-900 mb-2">💡 Recommendation</h4>
-                                <p className="text-sm text-blue-800">
+                            <div className="bg-primary-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-primary-100">
+                                <h4 className="font-semibold text-primary-900 mb-2">💡 Recommendation</h4>
+                                <p className="text-sm text-primary-800">
                                     Consider setting the KYC level to <span className="font-medium">"inactive"</span> instead of deleting it.
                                     This preserves historical data while preventing new assignments.
                                 </p>

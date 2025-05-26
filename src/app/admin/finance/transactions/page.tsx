@@ -161,8 +161,8 @@ const page = () => {
                 break;
             case 'Transfer':
                 icon = <ArrowDownUp size={16} strokeWidth={2.5} />;
-                bgColor = 'bg-blue-500/10';
-                iconColor = 'text-blue-600';
+                bgColor = 'bg-primary-500/10';
+                iconColor = 'text-primary-600';
                 break;
             default:
                 icon = <Minus size={16} strokeWidth={2.5} />;
@@ -219,7 +219,7 @@ const page = () => {
                     <select
                         value={itemsPerPage}
                         onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                        className="px-3 py-1.5 text-sm border-0 bg-gray-100 rounded-full focus:ring-2 focus:ring-indigo-500/30 focus:bg-white transition-all"
+                        className="px-3 py-1.5 text-sm border-0 bg-gray-100 rounded-full focus:ring-2 focus:ring-primary-500/30 focus:bg-white transition-all"
                     >
                         <option value={10}>10 rows</option>
                         <option value={25}>25 rows</option>
@@ -278,7 +278,7 @@ const page = () => {
                     <p className="text-gray-600 mb-6">{error}</p>
                     <button
                         onClick={() => fetchTransactions(currentPage, itemsPerPage, searchQuery)}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+                        className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
                     >
                         Try Again
                     </button>
@@ -298,7 +298,7 @@ const page = () => {
                         </div>
                         <div className="flex items-center space-x-3">
                             <motion.button
-                                className="flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all"
+                                className="flex items-center px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -317,7 +317,7 @@ const page = () => {
                                 placeholder="Search transactions..."
                                 value={searchQuery}
                                 onChange={(e) => handleSearch(e.target.value)}
-                                className="w-full pl-12 pr-12 py-4 bg-gray-100 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500/30 focus:bg-white transition-all"
+                                className="w-full pl-12 pr-12 py-4 bg-gray-100 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-primary-500/30 focus:bg-white transition-all"
                             />
                             <button className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-gray-200 rounded-lg transition-colors">
                                 <Filter size={18} className="text-gray-400" />
@@ -337,7 +337,7 @@ const page = () => {
                 >
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center h-64">
-                            <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+                            <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
                             <p className="text-gray-500">Loading transactions...</p>
                         </div>
                     ) : transactions.length === 0 ? (

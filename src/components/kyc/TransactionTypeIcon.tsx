@@ -11,7 +11,7 @@ const TransactionTypeIcon: React.FC<TransactionTypeIconProps> = ({ type, size = 
     const getIcon = () => {
         switch (type) {
             case 'send':
-                return <Users size={size} className="text-blue-500" />;
+                return <Users size={size} className="text-primary-500" />;
             case 'WITHDRAW':
                 return <BarChart4 size={size} className="text-purple-500" />;
             case 'withdraw_mpesa':

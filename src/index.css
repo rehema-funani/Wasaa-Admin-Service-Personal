@@ -1,103 +1,102 @@
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+Mono:wght@100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Raleway:ital,wght@0,100..900;1,100..900&family=Tuffy:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+Mono:wght@100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Raleway:ital,wght@0,100..900;1,100..900&family=Tuffy:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-    body {
-        font-family: "Open Sans", sans-serif;
-        font-optical-sizing: auto;
-        font-weight: 500;
-        font-style: normal;
-        font-variation-settings:
-            "wdth" 100;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
-    }
+  body {
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-    h1,
-    h2,
-    h3,
-    h4 {
-        font-weight: 600;
-        letter-spacing: -0.02em;
-    }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
 
-    p,
-    span,
-    div,
-    button,
-    a {
-        letter-spacing: -0.01em;
-    }
+  p,
+  span,
+  div,
+  button,
+  a {
+    letter-spacing: -0.01em;
+  }
 
-    .text-secondary {
-        font-weight: 400;
-    }
+  .text-secondary {
+    font-weight: 400;
+  }
 }
 
 @layer components {
-    .text-gradient {
-        @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500;
-    }
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-500;
+  }
 
-    .glass-panel {
-        @apply bg-white/80 backdrop-blur-lg border border-white/50 shadow-sm;
-    }
+  .glass-panel {
+    @apply bg-white/80 backdrop-blur-lg border border-white/50 shadow-sm;
+  }
 
-    .button-primary {
-        @apply bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-medium px-4 py-2 rounded-xl shadow-md hover:shadow-lg hover:from-indigo-500 hover:to-indigo-400 transition-all duration-200 ease-in-out;
-    }
+  .button-primary {
+    @apply bg-gradient-to-r from-primary-600 to-primary-500 text-white font-medium px-4 py-2 rounded-xl shadow-md hover:shadow-lg hover:from-primary-500 hover:to-primary-400 transition-all duration-200 ease-in-out;
+  }
 
-    .button-secondary {
-        @apply bg-white/80 backdrop-blur-sm border border-gray-100 text-gray-700 font-medium px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:bg-white/90 transition-all duration-200 ease-in-out;
-    }
+  .button-secondary {
+    @apply bg-white/80 backdrop-blur-sm border border-gray-100 text-gray-700 font-medium px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:bg-white/90 transition-all duration-200 ease-in-out;
+  }
 
-    .card {
-        @apply rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100/80 shadow-sm hover:shadow-md transition-all duration-200 ease-in-out;
-    }
+  .card {
+    @apply rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100/80 shadow-sm hover:shadow-md transition-all duration-200 ease-in-out;
+  }
 }
 
 ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    background: transparent;
-    display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+  display: none;
 }
 
 * {
-    scrollbar-width: none;
+  scrollbar-width: none;
 }
 
 * {
-    -ms-overflow-style: none;
+  -ms-overflow-style: none;
 }
 
 .modal-content,
 [class*="overflow-y-auto"],
 [class*="overflow-auto"] {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .modal-content::-webkit-scrollbar,
 [class*="overflow-y-auto"]::-webkit-scrollbar,
 [class*="overflow-auto"]::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .max-h-\[90vh\] {
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .max-h-\[90vh\]::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;
+  width: 0;
+  height: 0;
+  display: none;
 }

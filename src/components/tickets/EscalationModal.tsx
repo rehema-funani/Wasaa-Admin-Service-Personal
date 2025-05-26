@@ -99,7 +99,7 @@ const EscalationModal: React.FC<{
                             name="level"
                             value={formData.level}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-transparent transition-all duration-200 appearance-none"
+                            className="w-full px-3 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-transparent transition-all duration-200 appearance-none"
                             required
                         >
                             <option value="LEVEL_1">Level 1 Support</option>
@@ -122,15 +122,15 @@ const EscalationModal: React.FC<{
                         name="reason"
                         value={formData.reason}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-transparent transition-all duration-200"
+                        className="w-full px-3 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-transparent transition-all duration-200"
                         rows={3}
                         required
                         placeholder="Why does this ticket need to be escalated?"
                     />
                 </div>
 
-                <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100/50 mb-3">
-                    <h4 className="text-sm font-medium text-blue-700 mb-2">Reassign Ticket</h4>
+                <div className="bg-primary-50/50 p-3 rounded-lg border border-primary-100/50 mb-3">
+                    <h4 className="text-sm font-medium text-primary-700 mb-2">Reassign Ticket</h4>
 
                     <div className="space-y-3">
                         <div>
@@ -141,7 +141,7 @@ const EscalationModal: React.FC<{
                                 <select
                                     value={selectedTeam || ""}
                                     onChange={handleTeamChange}
-                                    className="w-full px-3 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-transparent transition-all duration-200 appearance-none"
+                                    className="w-full px-3 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-transparent transition-all duration-200 appearance-none"
                                 >
                                     <option value="">Select a team</option>
                                     {teams.map(team => (
@@ -172,7 +172,7 @@ const EscalationModal: React.FC<{
                                         <select
                                             value={selectedUser || ""}
                                             onChange={handleUserChange}
-                                            className="w-full px-3 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-transparent transition-all duration-200 appearance-none"
+                                            className="w-full px-3 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-transparent transition-all duration-200 appearance-none"
                                         >
                                             <option value="">Unassigned</option>
                                             {availableUsers.map(user => (

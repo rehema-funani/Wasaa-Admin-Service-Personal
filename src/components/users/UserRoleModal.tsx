@@ -46,11 +46,11 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
 
     // Role permission category colors
     const permissionColors: Record<string, string> = {
-        'read': 'bg-blue-100 text-blue-700',
+        'read': 'bg-primary-100 text-primary-700',
         'write': 'bg-green-100 text-green-700',
         'delete': 'bg-red-100 text-red-700',
         'manage': 'bg-purple-100 text-purple-700',
-        'admin': 'bg-indigo-100 text-indigo-700',
+        'admin': 'bg-primary-100 text-primary-700',
         'user': 'bg-orange-100 text-orange-700'
     };
 
@@ -125,10 +125,10 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                             transition={{ type: 'spring', damping: 30, stiffness: 400 }}
                         >
                             {/* Header */}
-                            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-indigo-50 to-purple-50">
+                            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-primary-50 to-purple-50">
                                 <div className="flex items-center">
-                                    <div className="p-2 bg-indigo-100 rounded-lg mr-3">
-                                        <Shield size={18} className="text-indigo-600" />
+                                    <div className="p-2 bg-primary-100 rounded-lg mr-3">
+                                        <Shield size={18} className="text-primary-600" />
                                     </div>
                                     <div>
                                         <h2 className="text-xl font-semibold text-gray-800">Assign Role</h2>
@@ -167,7 +167,7 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                                         placeholder="Search roles..."
                                         value={searchQuery}
                                         onChange={handleSearchChange}
-                                        className="pl-10 w-full px-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
+                                        className="pl-10 w-full px-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
                                     />
                                 </div>
 
@@ -187,7 +187,7 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                                                     className={`
                             relative p-4 rounded-xl border cursor-pointer transition-all duration-150
                             ${selectedRoleId === role.id
-                                                            ? 'border-indigo-300 bg-indigo-50 shadow-md'
+                                                            ? 'border-primary-300 bg-primary-50 shadow-md'
                                                             : 'border-gray-200 hover:bg-gray-50 hover:border-gray-300'
                                                         }
                           `}
@@ -199,8 +199,8 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                                                     <div className="flex items-start">
                                                         <div className="flex-shrink-0 mt-1">
                                                             <div className={`w-10 h-10 rounded-lg ${selectedRoleId === role.id
-                                                                    ? 'bg-gradient-to-br from-indigo-500 to-purple-500'
-                                                                    : 'bg-gradient-to-br from-gray-500 to-gray-400'
+                                                                ? 'bg-gradient-to-br from-primary-500 to-purple-500'
+                                                                : 'bg-gradient-to-br from-gray-500 to-gray-400'
                                                                 } text-white flex items-center justify-center shadow-md`}>
                                                                 <Shield size={18} strokeWidth={2} />
                                                             </div>
@@ -208,7 +208,7 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
 
                                                         <div className="ml-3 flex-grow">
                                                             <div className="flex items-center justify-between">
-                                                                <p className={`text-base font-medium ${selectedRoleId === role.id ? 'text-indigo-700' : 'text-gray-800'
+                                                                <p className={`text-base font-medium ${selectedRoleId === role.id ? 'text-primary-700' : 'text-gray-800'
                                                                     }`}>
                                                                     {role.title}
                                                                 </p>
@@ -218,15 +218,15 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                                                                         <motion.div
                                                                             initial={{ scale: 0 }}
                                                                             animate={{ scale: 1 }}
-                                                                            className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center mr-2 shadow-sm"
+                                                                            className="w-6 h-6 rounded-full bg-primary-500 flex items-center justify-center mr-2 shadow-sm"
                                                                         >
                                                                             <Check size={14} className="text-white" />
                                                                         </motion.div>
                                                                     )}
 
                                                                     <div className={`w-5 h-5 rounded-full border ${selectedRoleId === role.id
-                                                                            ? 'border-indigo-500 bg-indigo-100'
-                                                                            : 'border-gray-300 bg-white'
+                                                                        ? 'border-primary-500 bg-primary-100'
+                                                                        : 'border-gray-300 bg-white'
                                                                         }`}>
                                                                         {selectedRoleId === role.id && (
                                                                             <motion.div
@@ -234,7 +234,7 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                                                                                 animate={{ scale: 1 }}
                                                                                 className="w-full h-full flex items-center justify-center"
                                                                             >
-                                                                                <div className="w-3 h-3 rounded-full bg-indigo-500" />
+                                                                                <div className="w-3 h-3 rounded-full bg-primary-500" />
                                                                             </motion.div>
                                                                         )}
                                                                     </div>
@@ -242,7 +242,7 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                                                             </div>
 
                                                             {role.description && (
-                                                                <p className={`text-sm mt-1 ${selectedRoleId === role.id ? 'text-indigo-600' : 'text-gray-500'
+                                                                <p className={`text-sm mt-1 ${selectedRoleId === role.id ? 'text-primary-600' : 'text-gray-500'
                                                                     }`}>
                                                                     {role.description}
                                                                 </p>
@@ -308,7 +308,7 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                                         className="mb-2 p-4 bg-gray-50 rounded-xl border border-gray-200"
                                     >
                                         <h3 className="text-sm font-medium text-gray-800 mb-2 flex items-center">
-                                            <CheckCircle size={14} className="text-indigo-500 mr-2" />
+                                            <CheckCircle size={14} className="text-primary-500 mr-2" />
                                             Role Change Summary
                                         </h3>
 
@@ -321,8 +321,8 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
 
                                             <div>
                                                 <p className="text-xs font-medium text-gray-500 mb-1">To</p>
-                                                <p className="text-sm font-medium text-indigo-700">{selectedRole.title}</p>
-                                                <p className="text-xs text-indigo-500 mt-1">{selectedRole.permissions.length} permissions</p>
+                                                <p className="text-sm font-medium text-primary-700">{selectedRole.title}</p>
+                                                <p className="text-xs text-primary-500 mt-1">{selectedRole.permissions.length} permissions</p>
                                             </div>
                                         </div>
 
@@ -356,8 +356,8 @@ const UserRoleModal: React.FC<UserRoleModalProps> = ({
                                     whileTap={selectedRoleId ? { scale: 0.98 } : {}}
                                     onClick={handleSubmit}
                                     className={`px-6 py-2.5 text-white rounded-xl shadow-md transition-all duration-200 flex items-center ${selectedRoleId
-                                            ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400'
-                                            : 'bg-gray-400 cursor-not-allowed'
+                                        ? 'bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400'
+                                        : 'bg-gray-400 cursor-not-allowed'
                                         }`}
                                     disabled={isLoading || !selectedRoleId}
                                 >

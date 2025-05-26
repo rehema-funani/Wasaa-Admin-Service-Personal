@@ -227,7 +227,7 @@ const CountryDetailPage = () => {
             sortable: true,
             cell: (value: string, row: any) => (
                 <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
                         {value.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
@@ -280,10 +280,10 @@ const CountryDetailPage = () => {
 
                 if (value === 'mobile') {
                     icon = <Smartphone size={14} className="mr-1.5" strokeWidth={1.8} />;
-                    color = 'text-blue-600';
+                    color = 'text-primary-600';
                 } else if (value === 'desktop') {
                     icon = <Laptop size={14} className="mr-1.5" strokeWidth={1.8} />;
-                    color = 'text-indigo-600';
+                    color = 'text-primary-600';
                 } else {
                     icon = <Tablet size={14} className="mr-1.5" strokeWidth={1.8} />;
                     color = 'text-purple-600';
@@ -329,7 +329,7 @@ const CountryDetailPage = () => {
             cell: () => (
                 <div className="flex items-center">
                     <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         aria-label="View user details"
@@ -418,7 +418,7 @@ const CountryDetailPage = () => {
 
                     <div>
                         <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
                                 <Globe size={20} strokeWidth={1.8} />
                             </div>
                             <h1 className="text-2xl font-semibold text-gray-800">{country.country}</h1>
@@ -451,7 +451,7 @@ const CountryDetailPage = () => {
                         Export
                     </motion.button>
                     <motion.button
-                        className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+                        className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
                         whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
                         whileTap={{ y: 0 }}
                     >
@@ -474,8 +474,8 @@ const CountryDetailPage = () => {
                     transition={{ duration: 0.2 }}
                 >
                     <div className="flex justify-between items-start mb-4">
-                        <div className="bg-indigo-50 rounded-xl p-2">
-                            <Users size={20} className="text-indigo-500" strokeWidth={1.8} />
+                        <div className="bg-primary-50 rounded-xl p-2">
+                            <Users size={20} className="text-primary-500" strokeWidth={1.8} />
                         </div>
                         <div className="flex items-center">
                             <div className={`flex items-center ${country.growthRate >= 0 ? 'text-green-600' : 'text-red-500'}`}>
@@ -523,11 +523,11 @@ const CountryDetailPage = () => {
                     transition={{ duration: 0.2 }}
                 >
                     <div className="flex justify-between items-start mb-4">
-                        <div className="bg-blue-50 rounded-xl p-2">
-                            <TrendingUp size={20} className="text-blue-500" strokeWidth={1.8} />
+                        <div className="bg-primary-50 rounded-xl p-2">
+                            <TrendingUp size={20} className="text-primary-500" strokeWidth={1.8} />
                         </div>
                         <div className="flex items-center">
-                            <div className={`flex items-center text-blue-600`}>
+                            <div className={`flex items-center text-primary-600`}>
                                 <span className="text-xs font-medium">30-day</span>
                             </div>
                         </div>
@@ -572,24 +572,24 @@ const CountryDetailPage = () => {
                 >
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center">
-                            <LineChartIcon size={18} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                            <LineChartIcon size={18} className="text-primary-500 mr-2" strokeWidth={1.8} />
                             <h3 className="font-medium text-gray-800">User Growth</h3>
                         </div>
                         <div className="flex bg-gray-100 rounded-xl p-1">
                             <button
-                                className={`px-3 py-1 text-xs rounded-lg transition-all ${timeframe === 'week' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'}`}
+                                className={`px-3 py-1 text-xs rounded-lg transition-all ${timeframe === 'week' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-600'}`}
                                 onClick={() => handleTimeframeChange('week')}
                             >
                                 Week
                             </button>
                             <button
-                                className={`px-3 py-1 text-xs rounded-lg transition-all ${timeframe === 'month' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'}`}
+                                className={`px-3 py-1 text-xs rounded-lg transition-all ${timeframe === 'month' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-600'}`}
                                 onClick={() => handleTimeframeChange('month')}
                             >
                                 Month
                             </button>
                             <button
-                                className={`px-3 py-1 text-xs rounded-lg transition-all ${timeframe === 'year' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-600'}`}
+                                className={`px-3 py-1 text-xs rounded-lg transition-all ${timeframe === 'year' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-600'}`}
                                 onClick={() => handleTimeframeChange('year')}
                             >
                                 Year
@@ -600,7 +600,7 @@ const CountryDetailPage = () => {
                     <div className="h-64">
                         {isLoading ? (
                             <div className="h-full w-full flex items-center justify-center">
-                                <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                                <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin"></div>
                             </div>
                         ) : (
                             <ResponsiveContainer width="100%" height="100%">
@@ -637,7 +637,7 @@ const CountryDetailPage = () => {
                                                 return (
                                                     <div className="bg-white p-3 rounded-xl shadow-md border border-gray-100">
                                                         <p className="text-gray-600 text-xs mb-1">{label}</p>
-                                                        <p className="text-sm font-medium text-indigo-600 mb-1">
+                                                        <p className="text-sm font-medium text-primary-600 mb-1">
                                                             Total Users: {payload[0]?.value?.toLocaleString()}
                                                         </p>
                                                         <p className="text-sm font-medium text-green-500">
@@ -683,14 +683,14 @@ const CountryDetailPage = () => {
                         transition={{ duration: 0.3, delay: 0.3 }}
                     >
                         <div className="flex items-center mb-4">
-                            <PieChart size={18} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                            <PieChart size={18} className="text-primary-500 mr-2" strokeWidth={1.8} />
                             <h3 className="font-medium text-gray-800">Age Distribution</h3>
                         </div>
 
                         <div className="h-48">
                             {isLoading ? (
                                 <div className="h-full w-full flex items-center justify-center">
-                                    <div className="w-6 h-6 border-3 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                                    <div className="w-6 h-6 border-3 border-primary-200 border-t-primary-500 rounded-full animate-spin"></div>
                                 </div>
                             ) : (
                                 <ResponsiveContainer width="100%" height="100%">
@@ -732,14 +732,14 @@ const CountryDetailPage = () => {
                         transition={{ duration: 0.3, delay: 0.4 }}
                     >
                         <div className="flex items-center mb-4">
-                            <CreditCard size={18} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                            <CreditCard size={18} className="text-primary-500 mr-2" strokeWidth={1.8} />
                             <h3 className="font-medium text-gray-800">Payment Methods</h3>
                         </div>
 
                         <div className="h-48">
                             {isLoading ? (
                                 <div className="h-full w-full flex items-center justify-center">
-                                    <div className="w-6 h-6 border-3 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                                    <div className="w-6 h-6 border-3 border-primary-200 border-t-primary-500 rounded-full animate-spin"></div>
                                 </div>
                             ) : (
                                 <ResponsiveContainer width="100%" height="100%">
@@ -786,7 +786,7 @@ const CountryDetailPage = () => {
                 >
                     <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center">
-                            <Users size={18} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                            <Users size={18} className="text-primary-500 mr-2" strokeWidth={1.8} />
                             <h3 className="font-medium text-gray-800">Top Users from {country.country}</h3>
                         </div>
 
@@ -831,7 +831,7 @@ const CountryDetailPage = () => {
                 </motion.div>
 
                 <motion.div
-                    className="flex flex-col sm:flex-row sm:items-center justify-between bg-gradient-to-r from-indigo-500 to-blue-500 rounded-2xl shadow-md p-6 text-white mb-6"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between bg-gradient-to-r from-primary-500 to-primary-500 rounded-2xl shadow-md p-6 text-white mb-6"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: 1 }}
@@ -839,10 +839,10 @@ const CountryDetailPage = () => {
                 >
                     <div className="mb-4 sm:mb-0">
                         <h3 className="text-lg font-semibold mb-1">Ready to engage with users in {country.country}?</h3>
-                        <p className="text-indigo-100">Create targeted campaigns to increase user engagement and retention.</p>
+                        <p className="text-primary-100">Create targeted campaigns to increase user engagement and retention.</p>
                     </div>
                     <motion.button
-                        className="px-5 py-2.5 bg-white text-indigo-600 rounded-xl font-medium shadow-sm"
+                        className="px-5 py-2.5 bg-white text-primary-600 rounded-xl font-medium shadow-sm"
                         whileHover={{ scale: 1.05, boxShadow: '0 4px 12px rgba(255, 255, 255, 0.2)' }}
                         whileTap={{ scale: 0.98 }}
                     >
@@ -859,7 +859,7 @@ const CountryDetailPage = () => {
                 >
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center">
-                            <BarChart3 size={18} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                            <BarChart3 size={18} className="text-primary-500 mr-2" strokeWidth={1.8} />
                             <h3 className="font-medium text-gray-800">Active Users by Time of Day</h3>
                         </div>
                         <div className="flex items-center text-xs text-gray-500">
@@ -870,7 +870,7 @@ const CountryDetailPage = () => {
                     <div className="h-64">
                         {isLoading ? (
                             <div className="h-full w-full flex items-center justify-center">
-                                <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                                <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin"></div>
                             </div>
                         ) : (
                             <ResponsiveContainer width="100%" height="100%">
@@ -898,7 +898,7 @@ const CountryDetailPage = () => {
                                                 return (
                                                     <div className="bg-white p-3 rounded-xl shadow-md border border-gray-100">
                                                         <p className="text-gray-600 text-xs mb-1">{label}</p>
-                                                        <p className="text-sm font-medium text-indigo-600 mb-1">
+                                                        <p className="text-sm font-medium text-primary-600 mb-1">
                                                             Active Users: {payload[0]?.value?.toLocaleString()}
                                                         </p>
                                                         <p className="text-sm font-medium text-green-500">
@@ -935,7 +935,7 @@ const CountryDetailPage = () => {
                         transition={{ duration: 0.3, delay: 0.6 }}
                     >
                         <div className="flex items-center mb-6">
-                            <Smartphone size={18} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                            <Smartphone size={18} className="text-primary-500 mr-2" strokeWidth={1.8} />
                             <h3 className="font-medium text-gray-800">Device Distribution</h3>
                         </div>
 
@@ -943,14 +943,14 @@ const CountryDetailPage = () => {
                             <div>
                                 <div className="flex justify-between mb-1.5">
                                     <div className="flex items-center">
-                                        <Smartphone size={14} className="text-blue-500 mr-2" strokeWidth={1.8} />
+                                        <Smartphone size={14} className="text-primary-500 mr-2" strokeWidth={1.8} />
                                         <span className="text-sm text-gray-700">Mobile</span>
                                     </div>
                                     <span className="text-sm font-medium">{country.primaryDevices.mobile}%</span>
                                 </div>
                                 <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-blue-500 rounded-full"
+                                        className="h-full bg-primary-500 rounded-full"
                                         style={{ width: `${country.primaryDevices.mobile}%` }}
                                     ></div>
                                 </div>
@@ -959,14 +959,14 @@ const CountryDetailPage = () => {
                             <div>
                                 <div className="flex justify-between mb-1.5">
                                     <div className="flex items-center">
-                                        <Laptop size={14} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                                        <Laptop size={14} className="text-primary-500 mr-2" strokeWidth={1.8} />
                                         <span className="text-sm text-gray-700">Desktop</span>
                                     </div>
                                     <span className="text-sm font-medium">{country.primaryDevices.desktop}%</span>
                                 </div>
                                 <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-indigo-500 rounded-full"
+                                        className="h-full bg-primary-500 rounded-full"
                                         style={{ width: `${country.primaryDevices.desktop}%` }}
                                     ></div>
                                 </div>
@@ -1010,7 +1010,7 @@ const CountryDetailPage = () => {
                         transition={{ duration: 0.3, delay: 0.7 }}
                     >
                         <div className="flex items-center mb-6">
-                            <MapPin size={18} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                            <MapPin size={18} className="text-primary-500 mr-2" strokeWidth={1.8} />
                             <h3 className="font-medium text-gray-800">Top Cities</h3>
                         </div>
 
@@ -1047,7 +1047,7 @@ const CountryDetailPage = () => {
                                     <span className="text-lg font-medium text-gray-800">{(country.marketPenetration * 100).toFixed(1)}%</span>
                                 </div>
                                 <motion.button
-                                    className="text-xs text-indigo-600 font-medium flex items-center"
+                                    className="text-xs text-primary-600 font-medium flex items-center"
                                     whileHover={{ x: 3 }}
                                 >
                                     View Map <ChevronRight size={14} className="ml-1" />
@@ -1063,7 +1063,7 @@ const CountryDetailPage = () => {
                         transition={{ duration: 0.3, delay: 0.8 }}
                     >
                         <div className="flex items-center mb-6">
-                            <Globe size={18} className="text-indigo-500 mr-2" strokeWidth={1.8} />
+                            <Globe size={18} className="text-primary-500 mr-2" strokeWidth={1.8} />
                             <h3 className="font-medium text-gray-800">Language & Demographics</h3>
                         </div>
 
@@ -1073,7 +1073,7 @@ const CountryDetailPage = () => {
                                 {country.languages.map((language) => (
                                     <span
                                         key={language}
-                                        className="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-medium"
+                                        className="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-xs font-medium"
                                     >
                                         {language}
                                     </span>
@@ -1091,7 +1091,7 @@ const CountryDetailPage = () => {
                                     </div>
                                     <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-blue-500 rounded-full"
+                                            className="h-full bg-primary-500 rounded-full"
                                             style={{ width: `${country.userDemographics.gender.male}%` }}
                                         ></div>
                                     </div>
@@ -1132,7 +1132,7 @@ const CountryDetailPage = () => {
                                     <span className="text-lg font-medium text-gray-800">25-34 (41%)</span>
                                 </div>
                                 <motion.button
-                                    className="text-xs text-indigo-600 font-medium flex items-center"
+                                    className="text-xs text-primary-600 font-medium flex items-center"
                                     whileHover={{ x: 3 }}
                                 >
                                     Full Demographics <ChevronRight size={14} className="ml-1" />

@@ -110,7 +110,7 @@ const ListWallpaper: React.FC = () => {
 
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
-      'Gradient': 'bg-blue-50 text-blue-600',
+      'Gradient': 'bg-primary-50 text-primary-600',
       'Dark': 'bg-gray-900 text-white',
       'Light': 'bg-gray-50 text-gray-800',
       'Pattern': 'bg-emerald-50 text-emerald-600',
@@ -121,7 +121,7 @@ const ListWallpaper: React.FC = () => {
       'Unknown': 'bg-gray-100 text-gray-600'
     };
 
-    return colors[category] || 'bg-blue-50 text-blue-600';
+    return colors[category] || 'bg-primary-50 text-primary-600';
   };
 
   // Render loading state
@@ -136,7 +136,7 @@ const ListWallpaper: React.FC = () => {
         </div>
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center">
-            <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <div className="h-10 w-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
             <p className="text-gray-500">Loading wallpapers...</p>
           </div>
         </div>
@@ -169,7 +169,7 @@ const ListWallpaper: React.FC = () => {
         <div className="flex items-center justify-end">
           <button
             onClick={navigateToAdd}
-            className="group px-6 py-2 text-[14px] bg-blue-500 text-white rounded-full flex items-center gap-2 hover:bg-blue-600 transition-colors"
+            className="group px-6 py-2 text-[14px] bg-primary-500 text-white rounded-full flex items-center gap-2 hover:bg-primary-600 transition-colors"
           >
             <Plus size={18} className="transition-transform group-hover:rotate-90 duration-300" />
             <span>New Wallpaper</span>
@@ -185,7 +185,7 @@ const ListWallpaper: React.FC = () => {
           <input
             type="text"
             placeholder="Search wallpapers..."
-            className="w-[350px] pl-14 pr-5 py-2 bg-transparent rounded-2xl text-gray-800 focus:outline-none focus:bg-white border-2 border-gray-100 focus:border-blue-500 transition-all duration-200"
+            className="w-[350px] pl-14 pr-5 py-2 bg-transparent rounded-2xl text-gray-800 focus:outline-none focus:bg-white border-2 border-gray-100 focus:border-primary-500 transition-all duration-200"
             value={searchQuery}
             onChange={handleSearchChange}
           />
@@ -197,7 +197,7 @@ const ListWallpaper: React.FC = () => {
           {filteredWallpapers.map(wallpaper => (
             <div
               key={wallpaper.id}
-              className="group relative bg-white border-2 border-gray-50 rounded-3xl overflow-hidden transition-all hover:border-blue-100"
+              className="group relative bg-white border-2 border-gray-50 rounded-3xl overflow-hidden transition-all hover:border-primary-100"
             >
               <div className="aspect-video overflow-hidden">
                 <img
@@ -229,7 +229,7 @@ const ListWallpaper: React.FC = () => {
               </div>
 
               <div className="absolute bottom-6 right-6 opacity-0 transform translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                <ArrowRight size={20} className="text-blue-500" />
+                <ArrowRight size={20} className="text-primary-500" />
               </div>
             </div>
           ))}
@@ -245,7 +245,7 @@ const ListWallpaper: React.FC = () => {
           </p>
           <button
             onClick={navigateToAdd}
-            className="px-6 py-3 bg-blue-500 text-white rounded-full flex items-center gap-2 hover:bg-blue-600 transition-colors"
+            className="px-6 py-3 bg-primary-500 text-white rounded-full flex items-center gap-2 hover:bg-primary-600 transition-colors"
           >
             <Plus size={18} />
             <span>Add Wallpaper</span>

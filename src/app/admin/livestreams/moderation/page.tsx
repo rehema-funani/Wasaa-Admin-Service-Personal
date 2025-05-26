@@ -163,7 +163,7 @@ const page = () => {
           <p className="text-gray-500 mt-1">Review and moderate reported content to maintain platform standards</p>
         </div>
         <div className="flex space-x-2">
-          <button className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm hover:bg-indigo-700 flex items-center">
+          <button className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm hover:bg-primary-700 flex items-center">
             <RefreshCw size={16} className="mr-2" />
             Refresh
           </button>
@@ -207,8 +207,8 @@ const page = () => {
             <h3 className="text-lg font-semibold text-gray-800">23 min</h3>
             <p className="text-xs text-green-600 mt-1">-7 min from last week</p>
           </div>
-          <div className="bg-blue-100 p-3 rounded-lg">
-            <Clock size={20} className="text-blue-500" />
+          <div className="bg-primary-100 p-3 rounded-lg">
+            <Clock size={20} className="text-primary-500" />
           </div>
         </div>
 
@@ -230,8 +230,8 @@ const page = () => {
           <div className="flex overflow-x-auto">
             <button
               className={`px-4 py-3 text-sm font-medium flex items-center whitespace-nowrap ${activeTab === 'reported'
-                  ? 'text-indigo-600 border-b-2 border-indigo-600'
-                  : 'text-gray-600 hover:text-gray-800'
+                ? 'text-primary-600 border-b-2 border-primary-600'
+                : 'text-gray-600 hover:text-gray-800'
                 }`}
               onClick={() => setActiveTab('reported')}
             >
@@ -243,8 +243,8 @@ const page = () => {
             </button>
             <button
               className={`px-4 py-3 text-sm font-medium flex items-center whitespace-nowrap ${activeTab === 'messages'
-                  ? 'text-indigo-600 border-b-2 border-indigo-600'
-                  : 'text-gray-600 hover:text-gray-800'
+                ? 'text-primary-600 border-b-2 border-primary-600'
+                : 'text-gray-600 hover:text-gray-800'
                 }`}
               onClick={() => setActiveTab('messages')}
             >
@@ -256,8 +256,8 @@ const page = () => {
             </button>
             <button
               className={`px-4 py-3 text-sm font-medium flex items-center whitespace-nowrap ${activeTab === 'banned'
-                  ? 'text-indigo-600 border-b-2 border-indigo-600'
-                  : 'text-gray-600 hover:text-gray-800'
+                ? 'text-primary-600 border-b-2 border-primary-600'
+                : 'text-gray-600 hover:text-gray-800'
                 }`}
               onClick={() => setActiveTab('banned')}
             >
@@ -279,7 +279,7 @@ const page = () => {
             <input
               type="text"
               placeholder={activeTab === 'banned' ? "Search banned users..." : "Search reported content..."}
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
+              className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-300"
               value={searchQuery}
               onChange={handleSearchChange}
             />
@@ -301,10 +301,10 @@ const page = () => {
                   <ChevronDown size={16} className="ml-2" />
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10 hidden">
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleModerationStatusChange('all')}>All</button>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleModerationStatusChange('pending')}>Pending</button>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleModerationStatusChange('approved')}>Approved</button>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleModerationStatusChange('rejected')}>Rejected</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleModerationStatusChange('all')}>All</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleModerationStatusChange('pending')}>Pending</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleModerationStatusChange('approved')}>Approved</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleModerationStatusChange('rejected')}>Rejected</button>
                 </div>
               </div>
 
@@ -323,11 +323,11 @@ const page = () => {
                   <ChevronDown size={16} className="ml-2" />
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10 hidden">
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleReportTypeChange('all')}>All Types</button>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleReportTypeChange('inappropriate')}>Inappropriate</button>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleReportTypeChange('harassment')}>Harassment</button>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleReportTypeChange('violence')}>Violence</button>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleReportTypeChange('other')}>Other</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleReportTypeChange('all')}>All Types</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleReportTypeChange('inappropriate')}>Inappropriate</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleReportTypeChange('harassment')}>Harassment</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleReportTypeChange('violence')}>Violence</button>
+                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleReportTypeChange('other')}>Other</button>
                 </div>
               </div>
             </>
@@ -347,10 +347,10 @@ const page = () => {
               <ChevronDown size={16} className="ml-2" />
             </button>
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10 hidden">
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleDateRangeChange('all')}>All Time</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleDateRangeChange('today')}>Today</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleDateRangeChange('week')}>This Week</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleDateRangeChange('month')}>This Month</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleDateRangeChange('all')}>All Time</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleDateRangeChange('today')}>Today</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleDateRangeChange('week')}>This Week</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleDateRangeChange('month')}>This Month</button>
             </div>
           </div>
         </div>
@@ -359,7 +359,7 @@ const page = () => {
         <div className="p-4">
           {isLoading ? (
             <div className="text-center py-12">
-              <div className="inline-block w-8 h-8 border-4 border-indigo-300 border-t-indigo-600 rounded-full animate-spin"></div>
+              <div className="inline-block w-8 h-8 border-4 border-primary-300 border-t-primary-600 rounded-full animate-spin"></div>
               <p className="mt-3 text-gray-500">Loading moderation data...</p>
             </div>
           ) : (
@@ -427,12 +427,12 @@ const page = () => {
         <h3 className="text-base font-medium text-gray-800 mb-4">Moderation Guidelines</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+          <div className="bg-primary-50 rounded-xl p-4 border border-primary-100">
             <div className="flex items-center mb-3">
-              <Shield size={18} className="text-indigo-600 mr-2" />
-              <h4 className="font-medium text-indigo-800">Content Policy</h4>
+              <Shield size={18} className="text-primary-600 mr-2" />
+              <h4 className="font-medium text-primary-800">Content Policy</h4>
             </div>
-            <p className="text-sm text-indigo-700">Content should adhere to community guidelines. Remove any hate speech, explicit material, or copyrighted content.</p>
+            <p className="text-sm text-primary-700">Content should adhere to community guidelines. Remove any hate speech, explicit material, or copyrighted content.</p>
           </div>
 
           <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
@@ -602,7 +602,7 @@ const ReportedMessageCard = ({ message, onApprove, onReject }: { message: typeof
       <div className="p-4">
         <div className="flex justify-between items-start mb-3">
           <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-medium text-xs mr-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 text-white flex items-center justify-center font-medium text-xs mr-2">
               {message.user.name.split(' ').map(n => n[0]).join('')}
             </div>
             <div>
@@ -724,7 +724,7 @@ const BannedUserCard = ({ user, onUnban }: { user: typeof sampleBannedUsers[0]; 
             View Profile
           </button>
           <button
-            className="px-3 py-1.5 border border-indigo-200 bg-white rounded-lg text-sm text-indigo-600 hover:bg-indigo-50 flex items-center"
+            className="px-3 py-1.5 border border-primary-200 bg-white rounded-lg text-sm text-primary-600 hover:bg-primary-50 flex items-center"
             onClick={onUnban}
           >
             <ShieldCheck size={16} className="mr-1.5" />

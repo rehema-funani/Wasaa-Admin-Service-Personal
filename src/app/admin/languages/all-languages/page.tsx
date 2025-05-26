@@ -195,12 +195,12 @@ const page: React.FC = () => {
         <div className="py-4 px-4 max-w-7xl mx-auto bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
             <div className="flex justify-between items-center mb-4">
                 <motion.h1
-                    className="text-lg font-medium bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent flex items-center"
+                    className="text-lg font-medium bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent flex items-center"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                 >
-                    <Globe className="mr-2 text-blue-500" size={20} />
+                    <Globe className="mr-2 text-primary-500" size={20} />
                     Language Management
                 </motion.h1>
                 <div className="flex items-center space-x-2">
@@ -223,7 +223,7 @@ const page: React.FC = () => {
                     </motion.button>
                     <motion.button
                         onClick={handleAddNew}
-                        className="flex items-center px-3 py-1.5 bg-blue-600 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-xs font-medium shadow-sm"
+                        className="flex items-center px-3 py-1.5 bg-primary-600 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full text-xs font-medium shadow-sm"
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
                     >
@@ -247,7 +247,7 @@ const page: React.FC = () => {
                             placeholder="Search languages..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                            className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-gray-50"
                         />
                     </div>
 
@@ -261,7 +261,7 @@ const page: React.FC = () => {
                             whileTap={{ y: 1 }}
                             onClick={() => setActiveFilter('all')}
                             className={`px-2.5 py-1 rounded-full flex items-center ${activeFilter === 'all'
-                                ? 'bg-blue-600 text-white'
+                                ? 'bg-primary-600 text-white'
                                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
@@ -299,7 +299,7 @@ const page: React.FC = () => {
                         <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                            className="text-blue-500"
+                            className="text-primary-500"
                         >
                             <RefreshCw size={20} />
                         </motion.div>
@@ -318,7 +318,7 @@ const page: React.FC = () => {
                         <p className="text-sm">No languages found.</p>
                         <motion.button
                             onClick={handleAddNew}
-                            className="mt-3 inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-600 rounded-full text-xs font-medium"
+                            className="mt-3 inline-flex items-center px-3 py-1.5 bg-primary-100 text-primary-600 rounded-full text-xs font-medium"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
@@ -407,7 +407,7 @@ const page: React.FC = () => {
                                     {filteredLanguages.map((language, index) => (
                                         <motion.tr
                                             key={language.id}
-                                            className="border-t border-gray-100 hover:bg-blue-50/30"
+                                            className="border-t border-gray-100 hover:bg-primary-50/30"
                                             variants={itemVariants}
                                             initial="hidden"
                                             animate="visible"
@@ -416,7 +416,7 @@ const page: React.FC = () => {
                                         >
                                             <td className="px-3 py-2">
                                                 <div className="flex items-center">
-                                                    <div className="flex-shrink-0 h-6 w-6 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm">
+                                                    <div className="flex-shrink-0 h-6 w-6 bg-gradient-to-r from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white text-xs font-medium shadow-sm">
                                                         {language.code.slice(0, 2).toUpperCase()}
                                                     </div>
                                                     <div className="ml-2">
@@ -451,7 +451,7 @@ const page: React.FC = () => {
                                                 ) : (
                                                     <motion.button
                                                         onClick={() => handleSetDefault(language.id!)}
-                                                        className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-600 transition-colors"
+                                                        className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition-colors"
                                                         whileHover={{ scale: 1.05 }}
                                                         whileTap={{ scale: 0.95 }}
                                                     >
@@ -475,7 +475,7 @@ const page: React.FC = () => {
                                                 <div className="flex items-center justify-end space-x-1">
                                                     <motion.button
                                                         onClick={() => handleViewTranslations(language.id!)}
-                                                        className="p-1 rounded-md text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50"
+                                                        className="p-1 rounded-md text-primary-500 hover:text-primary-600 hover:bg-primary-50"
                                                         whileHover={{ scale: 1.1 }}
                                                         whileTap={{ scale: 0.9 }}
                                                         title="View Translations"
@@ -484,7 +484,7 @@ const page: React.FC = () => {
                                                     </motion.button>
                                                     <motion.button
                                                         onClick={() => handleEdit(language)}
-                                                        className="p-1 rounded-md text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+                                                        className="p-1 rounded-md text-primary-500 hover:text-primary-600 hover:bg-primary-50"
                                                         whileHover={{ scale: 1.1 }}
                                                         whileTap={{ scale: 0.9 }}
                                                         title="Edit Language"
@@ -520,7 +520,7 @@ const page: React.FC = () => {
                 transition={{ delay: 0.5 }}
             >
                 <div className="flex items-center">
-                    <Command size={12} className="text-blue-500 mr-1" />
+                    <Command size={12} className="text-primary-500 mr-1" />
                     <span>Total: {filteredLanguages.length} languages</span>
                 </div>
                 <div className="flex items-center">
@@ -545,7 +545,7 @@ const page: React.FC = () => {
                             transition={{ type: "spring", stiffness: 300, damping: 25 }}
                         >
                             <div className="flex justify-between items-center p-4 border-b border-gray-100">
-                                <h2 className="text-sm font-medium bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+                                <h2 className="text-sm font-medium bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
                                     {editLanguage ? 'Edit Language' : 'Add Language'}
                                 </h2>
                                 <motion.button

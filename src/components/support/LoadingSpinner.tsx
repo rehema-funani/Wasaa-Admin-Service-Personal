@@ -11,7 +11,7 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     size = 'medium',
-    color = 'indigo',
+    color = 'primary',
     fullScreen = false,
     message
 }) => {

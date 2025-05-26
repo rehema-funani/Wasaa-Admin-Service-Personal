@@ -414,7 +414,7 @@ const TariffForm = ({
             value={formData.name}
             onChange={handleFormChange}
             required
-            className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+            className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
             placeholder="e.g., Send Money"
             disabled={isLoading}
           />
@@ -430,7 +430,7 @@ const TariffForm = ({
             value={formData.description}
             onChange={handleFormChange}
             rows={2}
-            className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+            className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
             placeholder="Describe the purpose of this tariff"
             disabled={isLoading}
           ></textarea>
@@ -483,7 +483,7 @@ const TariffForm = ({
                 min="0"
                 step="0.1"
                 required
-                className="w-full py-2 px-3 pr-8 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                className="w-full py-2 px-3 pr-8 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                 disabled={isLoading}
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -540,7 +540,7 @@ const TariffForm = ({
                         onChange={(e) => handleUpdateFormRange(range.id, 'min', e.target.value, 'fixed')}
                         min="0"
                         required
-                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-xs"
+                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-xs"
                         disabled={isLoading}
                       />
                     </div>
@@ -554,7 +554,7 @@ const TariffForm = ({
                         value={range.max === null ? '' : range.max}
                         onChange={(e) => handleUpdateFormRange(range.id, 'max', e.target.value, 'fixed')}
                         placeholder="Leave empty for 'and above'"
-                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-xs"
+                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-xs"
                         disabled={isLoading}
                       />
                     </div>
@@ -570,7 +570,7 @@ const TariffForm = ({
                         min="0"
                         step="0.1"
                         required
-                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-xs"
+                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-xs"
                         disabled={isLoading}
                       />
                     </div>
@@ -628,7 +628,7 @@ const TariffForm = ({
                         onChange={(e) => handleUpdateFormRange(range.id, 'min', e.target.value, 'percentage')}
                         min="0"
                         required
-                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-xs"
+                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-xs"
                         disabled={isLoading}
                       />
                     </div>
@@ -642,7 +642,7 @@ const TariffForm = ({
                         value={range.max === null ? '' : range.max}
                         onChange={(e) => handleUpdateFormRange(range.id, 'max', e.target.value, 'percentage')}
                         placeholder="Leave empty for 'and above'"
-                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-xs"
+                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-xs"
                         disabled={isLoading}
                       />
                     </div>
@@ -658,7 +658,7 @@ const TariffForm = ({
                         min="0"
                         step="0.1"
                         required
-                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-xs"
+                        className="w-full py-1.5 px-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-xs"
                         disabled={isLoading}
                       />
                     </div>
@@ -716,7 +716,7 @@ const TariffForm = ({
         <button
           type="button"
           onClick={handleFormSubmit}
-          className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm flex items-center gap-1.5"
+          className="px-3 py-1.5 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm flex items-center gap-1.5"
           disabled={isLoading}
         >
           {isLoading && <Loader size={14} className="animate-spin" />}

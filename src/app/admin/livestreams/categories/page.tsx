@@ -35,7 +35,7 @@ const page = () => {
     gradientEnd: string;
     icon: JSX.Element;
   }
-  
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [sortBy, setSortBy] = useState('popular');
@@ -123,7 +123,7 @@ const page = () => {
       </div>
 
       <div className="border-t border-gray-100 p-3 flex justify-between">
-        <button className="text-xs text-indigo-600 font-medium flex items-center hover:text-indigo-800">
+        <button className="text-xs text-primary-600 font-medium flex items-center hover:text-primary-800">
           Browse category
           <ArrowUpRight size={12} className="ml-1" />
         </button>
@@ -165,7 +165,7 @@ const page = () => {
             </div>
           )}
           {category.isDefault && (
-            <div className="ml-2 bg-blue-100 text-xs text-blue-800 font-medium px-2 py-0.5 rounded-full">
+            <div className="ml-2 bg-primary-100 text-xs text-primary-800 font-medium px-2 py-0.5 rounded-full">
               Default
             </div>
           )}
@@ -215,7 +215,7 @@ const page = () => {
         </div>
         <div>
           <button
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm hover:bg-indigo-700 flex items-center"
+            className="px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm hover:bg-primary-700 flex items-center"
             onClick={toggleAddCategoryModal}
           >
             <Plus size={16} className="mr-2" />
@@ -230,7 +230,7 @@ const page = () => {
             <p className="text-gray-500 text-xs">Total Categories</p>
             <h3 className="text-lg font-semibold text-gray-800">23</h3>
           </div>
-          <Grid size={20} className="text-indigo-500" />
+          <Grid size={20} className="text-primary-500" />
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
@@ -246,7 +246,7 @@ const page = () => {
             <p className="text-gray-500 text-xs">Total Viewers</p>
             <h3 className="text-lg font-semibold text-gray-800">38,291</h3>
           </div>
-          <Users size={20} className="text-blue-500" />
+          <Users size={20} className="text-primary-500" />
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center justify-between">
@@ -266,7 +266,7 @@ const page = () => {
           <input
             type="text"
             placeholder="Search categories..."
-            className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300"
+            className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-300"
             value={searchQuery}
             onChange={handleSearchChange}
           />
@@ -283,22 +283,22 @@ const page = () => {
               <ChevronDown size={16} className="ml-1" />
             </button>
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10 hidden">
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => setSortBy('popular')}>Popular</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => setSortBy('viewers')}>Viewers</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => setSortBy('alphabetical')}>Alphabetical (A-Z)</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => setSortBy('newest')}>Newest</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => setSortBy('popular')}>Popular</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => setSortBy('viewers')}>Viewers</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => setSortBy('alphabetical')}>Alphabetical (A-Z)</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => setSortBy('newest')}>Newest</button>
             </div>
           </div>
 
           <div className="flex rounded-xl overflow-hidden border border-gray-200">
             <button
-              className={`p-2 ${viewMode === 'grid' ? 'bg-indigo-50 text-indigo-600' : 'bg-white text-gray-500'}`}
+              className={`p-2 ${viewMode === 'grid' ? 'bg-primary-50 text-primary-600' : 'bg-white text-gray-500'}`}
               onClick={() => setViewMode('grid')}
             >
               <Grid size={20} />
             </button>
             <button
-              className={`p-2 ${viewMode === 'list' ? 'bg-indigo-50 text-indigo-600' : 'bg-white text-gray-500'}`}
+              className={`p-2 ${viewMode === 'list' ? 'bg-primary-50 text-primary-600' : 'bg-white text-gray-500'}`}
               onClick={() => setViewMode('list')}
             >
               <List size={20} />
@@ -309,7 +309,7 @@ const page = () => {
 
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="inline-block w-8 h-8 border-4 border-indigo-300 border-t-indigo-600 rounded-full animate-spin"></div>
+          <div className="inline-block w-8 h-8 border-4 border-primary-300 border-t-primary-600 rounded-full animate-spin"></div>
           <p className="mt-3 text-gray-500">Loading categories...</p>
         </div>
       ) : (

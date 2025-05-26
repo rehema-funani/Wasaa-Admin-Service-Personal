@@ -68,8 +68,8 @@ const SettingsTabs: React.FC<SettingsTabsProps> = ({
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`flex items-center justify-between w-full px-5 py-4 my-1.5 rounded-xl text-[13px] transition-all duration-200 ${activeTab === tab.id
                                     ? theme === "light"
-                                        ? "bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-medium shadow-lg"
-                                        : "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-medium shadow-lg"
+                                        ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium shadow-lg"
+                                        : "bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium shadow-lg"
                                     : theme === "light"
                                         ? "text-slate-700 hover:bg-slate-50/80"
                                         : "text-slate-300 hover:bg-slate-700/30"
@@ -89,14 +89,14 @@ const SettingsTabs: React.FC<SettingsTabsProps> = ({
 
                 <motion.div
                     className={`mt-6 backdrop-blur-xl rounded-2xl p-6 border ${currentTheme.cardBorder} bg-gradient-to-br ${theme === "light"
-                        ? "from-purple-50/90 to-indigo-50/80"
-                        : "from-purple-900/30 to-indigo-900/20"
+                        ? "from-purple-50/90 to-primary-50/80"
+                        : "from-purple-900/30 to-primary-900/20"
                         }`}
                     initial="rest"
                     whileHover="hover"
                     variants={cardHover}
                 >
-                    <h3 className={`text-[13px] font-semibold ${theme === "light" ? "text-indigo-700" : "text-indigo-300"} mb-2`}>
+                    <h3 className={`text-[13px] font-semibold ${theme === "light" ? "text-primary-700" : "text-primary-300"} mb-2`}>
                         Your Status
                     </h3>
                     <div className={`text-xs ${theme === "light" ? "text-slate-600" : "text-slate-300"} space-y-2`}>
@@ -110,7 +110,7 @@ const SettingsTabs: React.FC<SettingsTabsProps> = ({
                         </div>
                         <div className={`h-1.5 w-full mt-2 rounded-full overflow-hidden ${theme === "light" ? "bg-slate-200" : "bg-slate-700"}`}>
                             <motion.div
-                                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                                className="h-full bg-gradient-to-r from-primary-500 to-purple-500"
                                 initial={{ width: 0 }}
                                 animate={{ width: "65%" }}
                                 transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}

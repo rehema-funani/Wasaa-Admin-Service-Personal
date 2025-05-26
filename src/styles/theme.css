@@ -6,232 +6,235 @@
 
 /* Light theme (default) */
 :root {
-    /* Base colors */
-    --background: 249, 250, 251;
-    --foreground: 17, 24, 39;
+  /* Base colors */
+  --background: 249, 250, 251;
+  --foreground: 17, 24, 39;
 
-    --card: 255, 255, 255;
-    --card-foreground: 17, 24, 39;
+  --card: 255, 255, 255;
+  --card-foreground: 17, 24, 39;
 
-    --popover: 255, 255, 255;
-    --popover-foreground: 17, 24, 39;
+  --popover: 255, 255, 255;
+  --popover-foreground: 17, 24, 39;
 
-    --primary: 34, 129, 235;
-    --primary-foreground: 255, 255, 255;
+  --primary: 34, 129, 235;
+  --primary-foreground: 255, 255, 255;
 
-    --secondary: 241, 245, 249;
-    --secondary-foreground: 17, 24, 39;
+  --secondary: 241, 245, 249;
+  --secondary-foreground: 17, 24, 39;
 
-    --muted: 241, 245, 249;
-    --muted-foreground: 100, 116, 139;
+  --muted: 241, 245, 249;
+  --muted-foreground: 100, 116, 139;
 
-    --accent: 241, 245, 249;
-    --accent-foreground: 17, 24, 39;
+  --accent: 241, 245, 249;
+  --accent-foreground: 17, 24, 39;
 
-    --destructive: 239, 68, 68;
-    --destructive-foreground: 255, 255, 255;
+  --destructive: 239, 68, 68;
+  --destructive-foreground: 255, 255, 255;
 
-    --border: 226, 232, 240;
-    --input: 226, 232, 240;
-    --ring: 34, 129, 235;
+  --border: 226, 232, 240;
+  --input: 226, 232, 240;
+  --ring: 34, 129, 235;
 }
 
 /* Dark theme */
 .dark {
-    --background: 15, 23, 42;
-    --foreground: 248, 250, 252;
+  --background: 15, 23, 42;
+  --foreground: 248, 250, 252;
 
-    --card: 30, 41, 59;
-    --card-foreground: 248, 250, 252;
+  --card: 30, 41, 59;
+  --card-foreground: 248, 250, 252;
 
-    --popover: 30, 41, 59;
-    --popover-foreground: 248, 250, 252;
+  --popover: 30, 41, 59;
+  --popover-foreground: 248, 250, 252;
 
-    --primary: 34, 129, 235;
-    --primary-foreground: 248, 250, 252;
+  --primary: 34, 129, 235;
+  --primary-foreground: 248, 250, 252;
 
-    --secondary: 51, 65, 85;
-    --secondary-foreground: 248, 250, 252;
+  --secondary: 51, 65, 85;
+  --secondary-foreground: 248, 250, 252;
 
-    --muted: 51, 65, 85;
-    --muted-foreground: 148, 163, 184;
+  --muted: 51, 65, 85;
+  --muted-foreground: 148, 163, 184;
 
-    --accent: 51, 65, 85;
-    --accent-foreground: 248, 250, 252;
+  --accent: 51, 65, 85;
+  --accent-foreground: 248, 250, 252;
 
-    --destructive: 239, 68, 68;
-    --destructive-foreground: 248, 250, 252;
+  --destructive: 239, 68, 68;
+  --destructive-foreground: 248, 250, 252;
 
-    --border: 51, 65, 85;
-    --input: 51, 65, 85;
-    --ring: 34, 129, 235;
+  --border: 51, 65, 85;
+  --input: 51, 65, 85;
+  --ring: 34, 129, 235;
 }
 
 /* iOS 18 Inspired Theme */
 [data-theme="ios"] {
-    /* Rounded corners */
-    --radius: 12px;
-    --radius-md: 16px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
+  /* Rounded corners */
+  --radius: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -2px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 4px 6px -4px rgba(0, 0, 0, 0.03);
 
-    /* Colors */
-    --primary: 10, 132, 255;
-    --ring: 10, 132, 255;
+  /* Colors */
+  --primary: 10, 132, 255;
+  --ring: 10, 132, 255;
 
-    /* iOS-specific variables */
-    --ios-background: 242, 242, 247;
-    --ios-card: 255, 255, 255;
-    --ios-divider: 228, 228, 230;
+  /* iOS-specific variables */
+  --ios-background: 242, 242, 247;
+  --ios-card: 255, 255, 255;
+  --ios-divider: 228, 228, 230;
 }
 
 [data-theme="ios"].dark {
-    --primary: 10, 132, 255;
-    --ios-background: 0, 0, 0;
-    --ios-card: 28, 28, 30;
-    --ios-divider: 44, 44, 46;
+  --primary: 10, 132, 255;
+  --ios-background: 0, 0, 0;
+  --ios-card: 28, 28, 30;
+  --ios-divider: 44, 44, 46;
 }
 
 /* Fintech Theme */
 [data-theme="fintech"] {
-    --primary: 0, 122, 255;
-    --success: 52, 199, 89;
-    --warning: 255, 204, 0;
-    --error: 255, 59, 48;
-    --info: 90, 200, 250;
+  --primary: 0, 122, 255;
+  --success: 52, 199, 89;
+  --warning: 255, 204, 0;
+  --error: 255, 59, 48;
+  --info: 90, 200, 250;
 
-    /* Clean, professional appearance */
-    --radius: 8px;
-    --radius-md: 10px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
+  /* Clean, professional appearance */
+  --radius: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 
-    /* Subtle shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 10px 0 rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 20px 0 rgba(0, 0, 0, 0.1);
+  /* Subtle shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 10px 0 rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 20px 0 rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="fintech"].dark {
-    --background: 10, 10, 10;
-    --card: 22, 22, 22;
-    --border: 38, 38, 38;
+  --background: 10, 10, 10;
+  --card: 22, 22, 22;
+  --border: 38, 38, 38;
 }
 
 /* Color Schemes */
-[data-color="blue"] {
-    --color-primary-50: 240, 247, 255;
-    --color-primary-100: 224, 238, 254;
-    --color-primary-200: 185, 218, 251;
-    --color-primary-300: 125, 188, 249;
-    --color-primary-400: 74, 157, 245;
-    --color-primary-500: 34, 129, 235;
-    --color-primary-600: 19, 103, 209;
-    --color-primary-700: 17, 82, 174;
-    --color-primary-800: 17, 70, 143;
-    --color-primary-900: 19, 61, 118;
-    --color-primary-950: 15, 40, 80;
+[data-color="primary"] {
+  --color-primary-50: 240, 247, 255;
+  --color-primary-100: 224, 238, 254;
+  --color-primary-200: 185, 218, 251;
+  --color-primary-300: 125, 188, 249;
+  --color-primary-400: 74, 157, 245;
+  --color-primary-500: 34, 129, 235;
+  --color-primary-600: 19, 103, 209;
+  --color-primary-700: 17, 82, 174;
+  --color-primary-800: 17, 70, 143;
+  --color-primary-900: 19, 61, 118;
+  --color-primary-950: 15, 40, 80;
 }
 
-[data-color="indigo"] {
-    --color-primary-50: 238, 242, 255;
-    --color-primary-100: 224, 231, 255;
-    --color-primary-200: 199, 210, 254;
-    --color-primary-300: 165, 180, 252;
-    --color-primary-400: 129, 140, 248;
-    --color-primary-500: 99, 102, 241;
-    --color-primary-600: 79, 70, 229;
-    --color-primary-700: 67, 56, 202;
-    --color-primary-800: 55, 48, 163;
-    --color-primary-900: 49, 46, 129;
-    --color-primary-950: 30, 27, 75;
+[data-color="primary"] {
+  --color-primary-50: 238, 242, 255;
+  --color-primary-100: 224, 231, 255;
+  --color-primary-200: 199, 210, 254;
+  --color-primary-300: 165, 180, 252;
+  --color-primary-400: 129, 140, 248;
+  --color-primary-500: 99, 102, 241;
+  --color-primary-600: 79, 70, 229;
+  --color-primary-700: 67, 56, 202;
+  --color-primary-800: 55, 48, 163;
+  --color-primary-900: 49, 46, 129;
+  --color-primary-950: 30, 27, 75;
 }
 
 [data-color="purple"] {
-    --color-primary-50: 250, 245, 255;
-    --color-primary-100: 243, 232, 255;
-    --color-primary-200: 233, 213, 255;
-    --color-primary-300: 216, 180, 254;
-    --color-primary-400: 192, 132, 252;
-    --color-primary-500: 168, 85, 247;
-    --color-primary-600: 147, 51, 234;
-    --color-primary-700: 126, 34, 206;
-    --color-primary-800: 107, 33, 168;
-    --color-primary-900: 88, 28, 135;
-    --color-primary-950: 59, 7, 100;
+  --color-primary-50: 250, 245, 255;
+  --color-primary-100: 243, 232, 255;
+  --color-primary-200: 233, 213, 255;
+  --color-primary-300: 216, 180, 254;
+  --color-primary-400: 192, 132, 252;
+  --color-primary-500: 168, 85, 247;
+  --color-primary-600: 147, 51, 234;
+  --color-primary-700: 126, 34, 206;
+  --color-primary-800: 107, 33, 168;
+  --color-primary-900: 88, 28, 135;
+  --color-primary-950: 59, 7, 100;
 }
 
 [data-color="teal"] {
-    --color-primary-50: 240, 253, 250;
-    --color-primary-100: 204, 251, 241;
-    --color-primary-200: 153, 246, 228;
-    --color-primary-300: 94, 234, 212;
-    --color-primary-400: 45, 212, 191;
-    --color-primary-500: 20, 184, 166;
-    --color-primary-600: 13, 148, 136;
-    --color-primary-700: 15, 118, 110;
-    --color-primary-800: 17, 94, 89;
-    --color-primary-900: 19, 78, 74;
-    --color-primary-950: 4, 47, 46;
+  --color-primary-50: 240, 253, 250;
+  --color-primary-100: 204, 251, 241;
+  --color-primary-200: 153, 246, 228;
+  --color-primary-300: 94, 234, 212;
+  --color-primary-400: 45, 212, 191;
+  --color-primary-500: 20, 184, 166;
+  --color-primary-600: 13, 148, 136;
+  --color-primary-700: 15, 118, 110;
+  --color-primary-800: 17, 94, 89;
+  --color-primary-900: 19, 78, 74;
+  --color-primary-950: 4, 47, 46;
 }
 
 [data-color="green"] {
-    --color-primary-50: 240, 253, 244;
-    --color-primary-100: 220, 252, 231;
-    --color-primary-200: 187, 247, 208;
-    --color-primary-300: 134, 239, 172;
-    --color-primary-400: 74, 222, 128;
-    --color-primary-500: 34, 197, 94;
-    --color-primary-600: 22, 163, 74;
-    --color-primary-700: 21, 128, 61;
-    --color-primary-800: 22, 101, 52;
-    --color-primary-900: 20, 83, 45;
-    --color-primary-950: 5, 46, 22;
+  --color-primary-50: 240, 253, 244;
+  --color-primary-100: 220, 252, 231;
+  --color-primary-200: 187, 247, 208;
+  --color-primary-300: 134, 239, 172;
+  --color-primary-400: 74, 222, 128;
+  --color-primary-500: 34, 197, 94;
+  --color-primary-600: 22, 163, 74;
+  --color-primary-700: 21, 128, 61;
+  --color-primary-800: 22, 101, 52;
+  --color-primary-900: 20, 83, 45;
+  --color-primary-950: 5, 46, 22;
 }
 
 /* iOS-style glass morphism */
 .glass {
-    background: rgba(var(--card), var(--glass-bg-opacity));
-    backdrop-filter: blur(var(--glass-backdrop-blur));
-    -webkit-backdrop-filter: blur(var(--glass-backdrop-blur));
-    border: 1px solid rgba(var(--border), var(--glass-border-opacity));
+  background: rgba(var(--card), var(--glass-bg-opacity));
+  backdrop-filter: blur(var(--glass-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--glass-backdrop-blur));
+  border: 1px solid rgba(var(--border), var(--glass-border-opacity));
 }
 
 .dark .glass {
-    background: rgba(var(--card), calc(var(--glass-bg-opacity) - 0.1));
+  background: rgba(var(--card), calc(var(--glass-bg-opacity) - 0.1));
 }
 
 /* iOS-style blur effects */
 .blur-background {
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    background-color: rgba(var(--background), 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background-color: rgba(var(--background), 0.8);
 }
 
 .dark .blur-background {
-    background-color: rgba(var(--background), 0.7);
+  background-color: rgba(var(--background), 0.7);
 }
 
 /* Apply theme transitions */
 * {
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 /* Remove transitions for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    * {
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-    }
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }

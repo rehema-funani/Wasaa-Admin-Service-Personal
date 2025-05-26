@@ -145,7 +145,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100 ${disabled ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100 ${disabled ? 'opacity-70 cursor-not-allowed' : ''}`}
                 />
             </div>
         </div>
@@ -166,8 +166,8 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                             transition={{ type: 'spring', damping: 30, stiffness: 400 }}
                         >
                             <div className="relative">
-                                <div className="px-6 py-4 border-b border-gray-100 flex items-center bg-gradient-to-r from-blue-50 to-indigo-50">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center mr-3 shadow-md">
+                                <div className="px-6 py-4 border-b border-gray-100 flex items-center bg-gradient-to-r from-primary-50 to-primary-50">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center mr-3 shadow-md">
                                         {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : '??'}
                                     </div>
                                     <div className="flex-1">
@@ -186,14 +186,14 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
 
                                 <div className="flex border-b border-gray-100">
                                     <motion.button
-                                        className={`px-6 py-3 text-sm font-medium ${activeTab === 'basic' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-600 hover:text-gray-800'}`}
+                                        className={`px-6 py-3 text-sm font-medium ${activeTab === 'basic' ? 'text-primary-600 border-b-2 border-primary-500' : 'text-gray-600 hover:text-gray-800'}`}
                                         onClick={() => setActiveTab('basic')}
                                         whileHover={{ backgroundColor: activeTab === 'basic' ? undefined : '#f9fafb' }}
                                     >
                                         Basic Info
                                     </motion.button>
                                     <motion.button
-                                        className={`px-6 py-3 text-sm font-medium ${activeTab === 'account' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-600 hover:text-gray-800'}`}
+                                        className={`px-6 py-3 text-sm font-medium ${activeTab === 'account' ? 'text-primary-600 border-b-2 border-primary-500' : 'text-gray-600 hover:text-gray-800'}`}
                                         onClick={() => setActiveTab('account')}
                                         whileHover={{ backgroundColor: activeTab === 'account' ? undefined : '#f9fafb' }}
                                     >
@@ -289,7 +289,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                                                                     checked={changePassword}
                                                                     onChange={toggleChangePassword}
                                                                 />
-                                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
+                                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                                                                 <span className="ml-2 text-sm font-medium text-gray-700">Change Password</span>
                                                             </label>
                                                         </div>
@@ -341,7 +341,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                                                                 <select
                                                                     id="role_id"
                                                                     name="role_id"
-                                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
+                                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
                                                                     value={formData.role_id || ''}
                                                                     onChange={handleChange}
                                                                 >
@@ -368,7 +368,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                                                                 <select
                                                                     id="status"
                                                                     name="status"
-                                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
+                                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
                                                                     value={formData.status}
                                                                     onChange={handleChange}
                                                                 >
@@ -413,7 +413,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onSucces
                                     whileHover={{ scale: 1.02, boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.2)" }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={handleSubmit}
-                                    className="px-6 py-2.5 text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl hover:from-indigo-500 hover:to-indigo-400 shadow-md transition-all duration-200 flex items-center"
+                                    className="px-6 py-2.5 text-white bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:from-primary-500 hover:to-primary-400 shadow-md transition-all duration-200 flex items-center"
                                     disabled={isSaving}
                                 >
                                     {isSaving ? (

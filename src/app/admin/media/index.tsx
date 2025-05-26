@@ -9,14 +9,14 @@ const MediaDashboard: React.FC = () => {
         title: string;
         value: number | string;
         icon: React.ReactNode;
-        color: 'amber' | 'red' | 'green' | 'blue';
+        color: 'amber' | 'red' | 'green' | 'primary';
     };
 
     const stats: Stat[] = [
         { title: 'Pending Reviews', value: 42, icon: <Clock size={20} />, color: 'amber' },
         { title: 'Flagged Content', value: 18, icon: <AlertTriangle size={20} />, color: 'red' },
         { title: 'Compliance Rate', value: '98.2%', icon: <ShieldCheck size={20} />, color: 'green' },
-        { title: 'Active Creators', value: 1256, icon: <Users size={20} />, color: 'blue' }
+        { title: 'Active Creators', value: 1256, icon: <Users size={20} />, color: 'primary' }
     ];
 
     return (

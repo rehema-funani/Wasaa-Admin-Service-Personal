@@ -13,7 +13,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, showIcon = true, size
     const statusConfig = {
         open: {
             label: 'Open',
-            color: 'bg-blue-100 text-blue-700 border-blue-200',
+            color: 'bg-primary-100 text-primary-700 border-primary-200',
             icon: AlertCircle
         },
         pending: {

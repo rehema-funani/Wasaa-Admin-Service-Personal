@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
           }}
         >
           <motion.span
-            className="font-medium mr-1.5 text-indigo-600"
+            className="font-medium mr-1.5 text-primary-600"
             whileHover={{ scale: 1.05 }}
           >
             v2.5.0

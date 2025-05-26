@@ -76,10 +76,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
                             transition={{ type: 'spring', damping: 30, stiffness: 400 }}
                         >
                             <div className="relative">
-                                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-indigo-50 to-blue-50">
+                                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-primary-50 to-primary-50">
                                     <div className="flex items-center space-x-3">
-                                        <div className="bg-indigo-100 rounded-full p-2">
-                                            <User size={20} className="text-indigo-600" />
+                                        <div className="bg-primary-100 rounded-full p-2">
+                                            <User size={20} className="text-primary-600" />
                                         </div>
                                         <h2 className="text-xl font-semibold text-gray-800">Create New User</h2>
                                     </div>
@@ -162,7 +162,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
                                                 <select
                                                     id="role_id"
                                                     name="role_id"
-                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
+                                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
                                                     value={formData.role_id}
                                                     onChange={handleChange}
                                                     required
@@ -180,18 +180,18 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: 'auto' }}
                                                 exit={{ opacity: 0, height: 0 }}
-                                                className="mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-100"
+                                                className="mb-4 p-3 bg-primary-50 rounded-lg border border-primary-100"
                                             >
-                                                <p className="text-xs text-indigo-700 font-medium">
+                                                <p className="text-xs text-primary-700 font-medium">
                                                     {roles.find(r => r.id === formData.role_id)?.description || 'No description available for this role.'}
                                                 </p>
                                             </motion.div>
                                         )}
                                     </div>
 
-                                    <div className="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                                        <p className="text-sm text-blue-800 flex items-start">
-                                            <AlertCircle size={16} className="mr-2 mt-0.5 flex-shrink-0 text-blue-500" />
+                                    <div className="mt-4 p-3 bg-primary-50 rounded-xl border border-primary-100">
+                                        <p className="text-sm text-primary-800 flex items-start">
+                                            <AlertCircle size={16} className="mr-2 mt-0.5 flex-shrink-0 text-primary-500" />
                                             The user will receive a welcome email with instructions to set their password.
                                         </p>
                                     </div>
@@ -213,7 +213,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ isOpen, onClose, onSu
                                     whileHover={{ scale: 1.02, boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.2)" }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={handleSubmit}
-                                    className="px-6 py-2 text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl hover:from-indigo-500 hover:to-indigo-400 shadow-md transition-all duration-200 flex items-center"
+                                    className="px-6 py-2 text-white bg-gradient-to-r from-primary-600 to-primary-500 rounded-xl hover:from-primary-500 hover:to-primary-400 shadow-md transition-all duration-200 flex items-center"
                                     disabled={isSaving}
                                 >
                                     {isSaving ? (
@@ -271,7 +271,7 @@ const InputField = ({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 bg-white text-gray-900 border border-gray-100 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100`}
+                className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 bg-white text-gray-900 border border-gray-100 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100`}
             />
         </div>
     </div>

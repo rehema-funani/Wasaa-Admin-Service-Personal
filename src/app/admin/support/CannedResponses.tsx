@@ -166,7 +166,7 @@ const CannedResponses: React.FC = () => {
                                 resetForm();
                                 setShowAddModal(true);
                             }}
-                            className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
+                            className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -229,14 +229,14 @@ const CannedResponses: React.FC = () => {
                                             <div className="flex items-center gap-2 ml-4">
                                                 <button
                                                     onClick={() => copyToClipboard(response.content)}
-                                                    className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                                    className="p-1.5 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
                                                     title="Copy to clipboard"
                                                 >
                                                     <Copy size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => openEditModal(response)}
-                                                    className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                                    className="p-1.5 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
                                                 >
                                                     <Edit3 size={16} />
                                                 </button>
@@ -259,7 +259,7 @@ const CannedResponses: React.FC = () => {
                                         {response.content.length > 150 && (
                                             <button
                                                 onClick={() => toggleExpanded(response.id)}
-                                                className="text-sm text-indigo-600 hover:text-indigo-700 mt-1"
+                                                className="text-sm text-primary-600 hover:text-primary-700 mt-1"
                                             >
                                                 {expandedResponses.has(response.id) ? 'Show less' : 'Show more'}
                                             </button>
@@ -334,7 +334,7 @@ const CannedResponses: React.FC = () => {
                                             type="text"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                                             placeholder="e.g., Password Reset Instructions"
                                             required
                                         />
@@ -348,7 +348,7 @@ const CannedResponses: React.FC = () => {
                                         <textarea
                                             value={formData.content}
                                             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                                             placeholder="Enter your response template..."
                                             rows={6}
                                             required
@@ -370,7 +370,7 @@ const CannedResponses: React.FC = () => {
                                                     className={`
                             flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-all
                             ${formData.categories.includes(category)
-                                                            ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
+                                                            ? 'bg-primary-50 border-primary-300 text-primary-700'
                                                             : 'bg-white border-gray-200 hover:bg-gray-50'
                                                         }
                           `}
@@ -445,7 +445,7 @@ const CannedResponses: React.FC = () => {
                                         </button>
                                         <button
                                             type="submit"
-                                            className="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all text-sm"
+                                            className="flex-1 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all text-sm"
                                         >
                                             {editingResponse ? 'Update Response' : 'Create Response'}
                                         </button>

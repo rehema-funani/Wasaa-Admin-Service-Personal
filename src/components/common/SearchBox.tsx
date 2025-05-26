@@ -238,7 +238,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
                                                 <span className="truncate">{suggestion}</span>
                                             </div>
                                             <motion.div
-                                                className="text-indigo-400 ml-2 flex-shrink-0 opacity-0"
+                                                className="text-primary-400 ml-2 flex-shrink-0 opacity-0"
                                                 whileHover={{ opacity: 1, x: 2 }}
                                             >
                                                 <ArrowRight size={12} strokeWidth={1.5} />

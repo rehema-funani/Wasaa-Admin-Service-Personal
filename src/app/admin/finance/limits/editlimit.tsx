@@ -137,7 +137,7 @@ const EditTransactionLimitPage: React.FC = () => {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50/50 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+                    <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-gray-600">Loading transaction limit...</p>
                 </div>
             </div>
@@ -155,7 +155,7 @@ const EditTransactionLimitPage: React.FC = () => {
                     <p className="text-gray-600 mb-6">The requested transaction limit could not be loaded.</p>
                     <button
                         onClick={() => navigate('/admin/finance/limits')}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+                        className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
                     >
                         Back to KYC Management
                     </button>
@@ -200,7 +200,7 @@ const EditTransactionLimitPage: React.FC = () => {
             <div className="max-w-4xl mx-auto p-6">
                 {/* KYC Config and Transaction Type Info */}
                 <motion.div
-                    className="bg-gradient-to-r from-indigo-50 to-blue-50 backdrop-blur-sm rounded-2xl p-6 border border-indigo-100 mb-6"
+                    className="bg-gradient-to-r from-primary-50 to-primary-50 backdrop-blur-sm rounded-2xl p-6 border border-primary-100 mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
@@ -211,13 +211,13 @@ const EditTransactionLimitPage: React.FC = () => {
                                 {getTransactionTypeIcon(transactionType as TransactionType)}
                             </div>
                             <div>
-                                <h3 className="font-bold text-indigo-900 text-lg">
+                                <h3 className="font-bold text-primary-900 text-lg">
                                     {formatTransactionType(transactionType as TransactionType)}
                                 </h3>
-                                <p className="text-indigo-700 text-sm">
+                                <p className="text-primary-700 text-sm">
                                     <span className="font-medium">KYC Level:</span> {kycConfig.name} ({kycConfig.level})
                                 </p>
-                                <p className="text-indigo-600 text-sm">
+                                <p className="text-primary-600 text-sm">
                                     Editing transaction limits for this transaction type
                                 </p>
                             </div>

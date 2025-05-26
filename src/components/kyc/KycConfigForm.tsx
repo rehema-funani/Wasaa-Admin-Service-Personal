@@ -110,7 +110,7 @@ const KycConfigForm: React.FC<KycConfigFormProps> = ({
                             value={formData.name}
                             onChange={handleFormChange}
                             required
-                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                             placeholder="e.g., Basic Verification"
                         />
                     </div>
@@ -155,7 +155,7 @@ const KycConfigForm: React.FC<KycConfigFormProps> = ({
                         value={formData.description}
                         onChange={handleFormChange}
                         rows={3}
-                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all resize-none"
+                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all resize-none"
                         placeholder="Describe the purpose and scope of this KYC level..."
                     />
                 </div>
@@ -183,7 +183,7 @@ const KycConfigForm: React.FC<KycConfigFormProps> = ({
                 </button>
                 <button
                     type="submit"
-                    className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium transition-colors"
+                    className="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 font-medium transition-colors"
                 >
                     {isAdd ? 'Create KYC Level' : 'Update KYC Level'}
                 </button>

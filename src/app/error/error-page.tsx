@@ -12,7 +12,7 @@ const errorPage: React.FC = () => {
           className="w-full max-w-md text-center"
         >
           <div className="flex items-center justify-center mb-8">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-teal-500 to-primary-500 flex items-center justify-center shadow-sm">
               <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.8214 2.48697 15.5291 3.33782 17L2.5 21.5L7 20.6622C8.47087 21.513 10.1786 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M9 12L10.5 13.5L15 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -53,12 +53,12 @@ const errorPage: React.FC = () => {
                     transition={{ duration: 0.5, delay: 0.4 }}
                     className="relative z-10 mx-1"
                   >
-                    <span className="text-8xl font-thin text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">0</span>
+                    <span className="text-8xl font-thin text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-primary-400">0</span>
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ duration: 0.3, delay: 0.7 }}
-                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-blue-500"
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary-500"
                     />
                   </motion.div>
 
@@ -66,7 +66,7 @@ const errorPage: React.FC = () => {
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.5 }}
-                    className="z-10 text-8xl font-thin text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-500"
+                    className="z-10 text-8xl font-thin text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-500"
                   >
                     4
                   </motion.div>
@@ -100,7 +100,7 @@ const errorPage: React.FC = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => window.location.href = '/'}
-              className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:shadow-sm focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-teal-500 transition-all duration-150"
+              className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-primary-500 hover:shadow-sm focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-teal-500 transition-all duration-150"
             >
               Return to dashboard
             </motion.button>

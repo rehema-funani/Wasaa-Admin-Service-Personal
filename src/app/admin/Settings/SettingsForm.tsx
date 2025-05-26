@@ -186,7 +186,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({
             ? "border-red-400"
             : theme === "light" ? "border-slate-200" : "border-slate-700"
         } ${theme === "light" ? "bg-white/80 text-slate-800" : "bg-slate-800/50 text-white"
-        } focus:outline-none focus:ring-2 ${theme === "light" ? "focus:ring-indigo-400" : "focus:ring-indigo-600"
+        } focus:outline-none focus:ring-2 ${theme === "light" ? "focus:ring-primary-400" : "focus:ring-primary-600"
         } focus:border-transparent transition-all duration-200 backdrop-blur-sm`;
 
     return (
@@ -205,8 +205,8 @@ const SettingsForm: React.FC<SettingsFormProps> = ({
                             variants={slideUp}
                             className="flex items-center space-x-3 mb-2"
                         >
-                            <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${theme === "light" ? "bg-blue-50" : "bg-blue-900/30"}`}>
-                                <Globe size={20} className={theme === "light" ? "text-blue-600" : "text-blue-400"} />
+                            <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${theme === "light" ? "bg-primary-50" : "bg-primary-900/30"}`}>
+                                <Globe size={20} className={theme === "light" ? "text-primary-600" : "text-primary-400"} />
                             </div>
                             <h2 className={`text-lg font-semibold ${theme === "light" ? "text-slate-800" : "text-white"}`}>
                                 General Settings
@@ -300,7 +300,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({
                         >
                             <div
                                 onClick={() => toggleSection("colors")}
-                                className={`flex items-center justify-between cursor-pointer ${theme === "light" ? "hover:text-indigo-600" : "hover:text-indigo-400"} transition-colors duration-200`}
+                                className={`flex items-center justify-between cursor-pointer ${theme === "light" ? "hover:text-primary-600" : "hover:text-primary-400"} transition-colors duration-200`}
                             >
                                 <h3 className={`text-base font-medium ${theme === "light" ? "text-slate-800" : "text-white"}`}>
                                     Brand Colors
@@ -482,7 +482,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({
                         >
                             <div
                                 onClick={() => toggleSection("branding")}
-                                className={`flex items-center justify-between cursor-pointer ${theme === "light" ? "hover:text-indigo-600" : "hover:text-indigo-400"} transition-colors duration-200`}
+                                className={`flex items-center justify-between cursor-pointer ${theme === "light" ? "hover:text-primary-600" : "hover:text-primary-400"} transition-colors duration-200`}
                             >
                                 <h3 className={`text-base font-medium ${theme === "light" ? "text-slate-800" : "text-white"}`}>
                                     Visual Assets
@@ -559,9 +559,9 @@ const SettingsForm: React.FC<SettingsFormProps> = ({
                                                         <motion.div
                                                             whileHover={{ y: -5 }}
                                                             transition={{ type: "spring", stiffness: 300 }}
-                                                            className={`w-16 h-16 rounded-full ${theme === "light" ? "bg-indigo-50" : "bg-indigo-900/30"} flex items-center justify-center mb-3`}
+                                                            className={`w-16 h-16 rounded-full ${theme === "light" ? "bg-primary-50" : "bg-primary-900/30"} flex items-center justify-center mb-3`}
                                                         >
-                                                            <Upload className={theme === "light" ? "text-indigo-400" : "text-indigo-300"} size={24} />
+                                                            <Upload className={theme === "light" ? "text-primary-400" : "text-primary-300"} size={24} />
                                                         </motion.div>
                                                         <p className={`text-[13px] font-medium ${theme === "light" ? "text-slate-700" : "text-slate-300"} mb-1`}>
                                                             Click to upload logo
@@ -733,7 +733,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({
                     type="submit"
                     className={`relative overflow-hidden flex items-center px-8 py-3.5 rounded-xl text-[13px] font-medium text-white ${saving
                         ? theme === "light" ? "bg-slate-400" : "bg-slate-600"
-                        : "bg-gradient-to-r from-indigo-600 to-indigo-500"} shadow-xl transition-all duration-300`}
+                        : "bg-gradient-to-r from-primary-600 to-primary-500"} shadow-xl transition-all duration-300`}
                 >
                     {/* Animated background effect for save button */}
                     <div

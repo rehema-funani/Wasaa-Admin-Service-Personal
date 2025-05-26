@@ -182,7 +182,7 @@ const UserManagementPage: React.FC = () => {
             sortable: true,
             cell: (value: string, row: User) => (
                 <div className="flex items-center">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center font-medium text-sm mr-3 shadow-sm">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3 shadow-sm">
                         {value ? value.split(' ').map(n => n[0]).join('') : '??'}
                     </div>
                     <div>
@@ -199,7 +199,7 @@ const UserManagementPage: React.FC = () => {
             sortable: true,
             width: '120px',
             cell: (value: string) => (
-                <span className="inline-flex px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700">
+                <span className="inline-flex px-2.5 py-1 rounded-md text-xs font-medium bg-primary-50 text-primary-700">
                     {value}
                 </span>
             )
@@ -235,7 +235,7 @@ const UserManagementPage: React.FC = () => {
             cell: (value: string, row: User) => (
                 <div className="flex items-center space-x-1">
                     <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         aria-label="View user"
@@ -244,7 +244,7 @@ const UserManagementPage: React.FC = () => {
                         <Eye size={16} strokeWidth={1.8} />
                     </motion.button>
                     <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
+                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         aria-label="Edit user"
@@ -389,7 +389,7 @@ const UserManagementPage: React.FC = () => {
     }) => (
         <motion.button
             className={`flex items-center px-4 py-2.5 rounded-xl text-sm shadow-sm transition-all duration-200 ${isPrimary
-                ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white hover:from-indigo-500 hover:to-indigo-400'
+                ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400'
                 : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
                 }`}
             whileHover={{ y: -2, boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)' }}
@@ -411,7 +411,7 @@ const UserManagementPage: React.FC = () => {
             >
                 <div>
                     <motion.h1
-                        className="text-2xl font-bold text-gray-800 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent"
+                        className="text-2xl font-bold text-gray-800 bg-gradient-to-r from-primary-600 to-primary-600 bg-clip-text text-transparent"
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1, duration: 0.4 }}

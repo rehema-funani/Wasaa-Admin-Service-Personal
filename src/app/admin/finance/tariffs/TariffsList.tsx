@@ -39,7 +39,7 @@ const TariffsList = ({
                         placeholder="Search tariffs..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                        className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                     />
                 </div>
 
@@ -75,7 +75,7 @@ const TariffsList = ({
             </div>
 
             {isLoading && (
-                <div className="mb-5 flex items-center gap-2 p-3 bg-blue-50 rounded-xl border border-blue-100 text-blue-700">
+                <div className="mb-5 flex items-center gap-2 p-3 bg-primary-50 rounded-xl border border-primary-100 text-primary-700">
                     <Loader size={16} className="animate-spin" />
                     <span className="text-sm">Loading tariffs...</span>
                 </div>
@@ -113,7 +113,7 @@ const TariffsList = ({
                             {tariffs.length > 0 ? (
                                 tariffs.map((tariff) => (
                                     <React.Fragment key={tariff.id}>
-                                        <tr className={`${expandedRows[tariff.id] ? 'bg-blue-50/50' : 'hover:bg-gray-50/50'} transition-colors`}>
+                                        <tr className={`${expandedRows[tariff.id] ? 'bg-primary-50/50' : 'hover:bg-gray-50/50'} transition-colors`}>
                                             <td className="px-3 py-3 text-center">
                                                 <button
                                                     onClick={() => toggleRowExpansion(tariff.id)}
@@ -136,7 +136,7 @@ const TariffsList = ({
                                                     <button
                                                         onClick={() => handleTypeChange(tariff.id, 'flat')}
                                                         className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${tariff.type === 'flat'
-                                                            ? 'bg-blue-100 text-gray-800 font-medium'
+                                                            ? 'bg-primary-100 text-gray-800 font-medium'
                                                             : 'text-gray-500'
                                                             }`}
                                                         disabled={isLoading}
@@ -147,7 +147,7 @@ const TariffsList = ({
                                                     <button
                                                         onClick={() => handleTypeChange(tariff.id, 'percentage')}
                                                         className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${tariff.type === 'percentage'
-                                                            ? 'bg-blue-100 text-gray-800 font-medium'
+                                                            ? 'bg-primary-100 text-gray-800 font-medium'
                                                             : 'text-gray-500'
                                                             }`}
                                                         disabled={isLoading}
@@ -167,7 +167,7 @@ const TariffsList = ({
                                                                 step="0.1"
                                                                 value={tariff.value}
                                                                 onChange={(e) => handleValueChange(tariff.id, e.target.value)}
-                                                                className="py-1.5 px-2 pr-7 bg-gray-50 border border-gray-100 rounded-lg text-gray-800 focus:ring-1 focus:ring-blue-400 w-20 text-sm"
+                                                                className="py-1.5 px-2 pr-7 bg-gray-50 border border-gray-100 rounded-lg text-gray-800 focus:ring-1 focus:ring-primary-400 w-20 text-sm"
                                                                 disabled={isLoading}
                                                             />
                                                             <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -195,7 +195,7 @@ const TariffsList = ({
                                                 <div className="flex items-center justify-end gap-1">
                                                     <button
                                                         onClick={() => openEditModal(tariff)}
-                                                        className="p-1 text-gray-400 hover:text-blue-500 rounded-md hover:bg-blue-50"
+                                                        className="p-1 text-gray-400 hover:text-primary-500 rounded-md hover:bg-primary-50"
                                                         title="Edit"
                                                         disabled={isLoading}
                                                     >
@@ -214,8 +214,8 @@ const TariffsList = ({
                                         </tr>
 
                                         {expandedRows[tariff.id] && (
-                                            <tr className="bg-blue-50/30">
-                                                <td colSpan={8} className="px-6 py-2 border-t border-blue-100">
+                                            <tr className="bg-primary-50/30">
+                                                <td colSpan={8} className="px-6 py-2 border-t border-primary-100">
                                                     <div className="py-2">
                                                         {tariff.type === 'flat' && (
                                                             <>
@@ -223,7 +223,7 @@ const TariffsList = ({
                                                                     <h4 className="text-sm font-medium text-gray-700">Fixed Fee Ranges</h4>
                                                                     <button
                                                                         onClick={() => openAddRangeModal(tariff, 'fixed')}
-                                                                        className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all text-xs"
+                                                                        className="flex items-center gap-1 px-2 py-1 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all text-xs"
                                                                         disabled={isLoading}
                                                                     >
                                                                         <Plus size={14} />
@@ -243,7 +243,7 @@ const TariffsList = ({
                                                                                     <div className="flex gap-0.5">
                                                                                         <button
                                                                                             onClick={() => openEditRangeModal(tariff, range, 'fixed')}
-                                                                                            className="p-1 text-gray-400 hover:text-blue-500 rounded-md hover:bg-blue-50"
+                                                                                            className="p-1 text-gray-400 hover:text-primary-500 rounded-md hover:bg-primary-50"
                                                                                             title="Edit Range"
                                                                                             disabled={isLoading}
                                                                                         >
@@ -280,7 +280,7 @@ const TariffsList = ({
                                                                     <h4 className="text-sm font-medium text-gray-700">Percentage Fee Ranges</h4>
                                                                     <button
                                                                         onClick={() => openAddRangeModal(tariff, 'percentage')}
-                                                                        className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all text-xs"
+                                                                        className="flex items-center gap-1 px-2 py-1 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all text-xs"
                                                                         disabled={isLoading}
                                                                     >
                                                                         <Plus size={14} />
@@ -300,7 +300,7 @@ const TariffsList = ({
                                                                                     <div className="flex gap-0.5">
                                                                                         <button
                                                                                             onClick={() => openEditRangeModal(tariff, range, 'percentage')}
-                                                                                            className="p-1 text-gray-400 hover:text-blue-500 rounded-md hover:bg-blue-50"
+                                                                                            className="p-1 text-gray-400 hover:text-primary-500 rounded-md hover:bg-primary-50"
                                                                                             title="Edit Range"
                                                                                             disabled={isLoading}
                                                                                         >

@@ -118,7 +118,7 @@ const EditKycConfigPage: React.FC = () => {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50/50 flex items-center justify-center">
                 <div className="text-center">
-                    <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+                    <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-gray-600">Loading KYC configuration...</p>
                 </div>
             </div>
@@ -155,7 +155,7 @@ const EditKycConfigPage: React.FC = () => {
                             <motion.button
                                 type="submit"
                                 form="kyc-config-form"
-                                className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 disabled={isLoading}
@@ -247,7 +247,7 @@ const EditKycConfigPage: React.FC = () => {
                                             value={formData.name}
                                             onChange={handleFormChange}
                                             required
-                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                             placeholder="e.g., Basic Verification"
                                             disabled={isLoading}
                                         />
@@ -294,7 +294,7 @@ const EditKycConfigPage: React.FC = () => {
                                         value={formData.description}
                                         onChange={handleFormChange}
                                         rows={3}
-                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all resize-none"
+                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all resize-none"
                                         placeholder="Describe the purpose and scope of this KYC level..."
                                         disabled={isLoading}
                                     />
@@ -310,7 +310,7 @@ const EditKycConfigPage: React.FC = () => {
                                         value={Array.isArray(formData.requirements) ? formData.requirements.join('\n') : formData.requirements}
                                         onChange={handleFormChange}
                                         rows={6}
-                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all resize-none"
+                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all resize-none"
                                         placeholder="Email verification&#10;Phone number verification&#10;National ID card&#10;Proof of address"
                                         disabled={isLoading}
                                     />

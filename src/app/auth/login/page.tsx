@@ -56,10 +56,10 @@ const page = () => {
   return (
     <div className="flex h-screen w-full bg-white">
       <div className="hidden lg:block lg:w-2/5 bg-zinc-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-teal-500/10" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-teal-500/10" />
 
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-teal-500/10" />
-        <div className="absolute bottom-1/4 right-1/4 w-32 h-32 rounded-full bg-blue-500/10" />
+        <div className="absolute bottom-1/4 right-1/4 w-32 h-32 rounded-full bg-primary-500/10" />
 
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
@@ -70,7 +70,7 @@ const page = () => {
           >
             <div className="relative z-10">
               <div className="flex items-center justify-center mb-10">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center shadow-lg">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-teal-500 to-primary-500 flex items-center justify-center shadow-lg">
                   <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.8214 2.48697 15.5291 3.33782 17L2.5 21.5L7 20.6622C8.47087 21.513 10.1786 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M9 12L10.5 13.5L15 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -90,7 +90,7 @@ const page = () => {
                       initial={{ height: 0 }}
                       animate={{ height: `${height}%` }}
                       transition={{ delay: i * 0.1, duration: 0.5 }}
-                      className="flex-1 rounded-t bg-gradient-to-t from-teal-500 to-blue-500"
+                      className="flex-1 rounded-t bg-gradient-to-t from-teal-500 to-primary-500"
                     />
                   ))}
                 </div>
@@ -101,7 +101,7 @@ const page = () => {
                   <p className="text-xs font-medium text-gray-500">Active Users</p>
                   <div className="flex space-x-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-300"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary-300"></div>
                   </div>
                 </div>
                 <p className="text-lg font-semibold mb-1">1,248,352</p>
@@ -131,7 +131,7 @@ const page = () => {
           className="w-full max-w-sm"
         >
           <div className="flex items-center gap-2 mb-10 lg:hidden">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500 to-primary-500 flex items-center justify-center">
               <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.8214 2.48697 15.5291 3.33782 17L2.5 21.5L7 20.6622C8.47087 21.513 10.1786 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M9 12L10.5 13.5L15 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -238,7 +238,7 @@ const page = () => {
               onClick={handleSubmit}
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full flex justify-center items-center py-2.5 px-4 mt-2 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:shadow-md focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-teal-500 transition-all duration-150"
+              className="w-full flex justify-center items-center py-2.5 px-4 mt-2 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-primary-500 hover:shadow-md focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-teal-500 transition-all duration-150"
               disabled={isLoading}
             >
               {isLoading ? (

@@ -73,10 +73,10 @@ const getCategoryIcon = (category: string) => {
 const getActionColor = (action: string): string => {
     const colorMap: Record<string, string> = {
         create: 'bg-green-100 text-green-700 border-green-200',
-        update: 'bg-blue-100 text-blue-700 border-blue-200',
+        update: 'bg-primary-100 text-primary-700 border-primary-200',
         delete: 'bg-red-100 text-red-700 border-red-200',
         list: 'bg-purple-100 text-purple-700 border-purple-200',
-        view: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+        view: 'bg-primary-100 text-primary-700 border-primary-200',
     };
 
     return colorMap[action] || 'bg-gray-100 text-gray-700 border-gray-200';
@@ -128,10 +128,10 @@ const CategoryPermissions: React.FC<{
                         }}
                     >
                         {allSelected ? (
-                            <CheckSquare size={18} className="text-blue-600" />
+                            <CheckSquare size={18} className="text-primary-600" />
                         ) : someSelected ? (
-                            <div className="w-[18px] h-[18px] border-2 border-blue-600 rounded-sm flex items-center justify-center">
-                                <div className="w-[10px] h-[10px] bg-blue-600 rounded-sm"></div>
+                            <div className="w-[18px] h-[18px] border-2 border-primary-600 rounded-sm flex items-center justify-center">
+                                <div className="w-[10px] h-[10px] bg-primary-600 rounded-sm"></div>
                             </div>
                         ) : (
                             <Square size={18} className="text-gray-400" />
@@ -170,7 +170,7 @@ const CategoryPermissions: React.FC<{
                                         {action}
                                     </span>
                                     {isSelected ? (
-                                        <CheckSquare size={16} className="text-blue-600" />
+                                        <CheckSquare size={16} className="text-primary-600" />
                                     ) : (
                                         <Square size={16} className="text-gray-400" />
                                     )}
@@ -351,7 +351,7 @@ const createrole: React.FC = () => {
                     <p className="text-gray-600 mb-6">{error}</p>
                     <button
                         onClick={() => window.location.reload()}
-                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-sm flex items-center justify-center mx-auto"
+                        className="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm flex items-center justify-center mx-auto"
                     >
                         <RefreshCw size={16} className="mr-2" />
                         Try Again
@@ -389,7 +389,7 @@ const createrole: React.FC = () => {
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    className="w-full text-[13px] px-4 py-2 text-[14px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full text-[13px] px-4 py-2 text-[14px] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                     placeholder="Enter role title"
                                 />
                             </div>
@@ -402,15 +402,15 @@ const createrole: React.FC = () => {
                                     id="roleDescription"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full text-[13px] px-4 py-2 text-[14px] border border-gray-200 rounded-xl h-24 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full text-[13px] px-4 py-2 text-[14px] border border-gray-200 rounded-xl h-24 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                     placeholder="Enter role description"
                                 />
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-100 flex items-center">
+                        <div className="bg-gradient-to-br from-primary-50 to-primary-50 p-6 rounded-xl border border-primary-100 flex items-center">
                             <div className="flex-shrink-0 bg-white p-4 rounded-xl shadow-sm mr-4">
-                                <Shield size={32} className="text-indigo-600" />
+                                <Shield size={32} className="text-primary-600" />
                             </div>
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-1">About Role Permissions</h3>
@@ -418,7 +418,7 @@ const createrole: React.FC = () => {
                                     Roles define what users can do in the system. Assign permissions carefully to ensure proper access control.
                                 </p>
                                 <div className="flex items-center mt-3 text-sm">
-                                    <span className="inline-flex items-center text-blue-600">
+                                    <span className="inline-flex items-center text-primary-600">
                                         <CheckCircle size={14} className="mr-1" />
                                         {selectedPermissions.length} permissions selected
                                     </span>
@@ -443,7 +443,7 @@ const createrole: React.FC = () => {
                             disabled={submitting || !title.trim() || selectedPermissions.length === 0 || !description.trim()}
                             className={`text-[14px] px-5 py-2 rounded-xl flex items-center transition-colors duration-300 ${submitting || !title.trim() || selectedPermissions.length === 0
                                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-sm'
+                                : 'bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-sm'
                                 }`}
                         >
                             {submitting ? (
@@ -465,7 +465,7 @@ const createrole: React.FC = () => {
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                         <div className="flex items-center">
                             <h2 className="text-xl font-semibold text-gray-800">Select Permissions</h2>
-                            <span className="ml-2 bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
+                            <span className="ml-2 bg-primary-100 text-primary-700 text-xs font-medium px-2 py-1 rounded-full">
                                 {selectedPermissions.length} selected
                             </span>
                         </div>
@@ -477,7 +477,7 @@ const createrole: React.FC = () => {
                                     placeholder="Search permissions..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-10 pr-4 py-2 text-[14px] w-full md:w-64 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="pl-10 pr-4 py-2 text-[14px] w-full md:w-64 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                 />
                                 <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                                 {searchQuery && (
@@ -500,7 +500,7 @@ const createrole: React.FC = () => {
                                         <button
                                             key={category}
                                             className={`w-full text-left px-4 py-2 text-sm ${activeFilter === category
-                                                ? 'bg-blue-50 text-blue-700'
+                                                ? 'bg-primary-50 text-primary-700'
                                                 : 'text-gray-700 hover:bg-gray-50'
                                                 }`}
                                             onClick={() => setActiveFilter(category)}
@@ -512,7 +512,7 @@ const createrole: React.FC = () => {
                             </div>
 
                             <button
-                                className="px-4 py-2 text-[14px] bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-xl flex items-center"
+                                className="px-4 py-2 text-[14px] bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-xl flex items-center"
                                 onClick={() => handleToggleAll(
                                     filteredPermissions.length > 0 &&
                                     !filteredPermissions.every(p => selectedPermissions.includes(p.id))
@@ -564,7 +564,7 @@ const createrole: React.FC = () => {
                                         setSearchQuery('');
                                         setActiveFilter('all');
                                     }}
-                                    className="mt-4 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors duration-300"
+                                    className="mt-4 px-4 py-2 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition-colors duration-300"
                                 >
                                     Clear Filters
                                 </button>
@@ -575,8 +575,8 @@ const createrole: React.FC = () => {
 
                 <div className="sticky bottom-6 bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex items-center justify-between">
                     <div className="flex items-center">
-                        <div className="bg-blue-100 p-2 rounded-lg mr-3">
-                            <CheckCircle size={24} className="text-blue-600" />
+                        <div className="bg-primary-100 p-2 rounded-lg mr-3">
+                            <CheckCircle size={24} className="text-primary-600" />
                         </div>
                         <div>
                             <p className="text-gray-700 font-medium">
@@ -600,7 +600,7 @@ const createrole: React.FC = () => {
                             disabled={submitting || !title.trim() || selectedPermissions.length === 0}
                             className={`px-5 py-2 text-[14px] rounded-xl flex items-center transition-colors duration-300 ${submitting || !title.trim() || selectedPermissions.length === 0
                                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-sm'
+                                : 'bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-sm'
                                 }`}
                         >
                             {submitting ? (

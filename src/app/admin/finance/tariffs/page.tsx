@@ -296,8 +296,8 @@ const TariffsPage: React.FC = () => {
 
     const getTariffIcon = (type: string) => {
         return type === 'percentage' ? (
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Percent size={18} className="text-blue-600" />
+            <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                <Percent size={18} className="text-primary-600" />
             </div>
         ) : (
             <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
@@ -317,7 +317,7 @@ const TariffsPage: React.FC = () => {
                     <p className="text-gray-600 mb-6">{error}</p>
                     <button
                         onClick={fetchTariffs}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+                        className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
                     >
                         Try Again
                     </button>
@@ -339,7 +339,7 @@ const TariffsPage: React.FC = () => {
                         <div className="flex items-center space-x-3">
                             <motion.button
                                 onClick={() => navigate('/admin/finance/tariffs/add')}
-                                className="flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all"
+                                className="flex items-center px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 disabled={isLoading}
@@ -359,7 +359,7 @@ const TariffsPage: React.FC = () => {
                                 placeholder="Search tariffs..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-gray-100 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500/30 focus:bg-white transition-all"
+                                className="w-full pl-12 pr-4 py-3 bg-gray-100 border-0 rounded-2xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-primary-500/30 focus:bg-white transition-all"
                             />
                         </div>
 
@@ -410,7 +410,7 @@ const TariffsPage: React.FC = () => {
                 >
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center h-64">
-                            <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+                            <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
                             <p className="text-gray-500">Loading tariffs...</p>
                         </div>
                     ) : filteredTariffs.length === 0 ? (
@@ -422,7 +422,7 @@ const TariffsPage: React.FC = () => {
                             <p className="text-sm text-gray-500 mb-4">Get started by creating your first tariff</p>
                             <button
                                 onClick={() => navigate('/admin/finance/tariffs/add')}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors"
+                                className="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors"
                             >
                                 Create Tariff
                             </button>
@@ -454,7 +454,7 @@ const TariffsPage: React.FC = () => {
                                                                 {tariff.status}
                                                             </span>
                                                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${tariff.type === 'percentage'
-                                                                ? 'bg-blue-100 text-blue-700'
+                                                                ? 'bg-primary-100 text-primary-700'
                                                                 : 'bg-emerald-100 text-emerald-700'
                                                                 }`}>
                                                                 {tariff.type === 'percentage' ? 'Percentage' : 'Fixed Rate'}
@@ -498,7 +498,7 @@ const TariffsPage: React.FC = () => {
                                                         onClick={() => navigate(`/admin/finance/tariffs/edit/${tariff.id}`, {
                                                             state: { tariff }
                                                         })}
-                                                        className="p-2 hover:bg-indigo-100 text-gray-400 hover:text-indigo-600 rounded-full transition-all"
+                                                        className="p-2 hover:bg-primary-100 text-gray-400 hover:text-primary-600 rounded-full transition-all"
                                                         whileHover={{ scale: 1.1 }}
                                                         whileTap={{ scale: 0.9 }}
                                                     >
@@ -533,7 +533,7 @@ const TariffsPage: React.FC = () => {
                                                             </h4>
                                                             <motion.button
                                                                 onClick={() => handleAddRangeClick(tariff)}
-                                                                className="flex items-center px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-all text-sm font-medium"
+                                                                className="flex items-center px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all text-sm font-medium"
                                                                 whileHover={{ scale: 1.02 }}
                                                                 whileTap={{ scale: 0.98 }}
                                                             >
@@ -582,18 +582,18 @@ const TariffsPage: React.FC = () => {
                 </motion.div>
 
                 <motion.div
-                    className="mt-6 bg-indigo-50/70 backdrop-blur-sm rounded-2xl p-6 border border-indigo-100"
+                    className="mt-6 bg-primary-50/70 backdrop-blur-sm rounded-2xl p-6 border border-primary-100"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
                 >
                     <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                            <TrendingUp size={18} className="text-indigo-600" />
+                        <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                            <TrendingUp size={18} className="text-primary-600" />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-indigo-900 mb-2">About Tariffs</h3>
-                            <p className="text-indigo-700 text-sm leading-relaxed">
+                            <h3 className="font-semibold text-primary-900 mb-2">About Tariffs</h3>
+                            <p className="text-primary-700 text-sm leading-relaxed">
                                 Tariffs define how transaction fees are calculated. You can set up either fixed rates
                                 (specific amounts for transaction ranges) or percentage-based fees. Changes take effect
                                 immediately and apply to all new transactions.
@@ -662,9 +662,9 @@ const TariffsPage: React.FC = () => {
                             </div>
 
                             {/* Recommendation */}
-                            <div className="bg-blue-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-blue-100">
-                                <h4 className="font-semibold text-blue-900 mb-2">💡 Recommendation</h4>
-                                <p className="text-sm text-blue-800">
+                            <div className="bg-primary-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-primary-100">
+                                <h4 className="font-semibold text-primary-900 mb-2">💡 Recommendation</h4>
+                                <p className="text-sm text-primary-800">
                                     Consider setting the tariff to <span className="font-medium">"inactive"</span> instead of deleting it.
                                     This preserves historical data while preventing future use.
                                 </p>
@@ -760,7 +760,7 @@ const TariffsPage: React.FC = () => {
                                             value={newRange.min}
                                             onChange={(e) => setNewRange(prev => ({ ...prev, min: parseFloat(e.target.value) || 0 }))}
                                             min="0"
-                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                             placeholder="0"
                                             disabled={isAddingRange}
                                         />
@@ -780,7 +780,7 @@ const TariffsPage: React.FC = () => {
                                                     max: value === '' ? null : parseFloat(value) || null
                                                 }));
                                             }}
-                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                             placeholder="Leave empty for 'and above'"
                                             disabled={isAddingRange}
                                         />
@@ -798,7 +798,7 @@ const TariffsPage: React.FC = () => {
                                             onChange={(e) => setNewRange(prev => ({ ...prev, fee: parseFloat(e.target.value) || 0 }))}
                                             min="0"
                                             step="0.1"
-                                            className="w-full px-4 py-3 pr-12 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                            className="w-full px-4 py-3 pr-12 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                             placeholder="0"
                                             disabled={isAddingRange}
                                         />
@@ -813,9 +813,9 @@ const TariffsPage: React.FC = () => {
                                 </div>
 
                                 {/* Preview */}
-                                <div className="bg-indigo-50/70 backdrop-blur-sm rounded-2xl p-4 border border-indigo-100">
-                                    <h4 className="font-semibold text-indigo-900 mb-2">Range Preview</h4>
-                                    <div className="text-sm text-indigo-800">
+                                <div className="bg-primary-50/70 backdrop-blur-sm rounded-2xl p-4 border border-primary-100">
+                                    <h4 className="font-semibold text-primary-900 mb-2">Range Preview</h4>
+                                    <div className="text-sm text-primary-800">
                                         <p className="font-medium">
                                             {newRange.max === null
                                                 ? `KES ${newRange.min.toLocaleString()}+`
@@ -845,7 +845,7 @@ const TariffsPage: React.FC = () => {
 
                                     <motion.button
                                         onClick={handleConfirmAddRange}
-                                        className="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                                        className="flex-1 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                                         whileHover={{ scale: isAddingRange ? 1 : 1.02 }}
                                         whileTap={{ scale: isAddingRange ? 1 : 0.98 }}
                                         disabled={isAddingRange}
@@ -931,9 +931,9 @@ const TariffsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-blue-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-blue-100">
-                                <h4 className="font-semibold text-blue-900 mb-2">💡 Consider Instead</h4>
-                                <p className="text-sm text-blue-800">
+                            <div className="bg-primary-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-primary-100">
+                                <h4 className="font-semibold text-primary-900 mb-2">💡 Consider Instead</h4>
+                                <p className="text-sm text-primary-800">
                                     You can modify this range by editing the tariff instead of deleting it.
                                     This preserves the pricing structure while allowing adjustments.
                                 </p>

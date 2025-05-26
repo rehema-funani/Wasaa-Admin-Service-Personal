@@ -11,7 +11,7 @@ const KycLevelIcon: React.FC<KycLevelIconProps> = ({ level, size = 16 }) => {
     const getKycLevelIcon = (level: KycLevel) => {
         switch (level) {
             case 'basic':
-                return { icon: <User size={size} />, color: 'text-blue-500 bg-blue-50' };
+                return { icon: <User size={size} />, color: 'text-primary-500 bg-primary-50' };
             case 'standard':
                 return { icon: <Shield size={size} />, color: 'text-amber-500 bg-amber-50' };
             case 'advanced':

@@ -32,8 +32,8 @@ export const TeamCard: React.FC<TeamCardProps> = ({
             <div className="p-5">
                 <div className="flex justify-between items-start">
                     <div className="flex items-center">
-                        <div className="bg-blue-100 p-2 rounded-lg">
-                            <Users size={20} className="text-blue-600" />
+                        <div className="bg-primary-100 p-2 rounded-lg">
+                            <Users size={20} className="text-primary-600" />
                         </div>
                         <h3 className="ml-3 font-medium text-gray-900">{team.title}</h3>
                     </div>
@@ -102,7 +102,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({
 
                 <button
                     onClick={() => onViewDetails(team.id)}
-                    className="mt-4 w-full py-2 text-sm text-center text-blue-600 font-medium border border-blue-100 rounded-lg hover:bg-blue-50 transition-colors"
+                    className="mt-4 w-full py-2 text-sm text-center text-primary-600 font-medium border border-primary-100 rounded-lg hover:bg-primary-50 transition-colors"
                 >
                     View Details
                 </button>

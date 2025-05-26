@@ -101,7 +101,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                         value={formData.title}
                         onChange={handleChange}
                         required
-                        className="w-full pl-9 pr-4 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-9 pr-4 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-transparent transition-all duration-200"
                         placeholder="Enter team name"
                     />
                 </div>
@@ -120,7 +120,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                         name="level"
                         value={formData.level}
                         onChange={handleChange}
-                        className="w-full pl-9 pr-9 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg appearance-none text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-9 pr-9 py-2 bg-white/90 backdrop-blur-sm border border-gray-100/70 rounded-lg appearance-none text-sm focus:outline-none focus:ring-2 focus:ring-primary-400/50 focus:border-transparent transition-all duration-200"
                     >
                         <option value="LEVEL_1">Level 1 - First Line Support</option>
                         <option value="LEVEL_2">Level 2 - Technical Support</option>
@@ -162,7 +162,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                             <div
                                 key={user.id}
                                 className={`flex items-center justify-between p-2 border ${formData.members.includes(user.id)
-                                    ? 'border-blue-100/70 bg-blue-50/50'
+                                    ? 'border-primary-100/70 bg-primary-50/50'
                                     : 'border-gray-100/60 hover:border-gray-200/70 hover:bg-gray-50/50'
                                     } rounded-lg cursor-pointer transition-all duration-200`}
                                 onClick={() => handleMemberToggle(user.id)}
@@ -181,7 +181,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                                 </div>
 
                                 {formData.members.includes(user.id) && (
-                                    <div className="h-4 w-4 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                                    <div className="h-4 w-4 bg-primary-500 rounded-full flex items-center justify-center text-white">
                                         <Check size={10} />
                                     </div>
                                 )}
@@ -213,7 +213,7 @@ export const TeamForm: React.FC<TeamFormProps> = ({
                     type="submit"
                     isLoading={isSubmitting}
                     disabled={isSubmitting}
-                    className="bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg shadow-sm transition-all duration-200 py-1.5 px-3"
+                    className="bg-primary-500 hover:bg-primary-600 text-white text-sm rounded-lg shadow-sm transition-all duration-200 py-1.5 px-3"
                     rightIcon={team ? <Check size={14} /> : <UserPlus size={14} />}
                 >
                     {team ? 'Update Team' : 'Create Team'}

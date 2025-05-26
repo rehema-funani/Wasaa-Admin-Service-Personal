@@ -31,7 +31,7 @@ const LivestreamMetrics: React.FC = () => {
             title: 'Avg. Duration',
             value: '48 min',
             change: '+8%',
-            icon: <Clock size={16} className="text-indigo-500" strokeWidth={1.8} />
+            icon: <Clock size={16} className="text-primary-500" strokeWidth={1.8} />
         }
     ];
 

@@ -363,14 +363,14 @@ const GiftManagementPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-50 to-primary-50">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen p-6 bg-gradient-to-br from-slate-50 to-primary-50">
       <motion.div
         className="max-w-6xl mx-auto"
         initial="hidden"
@@ -385,11 +385,11 @@ const GiftManagementPage = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/gifts')}
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-sm text-blue-600 hover:bg-white transition-all duration-300"
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-sm text-primary-600 hover:bg-white transition-all duration-300"
             >
               <ArrowLeft size={20} strokeWidth={2} />
             </button>
-            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400">
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-400">
               {isEditing ? 'Edit Gift' : 'Create New Gift'}
             </h1>
           </div>
@@ -423,7 +423,7 @@ const GiftManagementPage = () => {
               >
                 <div className="p-6">
                   <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                    <Gift size={20} className="mr-2 text-blue-500" />
+                    <Gift size={20} className="mr-2 text-primary-500" />
                     Basic Information
                   </h2>
 
@@ -439,7 +439,7 @@ const GiftManagementPage = () => {
                         type="text"
                         value={formData.name}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-xl bg-white border ${errors.name ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-blue-500'} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
+                        className={`w-full px-4 py-3 rounded-xl bg-white border ${errors.name ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-primary-500'} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
                         placeholder="Enter a memorable gift name"
                       />
                       {errors.name && (
@@ -461,7 +461,7 @@ const GiftManagementPage = () => {
                         rows={3}
                         value={formData.description}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                        className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
                         placeholder="Describe what makes this gift special"
                       />
                     </div>
@@ -477,7 +477,7 @@ const GiftManagementPage = () => {
                           name="category"
                           value={formData.category}
                           onChange={handleChange}
-                          className="appearance-none w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                          className="appearance-none w-full px-4 py-3 rounded-xl bg-white border border-slate-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
                         >
                           {mockCategories.map(category => (
                             <option key={category.id} value={category.name}>
@@ -500,12 +500,12 @@ const GiftManagementPage = () => {
                         {formData.tags.map((tag, index) => (
                           <div
                             key={index}
-                            className="flex items-center bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full text-sm font-medium"
+                            className="flex items-center bg-primary-50 text-primary-600 px-3 py-1.5 rounded-full text-sm font-medium"
                           >
                             <span>#{tag}</span>
                             <button
                               type="button"
-                              className="ml-1.5 p-0.5 rounded-full hover:bg-blue-100 transition-colors"
+                              className="ml-1.5 p-0.5 rounded-full hover:bg-primary-100 transition-colors"
                               onClick={() => handleRemoveTag(tag)}
                             >
                               <X size={14} />
@@ -521,12 +521,12 @@ const GiftManagementPage = () => {
                           value={tagInput}
                           onChange={handleTagInputChange}
                           onKeyDown={handleTagKeyDown}
-                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-slate-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                          className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-slate-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
                           placeholder="Add a tag and press Enter"
                         />
                       </div>
                       <p className="mt-2 text-xs text-slate-500 flex items-center">
-                        <Sparkles size={14} className="mr-1 text-blue-400" />
+                        <Sparkles size={14} className="mr-1 text-primary-400" />
                         Tags help users discover your gift
                       </p>
                     </div>
@@ -543,7 +543,7 @@ const GiftManagementPage = () => {
                 >
                   <div className="p-6">
                     <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                      <DollarSign size={20} className="mr-2 text-blue-500" />
+                      <DollarSign size={20} className="mr-2 text-primary-500" />
                       Pricing
                     </h2>
 
@@ -564,7 +564,7 @@ const GiftManagementPage = () => {
                             min="1"
                             value={formData.cost}
                             onChange={handleChange}
-                            className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white border ${errors.cost ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-blue-500'} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
+                            className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white border ${errors.cost ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-primary-500'} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
                             placeholder="100"
                           />
                         </div>
@@ -598,7 +598,7 @@ const GiftManagementPage = () => {
                           />
                         </div>
                         <p className="mt-2 text-xs text-slate-500 flex items-center">
-                          <CheckCircle size={14} className="mr-1 text-blue-400" />
+                          <CheckCircle size={14} className="mr-1 text-primary-400" />
                           Automatically calculated (100 coins = $1.00)
                         </p>
                       </div>
@@ -613,7 +613,7 @@ const GiftManagementPage = () => {
                 >
                   <div className="p-6">
                     <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                      <Clock size={20} className="mr-2 text-blue-500" />
+                      <Clock size={20} className="mr-2 text-primary-500" />
                       Availability
                     </h2>
 
@@ -632,7 +632,7 @@ const GiftManagementPage = () => {
                             checked={formData.isActive}
                             onChange={handleChange}
                           />
-                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                         </label>
                       </div>
 
@@ -651,7 +651,7 @@ const GiftManagementPage = () => {
                               checked={formData.isLimited}
                               onChange={handleChange}
                             />
-                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                           </label>
                         </div>
 
@@ -678,7 +678,7 @@ const GiftManagementPage = () => {
                                     type="date"
                                     value={formData.limitedStartDate ? formData.limitedStartDate.split('T')[0] : ''}
                                     onChange={handleDateChange}
-                                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white border ${errors.limitedStartDate ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-blue-500'} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
+                                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white border ${errors.limitedStartDate ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-primary-500'} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
                                   />
                                 </div>
                                 {errors.limitedStartDate && (
@@ -702,7 +702,7 @@ const GiftManagementPage = () => {
                                     type="date"
                                     value={formData.limitedEndDate ? formData.limitedEndDate.split('T')[0] : ''}
                                     onChange={handleDateChange}
-                                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white border ${errors.limitedEndDate ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-blue-500'} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
+                                    className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white border ${errors.limitedEndDate ? 'border-red-300 focus:ring-red-500' : 'border-slate-200 focus:ring-primary-500'} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
                                   />
                                 </div>
                                 {errors.limitedEndDate && (
@@ -730,7 +730,7 @@ const GiftManagementPage = () => {
                 >
                   <div className="p-6">
                     <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                      <ImageIcon size={20} className="mr-2 text-blue-500" />
+                      <ImageIcon size={20} className="mr-2 text-primary-500" />
                       Gift Image
                     </h2>
 
@@ -738,8 +738,8 @@ const GiftManagementPage = () => {
                       {imagePreview ? (
                         <div className="relative">
                           <div className="rounded-xl overflow-hidden bg-slate-100 aspect-video flex items-center justify-center">
-                            <div className="p-8 bg-blue-50 rounded-full">
-                              <Gift size={48} className="text-blue-500" strokeWidth={1.5} />
+                            <div className="p-8 bg-primary-50 rounded-full">
+                              <Gift size={48} className="text-primary-500" strokeWidth={1.5} />
                             </div>
                           </div>
                           <button
@@ -752,10 +752,10 @@ const GiftManagementPage = () => {
                         </div>
                       ) : (
                         <div
-                          className={`border-2 border-dashed ${errors.image ? 'border-red-300 bg-red-50/30' : 'border-slate-200 hover:border-blue-300 hover:bg-blue-50/30'} rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 aspect-video`}
+                          className={`border-2 border-dashed ${errors.image ? 'border-red-300 bg-red-50/30' : 'border-slate-200 hover:border-primary-300 hover:bg-primary-50/30'} rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 aspect-video`}
                           onClick={() => document.getElementById('imageUpload')?.click()}
                         >
-                          <Upload size={36} className={errors.image ? 'text-red-400 mb-4' : 'text-blue-400 mb-4'} strokeWidth={1.5} />
+                          <Upload size={36} className={errors.image ? 'text-red-400 mb-4' : 'text-primary-400 mb-4'} strokeWidth={1.5} />
                           <p className={`text-sm font-medium ${errors.image ? 'text-red-600' : 'text-slate-700'} mb-1`}>
                             {errors.image ? errors.image : 'Click to upload gift image'}
                           </p>
@@ -780,7 +780,7 @@ const GiftManagementPage = () => {
                 >
                   <div className="p-6">
                     <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
-                      <Film size={20} className="mr-2 text-blue-500" />
+                      <Film size={20} className="mr-2 text-primary-500" />
                       Gift Animation
                     </h2>
 
@@ -788,8 +788,8 @@ const GiftManagementPage = () => {
                       {animationPreview ? (
                         <div className="relative">
                           <div className="rounded-xl overflow-hidden bg-slate-100 aspect-video flex items-center justify-center">
-                            <div className="p-8 bg-blue-50 rounded-full">
-                              <Sparkles size={48} className="text-blue-500" strokeWidth={1.5} />
+                            <div className="p-8 bg-primary-50 rounded-full">
+                              <Sparkles size={48} className="text-primary-500" strokeWidth={1.5} />
                             </div>
                           </div>
                           <button
@@ -802,10 +802,10 @@ const GiftManagementPage = () => {
                         </div>
                       ) : (
                         <div
-                          className="border-2 border-dashed border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 aspect-video"
+                          className="border-2 border-dashed border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 aspect-video"
                           onClick={() => document.getElementById('animationUpload')?.click()}
                         >
-                          <Upload size={36} className="text-blue-400 mb-4" strokeWidth={1.5} />
+                          <Upload size={36} className="text-primary-400 mb-4" strokeWidth={1.5} />
                           <p className="text-sm font-medium text-slate-700 mb-1">
                             Click to upload animation
                           </p>
@@ -828,26 +828,26 @@ const GiftManagementPage = () => {
             {/* Right column - Preview */}
             <motion.div
               variants={itemVariants}
-              className="rounded-2xl backdrop-blur-md bg-gradient-to-br from-blue-50/80 via-white/80 to-blue-50/80 border border-slate-100 shadow-sm lg:sticky lg:top-6 overflow-hidden"
+              className="rounded-2xl backdrop-blur-md bg-gradient-to-br from-primary-50/80 via-white/80 to-primary-50/80 border border-slate-100 shadow-sm lg:sticky lg:top-6 overflow-hidden"
             >
               <div className="p-6">
                 <h2 className="text-xl font-bold text-slate-800 mb-1 flex items-center justify-center">
-                  <Eye size={20} className="mr-2 text-blue-500" />
+                  <Eye size={20} className="mr-2 text-primary-500" />
                   Gift Preview
                 </h2>
 
                 <p className="text-center text-sm text-slate-500 mb-8">See how your gift will appear to users</p>
 
                 <div className="flex flex-col items-center mb-8">
-                  <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center mb-6 shadow-md">
+                  <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center mb-6 shadow-md">
                     {imagePreview ? (
                       <Gift size={36} className="text-white" strokeWidth={1.5} />
                     ) : (
-                      <Gift size={36} className="text-blue-100" strokeWidth={1.5} />
+                      <Gift size={36} className="text-primary-100" strokeWidth={1.5} />
                     )}
                   </div>
 
-                  <h3 className="font-bold text-blue-900 text-xl text-center">
+                  <h3 className="font-bold text-primary-900 text-xl text-center">
                     {formData.name || 'Gift Name'}
                   </h3>
 
@@ -857,14 +857,14 @@ const GiftManagementPage = () => {
 
                   <div className="flex flex-wrap justify-center gap-2 mb-6">
                     {formData.tags.length > 0 ? formData.tags.slice(0, 3).map((tag, index) => (
-                      <span key={index} className="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full font-medium">
+                      <span key={index} className="bg-primary-100 text-primary-600 text-xs px-3 py-1 rounded-full font-medium">
                         #{tag}
                       </span>
                     )) : (
                       <span className="text-xs text-slate-400">No tags added yet</span>
                     )}
                     {formData.tags.length > 3 && (
-                      <span className="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full font-medium">
+                      <span className="bg-primary-100 text-primary-600 text-xs px-3 py-1 rounded-full font-medium">
                         +{formData.tags.length - 3}
                       </span>
                     )}
@@ -946,14 +946,14 @@ const GiftManagementPage = () => {
             <button
               type="button"
               onClick={() => navigate('/gifts')}
-              className="px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium text-sm shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
+              className="px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-medium text-sm shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className={`px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium text-sm shadow-sm hover:from-blue-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 flex items-center ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`px-6 py-3 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white font-medium text-sm shadow-sm hover:from-primary-700 hover:to-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 flex items-center ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {isSaving ? (
                 <>

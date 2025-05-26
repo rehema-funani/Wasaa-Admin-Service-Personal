@@ -301,7 +301,7 @@ const EditTariffPage = () => {
                     <p className="text-gray-600 mb-6">The requested tariff could not be loaded.</p>
                     <button
                         onClick={() => navigate('/admin/finance/tariffs')}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors"
+                        className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
                     >
                         Back to Tariffs
                     </button>
@@ -338,7 +338,7 @@ const EditTariffPage = () => {
                             <motion.button
                                 type="submit"
                                 form="tariff-form"
-                                className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 disabled={isLoading}
@@ -359,7 +359,7 @@ const EditTariffPage = () => {
             <div className="max-w-4xl mx-auto p-6">
                 {isLoading && !originalTariff ? (
                     <div className="flex flex-col items-center justify-center h-64">
-                        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+                        <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
                         <p className="text-gray-500">Loading tariff...</p>
                     </div>
                 ) : (
@@ -393,7 +393,7 @@ const EditTariffPage = () => {
                                                     value={formData.name}
                                                     onChange={handleInputChange}
                                                     required
-                                                    className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                                    className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                                     placeholder="e.g., Send Money Fee"
                                                     disabled={isLoading}
                                                 />
@@ -440,7 +440,7 @@ const EditTariffPage = () => {
                                                 value={formData.description}
                                                 onChange={handleInputChange}
                                                 rows={3}
-                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all resize-none"
+                                                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all resize-none"
                                                 placeholder="Describe the purpose of this tariff..."
                                                 disabled={isLoading}
                                             />
@@ -497,7 +497,7 @@ const EditTariffPage = () => {
                                                         onChange={handleInputChange}
                                                         min="0"
                                                         step="0.1"
-                                                        className="w-full px-4 py-3 pr-12 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                                        className="w-full px-4 py-3 pr-12 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                                         disabled={isLoading}
                                                     />
                                                     <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
@@ -517,7 +517,7 @@ const EditTariffPage = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => addRange(formData.type === 'flat' ? 'fixed' : 'percentage')}
-                                                className="flex items-center px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-all text-sm font-medium"
+                                                className="flex items-center px-3 py-2 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all text-sm font-medium"
                                                 disabled={isLoading}
                                             >
                                                 <Plus size={16} className="mr-2" />
@@ -556,7 +556,7 @@ const EditTariffPage = () => {
                                                                 value={range.min}
                                                                 onChange={(e) => updateRange(range.id, 'min', e.target.value, formData.type === 'flat' ? 'fixed' : 'percentage')}
                                                                 min="0"
-                                                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 text-gray-900"
+                                                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-500 text-gray-900"
                                                                 disabled={isLoading}
                                                             />
                                                         </div>
@@ -570,7 +570,7 @@ const EditTariffPage = () => {
                                                                 value={range.max === null ? '' : range.max}
                                                                 onChange={(e) => updateRange(range.id, 'max', e.target.value, formData.type === 'flat' ? 'fixed' : 'percentage')}
                                                                 placeholder="Leave empty for 'and above'"
-                                                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 text-gray-900"
+                                                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-500 text-gray-900"
                                                                 disabled={isLoading}
                                                             />
                                                         </div>
@@ -585,7 +585,7 @@ const EditTariffPage = () => {
                                                                 onChange={(e) => updateRange(range.id, 'fee', e.target.value, formData.type === 'flat' ? 'fixed' : 'percentage')}
                                                                 min="0"
                                                                 step="0.1"
-                                                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 text-gray-900"
+                                                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-500 text-gray-900"
                                                                 disabled={isLoading}
                                                             />
                                                         </div>

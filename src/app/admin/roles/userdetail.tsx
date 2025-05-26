@@ -355,8 +355,8 @@ const UserDetailsPage = () => {
             accessor: (row) => row.name,
             cell: (value, row) => (
                 <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-md bg-indigo-100 flex items-center justify-center mr-3">
-                        <Server size={16} className="text-indigo-600" />
+                    <div className="w-8 h-8 rounded-md bg-primary-100 flex items-center justify-center mr-3">
+                        <Server size={16} className="text-primary-600" />
                     </div>
                     <div>
                         <p className="font-medium">{value}</p>
@@ -439,7 +439,7 @@ const UserDetailsPage = () => {
             className={`flex items-center px-4 py-2.5 rounded-xl text-sm shadow-sm transition-all duration-200 ${isDisabled
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : isPrimary
-                    ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white hover:from-indigo-500 hover:to-indigo-400'
+                    ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400'
                     : isDanger
                         ? 'bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-400'
                         : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
@@ -457,7 +457,7 @@ const UserDetailsPage = () => {
     if (isLoadingUser) {
         return (
             <div className="p-6 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[60vh]">
-                <div className="w-16 h-16 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                <div className="w-16 h-16 border-4 border-gray-200 border-t-primary-600 rounded-full animate-spin"></div>
                 <p className="mt-4 text-gray-600">Loading user details...</p>
             </div>
         );
@@ -494,18 +494,18 @@ const UserDetailsPage = () => {
                 >
                     <ArrowLeft size={20} />
                 </motion.button>
-                <h1 className="text-2xl font-bold text-gray-800 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold text-gray-800 bg-gradient-to-r from-primary-600 to-primary-600 bg-clip-text text-transparent">
                     User Details
                 </h1>
             </div>
 
             {/* User Profile Header */}
-            <div className="relative h-40 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-t-2xl p-6 flex items-end mb-14">
+            <div className="relative h-40 bg-gradient-to-r from-primary-500 to-primary-600 rounded-t-2xl p-6 flex items-end mb-14">
                 <motion.div
                     initial={{ scale: 0.8, y: 20, opacity: 0 }}
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     transition={{ delay: 0.2, type: 'spring' }}
-                    className="absolute -bottom-10 left-6 w-20 h-20 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg border-4 border-white"
+                    className="absolute -bottom-10 left-6 w-20 h-20 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg border-4 border-white"
                 >
                     {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : '??'}
                 </motion.div>
@@ -570,7 +570,7 @@ const UserDetailsPage = () => {
                                 className={`flex items-center px-3 py-1.5 rounded-lg text-sm font-medium 
                                 ${isSendingReset
                                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                        : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100"
+                                        : "bg-primary-50 text-primary-600 hover:bg-primary-100"
                                     }`}
                             >
                                 {isSendingReset ? (
@@ -592,14 +592,14 @@ const UserDetailsPage = () => {
                 {/* Status Badges */}
                 <div className="flex mt-4 space-x-3">
                     <div className="flex items-center px-3 py-1.5 rounded-lg text-sm bg-gray-100 text-gray-700">
-                        <Shield size={14} className="mr-2 text-indigo-500" />
+                        <Shield size={14} className="mr-2 text-primary-500" />
                         <span>{user.role.title || 'No role assigned'}</span>
                     </div>
 
                     <StatusBadge status={user.status as any} size="lg" withIcon withDot={user.status === 'active'} />
 
                     <div className="flex items-center px-3 py-1.5 rounded-lg text-sm bg-gray-100 text-gray-700">
-                        <Cpu size={14} className="mr-2 text-indigo-500" />
+                        <Cpu size={14} className="mr-2 text-primary-500" />
                         <span>{user.mfa_enabled ? 'MFA Enabled' : 'MFA Disabled'}</span>
                     </div>
                 </div>
@@ -623,19 +623,19 @@ const UserDetailsPage = () => {
                     <div className="p-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                             <InfoCard
-                                icon={<Shield size={14} className="text-indigo-500" />}
+                                icon={<Shield size={14} className="text-primary-500" />}
                                 label="ROLE"
                                 value={user.role.title || 'No role assigned'}
                             />
 
                             <InfoCard
-                                icon={<UserCheck size={14} className="text-indigo-500" />}
+                                icon={<UserCheck size={14} className="text-primary-500" />}
                                 label="STATUS"
                                 value={<StatusBadge status={user.status as any} size="md" withIcon />}
                             />
 
                             <InfoCard
-                                icon={<Cpu size={14} className="text-indigo-500" />}
+                                icon={<Cpu size={14} className="text-primary-500" />}
                                 label="MFA STATUS"
                                 value={
                                     <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${user.mfa_enabled
@@ -672,7 +672,7 @@ const UserDetailsPage = () => {
                         {/* Activity stats */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <InfoCard
-                                icon={<Clock size={14} className="text-indigo-500" />}
+                                icon={<Clock size={14} className="text-primary-500" />}
                                 label="LAST ACTIVE"
                                 value={
                                     <div className="text-sm flex items-center">
@@ -682,7 +682,7 @@ const UserDetailsPage = () => {
                             />
 
                             <InfoCard
-                                icon={<CalendarDays size={14} className="text-indigo-500" />}
+                                icon={<CalendarDays size={14} className="text-primary-500" />}
                                 label="JOINED"
                                 value={
                                     <div className="text-sm">
@@ -694,14 +694,14 @@ const UserDetailsPage = () => {
 
                         {/* Transactions */}
                         <InfoCard
-                            icon={<CreditCard size={14} className="text-indigo-500" />}
+                            icon={<CreditCard size={14} className="text-primary-500" />}
                             label="TRANSACTIONS"
                             value={
                                 <div className="flex items-center">
                                     <span className="text-lg font-semibold mr-2">{user.transactions_count}</span>
                                     <div className="h-2.5 flex-1 bg-gray-200 rounded-full overflow-hidden">
                                         <motion.div
-                                            className="h-full bg-gradient-to-r from-indigo-500 to-blue-500"
+                                            className="h-full bg-gradient-to-r from-primary-500 to-primary-500"
                                             initial={{ width: 0 }}
                                             animate={{ width: `${Math.min(user.transactions_count * 2, 100)}%` }}
                                             transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
@@ -714,19 +714,19 @@ const UserDetailsPage = () => {
                         {/* Activity timeline */}
                         <div className="bg-gray-50 rounded-xl border border-gray-100 p-4 mt-4">
                             <h3 className="text-sm font-medium text-gray-800 mb-3 flex items-center">
-                                <Activity size={14} className="text-indigo-500 mr-2" />
+                                <Activity size={14} className="text-primary-500 mr-2" />
                                 Activity Timeline
                             </h3>
                             <div className="relative pl-4 border-l border-gray-200 space-y-3">
                                 <div className="relative">
-                                    <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-indigo-500"></div>
+                                    <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-primary-500"></div>
                                     <p className="text-xs font-medium text-gray-700">Account Created</p>
                                     <p className="text-xs text-gray-500">{user.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'Unknown'}</p>
                                 </div>
 
                                 {user.last_login && (
                                     <div className="relative">
-                                        <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                                        <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-primary-500"></div>
                                         <p className="text-xs font-medium text-gray-700">Last Login</p>
                                         <p className="text-xs text-gray-500">{format(new Date(user.last_login), 'MMM d, yyyy, h:mm a')}</p>
                                     </div>
@@ -800,7 +800,7 @@ const UserDetailsPage = () => {
                             emptyMessage="This user has no connected applications."
                         />
 
-                        <div className="mt-4 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-xl text-sm">
+                        <div className="mt-4 bg-primary-50 border border-primary-200 text-primary-700 px-4 py-3 rounded-xl text-sm">
                             <AlertCircle size={16} className="inline-block mr-2" />
                             Revoking access will immediately remove the application's ability to access the user's data.
                         </div>
@@ -874,7 +874,7 @@ const UserDetailsPage = () => {
                                 )}
                             </div>
 
-                            <div className="mt-4 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-xl text-sm">
+                            <div className="mt-4 bg-primary-50 border border-primary-200 text-primary-700 px-4 py-3 rounded-xl text-sm">
                                 <AlertCircle size={16} className="inline-block mr-2" />
                                 Resetting MFA will remove all enrolled devices and require the user to set up MFA again.
                             </div>

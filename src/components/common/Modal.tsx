@@ -93,7 +93,7 @@ export const Modal: React.FC<ModalProps> = ({
                                 <button
                                     type="button"
                                     onClick={onClose}
-                                    className="relative text-gray-600 hover:text-gray-800 rounded-full p-2 bg-white/20 hover:bg-white/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className="relative text-gray-600 hover:text-gray-800 rounded-full p-2 bg-white/20 hover:bg-white/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400"
                                 >
                                     <X size={16} />
                                 </button>

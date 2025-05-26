@@ -141,7 +141,7 @@ const TicketList: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <motion.button
                                 onClick={() => navigate('/admin/support/tickets/new')}
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -197,11 +197,11 @@ const TicketList: React.FC = () => {
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
-                            className="mb-4 flex items-center justify-between bg-indigo-50 rounded-xl p-3 border border-indigo-100"
+                            className="mb-4 flex items-center justify-between bg-primary-50 rounded-xl p-3 border border-primary-100"
                         >
                             <div className="flex items-center gap-2">
-                                <CheckSquare size={16} className="text-indigo-600" />
-                                <span className="text-sm font-medium text-indigo-700">
+                                <CheckSquare size={16} className="text-primary-600" />
+                                <span className="text-sm font-medium text-primary-700">
                                     {selectedTickets.length} ticket{selectedTickets.length > 1 ? 's' : ''} selected
                                 </span>
                             </div>
@@ -211,7 +211,7 @@ const TicketList: React.FC = () => {
                                         setBulkAction('assign');
                                         setShowBulkActions(true);
                                     }}
-                                    className="px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100 rounded-lg transition-colors"
+                                    className="px-3 py-1.5 text-sm font-medium text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
                                 >
                                     Assign
                                 </button>
@@ -220,7 +220,7 @@ const TicketList: React.FC = () => {
                                         setBulkAction('escalate');
                                         setShowBulkActions(true);
                                     }}
-                                    className="px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100 rounded-lg transition-colors"
+                                    className="px-3 py-1.5 text-sm font-medium text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
                                 >
                                     Escalate
                                 </button>
@@ -229,7 +229,7 @@ const TicketList: React.FC = () => {
                                         setBulkAction('close');
                                         setShowBulkActions(true);
                                     }}
-                                    className="px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100 rounded-lg transition-colors"
+                                    className="px-3 py-1.5 text-sm font-medium text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
                                 >
                                     Close
                                 </button>
@@ -275,7 +275,7 @@ const TicketList: React.FC = () => {
                                                 type="checkbox"
                                                 checked={selectedTickets.length === tickets.length && tickets.length > 0}
                                                 onChange={handleSelectAll}
-                                                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                                             />
                                         </th>
                                         <th className="text-left px-4 py-3 text-sm font-medium text-gray-700">Ticket ID</th>
@@ -301,7 +301,7 @@ const TicketList: React.FC = () => {
                                                     type="checkbox"
                                                     checked={selectedTickets.includes(ticket.id)}
                                                     onChange={() => handleSelectTicket(ticket.id)}
-                                                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                                                 />
                                             </td>
                                             <td className="px-4 py-3">

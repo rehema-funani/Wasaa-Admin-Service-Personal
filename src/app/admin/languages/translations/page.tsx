@@ -185,13 +185,13 @@ const TranslationsPage: React.FC = () => {
                     transition={{ duration: 0.3 }}
                 >
                     <span className="flex items-center">
-                        <FileText className="mr-2 text-blue-500" size={24} />
+                        <FileText className="mr-2 text-primary-500" size={24} />
                         Translation Management
                     </span>
                 </motion.h1>
                 <motion.button
                     onClick={handleAddNew}
-                    className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-xl shadow-md hover:bg-blue-600 transition-all"
+                    className="flex items-center px-4 py-2 bg-primary-500 text-white rounded-xl shadow-md hover:bg-primary-600 transition-all"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
@@ -216,7 +216,7 @@ const TranslationsPage: React.FC = () => {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-300 transition-all"
                             />
                             <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
                         </div>
@@ -226,7 +226,7 @@ const TranslationsPage: React.FC = () => {
                                 <select
                                     value={selectedLanguage}
                                     onChange={(e) => setSelectedLanguage(e.target.value)}
-                                    className="h-full px-4 py-2 border border-gray-200 rounded-xl appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all bg-white"
+                                    className="h-full px-4 py-2 border border-gray-200 rounded-xl appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-300 transition-all bg-white"
                                 >
                                     <option value="all">All Languages</option>
                                     {languages.map(language => (
@@ -240,7 +240,7 @@ const TranslationsPage: React.FC = () => {
                                 <button
                                     onClick={() => setViewMode('list')}
                                     className={`px-3 py-2 ${viewMode === 'list'
-                                        ? 'bg-blue-50 text-blue-600'
+                                        ? 'bg-primary-50 text-primary-600'
                                         : 'bg-white text-gray-500 hover:bg-gray-50'} transition-colors`}
                                 >
                                     <List size={18} />
@@ -248,7 +248,7 @@ const TranslationsPage: React.FC = () => {
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     className={`px-3 py-2 ${viewMode === 'grid'
-                                        ? 'bg-blue-50 text-blue-600'
+                                        ? 'bg-primary-50 text-primary-600'
                                         : 'bg-white text-gray-500 hover:bg-gray-50'} transition-colors`}
                                 >
                                     <Grid size={18} />
@@ -273,7 +273,7 @@ const TranslationsPage: React.FC = () => {
                                     onChange={(e) => setImportFile(e.target.files?.[0] || null)}
                                 />
                                 <motion.div
-                                    className="flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 hover:border-blue-300 transition-colors"
+                                    className="flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 hover:border-primary-300 transition-colors"
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.97 }}
                                 >
@@ -285,7 +285,7 @@ const TranslationsPage: React.FC = () => {
                             <motion.button
                                 type="button"
                                 onClick={handleExport}
-                                className="flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 hover:border-blue-300 transition-colors"
+                                className="flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 hover:border-primary-300 transition-colors"
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.97 }}
                             >
@@ -311,7 +311,7 @@ const TranslationsPage: React.FC = () => {
                             <motion.button
                                 onClick={handleImportFile}
                                 disabled={isImporting}
-                                className={`flex items-center px-3 py-1.5 rounded-lg text-sm text-white ${isImporting ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'} transition-colors`}
+                                className={`flex items-center px-3 py-1.5 rounded-lg text-sm text-white ${isImporting ? 'bg-gray-400' : 'bg-primary-500 hover:bg-primary-600'} transition-colors`}
                                 whileHover={!isImporting ? { scale: 1.03 } : {}}
                                 whileTap={!isImporting ? { scale: 0.97 } : {}}
                             >
@@ -351,7 +351,7 @@ const TranslationsPage: React.FC = () => {
                         animate={{ rotate: 360 }}
                         transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                     >
-                        <RefreshCw size={24} className="text-blue-500" />
+                        <RefreshCw size={24} className="text-primary-500" />
                     </motion.div>
                     <span className="ml-2 text-gray-600">Loading translations...</span>
                 </div>
@@ -388,7 +388,7 @@ const TranslationsPage: React.FC = () => {
                                 {filteredTranslations.map((translation) => (
                                     <motion.tr
                                         key={translation.id}
-                                        className="hover:bg-blue-50/30 transition-colors"
+                                        className="hover:bg-primary-50/30 transition-colors"
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
@@ -420,7 +420,7 @@ const TranslationsPage: React.FC = () => {
                                         <td className="px-4 py-3 text-right text-sm font-medium space-x-2">
                                             <motion.button
                                                 onClick={() => handleEdit(translation)}
-                                                className="text-blue-600 hover:text-blue-800 transition-colors"
+                                                className="text-primary-600 hover:text-primary-800 transition-colors"
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
                                             >

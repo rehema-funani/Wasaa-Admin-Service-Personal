@@ -61,22 +61,22 @@ const TabNavigation = ({
         switch (variant) {
             case 'pills':
                 return `${baseClasses} rounded-md ${isActive
-                    ? 'bg-white text-indigo-600 shadow-sm'
+                    ? 'bg-white text-primary-600 shadow-sm'
                     : 'text-gray-600 hover:text-gray-800'
                     }`;
             case 'underline':
                 return `${baseClasses} ${isActive
-                    ? 'text-indigo-600 border-b-2 border-indigo-500 -mb-px'
+                    ? 'text-primary-600 border-b-2 border-primary-500 -mb-px'
                     : 'text-gray-600 hover:text-gray-800 border-b-2 border-transparent'
                     }`;
             case 'minimal':
                 return `${baseClasses} ${isActive
-                    ? 'text-indigo-600 font-medium'
+                    ? 'text-primary-600 font-medium'
                     : 'text-gray-500 hover:text-gray-800'
                     }`;
             default:
                 return `${baseClasses} rounded-md ${isActive
-                    ? 'text-indigo-600 bg-indigo-50 shadow-sm'
+                    ? 'text-primary-600 bg-primary-50 shadow-sm'
                     : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
                     }`;
         }
@@ -88,7 +88,7 @@ const TabNavigation = ({
         <div className={`relative ${getContainerClasses()} ${className}`}>
             {showScrollButtons && (
                 <motion.button
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1 bg-white rounded-full shadow-md text-gray-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-1"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-1 bg-white rounded-full shadow-md text-gray-500 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-1"
                     onClick={() => scrollTabs('left')}
                     aria-label="Scroll tabs left"
                     initial={{ opacity: 0, x: -5 }}
@@ -123,7 +123,7 @@ const TabNavigation = ({
                             aria-controls={`${tab.id}-panel`}
                         >
                             {tab.icon && (
-                                <span className={`mr-2 ${isActive ? 'text-indigo-500' : 'text-gray-400'}`}>
+                                <span className={`mr-2 ${isActive ? 'text-primary-500' : 'text-gray-400'}`}>
                                     {tab.icon}
                                 </span>
                             )}
@@ -131,7 +131,7 @@ const TabNavigation = ({
 
                             {isActive && showIndicator && (
                                 <motion.div
-                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500 rounded-full mx-2"
+                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 rounded-full mx-2"
                                     layoutId="activeTabIndicator"
                                     initial={false}
                                 />
@@ -143,7 +143,7 @@ const TabNavigation = ({
 
             {showScrollButtons && (
                 <motion.button
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-1 bg-white rounded-full shadow-md text-gray-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-1"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-1 bg-white rounded-full shadow-md text-gray-500 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-1"
                     onClick={() => scrollTabs('right')}
                     aria-label="Scroll tabs right"
                     initial={{ opacity: 0, x: 5 }}

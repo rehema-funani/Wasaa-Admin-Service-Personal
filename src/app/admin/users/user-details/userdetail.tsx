@@ -387,7 +387,7 @@ const userdetail: React.FC = () => {
                     <p className="text-gray-600 mb-8 text-center">{error}</p>
                     <div className="flex justify-center">
                         <button
-                            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300"
+                            className="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300"
                             onClick={() => navigate(-1)}
                         >
                             Back to Users
@@ -452,7 +452,7 @@ const userdetail: React.FC = () => {
                     <div className="flex overflow-x-auto">
                         <button
                             className={`py-5 px-6 text-sm font-medium border-b-2 transition-colors duration-300 ${activeTab === 'profile'
-                                ? 'border-blue-500 text-blue-600'
+                                ? 'border-primary-500 text-primary-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                             onClick={() => setActiveTab('profile')}
@@ -461,7 +461,7 @@ const userdetail: React.FC = () => {
                         </button>
                         <button
                             className={`py-5 px-6 text-sm font-medium border-b-2 transition-colors duration-300 ${activeTab === 'wallets'
-                                ? 'border-blue-500 text-blue-600'
+                                ? 'border-primary-500 text-primary-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                             onClick={() => setActiveTab('wallets')}
@@ -470,7 +470,7 @@ const userdetail: React.FC = () => {
                         </button>
                         <button
                             className={`py-5 px-6 text-sm font-medium border-b-2 transition-colors duration-300 ${activeTab === 'activity'
-                                ? 'border-blue-500 text-blue-600'
+                                ? 'border-primary-500 text-primary-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                             onClick={() => setActiveTab('activity')}
@@ -479,7 +479,7 @@ const userdetail: React.FC = () => {
                         </button>
                         <button
                             className={`py-5 px-6 text-sm font-medium border-b-2 transition-colors duration-300 ${activeTab === 'security'
-                                ? 'border-blue-500 text-blue-600'
+                                ? 'border-primary-500 text-primary-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                             onClick={() => setActiveTab('security')}
@@ -507,7 +507,7 @@ const userdetail: React.FC = () => {
                                                 className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
                                             />
                                         ) : (
-                                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white text-xl font-bold shadow-md">
                                                 {userInitials}
                                             </div>
                                         )}
@@ -555,14 +555,14 @@ const userdetail: React.FC = () => {
                                 <div className="space-y-3">
                                     <button className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors duration-300 group">
                                         <div className="flex items-center">
-                                            <CreditCard size={18} className="mr-3 text-blue-500" />
+                                            <CreditCard size={18} className="mr-3 text-primary-500" />
                                             <span className="font-medium">View Wallets</span>
                                         </div>
                                         <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">{wallets.length}</span>
                                     </button>
                                     <button className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors duration-300 group">
                                         <div className="flex items-center">
-                                            <BellRing size={18} className="mr-3 text-blue-500" />
+                                            <BellRing size={18} className="mr-3 text-primary-500" />
                                             <span className="font-medium">Send Notification</span>
                                         </div>
                                     </button>
@@ -645,7 +645,7 @@ const userdetail: React.FC = () => {
                                 <SectionHeader title="Account & Identity Verification">
                                     <button
                                         onClick={() => setShowId(!showId)}
-                                        className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center"
+                                        className="text-sm text-primary-600 hover:text-primary-800 font-medium flex items-center"
                                     >
                                         {showId ? (
                                             <>
@@ -751,7 +751,7 @@ const userdetail: React.FC = () => {
                             <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition-shadow duration-300">
                                 <SectionHeader title="Recent Activity">
                                     <button
-                                        className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center"
+                                        className="text-sm text-primary-600 hover:text-primary-800 font-medium flex items-center"
                                         onClick={() => setActiveTab('activity')}
                                     >
                                         View All
@@ -761,8 +761,8 @@ const userdetail: React.FC = () => {
                                 {activities.length > 0 ? (
                                     <div className="space-y-4">
                                         {activities.slice(0, 3).map((activity) => (
-                                            <div key={activity.id} className="flex items-start p-4 border border-gray-100 rounded-xl hover:border-blue-100 transition-colors duration-300">
-                                                <div className={`h-10 w-10 rounded-full flex items-center justify-center mr-4 ${activity.type === 'login' ? 'bg-blue-100 text-blue-600' :
+                                            <div key={activity.id} className="flex items-start p-4 border border-gray-100 rounded-xl hover:border-primary-100 transition-colors duration-300">
+                                                <div className={`h-10 w-10 rounded-full flex items-center justify-center mr-4 ${activity.type === 'login' ? 'bg-primary-100 text-primary-600' :
                                                     activity.type === 'wallet' ? 'bg-green-100 text-green-600' :
                                                         'bg-purple-100 text-purple-600'
                                                     }`}>
@@ -803,7 +803,7 @@ const userdetail: React.FC = () => {
                 {activeTab === 'wallets' && (
                     <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition-shadow duration-300">
                         <SectionHeader title="User Wallets">
-                            <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300 flex items-center text-sm font-medium">
+                            <button className="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300 flex items-center text-sm font-medium">
                                 <CreditCard size={16} className="mr-2" />
                                 Add Wallet
                             </button>
@@ -812,8 +812,8 @@ const userdetail: React.FC = () => {
                         {wallets.length > 0 ? (
                             <div className="space-y-4">
                                 {wallets.map((wallet) => (
-                                    <div key={wallet.id} className="flex items-center p-5 border border-gray-200 rounded-xl hover:border-blue-200 hover:shadow-sm transition-all duration-300">
-                                        <div className={`h-12 w-12 rounded-full ${wallet.type === 'personal' ? 'bg-gradient-to-br from-blue-500 to-indigo-600' : 'bg-gradient-to-br from-purple-500 to-pink-500'
+                                    <div key={wallet.id} className="flex items-center p-5 border border-gray-200 rounded-xl hover:border-primary-200 hover:shadow-sm transition-all duration-300">
+                                        <div className={`h-12 w-12 rounded-full ${wallet.type === 'personal' ? 'bg-gradient-to-br from-primary-500 to-primary-600' : 'bg-gradient-to-br from-purple-500 to-pink-500'
                                             } text-white flex items-center justify-center mr-5`}>
                                             {wallet.type === 'personal' ? <User size={20} /> : <Users size={20} />}
                                         </div>
@@ -845,7 +845,7 @@ const userdetail: React.FC = () => {
                                                     <Eye size={14} className="mr-1.5" />
                                                     Details
                                                 </button>
-                                                <button className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors duration-300 flex items-center">
+                                                <button className="px-3 py-1.5 text-sm bg-primary-50 text-primary-600 hover:bg-primary-100 rounded-lg transition-colors duration-300 flex items-center">
                                                     <CreditCard size={14} className="mr-1.5" />
                                                     Transactions
                                                 </button>
@@ -859,7 +859,7 @@ const userdetail: React.FC = () => {
                                 <CreditCard size={64} className="mx-auto text-gray-300 mb-4" />
                                 <p className="text-gray-600 mb-2">No wallets found</p>
                                 <p className="text-sm text-gray-500 mb-6">This user doesn't have any wallets yet</p>
-                                <button className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300 flex items-center mx-auto">
+                                <button className="px-5 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300 flex items-center mx-auto">
                                     <CreditCard size={16} className="mr-2" />
                                     Create Wallet
                                 </button>
@@ -893,7 +893,7 @@ const userdetail: React.FC = () => {
                                 {activities.map((activity) => (
                                     <div key={activity.id} className="flex">
                                         <div className="mr-4">
-                                            <div className={`h-12 w-12 rounded-full flex items-center justify-center ${activity.type === 'login' ? 'bg-blue-100 text-blue-600' :
+                                            <div className={`h-12 w-12 rounded-full flex items-center justify-center ${activity.type === 'login' ? 'bg-primary-100 text-primary-600' :
                                                 activity.type === 'wallet' ? 'bg-green-100 text-green-600' :
                                                     'bg-purple-100 text-purple-600'
                                                 }`}>
@@ -942,10 +942,10 @@ const userdetail: React.FC = () => {
                             <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 hover:shadow-md transition-shadow duration-300">
                                 <SectionHeader title="Security Settings" />
                                 <div className="space-y-6">
-                                    <div className="p-5 border border-gray-200 rounded-xl hover:border-blue-200 transition-colors duration-300">
+                                    <div className="p-5 border border-gray-200 rounded-xl hover:border-primary-200 transition-colors duration-300">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center">
-                                                <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-4">
+                                                <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 mr-4">
                                                     <Shield size={20} />
                                                 </div>
                                                 <div>
@@ -966,10 +966,10 @@ const userdetail: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="p-5 border border-gray-200 rounded-xl hover:border-blue-200 transition-colors duration-300">
+                                    <div className="p-5 border border-gray-200 rounded-xl hover:border-primary-200 transition-colors duration-300">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center">
-                                                <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-4">
+                                                <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 mr-4">
                                                     <Activity size={20} />
                                                 </div>
                                                 <div>
@@ -1012,7 +1012,7 @@ const userdetail: React.FC = () => {
                                 <SectionHeader title="Verification Status" />
 
                                 <div className="space-y-6">
-                                    <div className="flex flex-col items-center bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6">
+                                    <div className="flex flex-col items-center bg-gradient-to-br from-gray-50 to-primary-50 rounded-xl p-6">
                                         <div className={`h-16 w-16 rounded-full flex items-center justify-center ${user.verification_status === 'verified' ? 'bg-green-100 text-green-600' :
                                             user.verification_status === 'pending' ? 'bg-yellow-100 text-yellow-600' :
                                                 'bg-gray-100 text-gray-600'
@@ -1037,7 +1037,7 @@ const userdetail: React.FC = () => {
                                         </p>
 
                                         {user.verification_status !== 'verified' && (
-                                            <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-300 text-sm font-medium w-full">
+                                            <button className="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-lg shadow-sm hover:shadow transition-all duration-300 text-sm font-medium w-full">
                                                 {user.verification_status === 'pending'
                                                     ? 'Review Documents'
                                                     : 'Send Verification Request'}

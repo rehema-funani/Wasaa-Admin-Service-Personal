@@ -640,7 +640,7 @@ const page: React.FC = () => {
         <div className="flex items-center justify-center">
           <div className="w-10 h-10 rounded-md bg-gray-100 flex items-center justify-center overflow-hidden">
             {/* In a real app, this would be an actual image */}
-            <Gift size={20} className="text-indigo-500" />
+            <Gift size={20} className="text-primary-500" />
           </div>
         </div>
       )
@@ -716,7 +716,7 @@ const page: React.FC = () => {
             <span className="text-gray-600">{(row?.stats?.totalRevenue / 100)}</span>
           </div>
           <div className="flex items-center mt-1">
-            <Star size={14} className="text-indigo-500 mr-1" strokeWidth={1.8} />
+            <Star size={14} className="text-primary-500 mr-1" strokeWidth={1.8} />
             <span className="text-gray-600">Popularity: {row?.stats?.popularityScore?.toFixed(1)}/10</span>
           </div>
         </div>
@@ -755,7 +755,7 @@ const page: React.FC = () => {
       cell: (row: Gift) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View gift details"
@@ -764,7 +764,7 @@ const page: React.FC = () => {
             <Eye size={16} strokeWidth={1.8} />
           </motion.button>
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-blue-100 hover:text-blue-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-primary-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Edit gift"
@@ -800,7 +800,7 @@ const page: React.FC = () => {
         </div>
         <div className="flex flex-wrap gap-2">
           <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)' }}
             whileTap={{ y: 0 }}
             onClick={handleCreateGift}
@@ -830,8 +830,8 @@ const page: React.FC = () => {
           className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center"
           whileHover={{ y: -4, boxShadow: '0 10px 20px rgba(0, 0, 0, 0.05)' }}
         >
-          <div className="mr-4 p-2 bg-indigo-50 rounded-lg">
-            <Gift size={20} className="text-indigo-500" strokeWidth={1.8} />
+          <div className="mr-4 p-2 bg-primary-50 rounded-lg">
+            <Gift size={20} className="text-primary-500" strokeWidth={1.8} />
           </div>
           <div>
             <p className="text-gray-500 text-xs">Total Gifts</p>
@@ -962,7 +962,7 @@ const page: React.FC = () => {
           <button
             key={category.id}
             className={`px-3 py-1 rounded-full text-xs ${filters.categories.includes(category.id)
-              ? 'bg-indigo-100 text-indigo-800'
+              ? 'bg-primary-100 text-primary-800'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             onClick={() => {
@@ -1098,8 +1098,8 @@ const page: React.FC = () => {
                       <div className="mb-6">
                         <h4 className="text-sm font-medium text-gray-500 mb-2">Gift Preview</h4>
                         <div className="bg-gray-50 rounded-lg p-4 flex flex-col items-center">
-                          <div className="w-24 h-24 rounded-lg bg-indigo-100 flex items-center justify-center mb-3">
-                            <Sparkles size={40} className="text-indigo-500" strokeWidth={1.8} />
+                          <div className="w-24 h-24 rounded-lg bg-primary-100 flex items-center justify-center mb-3">
+                            <Sparkles size={40} className="text-primary-500" strokeWidth={1.8} />
                           </div>
                           <h3 className="text-lg font-semibold text-gray-800">{selectedGift.name}</h3>
                           <p className="text-gray-500 text-sm text-center mt-1">{selectedGift.description}</p>
@@ -1196,7 +1196,7 @@ const page: React.FC = () => {
                             <div className="bg-white rounded-lg p-3 shadow-sm">
                               <div className="text-xs text-gray-500 mb-1">Unique Senders</div>
                               <div className="flex items-center">
-                                <Users size={16} className="text-blue-500 mr-1.5" strokeWidth={1.8} />
+                                <Users size={16} className="text-primary-500 mr-1.5" strokeWidth={1.8} />
                                 <span className="text-lg font-semibold text-gray-800">
                                   {(selectedGift.stats.uniqueSenders)}
                                 </span>
@@ -1205,7 +1205,7 @@ const page: React.FC = () => {
                             <div className="bg-white rounded-lg p-3 shadow-sm">
                               <div className="text-xs text-gray-500 mb-1">Popularity Score</div>
                               <div className="flex items-center">
-                                <Star size={16} className="text-indigo-500 mr-1.5" strokeWidth={1.8} />
+                                <Star size={16} className="text-primary-500 mr-1.5" strokeWidth={1.8} />
                                 <span className="text-lg font-semibold text-gray-800">
                                   {selectedGift.stats.popularityScore.toFixed(1)}/10
                                 </span>
@@ -1219,7 +1219,7 @@ const page: React.FC = () => {
                         <h4 className="text-sm font-medium text-gray-500 mb-2">Actions</h4>
                         <div className="bg-gray-50 rounded-lg p-4 flex flex-wrap gap-2">
                           <button
-                            className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg text-sm"
+                            className="flex items-center px-3 py-2 bg-primary-600 text-white rounded-lg text-sm"
                             onClick={() => {
                               handleCloseModal();
                               handleEditGift(selectedGift);

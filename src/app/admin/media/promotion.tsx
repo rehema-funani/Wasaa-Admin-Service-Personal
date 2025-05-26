@@ -87,7 +87,7 @@ const PromotionPage: React.FC = () => {
                     <p className="text-gray-500 text-sm mt-1">Promote and feature high-quality shorts</p>
                 </div>
 
-                <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium flex items-center">
+                <button className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium flex items-center">
                     <Star size={16} className="mr-2" />
                     Add New Promotion
                 </button>
@@ -99,8 +99,8 @@ const PromotionPage: React.FC = () => {
                         <button
                             onClick={() => setActiveTab('trending')}
                             className={`px-6 py-3 text-sm font-medium flex items-center ${activeTab === 'trending'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <TrendingUp size={16} className="mr-2" />
@@ -110,8 +110,8 @@ const PromotionPage: React.FC = () => {
                         <button
                             onClick={() => setActiveTab('featured')}
                             className={`px-6 py-3 text-sm font-medium flex items-center ${activeTab === 'featured'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <Star size={16} className="mr-2" />
@@ -121,8 +121,8 @@ const PromotionPage: React.FC = () => {
                         <button
                             onClick={() => setActiveTab('editor-pick')}
                             className={`px-6 py-3 text-sm font-medium flex items-center ${activeTab === 'editor-pick'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <Award size={16} className="mr-2" />
@@ -141,14 +141,14 @@ const PromotionPage: React.FC = () => {
                             placeholder="Search videos..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                            className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                         />
                     </div>
 
                     <select
                         value={region}
                         onChange={(e) => setRegion(e.target.value)}
-                        className="py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                        className="py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                     >
                         <option value="all">All Regions</option>
                         <option value="Global">Global</option>
@@ -161,7 +161,7 @@ const PromotionPage: React.FC = () => {
                     <select
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                        className="py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                     >
                         <option value="all">All Categories</option>
                         <option value="Entertainment">Entertainment</option>
@@ -185,7 +185,7 @@ const PromotionPage: React.FC = () => {
                                 />
 
                                 {video.promoted && (
-                                    <div className="absolute top-2 right-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded-full">
+                                    <div className="absolute top-2 right-2 bg-primary-600 text-white text-xs px-2 py-1 rounded-full">
                                         {video.promotionType === 'trending' ? 'Trending' :
                                             video.promotionType === 'featured' ? 'Featured' : 'Editor\'s Pick'}
                                     </div>
@@ -222,7 +222,7 @@ const PromotionPage: React.FC = () => {
                                             Remove Promotion
                                         </button>
                                     ) : (
-                                        <button className="w-full px-3 py-1.5 text-xs bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100">
+                                        <button className="w-full px-3 py-1.5 text-xs bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100">
                                             Promote Video
                                         </button>
                                     )}

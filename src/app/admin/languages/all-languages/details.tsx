@@ -125,11 +125,11 @@ const details: React.FC = () => {
                     <div className="flex items-center space-x-2">
                         <motion.div
                             whileHover={{ rotate: 20, scale: 1.1 }}
-                            className="text-blue-500"
+                            className="text-primary-500"
                         >
-                            <Globe size={20} className="text-blue-600" />
+                            <Globe size={20} className="text-primary-600" />
                         </motion.div>
-                        <h1 className="text-base font-medium bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">Translation Dashboard</h1>
+                        <h1 className="text-base font-medium bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">Translation Dashboard</h1>
                     </div>
 
                     <div className="flex items-center space-x-2">
@@ -144,7 +144,7 @@ const details: React.FC = () => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="px-3 py-1.5 bg-blue-600 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-xs font-medium flex items-center space-x-1 shadow-sm"
+                            className="px-3 py-1.5 bg-primary-600 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full text-xs font-medium flex items-center space-x-1 shadow-sm"
                         >
                             <Layers size={14} />
                             <span>Export</span>
@@ -163,16 +163,16 @@ const details: React.FC = () => {
                 >
                     <div className="px-3 mb-4">
                         <h2 className="text-xs font-medium uppercase text-gray-500 mb-3 tracking-wide flex items-center">
-                            <BarChart2 size={14} className="mr-1.5 text-blue-500" />
+                            <BarChart2 size={14} className="mr-1.5 text-primary-500" />
                             Dashboard
                         </h2>
 
                         <div className="space-y-3">
-                            <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-2.5 rounded-lg relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-16 h-16 rounded-full bg-blue-200 opacity-20 -mr-6 -mt-6"></div>
+                            <div className="bg-gradient-to-r from-primary-50 to-primary-100 p-2.5 rounded-lg relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-16 h-16 rounded-full bg-primary-200 opacity-20 -mr-6 -mt-6"></div>
                                 <p className="text-xs text-gray-500 mb-1">Total Entries</p>
                                 <div className="flex items-end justify-between">
-                                    <p className="text-lg font-semibold text-blue-700">{stats.totalItems}</p>
+                                    <p className="text-lg font-semibold text-primary-700">{stats.totalItems}</p>
                                     <motion.div
                                         animate={{
                                             rotate: [0, 0, 180, 180, 0],
@@ -184,7 +184,7 @@ const details: React.FC = () => {
                                             repeat: Infinity,
                                             repeatDelay: 10
                                         }}
-                                        className="text-blue-400"
+                                        className="text-primary-400"
                                     >
                                         <RefreshCcw size={14} />
                                     </motion.div>
@@ -222,7 +222,7 @@ const details: React.FC = () => {
 
                                 <div className="flex items-center justify-between mb-1.5">
                                     <div className="flex items-center">
-                                        <span className="w-2 h-2 rounded-full bg-blue-400 mr-1.5"></span>
+                                        <span className="w-2 h-2 rounded-full bg-primary-400 mr-1.5"></span>
                                         <span className="text-xs">Translated</span>
                                     </div>
                                     <span className="text-xs font-medium">{stats.averageTranslationLength.toFixed(1)}</span>
@@ -242,10 +242,10 @@ const details: React.FC = () => {
                     </div>
 
                     <div className="mt-auto px-3">
-                        <div className="flex items-center p-2.5 bg-blue-50 rounded-lg">
-                            <PieChart size={14} className="text-blue-500 mr-1.5" />
+                        <div className="flex items-center p-2.5 bg-primary-50 rounded-lg">
+                            <PieChart size={14} className="text-primary-500 mr-1.5" />
                             <div className="text-xs">
-                                <span className="font-medium text-blue-600">{(stats.totalItems - stats.unchangedCount)}</span>
+                                <span className="font-medium text-primary-600">{(stats.totalItems - stats.unchangedCount)}</span>
                                 <span className="text-gray-500"> of </span>
                                 <span className="font-medium">{stats.totalItems}</span>
                                 <span className="text-gray-500"> translated</span>
@@ -260,7 +260,7 @@ const details: React.FC = () => {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="text-xs text-blue-600 px-2 py-1 rounded-md flex items-center hover:bg-blue-50"
+                                className="text-xs text-primary-600 px-2 py-1 rounded-md flex items-center hover:bg-primary-50"
                             >
                                 details
                                 <ArrowRight size={12} className="ml-1" />
@@ -278,7 +278,7 @@ const details: React.FC = () => {
                             <input
                                 type="text"
                                 placeholder="Search translations..."
-                                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full pl-8 pr-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -291,7 +291,7 @@ const details: React.FC = () => {
                                 whileTap={{ y: 1 }}
                                 onClick={() => setActiveTab('all')}
                                 className={`px-3 py-1 rounded-full flex items-center ${activeTab === 'all'
-                                    ? 'bg-blue-600 text-white'
+                                    ? 'bg-primary-600 text-white'
                                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                             >
                                 All
@@ -362,7 +362,7 @@ const details: React.FC = () => {
                                             duration: 1.5,
                                             ease: "linear"
                                         }}
-                                        className="text-blue-500"
+                                        className="text-primary-500"
                                     >
                                         <RefreshCcw size={20} />
                                     </motion.div>
@@ -393,7 +393,7 @@ const details: React.FC = () => {
                                                 key={index}
                                                 variants={itemVariants}
                                                 onClick={() => setSelectedItem(item)}
-                                                className="bg-white rounded-lg p-2 border border-gray-100 hover:border-blue-200 hover:shadow-sm cursor-pointer transition-all duration-200"
+                                                className="bg-white rounded-lg p-2 border border-gray-100 hover:border-primary-200 hover:shadow-sm cursor-pointer transition-all duration-200"
                                             >
                                                 <div className="flex items-center justify-between">
                                                     <div className="w-5/12 truncate text-sm">{item.key}</div>
@@ -432,7 +432,7 @@ const details: React.FC = () => {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-sm font-medium bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">Translation details</h3>
+                                <h3 className="text-sm font-medium bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">Translation details</h3>
                                 <motion.button
                                     whileHover={{ scale: 1.1, rotate: 90 }}
                                     whileTap={{ scale: 0.9 }}
@@ -494,7 +494,7 @@ const details: React.FC = () => {
                                 <motion.button
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.97 }}
-                                    className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-xs flex items-center"
+                                    className="px-3 py-1.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg text-xs flex items-center"
                                 >
                                     <Maximize2 size={14} className="mr-1" />
                                     Edit

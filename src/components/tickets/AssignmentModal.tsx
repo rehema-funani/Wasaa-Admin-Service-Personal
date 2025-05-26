@@ -62,7 +62,7 @@ const AssignmentModal: React.FC<{
                                 key={type}
                                 onClick={() => setAssignType(type as 'TEAM' | 'USER')}
                                 className={`py-2 px-4 text-sm font-medium transition-all ${assignType === type
-                                    ? 'border-b-2 border-blue-500 text-blue-600'
+                                    ? 'border-b-2 border-primary-500 text-primary-600'
                                     : 'text-gray-500 hover:text-gray-700'
                                     }`}
                             >
@@ -83,7 +83,7 @@ const AssignmentModal: React.FC<{
                                     const value = e.target.value;
                                     setSelectedTeam(value === '' ? undefined : value);
                                 }}
-                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400/50"
                             >
                                 <option value="">Unassigned</option>
                                 {teams.map((team) => (
@@ -108,11 +108,11 @@ const AssignmentModal: React.FC<{
                             ) : (
                                 <select
                                     value={selectedUser || ''}
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            setSelectedUser(value === '' ? undefined : value);
-                                        }}
-                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setSelectedUser(value === '' ? undefined : value);
+                                    }}
+                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-400/50"
                                 >
                                     <option value="">Unassigned</option>
                                     {adminUsers.map((user) => (
@@ -141,7 +141,7 @@ const AssignmentModal: React.FC<{
                             onClick={handleAssign}
                             isLoading={isSubmitting}
                             disabled={isSubmitting}
-                            className="bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg shadow-sm transition-all duration-200 py-1.5 px-3"
+                            className="bg-primary-500 hover:bg-primary-600 text-white text-sm rounded-lg shadow-sm transition-all duration-200 py-1.5 px-3"
                         >
                             Assign
                         </Button>

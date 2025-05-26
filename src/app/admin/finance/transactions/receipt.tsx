@@ -56,7 +56,7 @@ const TransactionReceiptPage: React.FC = () => {
                     <p className="text-gray-600 mb-6">We couldn't locate the requested transaction.</p>
                     <button
                         onClick={() => navigate('/admin/finance/transactions')}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+                        className="px-6 py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors"
                     >
                         Back to Transactions
                     </button>
@@ -128,7 +128,7 @@ const TransactionReceiptPage: React.FC = () => {
             case 'Withdrawal':
                 return <TrendingDown size={24} strokeWidth={2.5} className="text-red-600" />;
             case 'Transfer':
-                return <ArrowDownUp size={24} strokeWidth={2.5} className="text-blue-600" />;
+                return <ArrowDownUp size={24} strokeWidth={2.5} className="text-primary-600" />;
             default:
                 return <Minus size={24} strokeWidth={2.5} className="text-gray-600" />;
         }
@@ -152,10 +152,10 @@ const TransactionReceiptPage: React.FC = () => {
                 };
             case 'Transfer':
                 return {
-                    primary: 'text-blue-600',
-                    bg: 'from-blue-50 to-indigo-50',
-                    accent: 'bg-blue-100',
-                    ring: 'ring-blue-500/20'
+                    primary: 'text-primary-600',
+                    bg: 'from-primary-50 to-primary-50',
+                    accent: 'bg-primary-100',
+                    ring: 'ring-primary-500/20'
                 };
             default:
                 return {
@@ -207,7 +207,7 @@ const TransactionReceiptPage: React.FC = () => {
                                 Print
                             </motion.button>
                             <motion.button
-                                className="flex items-center px-4 py-2 bg-indigo-600 text-white text-sm rounded-xl font-medium hover:bg-indigo-700 transition-all"
+                                className="flex items-center px-4 py-2 bg-primary-600 text-white text-sm rounded-xl font-medium hover:bg-primary-700 transition-all"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -275,7 +275,7 @@ const TransactionReceiptPage: React.FC = () => {
                         </div>
                     </motion.div>
                 </motion.div>
-                
+
                 <div className="p-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Transaction Details */}
@@ -290,8 +290,8 @@ const TransactionReceiptPage: React.FC = () => {
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mr-4">
-                                            <Hash size={18} className="text-indigo-600" />
+                                        <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
+                                            <Hash size={18} className="text-primary-600" />
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-500">Transaction ID</p>
@@ -311,8 +311,8 @@ const TransactionReceiptPage: React.FC = () => {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                                                <FileText size={18} className="text-blue-600" />
+                                            <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
+                                                <FileText size={18} className="text-primary-600" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-gray-500">External Reference</p>
@@ -366,8 +366,8 @@ const TransactionReceiptPage: React.FC = () => {
                                     {/* User Profile */}
                                     <div className="bg-gray-50/80 backdrop-blur-sm p-6 rounded-2xl">
                                         <div className="flex items-start">
-                                            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                                                <User size={18} className="text-blue-600" />
+                                            <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
+                                                <User size={18} className="text-primary-600" />
                                             </div>
                                             <div className="flex-1">
                                                 <p className="text-sm font-medium text-gray-500 mb-3">Account Holder</p>
@@ -422,8 +422,8 @@ const TransactionReceiptPage: React.FC = () => {
                             {transaction.UserWallet && (
                                 <div className="bg-gray-50/80 backdrop-blur-sm p-6 rounded-2xl">
                                     <div className="flex items-start">
-                                        <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mr-4">
-                                            <CreditCard size={18} className="text-indigo-600" />
+                                        <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center mr-4">
+                                            <CreditCard size={18} className="text-primary-600" />
                                         </div>
                                         <div className="flex-1">
                                             <p className="text-sm font-medium text-gray-500 mb-3">Wallet Details</p>
@@ -476,7 +476,7 @@ const TransactionReceiptPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-            
+
         </div >
     );
 };

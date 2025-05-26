@@ -116,7 +116,7 @@ const AddKycConfigPage: React.FC = () => {
                             <motion.button
                                 type="submit"
                                 form="kyc-config-form"
-                                className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 disabled={isLoading}
@@ -208,7 +208,7 @@ const AddKycConfigPage: React.FC = () => {
                                             value={formData.name}
                                             onChange={handleFormChange}
                                             required
-                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                             placeholder="e.g., Basic Verification"
                                             disabled={isLoading}
                                         />
@@ -255,7 +255,7 @@ const AddKycConfigPage: React.FC = () => {
                                         value={formData.description}
                                         onChange={handleFormChange}
                                         rows={3}
-                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all resize-none"
+                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all resize-none"
                                         placeholder="Describe the purpose and scope of this KYC level..."
                                         disabled={isLoading}
                                     />
@@ -279,17 +279,17 @@ const AddKycConfigPage: React.FC = () => {
                             <div className="space-y-4">
                                 <h2 className="text-lg font-semibold text-gray-900">Default Transaction Limits</h2>
 
-                                <div className="bg-indigo-50/70 backdrop-blur-sm rounded-2xl p-6 border border-indigo-100">
+                                <div className="bg-primary-50/70 backdrop-blur-sm rounded-2xl p-6 border border-primary-100">
                                     <div className="flex items-start space-x-4">
-                                        <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                            <CheckCircle size={18} className="text-indigo-600" />
+                                        <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                                            <CheckCircle size={18} className="text-primary-600" />
                                         </div>
                                         <div>
-                                            <h3 className="font-semibold text-indigo-900 mb-2">Automatic Setup</h3>
-                                            <p className="text-indigo-700 text-sm leading-relaxed mb-3">
+                                            <h3 className="font-semibold text-primary-900 mb-2">Automatic Setup</h3>
+                                            <p className="text-primary-700 text-sm leading-relaxed mb-3">
                                                 Default transaction limits will be automatically created for all transaction types:
                                             </p>
-                                            <div className="grid grid-cols-2 gap-4 text-sm text-indigo-600">
+                                            <div className="grid grid-cols-2 gap-4 text-sm text-primary-600">
                                                 <div>
                                                     <p className="font-medium">Daily Limit: KES 5,000</p>
                                                     <p className="font-medium">Weekly Limit: KES 15,000</p>
@@ -301,7 +301,7 @@ const AddKycConfigPage: React.FC = () => {
                                                     <p className="font-medium">All transaction types enabled</p>
                                                 </div>
                                             </div>
-                                            <p className="text-indigo-700 text-sm mt-3">
+                                            <p className="text-primary-700 text-sm mt-3">
                                                 You can customize these limits later for each transaction type individually.
                                             </p>
                                         </div>

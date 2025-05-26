@@ -90,7 +90,7 @@ const Reset = lazy(() => import('./app/auth/forgot-password/reset'));
 const Set = lazy(() => import('./app/auth/forgot-password/set'));
 
 const SupportDashboard = lazy(() => import('./app/admin/support/dashboard'));
-const Tickets = lazy(() => import('./app/admin/support/ticketList'));
+const Tickets = lazy(() => import('./app/admin/support/ticketlist'));
 const TicketDetails = lazy(() => import('./app/admin/support/ticketdetail'));
 const Agents = lazy(() => import('./app/admin/support/agentlist'));
 const Categories = lazy(() => import('./app/admin/support/categorymanagement'));

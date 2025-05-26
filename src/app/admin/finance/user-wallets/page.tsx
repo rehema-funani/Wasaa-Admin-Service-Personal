@@ -69,7 +69,7 @@ const page = () => {
       sortable: true,
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
             {value.split(' ').map((n: string) => n[0]).join('')}
           </div>
           <div>
@@ -110,7 +110,7 @@ const page = () => {
           'active': { color: 'green', icon: true },
           'inactive': { color: 'gray', icon: false },
           'pending': { color: 'yellow', icon: true },
-          'frozen': { color: 'blue', icon: true },
+          'frozen': { color: 'primary', icon: true },
           'processing': { color: 'purple', icon: true }
         };
         return (
@@ -149,7 +149,7 @@ const page = () => {
             ? 'bg-gray-100 text-gray-500'
             : value > 100
               ? 'bg-green-100 text-green-700'
-              : 'bg-blue-50 text-blue-700'}
+              : 'bg-primary-50 text-primary-700'}
       `}>
           {value}
         </span>
@@ -164,7 +164,7 @@ const page = () => {
       cell: (value: string) => (
         <div className="flex items-center space-x-1">
           <button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             onClick={() => navigate(`/admin/finance/user-wallets/${value}`)}
           >
             <Eye size={16} strokeWidth={1.8} />
@@ -204,7 +204,7 @@ const page = () => {
             Import
           </button>
           <button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
             onClick={handleExport}
           >
             <Download size={16} className="mr-2" strokeWidth={1.8} />

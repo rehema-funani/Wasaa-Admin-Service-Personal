@@ -5,7 +5,7 @@ interface VideoStatsCardProps {
     title: string;
     value: number | string;
     icon: React.ReactNode;
-    color: 'red' | 'green' | 'blue' | 'amber';
+    color: 'red' | 'green' | 'primary' | 'amber';
     change?: number;
     changeType?: 'increase' | 'decrease';
 }
@@ -17,7 +17,7 @@ export const VideoStatsCard: React.FC<VideoStatsCardProps> = ({
         switch (color) {
             case 'red': return 'bg-red-100 text-red-600';
             case 'green': return 'bg-green-100 text-green-600';
-            case 'blue': return 'bg-blue-100 text-blue-600';
+            case 'primary': return 'bg-primary-100 text-primary-600';
             case 'amber': return 'bg-amber-100 text-amber-600';
             default: return 'bg-gray-100 text-gray-600';
         }

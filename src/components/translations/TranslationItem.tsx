@@ -46,7 +46,7 @@ const TranslationItem: React.FC<TranslationItemProps> = ({
                 {/* Header with key */}
                 <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-500 mr-2">
+                        <div className="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center text-primary-500 mr-2">
                             <FileText size={16} />
                         </div>
                         <div>
@@ -54,10 +54,10 @@ const TranslationItem: React.FC<TranslationItemProps> = ({
                             <div className="flex items-center mt-1">
                                 <span
                                     className={`text-xs font-medium ${completionPercentage === 100
-                                            ? 'text-green-600'
-                                            : completionPercentage > 50
-                                                ? 'text-yellow-600'
-                                                : 'text-red-500'
+                                        ? 'text-green-600'
+                                        : completionPercentage > 50
+                                            ? 'text-yellow-600'
+                                            : 'text-red-500'
                                         }`}
                                 >
                                     {completionPercentage}% Complete
@@ -73,7 +73,7 @@ const TranslationItem: React.FC<TranslationItemProps> = ({
                     <div className="flex items-center space-x-1">
                         <motion.button
                             onClick={onEdit}
-                            className="p-1 text-blue-500 hover:bg-blue-50 rounded-md"
+                            className="p-1 text-primary-500 hover:bg-primary-50 rounded-md"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                         >
@@ -111,8 +111,8 @@ const TranslationItem: React.FC<TranslationItemProps> = ({
                             <div
                                 key={language.id}
                                 className={`px-2 py-0.5 rounded-full text-xs font-medium flex items-center ${hasTranslation
-                                        ? 'bg-blue-100 text-blue-700'
-                                        : 'bg-gray-100 text-gray-500'
+                                    ? 'bg-primary-100 text-primary-700'
+                                    : 'bg-gray-100 text-gray-500'
                                     }`}
                             >
                                 {language.code.split('-')[0].toUpperCase()}

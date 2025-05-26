@@ -115,7 +115,7 @@ const ReportedGroupsPage = () => {
       case 'harassment':
         return 'bg-red-100 text-red-700';
       case 'copyright_violation':
-        return 'bg-indigo-100 text-indigo-700';
+        return 'bg-primary-100 text-primary-700';
       case 'harmful_content':
         return 'bg-red-100 text-red-700';
       case 'scam':
@@ -123,13 +123,13 @@ const ReportedGroupsPage = () => {
       case 'inappropriate_content':
         return 'bg-yellow-100 text-yellow-700';
       case 'unauthorized_promotion':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-primary-100 text-primary-700';
       case 'hate_speech':
         return 'bg-red-100 text-red-700';
       case 'privacy_violation':
         return 'bg-teal-100 text-teal-700';
       case 'spam':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-primary-100 text-primary-700';
       case 'impersonation':
         return 'bg-orange-100 text-orange-700';
       default:
@@ -152,7 +152,7 @@ const ReportedGroupsPage = () => {
       case 'medium':
         return 'bg-yellow-100 text-yellow-700';
       case 'low':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-primary-100 text-primary-700';
       default:
         return 'bg-gray-100 text-gray-700';
     }
@@ -172,7 +172,7 @@ const ReportedGroupsPage = () => {
       case 'admins_removed':
         return <UserX size={14} className="text-red-500 mr-1" strokeWidth={1.8} />;
       case 'content_filtered':
-        return <Filter size={14} className="text-blue-500 mr-1" strokeWidth={1.8} />;
+        return <Filter size={14} className="text-primary-500 mr-1" strokeWidth={1.8} />;
       case 'no_action':
         return <CheckCircle size={14} className="text-gray-500 mr-1" strokeWidth={1.8} />;
       default:
@@ -205,8 +205,8 @@ const ReportedGroupsPage = () => {
         title: 'Large Groups',
         value: largeGroups.toString(),
         change: '2,500+ members',
-        icon: <Users size={20} className="text-blue-500" strokeWidth={1.8} />,
-        color: 'blue'
+        icon: <Users size={20} className="text-primary-500" strokeWidth={1.8} />,
+        color: 'primary'
       },
       {
         title: 'Resolved',
@@ -237,7 +237,7 @@ const ReportedGroupsPage = () => {
       cell: (value: string, row: ReportedGroup) => (
         <div className="flex flex-col">
           <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
               <Users size={16} strokeWidth={1.8} />
             </div>
             <div>
@@ -352,7 +352,7 @@ const ReportedGroupsPage = () => {
       cell: (value: string, row: ReportedGroup) => {
         const statusConfig: Record<string, any> = {
           'pending': { color: 'yellow', icon: true, label: 'Pending' },
-          'under_review': { color: 'blue', icon: true, label: 'Under Review' },
+          'under_review': { color: 'primary', icon: true, label: 'Under Review' },
           'resolved': { color: 'green', icon: true, label: 'Resolved' },
           'dismissed': { color: 'gray', icon: false, label: 'Dismissed' }
         };
@@ -475,7 +475,7 @@ const ReportedGroupsPage = () => {
       cell: (row: ReportedGroup) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View report details"
@@ -487,7 +487,7 @@ const ReportedGroupsPage = () => {
 
           {row.status === 'pending' && (
             <motion.button
-              className="p-1.5 rounded-lg text-gray-500 hover:bg-blue-100 hover:text-blue-600"
+              className="p-1.5 rounded-lg text-gray-500 hover:bg-primary-100 hover:text-primary-600"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               aria-label="Review this report"
@@ -989,7 +989,7 @@ const ReportedGroupsPage = () => {
                       <h4 className="text-sm font-medium text-gray-500 mb-2">Reported Group</h4>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <div className="flex items-center mb-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
                             <Users size={16} strokeWidth={1.8} />
                           </div>
                           <div>
@@ -1055,7 +1055,7 @@ const ReportedGroupsPage = () => {
                       <h4 className="text-sm font-medium text-gray-500 mb-2">Reported By</h4>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <div className="flex items-center mb-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-cyan-500 text-white flex items-center justify-center font-medium text-sm mr-3">
                             {selectedReport.reportedBy.name.split(' ').map((n: string) => n[0]).join('')}
                           </div>
                           <div>
@@ -1132,7 +1132,7 @@ const ReportedGroupsPage = () => {
                       <div className="bg-gray-50 rounded-lg p-4 flex flex-wrap gap-2">
                         {selectedReport.status === 'pending' && (
                           <button
-                            className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg text-sm"
+                            className="flex items-center px-3 py-2 bg-primary-600 text-white rounded-lg text-sm"
                             onClick={() => {
                               handleReviewReport(selectedReport.id);
                               handleCloseModal();

@@ -112,10 +112,10 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
                 };
             case 'info':
                 return {
-                    background: 'bg-blue-50',
-                    textColor: 'text-blue-700',
-                    iconColor: 'text-blue-500',
-                    borderColor: 'border-blue-100'
+                    background: 'bg-primary-50',
+                    textColor: 'text-primary-700',
+                    iconColor: 'text-primary-500',
+                    borderColor: 'border-primary-100'
                 };
             case 'pending':
                 return {
@@ -140,10 +140,10 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
                 };
             case 'processing':
                 return {
-                    background: 'bg-indigo-50',
-                    textColor: 'text-indigo-700',
-                    iconColor: 'text-indigo-500',
-                    borderColor: 'border-indigo-100'
+                    background: 'bg-primary-50',
+                    textColor: 'text-primary-700',
+                    iconColor: 'text-primary-500',
+                    borderColor: 'border-primary-100'
                 };
             case 'completed':
                 return {
@@ -175,10 +175,10 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
                 };
             case 'loading':
                 return {
-                    background: 'bg-blue-50',
-                    textColor: 'text-blue-700',
-                    iconColor: 'text-blue-500',
-                    borderColor: 'border-blue-100'
+                    background: 'bg-primary-50',
+                    textColor: 'text-primary-700',
+                    iconColor: 'text-primary-500',
+                    borderColor: 'border-primary-100'
                 };
             default:
                 return {

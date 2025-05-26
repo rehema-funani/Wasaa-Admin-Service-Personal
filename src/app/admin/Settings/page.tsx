@@ -133,7 +133,7 @@ const page: React.FC = () => {
 
     const themeStyles = {
         light: {
-            bg: "from-slate-50 via-slate-50 to-indigo-50",
+            bg: "from-slate-50 via-slate-50 to-primary-50",
             cardBg: "from-white/80 to-white/70",
             cardBorder: "border-white/60",
             text: "text-slate-800",
@@ -141,7 +141,7 @@ const page: React.FC = () => {
             sectionBorder: "border-slate-100"
         },
         dark: {
-            bg: "from-slate-900 via-slate-900 to-indigo-950",
+            bg: "from-slate-900 via-slate-900 to-primary-950",
             cardBg: "from-slate-800/70 to-slate-800/60",
             cardBorder: "border-slate-700/40",
             text: "text-slate-100",
@@ -204,9 +204,9 @@ const page: React.FC = () => {
                     <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className={`flex items-center justify-center w-10 h-10 rounded-full ${theme === "light" ? "bg-indigo-50" : "bg-indigo-900/50"}`}
+                        className={`flex items-center justify-center w-10 h-10 rounded-full ${theme === "light" ? "bg-primary-50" : "bg-primary-900/50"}`}
                     >
-                        <Settings size={20} className={theme === "light" ? "text-indigo-600" : "text-indigo-300"} />
+                        <Settings size={20} className={theme === "light" ? "text-primary-600" : "text-primary-300"} />
                     </motion.div>
                     <h1 className={`text-base font-semibold ${theme === "light" ? "text-slate-800" : "text-white"}`}>
                         Settings
@@ -249,8 +249,8 @@ const page: React.FC = () => {
                                     }}
                                     className={`w-full flex items-center space-x-3 px-4 py-3.5 my-1 rounded-xl text-left text-[13px] ${activeTab === tab.id
                                         ? theme === "light"
-                                            ? "bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-medium shadow-md"
-                                            : "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-medium shadow-md"
+                                            ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium shadow-md"
+                                            : "bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium shadow-md"
                                         : theme === "light"
                                             ? "text-slate-700 hover:bg-slate-50"
                                             : "text-slate-300 hover:bg-slate-800/50"
@@ -282,15 +282,15 @@ const page: React.FC = () => {
                         <motion.div
                             whileHover={{ scale: 1.05, rotate: 15 }}
                             whileTap={{ scale: 0.95, rotate: -15 }}
-                            className={`flex items-center justify-center w-14 h-14 rounded-2xl ${theme === "light" ? "bg-indigo-50" : "bg-indigo-900/50"} shadow-lg shadow-indigo-500/10`}
+                            className={`flex items-center justify-center w-14 h-14 rounded-2xl ${theme === "light" ? "bg-primary-50" : "bg-primary-900/50"} shadow-lg shadow-primary-500/10`}
                         >
-                            <Settings size={26} className={theme === "light" ? "text-indigo-600" : "text-indigo-300"} />
+                            <Settings size={26} className={theme === "light" ? "text-primary-600" : "text-primary-300"} />
                         </motion.div>
                         <div>
                             <motion.h1
                                 className={`text-3xl font-bold ${theme === "light"
-                                    ? "bg-gradient-to-r from-indigo-600 to-purple-600"
-                                    : "bg-gradient-to-r from-indigo-400 to-purple-400"} bg-clip-text text-transparent`}
+                                    ? "bg-gradient-to-r from-primary-600 to-purple-600"
+                                    : "bg-gradient-to-r from-primary-400 to-purple-400"} bg-clip-text text-transparent`}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2, duration: 0.5 }}

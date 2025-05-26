@@ -143,11 +143,11 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
 
     // Helper text for translation keys
     const keyHelperText = (
-        <div className="p-3 text-sm bg-blue-50 rounded-xl border border-blue-100 mb-4">
-            <p className="font-medium text-blue-700 mb-1">Translation Key Guidelines:</p>
-            <ul className="list-disc list-inside text-blue-600 space-y-1">
+        <div className="p-3 text-sm bg-primary-50 rounded-xl border border-primary-100 mb-4">
+            <p className="font-medium text-primary-700 mb-1">Translation Key Guidelines:</p>
+            <ul className="list-disc list-inside text-primary-600 space-y-1">
                 <li>Use descriptive names that represent the content</li>
-                <li>Use dot notation for hierarchy (e.g., <code className="bg-blue-100 px-1 rounded">app.header.title</code>)</li>
+                <li>Use dot notation for hierarchy (e.g., <code className="bg-primary-100 px-1 rounded">app.header.title</code>)</li>
                 <li>Avoid spaces, use underscores or camelCase</li>
                 <li>Keep keys consistent across your application</li>
             </ul>
@@ -163,7 +163,7 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
                     </label>
                     <motion.button
                         type="button"
-                        className="text-blue-500 hover:text-blue-700"
+                        className="text-primary-500 hover:text-primary-700"
                         onClick={() => setShowHelper(!showHelper)}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
@@ -179,7 +179,7 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
                     value={formData.key}
                     onChange={handleKeyChange}
                     className={`w-full px-3 py-2 rounded-xl border ${errors.key ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                        } focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-colors`}
+                        } focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-300 transition-colors`}
                     placeholder="e.g., app.common.save"
                 />
                 {errors.key && (
@@ -195,7 +195,7 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
                         <div className="relative group">
                             <motion.button
                                 type="button"
-                                className="flex items-center px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                                className="flex items-center px-2 py-1 text-xs bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100 transition-colors"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
@@ -209,9 +209,9 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
                                         key={language.id}
                                         type="button"
                                         onClick={() => addTranslation(language.id!)}
-                                        className="flex items-center w-full px-3 py-2 text-left text-sm hover:bg-blue-50 transition-colors"
+                                        className="flex items-center w-full px-3 py-2 text-left text-sm hover:bg-primary-50 transition-colors"
                                     >
-                                        <span className="w-6 h-6 inline-flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mr-2 text-xs font-medium">
+                                        <span className="w-6 h-6 inline-flex items-center justify-center bg-primary-100 text-primary-600 rounded-full mr-2 text-xs font-medium">
                                             {language.code.slice(0, 2).toUpperCase()}
                                         </span>
                                         <span className="text-gray-700">{language.name}</span>
@@ -238,7 +238,7 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
                             <div key={language.id} className="border border-gray-200 rounded-xl p-3 bg-white">
                                 <div className="flex justify-between items-center mb-2">
                                     <div className="flex items-center">
-                                        <span className="w-6 h-6 inline-flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mr-2 text-xs font-medium">
+                                        <span className="w-6 h-6 inline-flex items-center justify-center bg-primary-100 text-primary-600 rounded-full mr-2 text-xs font-medium">
                                             {language.code.slice(0, 2).toUpperCase()}
                                         </span>
                                         <span className="text-sm font-medium text-gray-700">{language.name}</span>
@@ -274,9 +274,9 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
                                         rows={2}
                                         dir={language.is_rtl ? 'rtl' : 'ltr'}
                                         className={`w-full px-3 py-2 rounded-lg border ${errors[`translation_${language.id}`]
-                                                ? 'border-red-300 bg-red-50'
-                                                : 'border-gray-200'
-                                            } focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-colors`}
+                                            ? 'border-red-300 bg-red-50'
+                                            : 'border-gray-200'
+                                            } focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-300 transition-colors`}
                                         placeholder={`Enter ${language.name} translation...`}
                                     />
                                     {errors[`translation_${language.id}`] && (
@@ -303,7 +303,7 @@ const TranslationForm: React.FC<TranslationFormProps> = ({
                 </motion.button>
                 <motion.button
                     type="submit"
-                    className="flex items-center px-5 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors shadow-sm"
+                    className="flex items-center px-5 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors shadow-sm"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >

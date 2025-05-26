@@ -112,8 +112,8 @@ const page: React.FC = () => {
                         <button
                             onClick={() => setDateRange('today')}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'today'
-                                    ? 'bg-gray-100 text-gray-900'
-                                    : 'text-gray-600 hover:text-gray-900'
+                                ? 'bg-gray-100 text-gray-900'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             Today
@@ -121,8 +121,8 @@ const page: React.FC = () => {
                         <button
                             onClick={() => setDateRange('last7days')}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'last7days'
-                                    ? 'bg-gray-100 text-gray-900'
-                                    : 'text-gray-600 hover:text-gray-900'
+                                ? 'bg-gray-100 text-gray-900'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             Last 7 Days
@@ -130,8 +130,8 @@ const page: React.FC = () => {
                         <button
                             onClick={() => setDateRange('last30days')}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'last30days'
-                                    ? 'bg-gray-100 text-gray-900'
-                                    : 'text-gray-600 hover:text-gray-900'
+                                ? 'bg-gray-100 text-gray-900'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             Last 30 Days
@@ -149,7 +149,7 @@ const page: React.FC = () => {
                         value={stats?.openTickets || 0}
                         icon={MessageSquare}
                         trend={{ value: 12, isPositive: false }}
-                        color="bg-blue-600"
+                        color="bg-primary-600"
                         onClick={() => navigate('/admin/support/tickets?status=open')}
                     />
                     <KPICard
@@ -196,7 +196,7 @@ const page: React.FC = () => {
                                             }}
                                         />
                                         <div
-                                            className="w-full bg-blue-500 rounded-t"
+                                            className="w-full bg-primary-500 rounded-t"
                                             style={{
                                                 height: `${(stats.ticketTrends.created[index] / 70) * 200}px`
                                             }}
@@ -208,7 +208,7 @@ const page: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-4 mt-4">
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                                <div className="w-3 h-3 bg-primary-500 rounded"></div>
                                 <span className="text-sm text-gray-600">Created</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -246,7 +246,7 @@ const page: React.FC = () => {
                         <h3 className="text-lg font-semibold text-gray-900">Top Performing Agents</h3>
                         <button
                             onClick={() => navigate('/admin/support/agents')}
-                            className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                         >
                             View All
                         </button>
@@ -280,7 +280,7 @@ const page: React.FC = () => {
                                         <td className="text-center py-3 px-4">
                                             <div className="flex items-center justify-center">
                                                 <span className={`text-sm font-medium ${agent.slaCompliance >= 95 ? 'text-green-600' :
-                                                        agent.slaCompliance >= 90 ? 'text-yellow-600' : 'text-red-600'
+                                                    agent.slaCompliance >= 90 ? 'text-yellow-600' : 'text-red-600'
                                                     }`}>
                                                     {agent.slaCompliance}%
                                                 </span>

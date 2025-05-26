@@ -138,7 +138,7 @@ const SLAManagement: React.FC = () => {
                                 resetForm();
                                 setShowAddModal(true);
                             }}
-                            className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
+                            className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -232,7 +232,7 @@ const SLAManagement: React.FC = () => {
                                                 <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         onClick={() => openEditModal(config)}
-                                                        className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                                        className="p-1.5 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
                                                     >
                                                         <Edit3 size={16} />
                                                     </button>
@@ -256,12 +256,12 @@ const SLAManagement: React.FC = () => {
                 </div>
 
                 {/* Info Section */}
-                <div className="mt-6 bg-blue-50/70 rounded-xl p-3 border border-blue-100 backdrop-blur-sm">
+                <div className="mt-6 bg-primary-50/70 rounded-xl p-3 border border-primary-100 backdrop-blur-sm">
                     <div className="flex items-start gap-2">
-                        <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
+                        <Info size={16} className="text-primary-500 mt-0.5 flex-shrink-0" />
                         <div>
-                            <h3 className="text-sm font-medium text-blue-700">About SLA Rules</h3>
-                            <p className="text-blue-600 text-xs mt-0.5 leading-relaxed">
+                            <h3 className="text-sm font-medium text-primary-700">About SLA Rules</h3>
+                            <p className="text-primary-600 text-xs mt-0.5 leading-relaxed">
                                 SLA (Service Level Agreement) rules define the expected response and resolution times for tickets based on their priority and category.
                                 Tickets that exceed these times will be marked as breached and can trigger escalations.
                             </p>
@@ -308,7 +308,7 @@ const SLAManagement: React.FC = () => {
                                                     type="button"
                                                     onClick={() => setFormData({ ...formData, priority })}
                                                     className={`py-2 px-3 rounded-lg text-sm font-medium transition-all ${formData.priority === priority
-                                                        ? 'bg-indigo-600 text-white'
+                                                        ? 'bg-primary-600 text-white'
                                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                         }`}
                                                 >
@@ -326,7 +326,7 @@ const SLAManagement: React.FC = () => {
                                         <select
                                             value={formData.category}
                                             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                                             required
                                         >
                                             <option value="">Select category</option>
@@ -349,7 +349,7 @@ const SLAManagement: React.FC = () => {
                                             max="4320"
                                             value={formData.responseTimeSLA}
                                             onChange={(e) => setFormData({ ...formData, responseTimeSLA: parseInt(e.target.value) })}
-                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                                             required
                                         />
                                         <p className="text-xs text-gray-500 mt-1">Minimum: 5 minutes, Maximum: 72 hours</p>
@@ -366,7 +366,7 @@ const SLAManagement: React.FC = () => {
                                             max="4320"
                                             value={formData.resolutionTimeSLA}
                                             onChange={(e) => setFormData({ ...formData, resolutionTimeSLA: parseInt(e.target.value) })}
-                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                                             required
                                         />
                                     </div>
@@ -382,7 +382,7 @@ const SLAManagement: React.FC = () => {
                                             max="4320"
                                             value={formData.escalationWindow}
                                             onChange={(e) => setFormData({ ...formData, escalationWindow: parseInt(e.target.value) })}
-                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
                                         />
                                         <p className="text-xs text-gray-500 mt-1">Time before automatic escalation</p>
                                     </div>
@@ -433,7 +433,7 @@ const SLAManagement: React.FC = () => {
                                         </button>
                                         <button
                                             type="submit"
-                                            className="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all text-sm"
+                                            className="flex-1 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all text-sm"
                                         >
                                             {editingConfig ? 'Update Rule' : 'Create Rule'}
                                         </button>

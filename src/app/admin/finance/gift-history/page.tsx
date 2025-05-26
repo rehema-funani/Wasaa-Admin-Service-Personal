@@ -622,13 +622,13 @@ const page = () => {
       case 'trophy':
         return <Award size={16} className="text-yellow-500" strokeWidth={1.8} />;
       case 'chef_hat':
-        return <Gift size={16} className="text-blue-500" strokeWidth={1.8} />;
+        return <Gift size={16} className="text-primary-500" strokeWidth={1.8} />;
       case 'palette':
         return <Sparkles size={16} className="text-purple-500" strokeWidth={1.8} />;
       case 'namaste':
         return <Heart size={16} className="text-pink-500" strokeWidth={1.8} />;
       case 'piano':
-        return <Gift size={16} className="text-indigo-500" strokeWidth={1.8} />;
+        return <Gift size={16} className="text-primary-500" strokeWidth={1.8} />;
       case 'diamond_heart':
         return <Diamond size={16} className="text-red-500" strokeWidth={1.8} />;
       case 'power_up':
@@ -640,9 +640,9 @@ const page = () => {
       case 'spatula':
         return <Gift size={16} className="text-orange-500" strokeWidth={1.8} />;
       case 'microphone_stage':
-        return <Gift size={16} className="text-blue-500" strokeWidth={1.8} />;
+        return <Gift size={16} className="text-primary-500" strokeWidth={1.8} />;
       case 'airplane':
-        return <Gift size={16} className="text-blue-500" strokeWidth={1.8} />;
+        return <Gift size={16} className="text-primary-500" strokeWidth={1.8} />;
       case 'zen_garden':
         return <Gift size={16} className="text-green-500" strokeWidth={1.8} />;
       case 'robot':
@@ -658,7 +658,7 @@ const page = () => {
       case 'premium':
         return 'bg-purple-100 text-purple-700';
       case 'standard':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-primary-100 text-primary-700';
       case 'themed':
         return 'bg-green-100 text-green-700';
       default:
@@ -684,7 +684,7 @@ const page = () => {
       sortable: true,
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center mr-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 text-white flex items-center justify-center mr-3">
             {getGiftIcon(row.gift.icon)}
           </div>
           <div>
@@ -709,7 +709,7 @@ const page = () => {
       cell: (value: string, row: any) => (
         <div className="flex flex-col">
           <div className="flex items-center">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 text-white flex items-center justify-center font-medium text-xs mr-2">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-cyan-500 text-white flex items-center justify-center font-medium text-xs mr-2">
               {row.sender.name.split(' ').map((n: string) => n[0]).join('')}
             </div>
             <div className="flex flex-col">
@@ -778,7 +778,7 @@ const page = () => {
             ${value > 50
               ? 'bg-pink-100 text-pink-700'
               : value > 20
-                ? 'bg-blue-50 text-blue-700'
+                ? 'bg-primary-50 text-primary-700'
                 : 'bg-gray-100 text-gray-700'}
           `}>
             {value}
@@ -819,7 +819,7 @@ const page = () => {
       cell: (value: string) => {
         const statusConfig: Record<string, any> = {
           'completed': { color: 'green', label: 'Completed' },
-          'processing': { color: 'blue', label: 'Processing' },
+          'processing': { color: 'primary', label: 'Processing' },
           'failed': { color: 'red', label: 'Failed' },
           'refunded': { color: 'yellow', label: 'Refunded' }
         };
@@ -830,7 +830,7 @@ const page = () => {
             size="sm"
             withIcon
             withDot={value === 'completed'}
-            className={`text-${statusConfig[value]?.color}-500`}              
+            className={`text-${statusConfig[value]?.color}-500`}
           />
         );
       }
@@ -844,7 +844,7 @@ const page = () => {
       cell: (value: string) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View gift details"

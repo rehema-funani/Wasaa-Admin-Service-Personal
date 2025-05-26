@@ -54,7 +54,7 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
             case 'basic':
                 return 'from-emerald-400 to-teal-500';
             case 'standard':
-                return 'from-blue-400 to-indigo-500';
+                return 'from-primary-400 to-primary-500';
             case 'advanced':
                 return 'from-purple-400 to-pink-500';
             default:
@@ -78,7 +78,7 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
     const getTransactionLimitCardStyle = (type: TransactionType) => {
         switch (type) {
             case 'send':
-                return 'border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50';
+                return 'border-primary-200 bg-gradient-to-br from-primary-50 to-primary-100/50';
             case 'WITHDRAW':
                 return 'border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100/50';
             case 'withdraw_mpesa':
@@ -96,8 +96,8 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
         return (
             <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-gray-200/50 p-12">
                 <div className="text-center">
-                    <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <Shield size={32} className="text-indigo-600" />
+                    <div className="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <Shield size={32} className="text-primary-600" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">No KYC Levels Found</h3>
                     <p className="text-gray-600 mb-6 max-w-md mx-auto">
@@ -136,16 +136,16 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
                                     <div className="flex items-center space-x-3 mb-2">
                                         <h3 className="text-lg font-semibold text-gray-900">{config.name}</h3>
                                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${config.status === 'active'
-                                                ? 'bg-emerald-100 text-emerald-700'
-                                                : 'bg-gray-100 text-gray-600'
+                                            ? 'bg-emerald-100 text-emerald-700'
+                                            : 'bg-gray-100 text-gray-600'
                                             }`}>
                                             <span className={`h-1.5 w-1.5 rounded-full ${config.status === 'active' ? 'bg-emerald-500' : 'bg-gray-500'
                                                 } mr-1.5`}></span>
                                             {config.status === 'active' ? 'Active' : 'Inactive'}
                                         </span>
                                         <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${config.level === 'basic' ? 'bg-emerald-100 text-emerald-700' :
-                                                config.level === 'standard' ? 'bg-blue-100 text-blue-700' :
-                                                    'bg-purple-100 text-purple-700'
+                                            config.level === 'standard' ? 'bg-primary-100 text-primary-700' :
+                                                'bg-purple-100 text-purple-700'
                                             }`}>
                                             {config.level} Level
                                         </span>
@@ -192,8 +192,8 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
                                 <motion.button
                                     onClick={() => toggleRowExpansion(config.id!)}
                                     className={`p-3 rounded-xl transition-all ${expandedRows[config.id!]
-                                            ? 'bg-indigo-100 text-indigo-600'
-                                            : 'bg-gray-100 text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
+                                        ? 'bg-primary-100 text-primary-600'
+                                        : 'bg-gray-100 text-gray-500 hover:bg-primary-50 hover:text-primary-600'
                                         }`}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
@@ -209,7 +209,7 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
 
                                 <motion.button
                                     onClick={() => openEditModal(config)}
-                                    className="p-3 rounded-xl bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-all"
+                                    className="p-3 rounded-xl bg-gray-100 text-gray-500 hover:bg-primary-50 hover:text-primary-600 transition-all"
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     title="Edit KYC Level"
@@ -243,8 +243,8 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
                                 <div className="p-6">
                                     <div className="flex justify-between items-center mb-6">
                                         <div className="flex items-center space-x-3">
-                                            <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                                <Settings size={20} className="text-indigo-600" />
+                                            <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                                                <Settings size={20} className="text-primary-600" />
                                             </div>
                                             <div>
                                                 <h4 className="text-lg font-semibold text-gray-900">Transaction Limits</h4>
@@ -254,7 +254,7 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
 
                                         <motion.button
                                             onClick={() => openAddLimitModal(config)}
-                                            className="flex items-center space-x-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all shadow-sm"
+                                            className="flex items-center space-x-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all shadow-sm"
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
                                         >
@@ -295,7 +295,7 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
 
                                                         <motion.button
                                                             onClick={() => openEditLimitsModal(config, limit.transactionType)}
-                                                            className="p-2 rounded-lg bg-white/60 hover:bg-white hover:shadow-sm text-gray-500 hover:text-indigo-600 transition-all"
+                                                            className="p-2 rounded-lg bg-white/60 hover:bg-white hover:shadow-sm text-gray-500 hover:text-primary-600 transition-all"
                                                             whileHover={{ scale: 1.05 }}
                                                             whileTap={{ scale: 0.95 }}
                                                             title="Edit Limits"
@@ -309,7 +309,7 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
                                                         {limit.isDailyLimitEnabled && (
                                                             <div className="flex justify-between items-center p-3 bg-white/70 rounded-lg border border-white/50">
                                                                 <div className="flex items-center space-x-2">
-                                                                    <Calendar size={14} className="text-blue-500" />
+                                                                    <Calendar size={14} className="text-primary-500" />
                                                                     <span className="text-xs font-medium text-gray-700">Daily</span>
                                                                 </div>
                                                                 <span className="text-sm font-semibold text-gray-900">
@@ -371,8 +371,8 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
                                         </div>
                                     ) : (
                                         <div className="text-center py-12 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200">
-                                            <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                                <Info size={24} className="text-indigo-600" />
+                                            <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                                <Info size={24} className="text-primary-600" />
                                             </div>
                                             <h3 className="text-lg font-semibold text-gray-900 mb-2">No Transaction Limits</h3>
                                             <p className="text-gray-600 text-sm mb-6 max-w-md mx-auto">
@@ -380,7 +380,7 @@ const KycConfigList: React.FC<KycConfigListProps> = ({
                                             </p>
                                             <motion.button
                                                 onClick={() => openAddLimitModal(config)}
-                                                className="inline-flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-all shadow-sm"
+                                                className="inline-flex items-center space-x-2 px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-all shadow-sm"
                                                 whileHover={{ scale: 1.02 }}
                                                 whileTap={{ scale: 0.98 }}
                                             >

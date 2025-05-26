@@ -53,7 +53,7 @@ const AnalyticsPage: React.FC = () => {
                         ))}
                     </div>
 
-                    <button className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 text-white rounded-lg shadow-sm hover:bg-indigo-700 transition-all text-sm">
+                    <button className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white rounded-lg shadow-sm hover:bg-primary-700 transition-all text-sm">
                         <Download size={16} />
                         <span>Export Report</span>
                     </button>
@@ -66,8 +66,8 @@ const AnalyticsPage: React.FC = () => {
                         <button
                             onClick={() => setActiveTab('overview')}
                             className={`px-6 py-3 text-sm font-medium flex items-center ${activeTab === 'overview'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <BarChart3 size={16} className="mr-2" />
@@ -77,8 +77,8 @@ const AnalyticsPage: React.FC = () => {
                         <button
                             onClick={() => setActiveTab('videos')}
                             className={`px-6 py-3 text-sm font-medium flex items-center ${activeTab === 'videos'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <Video size={16} className="mr-2" />
@@ -88,8 +88,8 @@ const AnalyticsPage: React.FC = () => {
                         <button
                             onClick={() => setActiveTab('moderation')}
                             className={`px-6 py-3 text-sm font-medium flex items-center ${activeTab === 'moderation'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             <Flag size={16} className="mr-2" />
@@ -105,8 +105,8 @@ const AnalyticsPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="p-2 bg-indigo-100 rounded-lg">
-                                    <Video size={20} className="text-indigo-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <Video size={20} className="text-primary-600" />
                                 </div>
                                 <h3 className="text-sm font-medium text-gray-700">Total Videos</h3>
                             </div>
@@ -147,8 +147,8 @@ const AnalyticsPage: React.FC = () => {
 
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="p-2 bg-blue-100 rounded-lg">
-                                    <Clock size={20} className="text-blue-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <Clock size={20} className="text-primary-600" />
                                 </div>
                                 <h3 className="text-sm font-medium text-gray-700">Avg. Resolution Time</h3>
                             </div>
@@ -179,8 +179,8 @@ const AnalyticsPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="p-2 bg-indigo-100 rounded-lg">
-                                    <Video size={20} className="text-indigo-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <Video size={20} className="text-primary-600" />
                                 </div>
                                 <h3 className="text-sm font-medium text-gray-700">Total Views</h3>
                             </div>
@@ -244,8 +244,8 @@ const AnalyticsPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="p-2 bg-indigo-100 rounded-lg">
-                                    <Flag size={20} className="text-indigo-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <Flag size={20} className="text-primary-600" />
                                 </div>
                                 <h3 className="text-sm font-medium text-gray-700">Videos Flagged</h3>
                             </div>
@@ -286,8 +286,8 @@ const AnalyticsPage: React.FC = () => {
 
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="p-2 bg-blue-100 rounded-lg">
-                                    <Video size={20} className="text-blue-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <Video size={20} className="text-primary-600" />
                                 </div>
                                 <h3 className="text-sm font-medium text-gray-700">Content Takedowns</h3>
                             </div>

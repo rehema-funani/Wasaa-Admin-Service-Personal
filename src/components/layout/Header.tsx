@@ -323,9 +323,9 @@ const Header: React.FC<HeaderProps> = ({
       case 'stream':
         return (
           <div
-            className="p-1.5 rounded-full bg-blue-50 border border-blue-100"
+            className="p-1.5 rounded-full bg-primary-50 border border-primary-100"
           >
-            <Bell size={16} className="text-blue-500" />
+            <Bell size={16} className="text-primary-500" />
           </div>
         );
       case 'withdrawal':
@@ -347,9 +347,9 @@ const Header: React.FC<HeaderProps> = ({
       default:
         return (
           <div
-            className="p-1.5 rounded-full bg-indigo-50 border border-indigo-100"
+            className="p-1.5 rounded-full bg-primary-50 border border-primary-100"
           >
-            <Bell size={16} className="text-indigo-500" />
+            <Bell size={16} className="text-primary-500" />
           </div>
         );
     }
@@ -357,11 +357,11 @@ const Header: React.FC<HeaderProps> = ({
 
   const getResultIcon = (result: SearchResult) => {
     if (result.icon) {
-      return <result.icon width={16} height={16} className="text-indigo-500" />;
+      return <result.icon width={16} height={16} className="text-primary-500" />;
     }
 
     const CategoryIcon = getCategoryIcon(result.category);
-    return <CategoryIcon width={16} height={16} className="text-indigo-500" />;
+    return <CategoryIcon width={16} height={16} className="text-primary-500" />;
   };
 
   return (
@@ -378,7 +378,7 @@ const Header: React.FC<HeaderProps> = ({
               className="h-12 w-auto rounded-xl transition-all duration-200 group-hover:opacity-90"
             />
             <div
-              className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-blue-200/20 to-indigo-200/10 blur-sm -z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+              className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-primary-200/20 to-primary-200/10 blur-sm -z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
             />
           </div>
         </NavLink>
@@ -387,7 +387,7 @@ const Header: React.FC<HeaderProps> = ({
       <div className={`relative flex-1 max-w-xl mx-4 ${showSearchOnMobile ? 'block' : 'hidden md:block'}`}>
         <div
           className={`
-            flex items-center bg-gray-50/80 rounded-xl border ${showSearchResults ? 'border-indigo-200 shadow-sm' : 'border-gray-100'} 
+            flex items-center bg-gray-50/80 rounded-xl border ${showSearchResults ? 'border-primary-200 shadow-sm' : 'border-gray-100'} 
             overflow-hidden transition-all
           `}
         >
@@ -455,12 +455,12 @@ const Header: React.FC<HeaderProps> = ({
                               onMouseEnter={() => setSelectedResultIndex(globalIndex)}
                               className={`
                                 cursor-pointer p-2 rounded-lg transition-all duration-150 flex items-center
-                                ${isSelected ? 'bg-indigo-50/80 text-indigo-700' : 'hover:bg-gray-50/80'}
+                                ${isSelected ? 'bg-primary-50/80 text-primary-700' : 'hover:bg-gray-50/80'}
                               `}
                             >
                               <div className={`
                                 p-1.5 rounded-lg mr-2
-                                ${isSelected ? 'bg-indigo-100' : 'bg-gray-50'}
+                                ${isSelected ? 'bg-primary-100' : 'bg-gray-50'}
                               `}>
                                 {getResultIcon(result)}
                               </div>
@@ -474,7 +474,7 @@ const Header: React.FC<HeaderProps> = ({
                               </div>
                               <div className={`
                                 ml-2 p-1 rounded-full
-                                ${isSelected ? 'bg-indigo-100 text-indigo-600' : 'text-gray-400'}
+                                ${isSelected ? 'bg-primary-100 text-primary-600' : 'text-gray-400'}
                               `}>
                                 <ArrowRight size={14} />
                               </div>
@@ -526,8 +526,8 @@ const Header: React.FC<HeaderProps> = ({
             className={`
               p-2 rounded-xl relative transition-all
               ${notificationsOpen
-                ? 'bg-indigo-50 text-indigo-600'
-                : 'text-gray-400 hover:text-indigo-500'}
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-gray-400 hover:text-primary-500'}
             `}
             onClick={() => setNotificationsOpen(!notificationsOpen)}
             onMouseEnter={() => setHoveredButton('notifications')}
@@ -562,7 +562,7 @@ const Header: React.FC<HeaderProps> = ({
                   {unreadNotifications > 0 && (
                     <button
                       onClick={markAllAsRead}
-                      className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                      className="text-xs text-primary-600 hover:text-primary-700 font-medium"
                     >
                       Mark all as read
                     </button>
@@ -576,8 +576,8 @@ const Header: React.FC<HeaderProps> = ({
                         <div
                           key={notification.id}
                           className={`
-                            px-4 py-3 hover:bg-indigo-50/50 cursor-pointer relative
-                            ${!notification.read ? 'bg-indigo-50/30' : ''}
+                            px-4 py-3 hover:bg-primary-50/50 cursor-pointer relative
+                            ${!notification.read ? 'bg-primary-50/30' : ''}
                           `}
                         >
                           <div className="flex items-start">
@@ -590,7 +590,7 @@ const Header: React.FC<HeaderProps> = ({
                               <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
                             </div>
                             {!notification.read && (
-                              <div className="absolute top-3 right-3 w-2 h-2 bg-indigo-500 rounded-full"></div>
+                              <div className="absolute top-3 right-3 w-2 h-2 bg-primary-500 rounded-full"></div>
                             )}
                           </div>
                         </div>
@@ -610,7 +610,7 @@ const Header: React.FC<HeaderProps> = ({
                   className="px-4 py-2 border-t border-gray-100"
                 >
                   <button
-                    className="w-full text-xs text-center text-indigo-600 hover:text-indigo-700 font-medium py-1"
+                    className="w-full text-xs text-center text-primary-600 hover:text-primary-700 font-medium py-1"
                   >
                     View all notifications
                   </button>
@@ -621,7 +621,7 @@ const Header: React.FC<HeaderProps> = ({
         </div>
 
         <button
-          className="p-2 rounded-xl text-gray-400 hover:text-indigo-500 hover:bg-gray-50/80 transition-all hidden sm:block"
+          className="p-2 rounded-xl text-gray-400 hover:text-primary-500 hover:bg-gray-50/80 transition-all hidden sm:block"
           onMouseEnter={() => setHoveredButton('settings')}
           onMouseLeave={() => setHoveredButton(null)}
         >
@@ -632,12 +632,12 @@ const Header: React.FC<HeaderProps> = ({
           <button
             className={`
               flex items-center space-x-2 py-1.5 px-1.5 sm:px-2.5 rounded-xl transition-all
-              ${userMenuOpen ? 'bg-indigo-50/80' : 'hover:bg-gray-50/80'}
+              ${userMenuOpen ? 'bg-primary-50/80' : 'hover:bg-gray-50/80'}
             `}
             onClick={() => setUserMenuOpen(!userMenuOpen)}
           >
             <div
-              className="w-8 h-8 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center text-white"
+              className="w-8 h-8 rounded-xl bg-gradient-to-r from-primary-500 to-primary-500 flex items-center justify-center text-white"
             >
               <User size={16} strokeWidth={1.8} />
             </div>
@@ -673,13 +673,13 @@ const Header: React.FC<HeaderProps> = ({
                   className="px-1 py-1"
                 >
                   <button
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-primary-50/50 text-sm flex items-center"
                   >
                     <User size={16} className="mr-3 text-gray-500" strokeWidth={1.8} />
                     <span>Profile</span>
                   </button>
                   <button
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-primary-50/50 text-sm flex items-center"
                   >
                     <UserCog size={16} className="mr-3 text-gray-500" strokeWidth={1.8} />
                     <span>Account Settings</span>

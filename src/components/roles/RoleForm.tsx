@@ -249,7 +249,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ isEdit = false }) => {
                                 name="title"
                                 value={role.title}
                                 onChange={handleInputChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 placeholder="Enter role name"
                                 required
                             />
@@ -264,7 +264,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ isEdit = false }) => {
                                 name="status"
                                 value={role.status}
                                 onChange={handleInputChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             >
                                 {statusOptions.map(option => (
                                     <option key={option.value} value={option.value}>
@@ -284,7 +284,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ isEdit = false }) => {
                                 value={role.description}
                                 onChange={handleInputChange}
                                 rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 placeholder="Enter role description"
                             />
                         </div>
@@ -303,13 +303,13 @@ const RoleForm: React.FC<RoleFormProps> = ({ isEdit = false }) => {
                             placeholder="Search permissions..."
                             value={permissionSearchQuery}
                             onChange={handlePermissionSearch}
-                            className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         />
                     </div>
 
                     {isLoading ? (
                         <div className="flex justify-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
                         </div>
                     ) : (
                         <div className="max-h-96 overflow-y-auto pr-2">
@@ -330,7 +330,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ isEdit = false }) => {
                                                     className={`
                             flex items-start p-3 rounded-lg border 
                             ${role.permissions.includes(permission.id)
-                                                            ? 'border-indigo-200 bg-indigo-50'
+                                                            ? 'border-primary-200 bg-primary-50'
                                                             : 'border-gray-200 hover:bg-gray-50'}
                             cursor-pointer transition-all duration-150
                           `}
@@ -340,7 +340,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ isEdit = false }) => {
                                                         type="checkbox"
                                                         checked={role.permissions.includes(permission.id)}
                                                         onChange={() => { }}
-                                                        className="mt-0.5 h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                                        className="mt-0.5 h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                                                     />
                                                     <div className="ml-3">
                                                         <p className="text-sm font-medium text-gray-800">{permission.name}</p>
@@ -373,7 +373,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ isEdit = false }) => {
 
                     <motion.button
                         type="submit"
-                        className="flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none disabled:opacity-50"
+                        className="flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none disabled:opacity-50"
                         whileHover={{ y: -1 }}
                         whileTap={{ y: 0 }}
                         disabled={isSaving}

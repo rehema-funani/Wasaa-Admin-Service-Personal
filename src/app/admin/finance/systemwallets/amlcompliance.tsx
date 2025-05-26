@@ -370,7 +370,7 @@ const AMLComplianceDashboard: React.FC = () => {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'new':
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-primary-100 text-primary-800';
             case 'under_review':
                 return 'bg-yellow-100 text-yellow-800';
             case 'escalated':
@@ -438,7 +438,7 @@ const AMLComplianceDashboard: React.FC = () => {
     const getAlertTypeIcon = (type: string) => {
         switch (type) {
             case 'high_volume':
-                return <BarChart3 className="w-4 h-4 text-blue-600" />;
+                return <BarChart3 className="w-4 h-4 text-primary-600" />;
             case 'unusual_pattern':
                 return <PieChart className="w-4 h-4 text-purple-600" />;
             case 'restricted_country':
@@ -446,7 +446,7 @@ const AMLComplianceDashboard: React.FC = () => {
             case 'multiple_accounts':
                 return <Users className="w-4 h-4 text-orange-600" />;
             case 'structured_transactions':
-                return <Layers className="w-4 h-4 text-indigo-600" />;
+                return <Layers className="w-4 h-4 text-primary-600" />;
             case 'watchlist_match':
                 return <FileCheck className="w-4 h-4 text-green-600" />;
             default:
@@ -490,14 +490,14 @@ const AMLComplianceDashboard: React.FC = () => {
                 <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                                <AlertCircle size={20} className="text-blue-600" />
+                            <div className="p-2 bg-primary-100 rounded-lg">
+                                <AlertCircle size={20} className="text-primary-600" />
                             </div>
                             <h3 className="text-sm font-medium text-gray-800">Active Alerts</h3>
                         </div>
                         <p className="text-2xl font-semibold text-gray-900">{metrics?.totalAlerts || 0}</p>
                         <div className="flex flex-wrap gap-2 mt-2">
-                            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                            <span className="text-xs bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">
                                 New: {metrics?.newAlerts || 0}
                             </span>
                             <span className="text-xs bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full">
@@ -545,7 +545,7 @@ const AMLComplianceDashboard: React.FC = () => {
                             <span className="text-xs bg-gray-50 text-gray-700 px-2 py-0.5 rounded-full">
                                 False Positives: {metrics?.falsePositives || 0}
                             </span>
-                            <span className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full">
+                            <span className="text-xs bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">
                                 Resolution Rate: {metrics ? ((metrics.resolvedAlerts / metrics.totalAlerts) * 100).toFixed(1) : 0}%
                             </span>
                         </div>
@@ -674,7 +674,7 @@ const AMLComplianceDashboard: React.FC = () => {
                                             <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
-                                                        className="text-indigo-600 hover:text-indigo-900 p-1"
+                                                        className="text-primary-600 hover:text-primary-900 p-1"
                                                         onClick={() => openAlertViewModal(alert)}
                                                     >
                                                         <Eye size={18} />
@@ -682,7 +682,7 @@ const AMLComplianceDashboard: React.FC = () => {
 
                                                     {(alert.status === 'new' || alert.status === 'under_review') && (
                                                         <button
-                                                            className="text-blue-600 hover:text-blue-900 p-1"
+                                                            className="text-primary-600 hover:text-primary-900 p-1"
                                                             onClick={() => openUpdateStatusModal(alert)}
                                                         >
                                                             <FileText size={18} />
@@ -747,7 +747,7 @@ const AMLComplianceDashboard: React.FC = () => {
                             </button>
 
                             <button
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 text-white rounded-xl shadow-sm hover:bg-indigo-700 transition-all text-sm"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white rounded-xl shadow-sm hover:bg-primary-700 transition-all text-sm"
                             >
                                 <Download size={16} />
                                 <span>Export Report</span>
@@ -759,8 +759,8 @@ const AMLComplianceDashboard: React.FC = () => {
                     <div className="flex flex-wrap md:flex-nowrap border-b border-gray-200 mb-6">
                         <button
                             className={`flex items-center px-4 py-2 text-sm font-medium ${activeTab === 'dashboard'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                             onClick={() => setActiveTab('dashboard')}
                         >
@@ -769,8 +769,8 @@ const AMLComplianceDashboard: React.FC = () => {
                         </button>
                         <button
                             className={`flex items-center px-4 py-2 text-sm font-medium ${activeTab === 'blacklist'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                             onClick={() => setActiveTab('blacklist')}
                         >
@@ -779,8 +779,8 @@ const AMLComplianceDashboard: React.FC = () => {
                         </button>
                         <button
                             className={`flex items-center px-4 py-2 text-sm font-medium ${activeTab === 'activity'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                             onClick={() => setActiveTab('activity')}
                         >
@@ -789,8 +789,8 @@ const AMLComplianceDashboard: React.FC = () => {
                         </button>
                         <button
                             className={`flex items-center px-4 py-2 text-sm font-medium ${activeTab === 'rules'
-                                    ? 'text-indigo-600 border-b-2 border-indigo-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                ? 'text-primary-600 border-b-2 border-primary-600'
+                                : 'text-gray-500 hover:text-gray-700'
                                 }`}
                             onClick={() => setActiveTab('rules')}
                         >
@@ -888,7 +888,7 @@ const AMLComplianceDashboard: React.FC = () => {
                                                     <tr key={txId}>
                                                         <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-800">{txId}</td>
                                                         <td className="px-3 py-2 whitespace-nowrap text-right text-sm">
-                                                            <button className="text-indigo-600 hover:text-indigo-900 text-xs font-medium">
+                                                            <button className="text-primary-600 hover:text-primary-900 text-xs font-medium">
                                                                 View Details
                                                             </button>
                                                         </td>
@@ -906,8 +906,8 @@ const AMLComplianceDashboard: React.FC = () => {
                                 <h3 className="text-sm font-medium text-gray-700 mb-2">Status Timeline</h3>
                                 <div className="space-y-3">
                                     <div className="flex items-start gap-2">
-                                        <div className="p-1.5 bg-blue-100 rounded-full">
-                                            <AlertCircle size={14} className="text-blue-600" />
+                                        <div className="p-1.5 bg-primary-100 rounded-full">
+                                            <AlertCircle size={14} className="text-primary-600" />
                                         </div>
                                         <div>
                                             <div className="text-xs font-medium text-gray-800">Alert Created</div>
@@ -970,7 +970,7 @@ const AMLComplianceDashboard: React.FC = () => {
                             {(selectedAlert.status === 'new' || selectedAlert.status === 'under_review') && (
                                 <button
                                     onClick={() => openUpdateStatusModal(selectedAlert)}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                                 >
                                     Update Status
                                 </button>

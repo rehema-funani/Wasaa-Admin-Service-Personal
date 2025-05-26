@@ -56,7 +56,7 @@ const page = () => {
       trend: 'up',
       period: 'vs. last month',
       icon: <DollarSign size={24} />,
-      color: 'blue'
+      color: 'primary'
     },
     {
       title: 'Total Transactions',
@@ -263,8 +263,8 @@ const page = () => {
           <div className="bg-white border border-gray-200 rounded-xl p-1 flex items-center shadow-sm">
             <button
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${selectedPeriod === 'weekly'
-                  ? 'bg-indigo-100 text-indigo-700'
-                  : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-primary-100 text-primary-700'
+                : 'text-gray-600 hover:bg-gray-100'
                 }`}
               onClick={() => handlePeriodChange('weekly')}
             >
@@ -272,8 +272,8 @@ const page = () => {
             </button>
             <button
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${selectedPeriod === 'monthly'
-                  ? 'bg-indigo-100 text-indigo-700'
-                  : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-primary-100 text-primary-700'
+                : 'text-gray-600 hover:bg-gray-100'
                 }`}
               onClick={() => handlePeriodChange('monthly')}
             >
@@ -281,8 +281,8 @@ const page = () => {
             </button>
             <button
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${selectedPeriod === 'quarterly'
-                  ? 'bg-indigo-100 text-indigo-700'
-                  : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-primary-100 text-primary-700'
+                : 'text-gray-600 hover:bg-gray-100'
                 }`}
               onClick={() => handlePeriodChange('quarterly')}
             >
@@ -350,7 +350,7 @@ const page = () => {
               </div>
               <div className={`
                 p-3 rounded-lg 
-                ${stat.color === 'blue' ? 'bg-blue-100 text-blue-600' :
+                ${stat.color === 'primary' ? 'bg-primary-100 text-primary-600' :
                   stat.color === 'green' ? 'bg-green-100 text-green-600' :
                     stat.color === 'purple' ? 'bg-purple-100 text-purple-600' :
                       'bg-orange-100 text-orange-600'}
@@ -378,7 +378,7 @@ const page = () => {
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-indigo-500 mr-1"></div>
+                <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
                 <span className="text-xs text-gray-600">Revenue</span>
               </div>
               <div className="flex items-center">
@@ -481,7 +481,7 @@ const page = () => {
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-blue-500 mr-1"></div>
+                <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
                 <span className="text-xs text-gray-600">Total</span>
               </div>
               <div className="flex items-center">
@@ -533,7 +533,7 @@ const page = () => {
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-indigo-500 mr-1"></div>
+                <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
                 <span className="text-xs text-gray-600">Count</span>
               </div>
               <div className="flex items-center">
@@ -736,7 +736,7 @@ const page = () => {
               whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
               whileTap={{ y: 0 }}
             >
-              <Mail size={16} className="mr-2 text-blue-600" strokeWidth={1.8} />
+              <Mail size={16} className="mr-2 text-primary-600" strokeWidth={1.8} />
               Email Report
             </motion.button>
             <motion.button
@@ -791,7 +791,7 @@ const page = () => {
         </div>
         <div className="mt-4 flex justify-end">
           <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0 }}
           >
@@ -809,7 +809,7 @@ const page = () => {
         transition={{ duration: 0.3, delay: 1.0 }}
       >
         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center">
-          <div className="mr-4 p-3 bg-blue-100 text-blue-600 rounded-lg">
+          <div className="mr-4 p-3 bg-primary-100 text-primary-600 rounded-lg">
             <BarChart3 size={24} strokeWidth={1.8} />
           </div>
           <div>
@@ -818,7 +818,7 @@ const page = () => {
           </div>
           <div className="ml-auto">
             <motion.button
-              className="text-blue-600 hover:text-blue-800"
+              className="text-primary-600 hover:text-primary-800"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

@@ -9,16 +9,16 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
 
     switch (status.toLowerCase()) {
         case 'open':
-            bgColor = "bg-blue-50/80";
-            textColor = "text-blue-700";
-            borderColor = "border-blue-100/50";
-            icon = <MessageSquare size={12} className="mr-1 text-blue-500" />;
+            bgColor = "bg-primary-50/80";
+            textColor = "text-primary-700";
+            borderColor = "border-primary-100/50";
+            icon = <MessageSquare size={12} className="mr-1 text-primary-500" />;
             break;
         case 'in-progress':
-            bgColor = "bg-indigo-50/80";
-            textColor = "text-indigo-700";
-            borderColor = "border-indigo-100/50";
-            icon = <Clock size={12} className="mr-1 text-indigo-500" />;
+            bgColor = "bg-primary-50/80";
+            textColor = "text-primary-700";
+            borderColor = "border-primary-100/50";
+            icon = <Clock size={12} className="mr-1 text-primary-500" />;
             break;
         case 'resolved':
             bgColor = "bg-green-50/80";

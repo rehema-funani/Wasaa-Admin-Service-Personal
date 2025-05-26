@@ -66,8 +66,8 @@ const RecentUsersTable: React.FC = () => {
                             whileHover={{ x: 3 }}
                         >
                             <div className="flex items-center p-4">
-                                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-3 shrink-0">
-                                    <User size={16} className="text-indigo-600" strokeWidth={1.8} />
+                                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center mr-3 shrink-0">
+                                    <User size={16} className="text-primary-600" strokeWidth={1.8} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-gray-800 truncate">{user.name}</p>

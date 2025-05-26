@@ -184,7 +184,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                             id={filter.id}
                             value={filterValues[filter.id] || ''}
                             onChange={(e) => handleInputChange(filter.id, e.target.value)}
-                            className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-indigo-100 appearance-none"
+                            className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-primary-100 appearance-none"
                         >
                             <option value="">All</option>
                             {filter.options?.map(option => (
@@ -213,7 +213,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                     className={`
                     w-5 h-5 rounded-full border flex items-center justify-center cursor-pointer
                     ${filterValues[filter.id]?.includes(option.value)
-                                            ? 'border-indigo-500 bg-indigo-500'
+                                            ? 'border-primary-500 bg-primary-500'
                                             : 'border-gray-300 bg-white'}
                   `}
                                     whileHover={{ scale: 1.1 }}
@@ -244,7 +244,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                             id={filter.id}
                             value={filterValues[filter.id] || ''}
                             onChange={(e) => handleInputChange(filter.id, e.target.value)}
-                            className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-indigo-100"
+                            className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-primary-100"
                         />
                         <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
                             <Calendar size={16} className="text-gray-400" strokeWidth={1.5} />
@@ -264,7 +264,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                     ...filterValues[filter.id],
                                     from: e.target.value
                                 })}
-                                className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-indigo-100"
+                                className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-primary-100"
                                 placeholder="From"
                             />
                         </div>
@@ -277,7 +277,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                     ...filterValues[filter.id] || {},
                                     to: e.target.value
                                 })}
-                                className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-indigo-100"
+                                className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-primary-100"
                                 placeholder="To"
                             />
                         </div>
@@ -292,7 +292,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                             id={filter.id}
                             value={filterValues[filter.id] || ''}
                             onChange={(e) => handleInputChange(filter.id, e.target.value)}
-                            className="w-full py-2.5 pl-10 pr-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-indigo-100"
+                            className="w-full py-2.5 pl-10 pr-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-primary-100"
                             placeholder={`Search ${filter.label.toLowerCase()}...`}
                         />
                         <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
@@ -308,7 +308,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                         id={filter.id}
                         value={filterValues[filter.id] || ''}
                         onChange={(e) => handleInputChange(filter.id, e.target.value)}
-                        className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-indigo-100"
+                        className="w-full py-2.5 px-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-1 focus:ring-primary-100"
                     />
                 );
 
@@ -319,7 +319,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                             className={`
                 w-12 h-6 rounded-full flex items-center border-2 
                 ${filterValues[filter.id]
-                                    ? 'bg-indigo-500 border-indigo-500 justify-end'
+                                    ? 'bg-primary-500 border-primary-500 justify-end'
                                     : 'bg-gray-100 border-gray-200 justify-start'}
                 cursor-pointer transition-colors
               `}
@@ -334,7 +334,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
                             />
                         </motion.div>
-                        <span className={`ml-2.5 text-sm ${filterValues[filter.id] ? 'text-indigo-500 font-medium' : 'text-gray-500'}`}>
+                        <span className={`ml-2.5 text-sm ${filterValues[filter.id] ? 'text-primary-500 font-medium' : 'text-gray-500'}`}>
                             {filterValues[filter.id] ? 'Yes' : 'No'}
                         </span>
                     </div>
@@ -353,10 +353,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                 whileHover={{ scale: 1.02, boxShadow: '0 3px 10px rgba(0, 0, 0, 0.08)' }}
                 whileTap={{ scale: 0.98 }}
             >
-                <Sliders size={14} className="text-indigo-500" strokeWidth={1.5} />
+                <Sliders size={14} className="text-primary-500" strokeWidth={1.5} />
                 <span className="text-gray-700">{title}</span>
                 {activeFiltersCount > 0 && (
-                    <span className="ml-1 w-5 h-5 bg-indigo-500 text-white rounded-full text-xs flex items-center justify-center">
+                    <span className="ml-1 w-5 h-5 bg-primary-500 text-white rounded-full text-xs flex items-center justify-center">
                         {activeFiltersCount}
                     </span>
                 )}
@@ -407,10 +407,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
 
                                 <div className="px-5 py-3 flex items-center justify-between border-b border-gray-100">
                                     <div className="flex w-full items-center space-x-2">
-                                        <Filter size={16} className="text-indigo-500" strokeWidth={1.5} />
+                                        <Filter size={16} className="text-primary-500" strokeWidth={1.5} />
                                         <h3 className="font-medium text-gray-700">{title}</h3>
                                         {activeFiltersCount > 0 && (
-                                            <span className="ml-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+                                            <span className="ml-1 px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full text-xs">
                                                 {activeFiltersCount}
                                             </span>
                                         )}
@@ -469,7 +469,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                         </motion.button>
 
                                         <motion.button
-                                            className="px-5 py-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-full text-sm shadow-sm"
+                                            className="px-5 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full text-sm shadow-sm"
                                             whileHover={{ scale: 1.03, boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
                                             whileTap={{ scale: 0.97 }}
                                             onClick={handleApplyFilters}

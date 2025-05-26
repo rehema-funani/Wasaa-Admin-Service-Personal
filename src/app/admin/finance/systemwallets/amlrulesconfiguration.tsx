@@ -889,9 +889,9 @@ const AMLRulesConfiguration: React.FC = () => {
     const getRuleTypeIcon = (type: string) => {
         switch (type) {
             case 'transaction':
-                return <DollarSign className="w-4 h-4 text-indigo-600" />;
+                return <DollarSign className="w-4 h-4 text-primary-600" />;
             case 'behavior':
-                return <Activity className="w-4 h-4 text-blue-600" />;
+                return <Activity className="w-4 h-4 text-primary-600" />;
             case 'identity':
                 return <Users className="w-4 h-4 text-purple-600" />;
             case 'velocity':
@@ -909,7 +909,7 @@ const AMLRulesConfiguration: React.FC = () => {
     const getCategoryIcon = (category: string) => {
         switch (category) {
             case 'monitoring':
-                return <Eye className="w-4 h-4 text-blue-600" />;
+                return <Eye className="w-4 h-4 text-primary-600" />;
             case 'screening':
                 return <Filter className="w-4 h-4 text-orange-600" />;
             case 'detection':
@@ -957,7 +957,7 @@ const AMLRulesConfiguration: React.FC = () => {
     const getSeverityColor = (severity: string) => {
         switch (severity) {
             case 'low':
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-primary-100 text-primary-800';
             case 'medium':
                 return 'bg-yellow-100 text-yellow-800';
             case 'high':
@@ -990,7 +990,7 @@ const AMLRulesConfiguration: React.FC = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {parameters.map((param) => (
                                 <tr key={param.id} className="hover:bg-gray-50">
-                                    <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-indigo-600">
+                                    <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-primary-600">
                                         {param.name}
                                     </td>
                                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
@@ -1029,13 +1029,13 @@ const AMLRulesConfiguration: React.FC = () => {
                                 Condition #{index + 1}
                             </div>
                             {index > 0 && (
-                                <div className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                                <div className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">
                                     {condition.logicalOperator || 'AND'}
                                 </div>
                             )}
                         </div>
                         <div className="text-sm">
-                            <span className="text-indigo-600 font-medium">{condition.field}</span>
+                            <span className="text-primary-600 font-medium">{condition.field}</span>
                             <span className="mx-1 text-gray-500">{condition.operator}</span>
                             <span className="text-orange-600 font-medium">
                                 {typeof condition.value === 'string' && condition.valueType === 'parameter'
@@ -1134,8 +1134,8 @@ const AMLRulesConfiguration: React.FC = () => {
             <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-indigo-100 rounded-lg">
-                            <Play size={20} className="text-indigo-600" />
+                        <div className="p-2 bg-primary-100 rounded-lg">
+                            <Play size={20} className="text-primary-600" />
                         </div>
                         <h3 className="text-sm font-medium text-gray-800">Active Rules</h3>
                     </div>
@@ -1154,8 +1154,8 @@ const AMLRulesConfiguration: React.FC = () => {
 
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                            <BarChart3 size={20} className="text-blue-600" />
+                        <div className="p-2 bg-primary-100 rounded-lg">
+                            <BarChart3 size={20} className="text-primary-600" />
                         </div>
                         <h3 className="text-sm font-medium text-gray-800">Rule Categories</h3>
                     </div>
@@ -1163,7 +1163,7 @@ const AMLRulesConfiguration: React.FC = () => {
                         {rules.length}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-2">
-                        <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                        <span className="text-xs bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full">
                             Monitoring: {rules.filter(rule => rule.category === 'monitoring').length}
                         </span>
                         <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
@@ -1203,7 +1203,7 @@ const AMLRulesConfiguration: React.FC = () => {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={openAddRuleModal}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm"
                         >
                             <PlusCircle size={16} />
                             <span>Add Rule</span>
@@ -1227,7 +1227,7 @@ const AMLRulesConfiguration: React.FC = () => {
                             placeholder="Search rules..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                            className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                         />
                     </div>
 
@@ -1288,7 +1288,7 @@ const AMLRulesConfiguration: React.FC = () => {
                                 id="showSystemRules"
                                 checked={showSystemRules}
                                 onChange={() => setShowSystemRules(!showSystemRules)}
-                                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                             />
                             <label htmlFor="showSystemRules" className="ml-2 text-sm text-gray-600">
                                 Show System Rules
@@ -1342,7 +1342,7 @@ const AMLRulesConfiguration: React.FC = () => {
                                                             {rule.description}
                                                         </div>
                                                         {rule.isSystemRule && (
-                                                            <span className="mt-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700">
+                                                            <span className="mt-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-50 text-primary-700">
                                                                 System Rule
                                                             </span>
                                                         )}
@@ -1378,9 +1378,9 @@ const AMLRulesConfiguration: React.FC = () => {
                                                         <div className="mr-2 w-12 bg-gray-200 rounded-full h-2.5">
                                                             <div
                                                                 className={`h-2.5 rounded-full ${effectiveness.efficiency >= 0.9 ? 'bg-green-500' :
-                                                                        effectiveness.efficiency >= 0.7 ? 'bg-blue-500' :
-                                                                            effectiveness.efficiency >= 0.5 ? 'bg-yellow-500' :
-                                                                                'bg-red-500'
+                                                                    effectiveness.efficiency >= 0.7 ? 'bg-primary-500' :
+                                                                        effectiveness.efficiency >= 0.5 ? 'bg-yellow-500' :
+                                                                            'bg-red-500'
                                                                     }`}
                                                                 style={{ width: `${effectiveness.efficiency * 100}%` }}
                                                             ></div>
@@ -1399,13 +1399,13 @@ const AMLRulesConfiguration: React.FC = () => {
                                             <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div className="flex items-center justify-end gap-1">
                                                     <button
-                                                        className="text-indigo-600 hover:text-indigo-900 p-1"
+                                                        className="text-primary-600 hover:text-primary-900 p-1"
                                                         onClick={() => openViewRuleModal(rule)}
                                                     >
                                                         <Eye size={16} />
                                                     </button>
                                                     <button
-                                                        className="text-blue-600 hover:text-blue-900 p-1"
+                                                        className="text-primary-600 hover:text-primary-900 p-1"
                                                         onClick={() => openEditRuleModal(rule)}
                                                         disabled={rule.isSystemRule}
                                                         title={rule.isSystemRule ? "System rules cannot be edited" : "Edit rule"}
@@ -1492,7 +1492,7 @@ const AMLRulesConfiguration: React.FC = () => {
                                         {selectedRule.status.charAt(0).toUpperCase() + selectedRule.status.slice(1)}
                                     </span>
                                     {selectedRule.isSystemRule && (
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
                                             System Rule
                                         </span>
                                     )}
@@ -1577,9 +1577,9 @@ const AMLRulesConfiguration: React.FC = () => {
                                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                                     <div
                                                         className={`h-2 rounded-full ${(1 - selectedRule.falsePositiveRate) >= 0.9 ? 'bg-green-500' :
-                                                                (1 - selectedRule.falsePositiveRate) >= 0.7 ? 'bg-blue-500' :
-                                                                    (1 - selectedRule.falsePositiveRate) >= 0.5 ? 'bg-yellow-500' :
-                                                                        'bg-red-500'
+                                                            (1 - selectedRule.falsePositiveRate) >= 0.7 ? 'bg-primary-500' :
+                                                                (1 - selectedRule.falsePositiveRate) >= 0.5 ? 'bg-yellow-500' :
+                                                                    'bg-red-500'
                                                             }`}
                                                         style={{ width: `${(1 - selectedRule.falsePositiveRate) * 100}%` }}
                                                     ></div>
@@ -1623,7 +1623,7 @@ const AMLRulesConfiguration: React.FC = () => {
                             {!selectedRule.isSystemRule && (
                                 <button
                                     onClick={() => openEditRuleModal(selectedRule)}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                                 >
                                     Edit Rule
                                 </button>
@@ -1648,13 +1648,13 @@ const AMLRulesConfiguration: React.FC = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-md mb-4">
+                            <div className="bg-primary-50 border-l-4 border-primary-400 p-3 rounded-md mb-4">
                                 <div className="flex">
                                     <div className="flex-shrink-0">
-                                        <Info className="h-5 w-5 text-blue-400" />
+                                        <Info className="h-5 w-5 text-primary-400" />
                                     </div>
                                     <div className="ml-3">
-                                        <p className="text-sm text-blue-700">
+                                        <p className="text-sm text-primary-700">
                                             You are creating a new AML rule. The rule will be set to inactive by default until you activate it.
                                         </p>
                                     </div>
@@ -1669,7 +1669,7 @@ const AMLRulesConfiguration: React.FC = () => {
                                 value={ruleFormData.name}
                                 onChange={(e) => setRuleFormData({ ...ruleFormData, name: e.target.value })}
                                 placeholder="Enter rule name..."
-                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 required
                             />
                         </div>
@@ -1681,7 +1681,7 @@ const AMLRulesConfiguration: React.FC = () => {
                                 onChange={(e) => setRuleFormData({ ...ruleFormData, description: e.target.value })}
                                 placeholder="Enter rule description..."
                                 rows={3}
-                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 required
                             />
                         </div>
@@ -1692,7 +1692,7 @@ const AMLRulesConfiguration: React.FC = () => {
                                 <select
                                     value={ruleFormData.ruleType}
                                     onChange={(e) => setRuleFormData({ ...ruleFormData, ruleType: e.target.value as any })}
-                                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 >
                                     <option value="transaction">Transaction</option>
                                     <option value="behavior">Behavior</option>
@@ -1708,7 +1708,7 @@ const AMLRulesConfiguration: React.FC = () => {
                                 <select
                                     value={ruleFormData.category}
                                     onChange={(e) => setRuleFormData({ ...ruleFormData, category: e.target.value as any })}
-                                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 >
                                     <option value="monitoring">Monitoring</option>
                                     <option value="screening">Screening</option>
@@ -1723,7 +1723,7 @@ const AMLRulesConfiguration: React.FC = () => {
                             <select
                                 value={ruleFormData.severity}
                                 onChange={(e) => setRuleFormData({ ...ruleFormData, severity: e.target.value as any })}
-                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             >
                                 <option value="low">Low</option>
                                 <option value="medium">Medium</option>
@@ -1771,7 +1771,7 @@ const AMLRulesConfiguration: React.FC = () => {
                             <button
                                 onClick={modalType === 'add' ? handleAddRule : handleUpdateRule}
                                 disabled={!ruleFormData.name || !ruleFormData.description}
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {modalType === 'add' ? 'Add Rule' : 'Update Rule'}
                             </button>

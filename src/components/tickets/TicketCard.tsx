@@ -49,13 +49,13 @@ export const TicketCard: React.FC<TicketCardProps> = ({ ticket, onClick }) => {
                 <div className="flex justify-between items-start">
                     <div className="flex items-center">
                         <div className={`p-2 rounded-lg ${ticket.escalated
-                                ? 'bg-red-100'
-                                : 'bg-blue-100'
+                            ? 'bg-red-100'
+                            : 'bg-primary-100'
                             }`}>
                             {ticket.escalated ? (
                                 <ArrowUpCircle size={16} className="text-red-600" />
                             ) : (
-                                <TicketIcon size={16} className="text-blue-600" />
+                                <TicketIcon size={16} className="text-primary-600" />
                             )}
                         </div>
                         <div className="ml-3">

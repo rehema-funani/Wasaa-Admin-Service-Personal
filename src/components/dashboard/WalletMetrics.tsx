@@ -20,7 +20,7 @@ const WalletMetrics: React.FC = () => {
             value: '$162,480',
             change: '+24%',
             isPositive: true,
-            icon: <Wallet size={16} className="text-blue-500" strokeWidth={1.8} />
+            icon: <Wallet size={16} className="text-primary-500" strokeWidth={1.8} />
         },
         {
             title: 'Total Withdrawals',
@@ -43,7 +43,7 @@ const WalletMetrics: React.FC = () => {
             return (
                 <div className="bg-white p-3 rounded-xl shadow-md border border-gray-100">
                     <p className="text-gray-600 text-xs mb-1">{label}</p>
-                    <p className="text-sm font-medium text-blue-600 mb-1">
+                    <p className="text-sm font-medium text-primary-600 mb-1">
                         {`Deposits: $${payload[0]?.value?.toLocaleString()}`}
                     </p>
                     <p className="text-sm font-medium text-cyan-500">

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type ThemeMode = 'light' | 'dark' | 'system';
-type ColorScheme = 'blue' | 'indigo' | 'purple' | 'teal' | 'green';
+type ColorScheme = 'primary' | 'primary' | 'purple' | 'teal' | 'green';
 
 type ThemeContextType = {
     mode: ThemeMode;
@@ -20,7 +20,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const [mode, setMode] = useState<ThemeMode>('system');
-    const [colorScheme, setColorScheme] = useState<ColorScheme>('blue');
+    const [colorScheme, setColorScheme] = useState<ColorScheme>('primary');
     const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
     const updateThemeClass = (darkMode: boolean) => {
@@ -34,7 +34,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
     useEffect(() => {
         const storedMode = localStorage.getItem('theme-mode') as ThemeMode || 'system';
-        const storedColorScheme = localStorage.getItem('color-scheme') as ColorScheme || 'blue';
+        const storedColorScheme = localStorage.getItem('color-scheme') as ColorScheme || 'primary';
 
         setMode(storedMode);
         setColorScheme(storedColorScheme);

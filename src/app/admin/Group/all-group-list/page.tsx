@@ -31,12 +31,12 @@ type ApiResponse = {
 
 const generateGroupColor = (title: string) => {
   const colors = [
-    'bg-blue-100 text-blue-600',
+    'bg-primary-100 text-primary-600',
     'bg-purple-100 text-purple-600',
     'bg-green-100 text-green-600',
     'bg-yellow-100 text-yellow-600',
     'bg-pink-100 text-pink-600',
-    'bg-indigo-100 text-indigo-600',
+    'bg-primary-100 text-primary-600',
   ];
 
   const sum = title.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -240,11 +240,11 @@ const page = () => {
                   <tr className="bg-gray-50/80 backdrop-blur-sm">
                     <th className="w-10 px-4 py-3">
                       <div
-                        className="w-5 h-5 rounded-md border border-gray-300 flex items-center justify-center cursor-pointer hover:border-indigo-600"
+                        className="w-5 h-5 rounded-md border border-gray-300 flex items-center justify-center cursor-pointer hover:border-primary-600"
                         onClick={handleSelectAll}
                       >
                         {isAllSelected && (
-                          <Check size={14} className="text-indigo-600" />
+                          <Check size={14} className="text-primary-600" />
                         )}
                       </div>
                     </th>
@@ -257,9 +257,9 @@ const page = () => {
                         <div className="ml-1 opacity-30">
                           {sortedColumn === 'title' ? (
                             sortDirection === 'asc' ? (
-                              <SortAsc size={14} className="text-indigo-600" />
+                              <SortAsc size={14} className="text-primary-600" />
                             ) : (
-                              <SortDesc size={14} className="text-indigo-600" />
+                              <SortDesc size={14} className="text-primary-600" />
                             )
                           ) : (
                             <SortAsc size={14} className="text-gray-400" />
@@ -276,9 +276,9 @@ const page = () => {
                         <div className="ml-1 opacity-30">
                           {sortedColumn === 'type' ? (
                             sortDirection === 'asc' ? (
-                              <SortAsc size={14} className="text-indigo-600" />
+                              <SortAsc size={14} className="text-primary-600" />
                             ) : (
-                              <SortDesc size={14} className="text-indigo-600" />
+                              <SortDesc size={14} className="text-primary-600" />
                             )
                           ) : (
                             <SortAsc size={14} className="text-gray-400" />
@@ -295,9 +295,9 @@ const page = () => {
                         <div className="ml-1 opacity-30">
                           {sortedColumn === 'status' ? (
                             sortDirection === 'asc' ? (
-                              <SortAsc size={14} className="text-indigo-600" />
+                              <SortAsc size={14} className="text-primary-600" />
                             ) : (
-                              <SortDesc size={14} className="text-indigo-600" />
+                              <SortDesc size={14} className="text-primary-600" />
                             )
                           ) : (
                             <SortAsc size={14} className="text-gray-400" />
@@ -314,9 +314,9 @@ const page = () => {
                         <div className="ml-1 opacity-30">
                           {sortedColumn === 'created' ? (
                             sortDirection === 'asc' ? (
-                              <SortAsc size={14} className="text-indigo-600" />
+                              <SortAsc size={14} className="text-primary-600" />
                             ) : (
-                              <SortDesc size={14} className="text-indigo-600" />
+                              <SortDesc size={14} className="text-primary-600" />
                             )
                           ) : (
                             <SortAsc size={14} className="text-gray-400" />
@@ -336,7 +336,7 @@ const page = () => {
                       className={`
                         border-b border-gray-50 last:border-0 
                         hover:bg-gray-50/50 cursor-pointer
-                        ${selectedRows[group.id] ? 'bg-indigo-50/50' : ''}
+                        ${selectedRows[group.id] ? 'bg-primary-50/50' : ''}
                       `}
                     >
                       <td
@@ -348,12 +348,12 @@ const page = () => {
                       >
                         <div
                           className={`
-                            w-5 h-5 rounded-md border flex items-center justify-center cursor-pointer hover:border-indigo-600
-                            ${selectedRows[group.id] ? 'border-indigo-600 bg-indigo-50' : 'border-gray-300'}
+                            w-5 h-5 rounded-md border flex items-center justify-center cursor-pointer hover:border-primary-600
+                            ${selectedRows[group.id] ? 'border-primary-600 bg-primary-50' : 'border-gray-300'}
                           `}
                         >
                           {selectedRows[group.id] && (
-                            <Check size={14} className="text-indigo-600" />
+                            <Check size={14} className="text-primary-600" />
                           )}
                         </div>
                       </td>
@@ -369,13 +369,13 @@ const page = () => {
                         </div>
                       </td>
                       <td className="px-4 py-3.5 text-sm">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${group.type === 'public' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${group.type === 'public' ? 'bg-green-100 text-green-800' : 'bg-primary-100 text-primary-800'
                           }`}>
                           {group.type}
                         </span>
                       </td>
                       <td className="px-4 py-3.5 text-sm">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${group.status === 'active' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${group.status === 'active' ? 'bg-primary-100 text-primary-800' : 'bg-gray-100 text-gray-800'
                           }`}>
                           {group.status}
                         </span>
@@ -389,7 +389,7 @@ const page = () => {
                       <td className="px-4 py-3.5 text-sm">
                         <div className="flex items-center space-x-1">
                           <button
-                            className="p-1 rounded-md hover:bg-indigo-50 text-indigo-600"
+                            className="p-1 rounded-md hover:bg-primary-50 text-primary-600"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleViewGroup(group.id);
@@ -439,7 +439,7 @@ const page = () => {
                 return (
                   <button
                     key={i}
-                    className={`px-3 py-1 rounded-lg ${pageNum === metadata.currentPage ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600'}`}
+                    className={`px-3 py-1 rounded-lg ${pageNum === metadata.currentPage ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-600'}`}
                     onClick={() => changePage(pageNum)}
                   >
                     {pageNum}

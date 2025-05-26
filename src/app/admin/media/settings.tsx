@@ -45,7 +45,7 @@ const ShortsSettings: React.FC = () => {
 
                 <button
                     onClick={handleSaveSettings}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium flex items-center"
+                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium flex items-center"
                 >
                     <Save size={16} className="mr-2" />
                     Save Settings
@@ -63,7 +63,7 @@ const ShortsSettings: React.FC = () => {
                 {/* Video Settings */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-5 border-b border-gray-200 flex items-center">
-                        <Video size={20} className="text-indigo-600 mr-2" />
+                        <Video size={20} className="text-primary-600 mr-2" />
                         <h2 className="text-lg font-medium">Video Settings</h2>
                     </div>
 
@@ -76,7 +76,7 @@ const ShortsSettings: React.FC = () => {
                                 type="number"
                                 value={maxDuration}
                                 onChange={(e) => setMaxDuration(parseInt(e.target.value))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                             />
                             <p className="mt-1 text-sm text-gray-500">Maximum allowed duration for short videos</p>
                         </div>
@@ -89,7 +89,7 @@ const ShortsSettings: React.FC = () => {
                                 type="number"
                                 value={minDuration}
                                 onChange={(e) => setMinDuration(parseInt(e.target.value))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                             />
                             <p className="mt-1 text-sm text-gray-500">Minimum allowed duration for short videos</p>
                         </div>
@@ -102,7 +102,7 @@ const ShortsSettings: React.FC = () => {
                                 type="number"
                                 value={maxFileSize}
                                 onChange={(e) => setMaxFileSize(parseInt(e.target.value))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                             />
                             <p className="mt-1 text-sm text-gray-500">Maximum allowed file size for uploads</p>
                         </div>
@@ -118,8 +118,8 @@ const ShortsSettings: React.FC = () => {
                                         key={format}
                                         onClick={() => toggleFormat(format)}
                                         className={`px-3 py-1 rounded-lg text-sm font-medium ${allowedFormats.includes(format)
-                                                ? 'bg-indigo-100 text-indigo-700 border border-indigo-200'
-                                                : 'bg-gray-100 text-gray-700 border border-gray-200'
+                                            ? 'bg-primary-100 text-primary-700 border border-primary-200'
+                                            : 'bg-gray-100 text-gray-700 border border-gray-200'
                                             }`}
                                     >
                                         {format.toUpperCase()}
@@ -133,7 +133,7 @@ const ShortsSettings: React.FC = () => {
                 {/* Moderation Settings */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-5 border-b border-gray-200 flex items-center">
-                        <ShieldCheck size={20} className="text-indigo-600 mr-2" />
+                        <ShieldCheck size={20} className="text-primary-600 mr-2" />
                         <h2 className="text-lg font-medium">Moderation Settings</h2>
                     </div>
 
@@ -154,7 +154,7 @@ const ShortsSettings: React.FC = () => {
                                 />
                                 <label
                                     htmlFor="toggle-auto-mod"
-                                    className={`block h-6 rounded-full cursor-pointer transition-colors ${autoModeration ? 'bg-indigo-600' : 'bg-gray-300'}`}
+                                    className={`block h-6 rounded-full cursor-pointer transition-colors ${autoModeration ? 'bg-primary-600' : 'bg-gray-300'}`}
                                 ></label>
                             </div>
                         </div>
@@ -167,7 +167,7 @@ const ShortsSettings: React.FC = () => {
                                 type="number"
                                 value={moderationSLA}
                                 onChange={(e) => setModerationSLA(parseInt(e.target.value))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                             />
                             <p className="mt-1 text-sm text-gray-500">Target turnaround time for manual content review</p>
                         </div>
@@ -180,7 +180,7 @@ const ShortsSettings: React.FC = () => {
                                 type="number"
                                 value={maxReportsToFlag}
                                 onChange={(e) => setMaxReportsToFlag(parseInt(e.target.value))}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                             />
                             <p className="mt-1 text-sm text-gray-500">Number of user reports needed to auto-flag content</p>
                         </div>
@@ -190,7 +190,7 @@ const ShortsSettings: React.FC = () => {
                 {/* Hashtag Settings */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-5 border-b border-gray-200 flex items-center">
-                        <Info size={20} className="text-indigo-600 mr-2" />
+                        <Info size={20} className="text-primary-600 mr-2" />
                         <h2 className="text-lg font-medium">Hashtag Settings</h2>
                     </div>
 
@@ -211,7 +211,7 @@ const ShortsSettings: React.FC = () => {
                                 />
                                 <label
                                     htmlFor="toggle-hashtags"
-                                    className={`block h-6 rounded-full cursor-pointer transition-colors ${enableHashtags ? 'bg-indigo-600' : 'bg-gray-300'}`}
+                                    className={`block h-6 rounded-full cursor-pointer transition-colors ${enableHashtags ? 'bg-primary-600' : 'bg-gray-300'}`}
                                 ></label>
                             </div>
                         </div>
@@ -225,7 +225,7 @@ const ShortsSettings: React.FC = () => {
                                 value={maxHashtags}
                                 onChange={(e) => setMaxHashtags(parseInt(e.target.value))}
                                 disabled={!enableHashtags}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100 disabled:text-gray-500"
                             />
                             <p className="mt-1 text-sm text-gray-500">Maximum number of hashtags allowed per video</p>
                         </div>
@@ -235,7 +235,7 @@ const ShortsSettings: React.FC = () => {
                 {/* Regional Settings */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-5 border-b border-gray-200 flex items-center">
-                        <Languages size={20} className="text-indigo-600 mr-2" />
+                        <Languages size={20} className="text-primary-600 mr-2" />
                         <h2 className="text-lg font-medium">Regional Settings</h2>
                     </div>
 
@@ -247,7 +247,7 @@ const ShortsSettings: React.FC = () => {
                             <select
                                 value={defaultLanguage}
                                 onChange={(e) => setDefaultLanguage(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
                             >
                                 <option value="en">English</option>
                                 <option value="sw">Swahili</option>
@@ -260,13 +260,13 @@ const ShortsSettings: React.FC = () => {
                 </div>
             </div>
 
-            <div className="mt-6 bg-blue-50 border border-blue-100 rounded-lg p-4">
+            <div className="mt-6 bg-primary-50 border border-primary-100 rounded-lg p-4">
                 <div className="flex">
                     <div className="flex-shrink-0">
-                        <Info className="h-5 w-5 text-blue-400" />
+                        <Info className="h-5 w-5 text-primary-400" />
                     </div>
                     <div className="ml-3">
-                        <p className="text-sm text-blue-700">
+                        <p className="text-sm text-primary-700">
                             Changes to these settings will affect all new uploads. Existing content will not be affected.
                         </p>
                     </div>

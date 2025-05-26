@@ -111,9 +111,9 @@ const UserActivityChart: React.FC<UserActivityChartProps> = ({ timeframe, dataTy
         switch (dataType) {
             case 'users':
                 return {
-                    stroke: '#6366f1', // indigo-500
-                    fill: '#6366f1',   // indigo-500
-                    gradient: ['#eef2ff', '#c7d2fe'] // indigo-50 to indigo-200
+                    stroke: '#6366f1', // primary-500
+                    fill: '#6366f1',   // primary-500
+                    gradient: ['#eef2ff', '#c7d2fe'] // primary-50 to primary-200
                 };
             case 'groups':
                 return {
@@ -172,7 +172,7 @@ const UserActivityChart: React.FC<UserActivityChartProps> = ({ timeframe, dataTy
                         exit={{ opacity: 0 }}
                     >
                         <div className="flex flex-col items-center">
-                            <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"></div>
+                            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin"></div>
                             <p className="mt-2 text-sm text-gray-500">Loading data...</p>
                         </div>
                     </motion.div>

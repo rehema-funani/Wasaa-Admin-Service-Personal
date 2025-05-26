@@ -10,7 +10,7 @@ const mockVideos = Array(12).fill(null).map((_, i) => ({
     creator: `Creator ${i + 1}`,
     creatorId: `user-${i + 1}`,
     uploadDate: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
-    duration: Math.floor(Math.random() * 45) + 15, 
+    duration: Math.floor(Math.random() * 45) + 15,
     views: Math.floor(Math.random() * 100000),
     flags: Math.floor(Math.random() * 5),
     reason: ['NSFW', 'Hate Speech', 'Violence', 'Copyright', 'Spam'][Math.floor(Math.random() * 5)],
@@ -38,14 +38,14 @@ const VideoModeration: React.FC = () => {
                             placeholder="Search videos..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                            className="pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                         />
                     </div>
 
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className="py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                        className="py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                     >
                         <option value="all">All Videos</option>
                         <option value="flagged">Flagged</option>

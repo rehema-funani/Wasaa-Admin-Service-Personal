@@ -118,7 +118,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSubmit, onCa
                         value={formData.name}
                         onChange={handleChange}
                         className={`w-full px-3 py-2 rounded-xl border ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                            } focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-colors`}
+                            } focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-300 transition-colors`}
                         placeholder="English"
                     />
                     {errors.name && (
@@ -137,7 +137,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSubmit, onCa
                             value={formData.code}
                             onChange={handleChange}
                             className={`w-full px-3 py-2 rounded-xl border ${errors.code ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                                } focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-colors`}
+                                } focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-300 transition-colors`}
                             placeholder="en or en-US"
                         />
                         <Globe size={18} className="absolute right-3 top-2.5 text-gray-400" />
@@ -172,7 +172,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSubmit, onCa
                             }}
                             onFocus={() => setShowCountryDropdown(true)}
                             className={`w-full px-3 py-2 rounded-xl border ${errors.country ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                                } focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-colors`}
+                                } focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-300 transition-colors`}
                             placeholder="United States"
                         />
                         {errors.country && (
@@ -190,7 +190,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSubmit, onCa
                                         {filteredCountries.map((country) => (
                                             <li
                                                 key={country.code}
-                                                className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm transition-colors"
+                                                className="px-3 py-2 hover:bg-primary-50 cursor-pointer text-sm transition-colors"
                                                 onClick={() => handleCountrySelect(country.code, country.name)}
                                             >
                                                 {country.name}
@@ -212,7 +212,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSubmit, onCa
                         <motion.button
                             type="button"
                             onClick={() => handleToggle('is_rtl')}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none ${formData.is_rtl ? 'bg-blue-500' : 'bg-gray-300'
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none ${formData.is_rtl ? 'bg-primary-500' : 'bg-gray-300'
                                 }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -229,7 +229,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSubmit, onCa
                         <motion.button
                             type="button"
                             onClick={() => handleToggle('is_active')}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none ${formData.is_active ? 'bg-blue-500' : 'bg-gray-300'
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full focus:outline-none ${formData.is_active ? 'bg-primary-500' : 'bg-gray-300'
                                 }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -274,7 +274,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSubmit, onCa
                 </motion.button>
                 <motion.button
                     type="submit"
-                    className="flex items-center px-5 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors shadow-sm"
+                    className="flex items-center px-5 py-2 bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-colors shadow-sm"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >

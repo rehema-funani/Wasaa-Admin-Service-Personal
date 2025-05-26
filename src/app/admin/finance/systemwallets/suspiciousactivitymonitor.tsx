@@ -579,7 +579,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'detected':
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-primary-100 text-primary-800';
             case 'under_review':
                 return 'bg-yellow-100 text-yellow-800';
             case 'escalated':
@@ -613,7 +613,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
     const getActivityTypeIcon = (type: string) => {
         switch (type) {
             case 'transaction_velocity':
-                return <Zap className="w-4 h-4 text-blue-600" />;
+                return <Zap className="w-4 h-4 text-primary-600" />;
             case 'geo_location_mismatch':
                 return <MapPin className="w-4 h-4 text-red-600" />;
             case 'unusual_amount':
@@ -623,7 +623,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
             case 'time_pattern':
                 return <Clock className="w-4 h-4 text-orange-600" />;
             case 'first_time_recipient':
-                return <User className="w-4 h-4 text-indigo-600" />;
+                return <User className="w-4 h-4 text-primary-600" />;
             case 'account_dormancy':
                 return <Activity className="w-4 h-4 text-yellow-600" />;
             default:
@@ -701,8 +701,8 @@ const SuspiciousActivityMonitor: React.FC = () => {
             <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                            <AlertTriangle size={20} className="text-blue-600" />
+                        <div className="p-2 bg-primary-100 rounded-lg">
+                            <AlertTriangle size={20} className="text-primary-600" />
                         </div>
                         <h3 className="text-sm font-medium text-gray-800">Detected Activities</h3>
                     </div>
@@ -764,7 +764,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
                             placeholder="Search by user, description or ID..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                            className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                         />
                     </div>
 
@@ -815,8 +815,8 @@ const SuspiciousActivityMonitor: React.FC = () => {
                                     key={period}
                                     onClick={() => setTimeframeFilter(period as any)}
                                     className={`px-2 py-1 rounded-lg text-xs transition-all ${timeframeFilter === period
-                                            ? 'bg-gray-100 text-gray-800 font-medium'
-                                            : 'text-gray-500'
+                                        ? 'bg-gray-100 text-gray-800 font-medium'
+                                        : 'text-gray-500'
                                         }`}
                                 >
                                     {period === 'all' ? 'All Time' : period}
@@ -844,7 +844,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
                 <div className="p-5 border-b border-gray-200 flex justify-between items-center">
                     <h2 className="text-lg font-medium text-gray-800">Suspicious Activities</h2>
                     <button
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors text-sm"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-colors text-sm"
                     >
                         <Download size={16} />
                         <span>Export Report</span>
@@ -942,14 +942,14 @@ const SuspiciousActivityMonitor: React.FC = () => {
                                         <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex items-center justify-end gap-1">
                                                 <button
-                                                    className="text-indigo-600 hover:text-indigo-900 p-1"
+                                                    className="text-primary-600 hover:text-primary-900 p-1"
                                                     onClick={() => openActivityViewModal(activity)}
                                                 >
                                                     <Eye size={16} />
                                                 </button>
                                                 {activity.transactionIds && activity.transactionIds.length > 0 && (
                                                     <button
-                                                        className="text-blue-600 hover:text-blue-900 p-1"
+                                                        className="text-primary-600 hover:text-primary-900 p-1"
                                                         onClick={() => openTransactionsModal(activity)}
                                                     >
                                                         <FileText size={16} />
@@ -1103,7 +1103,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
                                             <tbody className="bg-white divide-y divide-gray-200">
                                                 {activityDetails.transactionDetails?.map((tx) => (
                                                     <tr key={tx.id} className="hover:bg-gray-50">
-                                                        <td className="px-3 py-2 whitespace-nowrap text-xs text-blue-600 font-medium">{tx.id}</td>
+                                                        <td className="px-3 py-2 whitespace-nowrap text-xs text-primary-600 font-medium">{tx.id}</td>
                                                         <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-700 capitalize">{tx.type}</td>
                                                         <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-700 text-right font-medium">
                                                             {formatCurrency(tx.amount, tx.currency)}
@@ -1117,7 +1117,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
                                     <div className="p-2 bg-gray-50 border-t border-gray-200 text-center">
                                         <button
                                             onClick={() => openTransactionsModal(selectedActivity)}
-                                            className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                                            className="text-xs text-primary-600 hover:text-primary-800 font-medium"
                                         >
                                             View All Transactions
                                         </button>
@@ -1147,8 +1147,8 @@ const SuspiciousActivityMonitor: React.FC = () => {
                             <h3 className="text-sm font-medium text-gray-700 mb-2">Activity Timeline</h3>
                             <div className="space-y-3">
                                 <div className="flex items-start gap-2">
-                                    <div className="p-1.5 bg-blue-100 rounded-full">
-                                        <AlertTriangle size={14} className="text-blue-600" />
+                                    <div className="p-1.5 bg-primary-100 rounded-full">
+                                        <AlertTriangle size={14} className="text-primary-600" />
                                     </div>
                                     <div>
                                         <div className="text-xs font-medium text-gray-800">Activity Detected</div>
@@ -1228,7 +1228,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
                             {(selectedActivity.status === 'detected' || selectedActivity.status === 'under_review') && (
                                 <button
                                     onClick={() => openUpdateStatusModal(selectedActivity)}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                    className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                                 >
                                     Update Status
                                 </button>
@@ -1406,11 +1406,11 @@ const SuspiciousActivityMonitor: React.FC = () => {
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {activityDetails.transactionDetails?.map((tx) => (
                                             <tr key={tx.id} className="hover:bg-gray-50">
-                                                <td className="px-3 py-3 whitespace-nowrap text-sm font-medium text-blue-600">{tx.id}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap text-sm font-medium text-primary-600">{tx.id}</td>
                                                 <td className="px-3 py-3 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         {tx.type === 'transfer' ? (
-                                                            <ArrowUpRight className="w-4 h-4 text-blue-600 mr-1.5" />
+                                                            <ArrowUpRight className="w-4 h-4 text-primary-600 mr-1.5" />
                                                         ) : tx.type === 'credit' ? (
                                                             <ArrowDownLeft className="w-4 h-4 text-green-600 mr-1.5" />
                                                         ) : (
@@ -1430,9 +1430,9 @@ const SuspiciousActivityMonitor: React.FC = () => {
                                                 </td>
                                                 <td className="px-3 py-3 whitespace-nowrap">
                                                     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${tx.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                            tx.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                                tx.status === 'failed' ? 'bg-red-100 text-red-800' :
-                                                                    'bg-gray-100 text-gray-800'
+                                                        tx.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                            tx.status === 'failed' ? 'bg-red-100 text-red-800' :
+                                                                'bg-gray-100 text-gray-800'
                                                         }`}>
                                                         {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
                                                     </span>
@@ -1446,7 +1446,7 @@ const SuspiciousActivityMonitor: React.FC = () => {
 
                         <div className="flex justify-between items-center pt-4 mt-5 border-t border-gray-200">
                             <button
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors text-sm"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100 transition-colors text-sm"
                             >
                                 <Download size={16} />
                                 <span>Export Transactions</span>

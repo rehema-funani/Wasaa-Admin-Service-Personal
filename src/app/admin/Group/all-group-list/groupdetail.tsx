@@ -127,7 +127,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ title, children = null })
 
 const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: string | number }> = ({ icon, label, value }) => (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 flex items-center">
-        <div className="mr-3 p-3 rounded-xl bg-gradient-to-tr from-blue-50 to-indigo-50 text-blue-600">
+        <div className="mr-3 p-3 rounded-xl bg-gradient-to-tr from-primary-50 to-primary-50 text-primary-600">
             {icon}
         </div>
         <div>
@@ -240,7 +240,7 @@ const groupdetail: React.FC = () => {
                     <p className="text-gray-600 mb-8 text-center">{error}</p>
                     <div className="flex justify-center">
                         <button
-                            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300"
+                            className="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300"
                             onClick={() => navigate(-1)}
                         >
                             Back to Groups
@@ -301,12 +301,12 @@ const groupdetail: React.FC = () => {
                     </div>
                     <div className="flex flex-wrap items-center justify-between">
                         <div className="flex items-center space-x-3">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${group.type === 'public' ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700' : 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700'
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${group.type === 'public' ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700' : 'bg-gradient-to-r from-primary-50 to-primary-100 text-primary-700'
                                 }`}>
                                 {group.type === 'public' ? <Globe size={14} className="mr-1" /> : <Lock size={14} className="mr-1" />}
                                 {group.type}
                             </span>
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${group.status === 'active' ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700' : 'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700'
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${group.status === 'active' ? 'bg-gradient-to-r from-primary-50 to-primary-100 text-primary-700' : 'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700'
                                 }`}>
                                 {group.status}
                             </span>
@@ -364,7 +364,7 @@ const groupdetail: React.FC = () => {
                     <div className="flex overflow-x-auto">
                         <button
                             className={`py-5 px-6 text-sm font-medium border-b-2 transition-colors duration-300 ${activeTab === 'overview'
-                                ? 'border-blue-500 text-blue-600'
+                                ? 'border-primary-500 text-primary-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                             onClick={() => setActiveTab('overview')}
@@ -373,7 +373,7 @@ const groupdetail: React.FC = () => {
                         </button>
                         <button
                             className={`py-5 px-6 text-sm font-medium border-b-2 transition-colors duration-300 ${activeTab === 'members'
-                                ? 'border-blue-500 text-blue-600'
+                                ? 'border-primary-500 text-primary-600'
                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                             onClick={() => setActiveTab('members')}
@@ -394,16 +394,16 @@ const groupdetail: React.FC = () => {
 
                                 <div className="flex flex-wrap gap-6 mb-6">
                                     <div className="flex items-center text-gray-500 text-sm">
-                                        <Calendar size={16} className="mr-2 text-blue-500" />
+                                        <Calendar size={16} className="mr-2 text-primary-500" />
                                         <span>Created on {formatDate(group.createdAt)}</span>
                                     </div>
                                     <div className="flex items-center text-gray-500 text-sm">
-                                        <Users size={16} className="mr-2 text-blue-500" />
+                                        <Users size={16} className="mr-2 text-primary-500" />
                                         <span>{group.members ? group.members.length : 0} members</span>
                                     </div>
                                     {group.last_message && (
                                         <div className="flex items-center text-gray-500 text-sm">
-                                            <MessageSquare size={16} className="mr-2 text-blue-500" />
+                                            <MessageSquare size={16} className="mr-2 text-primary-500" />
                                             <span>Last message: {timeAgo(group.last_message_time || '')}</span>
                                         </div>
                                     )}
@@ -416,12 +416,12 @@ const groupdetail: React.FC = () => {
                                 <SectionHeader title="Group Stats" />
                                 <div className="space-y-4">
                                     <StatCard
-                                        icon={<Users size={20} className="text-blue-600" />}
+                                        icon={<Users size={20} className="text-primary-600" />}
                                         label="Members"
                                         value={group.members ? group.members.length : 0}
                                     />
                                     <StatCard
-                                        icon={<MessageSquare size={20} className="text-blue-600" />}
+                                        icon={<MessageSquare size={20} className="text-primary-600" />}
                                         label="Total Messages"
                                         value={group.last_message ? 1 : 0}
                                     />
@@ -465,7 +465,7 @@ const groupdetail: React.FC = () => {
                                             <tr key={member.id} className="hover:bg-gray-50/50 transition-colors duration-300">
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
-                                                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 mr-3">
+                                                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-100 to-primary-100 flex items-center justify-center text-primary-600 mr-3">
                                                             {member.user ? member.user.username?.charAt(0) : 'M'}
                                                         </div>
                                                         <div className="text-sm font-medium text-gray-900">
@@ -475,7 +475,7 @@ const groupdetail: React.FC = () => {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${member.role === 'admin' ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700' :
-                                                        member.role === 'moderator' ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700' :
+                                                        member.role === 'moderator' ? 'bg-gradient-to-r from-primary-50 to-primary-100 text-primary-700' :
                                                             'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700'
                                                         }`}>
                                                         {member.role === 'admin' && <Shield size={12} className="mr-1" />}
@@ -498,11 +498,11 @@ const groupdetail: React.FC = () => {
                             </div>
                         ) : (
                             <div className="p-8 text-center">
-                                <div className="w-16 h-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center mb-4">
-                                    <Users size={24} className="text-blue-500" />
+                                <div className="w-16 h-16 mx-auto bg-primary-50 rounded-full flex items-center justify-center mb-4">
+                                    <Users size={24} className="text-primary-500" />
                                 </div>
                                 <p className="text-gray-600 mb-4">No members found in this group.</p>
-                                <button className="px-5 py-2.5 bg-blue-100 text-blue-600 rounded-xl font-medium hover:bg-blue-200 transition-colors duration-300">
+                                <button className="px-5 py-2.5 bg-primary-100 text-primary-600 rounded-xl font-medium hover:bg-primary-200 transition-colors duration-300">
                                     <UserPlus size={16} className="inline mr-2" />
                                     Add Members
                                 </button>

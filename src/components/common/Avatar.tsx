@@ -42,7 +42,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     // If no src is provided, show initials
     return (
         <div
-            className={`flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-medium ${sizeStyles[size]} ${className}`}
+            className={`flex items-center justify-center rounded-full bg-primary-100 text-primary-700 font-medium ${sizeStyles[size]} ${className}`}
         >
             {initials || alt.charAt(0).toUpperCase()}
         </div>

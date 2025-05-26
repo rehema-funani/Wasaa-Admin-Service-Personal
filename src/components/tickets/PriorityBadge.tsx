@@ -13,9 +13,9 @@ const PriorityBadge: React.FC<{ priority: string }> = ({ priority }) => {
             borderColor = "border-gray-100/50";
             break;
         case 'medium':
-            bgColor = "bg-blue-50/80";
-            textColor = "text-blue-700";
-            borderColor = "border-blue-100/50";
+            bgColor = "bg-primary-50/80";
+            textColor = "text-primary-700";
+            borderColor = "border-primary-100/50";
             break;
         case 'high':
             bgColor = "bg-orange-50/80";

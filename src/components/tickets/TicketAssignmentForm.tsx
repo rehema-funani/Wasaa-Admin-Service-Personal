@@ -80,7 +80,7 @@ export const TicketAssignmentForm: React.FC<TicketAssignmentFormProps> = ({
                                 <select
                                     value={selectedTeamId || ''}
                                     onChange={handleTeamChange}
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                     disabled={isLoading}
                                 >
                                     <option value="">Select a team</option>
@@ -107,7 +107,7 @@ export const TicketAssignmentForm: React.FC<TicketAssignmentFormProps> = ({
                                     <select
                                         value={selectedUserId || ''}
                                         onChange={handleUserChange}
-                                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                         disabled={isLoading}
                                     >
                                         <option value="">Select a team member</option>

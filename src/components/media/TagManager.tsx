@@ -104,7 +104,7 @@ export const TagManager: React.FC<TagManagerProps> = ({ tags, search }) => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div className="flex items-center justify-end space-x-2">
-                                            <button className="p-1 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded">
+                                            <button className="p-1 text-primary-600 hover:text-primary-900 hover:bg-primary-50 rounded">
                                                 <Edit size={16} />
                                             </button>
                                             {tag.status !== 'blocked' ? (

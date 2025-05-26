@@ -90,7 +90,7 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ isOpen, onClose, onCo
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3, delay: 0.4 }}
                                 >
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 text-white flex items-center justify-center font-medium text-sm mr-2 shadow-sm">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-2 shadow-sm">
                                         {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : '??'}
                                     </div>
                                     <div className="text-left">
@@ -148,8 +148,8 @@ const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ isOpen, onClose, onCo
                                     whileTap={confirmText.toLowerCase() === requiredConfirmation ? { scale: 0.98 } : {}}
                                     onClick={handleConfirm}
                                     className={`px-4 py-2.5 text-white rounded-xl shadow-md transition-all duration-200 flex items-center ${confirmText.toLowerCase() === requiredConfirmation
-                                            ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400'
-                                            : 'bg-gray-400 cursor-not-allowed'
+                                        ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400'
+                                        : 'bg-gray-400 cursor-not-allowed'
                                         }`}
                                     disabled={isDeleting || confirmText.toLowerCase() !== requiredConfirmation}
                                 >

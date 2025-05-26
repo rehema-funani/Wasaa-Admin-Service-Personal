@@ -38,8 +38,8 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video, isSelected, onClick
     return (
         <div
             className={`rounded-lg overflow-hidden border ${isSelected
-                    ? 'border-indigo-500 ring-2 ring-indigo-200'
-                    : 'border-gray-200'
+                ? 'border-primary-500 ring-2 ring-primary-200'
+                : 'border-gray-200'
                 } shadow-sm cursor-pointer transition-all hover:shadow-md`}
             onClick={onClick}
         >

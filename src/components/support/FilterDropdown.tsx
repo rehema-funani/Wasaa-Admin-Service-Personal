@@ -99,7 +99,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
                                     )}
                                 </div>
                                 {isSelected(option.value) && (
-                                    <Check size={16} className="text-indigo-600" />
+                                    <Check size={16} className="text-primary-600" />
                                 )}
                             </button>
                         ))}

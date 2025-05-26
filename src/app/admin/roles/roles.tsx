@@ -83,7 +83,7 @@ const roles = () => {
             sortable: true,
             cell: (value: string, row: Role) => (
                 <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
                         <ShieldCheck size={16} strokeWidth={2} />
                     </div>
                     <div>
@@ -136,7 +136,7 @@ const roles = () => {
             cell: (value: string, row: Role) => (
                 <div className="flex items-center space-x-1">
                     <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         aria-label="View role"
@@ -260,7 +260,7 @@ const roles = () => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <motion.button
-                        className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+                        className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
                         whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
                         whileTap={{ y: 0 }}
                         onClick={handleAddRole}

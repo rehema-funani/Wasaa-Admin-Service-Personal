@@ -712,7 +712,7 @@ const page = () => {
         const statusConfig = {
           'live': { color: 'red', label: 'Live Now', icon: <Play size={12} className="mr-1" /> },
           'ended': { color: 'gray', label: 'Ended', icon: <CheckCircle size={12} className="mr-1" /> },
-          'scheduled': { color: 'blue', label: 'Scheduled', icon: <Calendar size={12} className="mr-1" /> }
+          'scheduled': { color: 'primary', label: 'Scheduled', icon: <Calendar size={12} className="mr-1" /> }
         };
 
         const config = statusConfig[value as keyof typeof statusConfig];
@@ -722,7 +722,7 @@ const page = () => {
             flex items-center px-2 py-1 text-xs font-medium rounded-full
             ${value === 'live' ? 'bg-red-100 text-red-700' :
               value === 'ended' ? 'bg-gray-100 text-gray-700' :
-                'bg-blue-100 text-blue-700'}
+                'bg-primary-100 text-primary-700'}
           `}>
             {config.icon}
             {config.label}
@@ -739,7 +739,7 @@ const page = () => {
         <div className="flex items-center">
           <div className="w-12 h-8 bg-gray-200 rounded overflow-hidden mr-3 flex-shrink-0">
             {/* Thumbnail would be here in a real implementation */}
-            <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center">
               <Video size={14} className="text-white" />
             </div>
           </div>
@@ -761,14 +761,14 @@ const page = () => {
       width: '180px',
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center font-medium text-xs mr-2">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-xs mr-2">
             {value.split(' ').map((n: string) => n[0]).join('')}
           </div>
           <div>
             <div className="flex items-center">
               <p className="font-medium text-gray-800">{value}</p>
               {row.streamer.verified && (
-                <CheckCircle size={12} className="ml-1 text-blue-500" strokeWidth={2} />
+                <CheckCircle size={12} className="ml-1 text-primary-500" strokeWidth={2} />
               )}
             </div>
             <p className="text-xs text-gray-500">{row.streamer.username}</p>
@@ -852,7 +852,7 @@ const page = () => {
       cell: (value: boolean, row: any) => (
         <div className="flex flex-col space-y-1">
           {row.featured && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800">
               <Star size={10} className="mr-1" strokeWidth={2} />
               Featured
             </span>
@@ -887,7 +887,7 @@ const page = () => {
       cell: (value: string, row: any) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View stream details"
@@ -896,7 +896,7 @@ const page = () => {
           </motion.button>
 
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Edit stream"
@@ -1094,15 +1094,15 @@ const page = () => {
       title: 'Total Viewers',
       value: '13,481',
       change: '+5,623 watching now',
-      icon: <Users size={20} className="text-blue-500" strokeWidth={1.8} />,
-      color: 'blue'
+      icon: <Users size={20} className="text-primary-500" strokeWidth={1.8} />,
+      color: 'primary'
     },
     {
       title: 'Scheduled',
       value: '3',
       change: 'Next: 6h 23m',
-      icon: <Calendar size={20} className="text-indigo-500" strokeWidth={1.8} />,
-      color: 'indigo'
+      icon: <Calendar size={20} className="text-primary-500" strokeWidth={1.8} />,
+      color: 'primary'
     },
     {
       title: 'Engagement',
@@ -1144,7 +1144,7 @@ const page = () => {
             Export
           </motion.button>
           <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0 }}
           >

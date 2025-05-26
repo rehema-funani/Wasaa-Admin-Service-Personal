@@ -75,15 +75,15 @@ const RequirementsInput: React.FC<RequirementsInputProps> = ({
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.8 }}
                                 transition={{ duration: 0.2 }}
-                                className="inline-flex items-center px-3 py-2 bg-indigo-100 text-indigo-800 rounded-lg text-sm font-medium group hover:bg-indigo-200 transition-colors"
+                                className="inline-flex items-center px-3 py-2 bg-primary-100 text-primary-800 rounded-lg text-sm font-medium group hover:bg-primary-200 transition-colors"
                             >
-                                <Check size={14} className="mr-1.5 text-indigo-600" />
+                                <Check size={14} className="mr-1.5 text-primary-600" />
                                 <span>{requirement}</span>
                                 {!disabled && (
                                     <button
                                         type="button"
                                         onClick={() => removeRequirement(index)}
-                                        className="ml-2 p-0.5 hover:bg-indigo-300 rounded-full transition-colors opacity-60 group-hover:opacity-100"
+                                        className="ml-2 p-0.5 hover:bg-primary-300 rounded-full transition-colors opacity-60 group-hover:opacity-100"
                                     >
                                         <X size={12} />
                                     </button>
@@ -105,14 +105,14 @@ const RequirementsInput: React.FC<RequirementsInputProps> = ({
                             onKeyDown={handleInputKeyDown}
                             disabled={disabled}
                             placeholder={placeholder}
-                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                         {inputValue && (
                             <button
                                 type="button"
                                 onClick={() => addRequirement(inputValue.trim())}
                                 disabled={disabled}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
                             >
                                 <Plus size={14} />
                             </button>
@@ -124,8 +124,8 @@ const RequirementsInput: React.FC<RequirementsInputProps> = ({
                             type="button"
                             onClick={() => setShowPredefined(!showPredefined)}
                             className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${showPredefined
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-primary-600 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             Quick Add
@@ -168,17 +168,17 @@ const RequirementsInput: React.FC<RequirementsInputProps> = ({
                                         key={requirement.id}
                                         type="button"
                                         onClick={() => addPredefinedRequirement(requirement.label)}
-                                        className="flex items-center space-x-3 p-3 bg-white hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 rounded-lg transition-all text-left group"
+                                        className="flex items-center space-x-3 p-3 bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-200 rounded-lg transition-all text-left group"
                                         whileHover={{ scale: 1.01 }}
                                         whileTap={{ scale: 0.99 }}
                                     >
-                                        <div className="w-8 h-8 bg-gray-100 group-hover:bg-indigo-100 rounded-lg flex items-center justify-center transition-colors">
-                                            <IconComponent size={16} className="text-gray-600 group-hover:text-indigo-600 transition-colors" />
+                                        <div className="w-8 h-8 bg-gray-100 group-hover:bg-primary-100 rounded-lg flex items-center justify-center transition-colors">
+                                            <IconComponent size={16} className="text-gray-600 group-hover:text-primary-600 transition-colors" />
                                         </div>
-                                        <span className="text-sm text-gray-900 group-hover:text-indigo-900 transition-colors">
+                                        <span className="text-sm text-gray-900 group-hover:text-primary-900 transition-colors">
                                             {requirement.label}
                                         </span>
-                                        <Plus size={14} className="text-gray-400 group-hover:text-indigo-500 ml-auto transition-colors" />
+                                        <Plus size={14} className="text-gray-400 group-hover:text-primary-500 ml-auto transition-colors" />
                                     </motion.button>
                                 );
                             })}

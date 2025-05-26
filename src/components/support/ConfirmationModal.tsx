@@ -40,9 +40,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         },
         info: {
             icon: Info,
-            iconBg: 'bg-blue-100',
-            iconColor: 'text-blue-600',
-            confirmBg: 'bg-blue-600 hover:bg-blue-700'
+            iconBg: 'bg-primary-100',
+            iconColor: 'text-primary-600',
+            confirmBg: 'bg-primary-600 hover:bg-primary-700'
         },
         success: {
             icon: CheckCircle,

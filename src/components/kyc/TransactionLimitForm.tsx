@@ -64,7 +64,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {/* Stylish Header with Transaction Type Selection */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 -mx-6 -mt-6 mb-6 border-b border-blue-100">
+            <div className="bg-gradient-to-r from-primary-50 to-primary-50 p-4 -mx-6 -mt-6 mb-6 border-b border-primary-100">
                 <div className="max-w-3xl mx-auto">
                     {isAdd ? (
                         <div className="mb-4">
@@ -78,7 +78,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                                     value={formData.transactionType || ''}
                                     onChange={handleFormChange}
                                     required
-                                    className="w-full py-3 px-4 pr-10 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 text-sm shadow-sm transition-all duration-200 appearance-none"
+                                    className="w-full py-3 px-4 pr-10 bg-white border border-primary-200 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-primary-400 text-gray-800 text-sm shadow-sm transition-all duration-200 appearance-none"
                                 >
                                     <option value="">Select a transaction type</option>
                                     {availableTransactionTypes.map(type => (
@@ -124,7 +124,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                                 onChange={handleFormChange}
                                 className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
                             <span className="ml-2 text-sm font-medium text-gray-700">
                                 {formData.isAllowed ? 'Enabled' : 'Disabled'}
                             </span>
@@ -139,7 +139,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                     <button
                         type="button"
                         onClick={() => setActiveSection('daily')}
-                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${activeSection === 'daily' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'}`}
+                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${activeSection === 'daily' ? 'bg-white shadow text-primary-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'}`}
                     >
                         <span className="flex items-center justify-center gap-1.5">
                             <Calendar size={14} />
@@ -149,7 +149,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                     <button
                         type="button"
                         onClick={() => setActiveSection('weekly')}
-                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${activeSection === 'weekly' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'}`}
+                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${activeSection === 'weekly' ? 'bg-white shadow text-primary-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'}`}
                     >
                         <span className="flex items-center justify-center gap-1.5">
                             <Calendar size={14} />
@@ -159,7 +159,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                     <button
                         type="button"
                         onClick={() => setActiveSection('monthly')}
-                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${activeSection === 'monthly' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'}`}
+                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${activeSection === 'monthly' ? 'bg-white shadow text-primary-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'}`}
                     >
                         <span className="flex items-center justify-center gap-1.5">
                             <Calendar size={14} />
@@ -169,7 +169,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                     <button
                         type="button"
                         onClick={() => setActiveSection('transaction')}
-                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${activeSection === 'transaction' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'}`}
+                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${activeSection === 'transaction' ? 'bg-white shadow text-primary-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'}`}
                     >
                         <span className="flex items-center justify-center gap-1.5">
                             <DollarSign size={14} />
@@ -185,8 +185,8 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                             <div className="flex items-center justify-between p-4 border-b border-gray-100">
                                 <div className="flex items-center gap-3">
-                                    <div className="bg-blue-100 p-2 rounded-lg">
-                                        <Calendar size={20} className="text-blue-600" />
+                                    <div className="bg-primary-100 p-2 rounded-lg">
+                                        <Calendar size={20} className="text-primary-600" />
                                     </div>
                                     <div>
                                         <h3 className="font-medium text-gray-800">Daily Transaction Limit</h3>
@@ -202,7 +202,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                                         onChange={handleFormChange}
                                         className="sr-only peer"
                                     />
-                                    <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
                                 </label>
                             </div>
 
@@ -220,7 +220,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                                             min="0"
                                             step="1"
                                             required
-                                            className="w-full py-3 pl-10 pr-12 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-800 text-sm"
+                                            className="w-full py-3 pl-10 pr-12 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 text-gray-800 text-sm"
                                             placeholder="Enter daily limit amount"
                                         />
                                         <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -228,7 +228,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                                         </div>
                                     </div>
                                     <p className="text-xs text-gray-500 mt-2 flex items-center">
-                                        <AlertCircle size={12} className="text-blue-500 mr-1" />
+                                        <AlertCircle size={12} className="text-primary-500 mr-1" />
                                         This is the maximum total amount a user can transact in a single day
                                     </p>
                                 </div>
@@ -485,7 +485,7 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm text-sm font-medium flex items-center justify-center gap-2"
+                            className="px-4 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 shadow-sm text-sm font-medium flex items-center justify-center gap-2"
                         >
                             <Check size={18} />
                             {isAdd ? 'Add Limit' : 'Save Changes'}

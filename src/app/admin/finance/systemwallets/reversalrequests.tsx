@@ -407,7 +407,7 @@ const reversalrequests: React.FC = () => {
             case 'pending':
                 return 'bg-yellow-100 text-yellow-800';
             case 'approved':
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-primary-100 text-primary-800';
             case 'completed':
                 return 'bg-green-100 text-green-800';
             case 'rejected':
@@ -477,7 +477,7 @@ const reversalrequests: React.FC = () => {
                             </button>
 
                             <button
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 text-white rounded-xl shadow-sm hover:bg-indigo-700 transition-all text-sm"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white rounded-xl shadow-sm hover:bg-primary-700 transition-all text-sm"
                             >
                                 <ExternalLink size={16} />
                                 <span>View All Transactions</span>
@@ -495,7 +495,7 @@ const reversalrequests: React.FC = () => {
                                 placeholder="Search by transaction ID, user name or reason..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                         </div>
 
@@ -607,8 +607,8 @@ const reversalrequests: React.FC = () => {
 
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                                <CheckCircle2 size={20} className="text-blue-600" />
+                            <div className="p-2 bg-primary-100 rounded-lg">
+                                <CheckCircle2 size={20} className="text-primary-600" />
                             </div>
                             <h3 className="text-sm font-medium text-gray-800">Approved</h3>
                         </div>
@@ -687,7 +687,7 @@ const reversalrequests: React.FC = () => {
                                                     <div>
                                                         <div className="text-sm font-medium text-gray-900">{request.id}</div>
                                                         <button
-                                                            className="text-xs text-indigo-600 hover:text-indigo-800 mt-0.5 flex items-center"
+                                                            className="text-xs text-primary-600 hover:text-primary-800 mt-0.5 flex items-center"
                                                             onClick={() => openTransactionDetails(request.transactionId)}
                                                         >
                                                             <ExternalLink size={12} className="mr-1" />
@@ -720,7 +720,7 @@ const reversalrequests: React.FC = () => {
                                             <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
-                                                        className="text-indigo-600 hover:text-indigo-900 p-1"
+                                                        className="text-primary-600 hover:text-primary-900 p-1"
                                                         onClick={() => openRequestViewModal(request)}
                                                     >
                                                         <Eye size={18} />
@@ -782,14 +782,14 @@ const reversalrequests: React.FC = () => {
                 </div>
 
                 {/* Info Box */}
-                <div className="mt-6 bg-blue-50/70 rounded-xl p-4 border border-blue-100 backdrop-blur-sm">
+                <div className="mt-6 bg-primary-50/70 rounded-xl p-4 border border-primary-100 backdrop-blur-sm">
                     <div className="flex items-start gap-3">
-                        <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                            <Shield size={20} className="text-blue-600" />
+                        <div className="p-2 bg-primary-100 rounded-lg flex-shrink-0">
+                            <Shield size={20} className="text-primary-600" />
                         </div>
                         <div>
-                            <h3 className="text-sm font-medium text-blue-700">About Transaction Reversals</h3>
-                            <p className="text-blue-600 text-xs mt-1 leading-relaxed">
+                            <h3 className="text-sm font-medium text-primary-700">About Transaction Reversals</h3>
+                            <p className="text-primary-600 text-xs mt-1 leading-relaxed">
                                 Transaction reversals require dual approval to ensure security and accuracy. All actions are logged for audit purposes.
                                 <br />• <strong>Pending:</strong> Awaiting first admin approval
                                 <br />• <strong>Approved:</strong> Confirmed by first admin, awaiting reversal execution
@@ -836,7 +836,7 @@ const reversalrequests: React.FC = () => {
                                     <div className="font-medium text-gray-800 flex items-center">
                                         {selectedRequest.transactionId}
                                         <button
-                                            className="ml-1 text-indigo-600 hover:text-indigo-800"
+                                            className="ml-1 text-primary-600 hover:text-primary-800"
                                             onClick={() => openTransactionDetails(selectedRequest.transactionId)}
                                         >
                                             <ExternalLink size={14} />
@@ -862,8 +862,8 @@ const reversalrequests: React.FC = () => {
                                 <h3 className="text-sm font-medium text-gray-700 mb-2">Request Timeline</h3>
                                 <div className="space-y-3">
                                     <div className="flex items-start gap-2">
-                                        <div className="p-1.5 bg-blue-100 rounded-full">
-                                            <FileText size={14} className="text-blue-600" />
+                                        <div className="p-1.5 bg-primary-100 rounded-full">
+                                            <FileText size={14} className="text-primary-600" />
                                         </div>
                                         <div>
                                             <div className="text-xs font-medium text-gray-800">Requested</div>
@@ -991,7 +991,7 @@ const reversalrequests: React.FC = () => {
                                 onChange={(e) => setApprovalNote(e.target.value)}
                                 placeholder="Add any additional notes or justification for approving this reversal..."
                                 rows={4}
-                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                         </div>
 
@@ -1035,7 +1035,7 @@ const reversalrequests: React.FC = () => {
                                 onChange={(e) => setApprovalNote(e.target.value)}
                                 placeholder="Provide a detailed reason for rejecting this reversal request..."
                                 rows={4}
-                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="p-3 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                 required
                             />
                             {approvalNote.length === 0 && (
@@ -1079,7 +1079,7 @@ const reversalrequests: React.FC = () => {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <div className="text-sm text-gray-500">Amount</div>
-                                    <div className={`text-xl font-semibold ${selectedTransaction.type === 'credit' ? 'text-green-600' : 'text-blue-600'}`}>
+                                    <div className={`text-xl font-semibold ${selectedTransaction.type === 'credit' ? 'text-green-600' : 'text-primary-600'}`}>
                                         {selectedTransaction.type === 'credit' ? '+' : '-'}{formatCurrency(selectedTransaction.amount)}
                                     </div>
                                 </div>

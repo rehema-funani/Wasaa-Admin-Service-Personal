@@ -81,10 +81,10 @@ const getCategoryIcon = (category: string) => {
 const getActionColor = (action: string): string => {
     const colorMap: Record<string, string> = {
         create: 'bg-green-100 text-green-700',
-        update: 'bg-blue-100 text-blue-700',
+        update: 'bg-primary-100 text-primary-700',
         delete: 'bg-red-100 text-red-700',
         list: 'bg-purple-100 text-purple-700',
-        view: 'bg-indigo-100 text-indigo-700',
+        view: 'bg-primary-100 text-primary-700',
     };
 
     return colorMap[action] || 'bg-gray-100 text-gray-700';
@@ -237,7 +237,7 @@ const roledetail: React.FC = () => {
                     <p className="text-gray-600 mb-6">{error}</p>
                     <button
                         onClick={() => navigate(-1)}
-                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-sm"
+                        className="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm"
                     >
                         Go Back
                     </button>
@@ -269,7 +269,7 @@ const roledetail: React.FC = () => {
                         <div className="flex space-x-3">
                             <button
                                 onClick={() => setIsEditModalOpen(true)}
-                                className="px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-sm flex items-center"
+                                className="px-4 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm flex items-center"
                             >
                                 <Edit size={16} className="mr-2" />
                                 Edit Role
@@ -285,10 +285,10 @@ const roledetail: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-100">
+                        <div className="bg-gradient-to-br from-primary-50 to-primary-50 p-6 rounded-xl border border-primary-100">
                             <div className="flex items-start">
                                 <div className="bg-white p-3 rounded-lg shadow-sm mr-4">
-                                    <Shield size={20} className="text-indigo-600" />
+                                    <Shield size={20} className="text-primary-600" />
                                 </div>
                                 <div>
                                     <h3 className="text-gray-600 text-sm font-medium">Total Permissions</h3>
@@ -337,7 +337,7 @@ const roledetail: React.FC = () => {
                                 placeholder="Search permissions..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 pr-4 py-2.5 w-full md:w-64 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="pl-10 pr-4 py-2.5 w-full md:w-64 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                             />
                             <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         </div>
@@ -348,7 +348,7 @@ const roledetail: React.FC = () => {
                             {Object.entries(groupedPermissions).map(([category, permissions]) => (
                                 <div key={category} className="border border-gray-100 rounded-xl p-6 hover:shadow-sm transition-shadow duration-300">
                                     <div className="flex items-center mb-4">
-                                        <div className="p-2 rounded-lg bg-indigo-50 mr-3">
+                                        <div className="p-2 rounded-lg bg-primary-50 mr-3">
                                             {getCategoryIcon(category)}
                                         </div>
                                         <h3 className="text-lg font-medium text-gray-800 capitalize">
@@ -366,7 +366,7 @@ const roledetail: React.FC = () => {
                                             return (
                                                 <div
                                                     key={rp.id}
-                                                    className="p-4 border border-gray-100 rounded-lg hover:border-indigo-100 transition-colors duration-300 bg-white"
+                                                    className="p-4 border border-gray-100 rounded-lg hover:border-primary-100 transition-colors duration-300 bg-white"
                                                 >
                                                     <div className="flex items-center justify-between mb-2">
                                                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${actionColor}`}>
@@ -398,7 +398,7 @@ const roledetail: React.FC = () => {
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery('')}
-                                    className="mt-4 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors duration-300"
+                                    className="mt-4 px-4 py-2 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition-colors duration-300"
                                 >
                                     Clear Search
                                 </button>
@@ -423,7 +423,7 @@ const roledetail: React.FC = () => {
                             type="text"
                             value={editedRoleTitle}
                             onChange={(e) => setEditedRoleTitle(e.target.value)}
-                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                             placeholder="Enter role title"
                         />
                     </div>
@@ -441,7 +441,7 @@ const roledetail: React.FC = () => {
                             onClick={handleUpdateRole}
                             disabled={!editedRoleTitle.trim()}
                             className={`px-4 py-2.5 rounded-xl transition-colors duration-300 ${editedRoleTitle.trim()
-                                ? 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white'
+                                ? 'bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white'
                                 : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                 }`}
                         >

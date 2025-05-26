@@ -122,10 +122,10 @@ const set: React.FC = () => {
     return (
         <div className="flex h-screen w-full bg-white">
             <div className="hidden lg:block lg:w-2/5 bg-zinc-50 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-teal-500/10" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-teal-500/10" />
 
                 <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-teal-500/10" />
-                <div className="absolute bottom-1/4 right-1/4 w-32 h-32 rounded-full bg-blue-500/10" />
+                <div className="absolute bottom-1/4 right-1/4 w-32 h-32 rounded-full bg-primary-500/10" />
 
                 <div className="absolute inset-0 flex items-center justify-center">
                     <motion.div
@@ -136,7 +136,7 @@ const set: React.FC = () => {
                     >
                         <div className="relative z-10">
                             <div className="flex items-center justify-center mb-10">
-                                <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center shadow-lg">
+                                <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-teal-500 to-primary-500 flex items-center justify-center shadow-lg">
                                     <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 15V17M6 21H18C19.1046 21 20 20.1046 20 19V13C20 11.8954 19.1046 11 18 11H6C4.89543 11 4 11.8954 4 13V19C4 20.1046 4.89543 21 6 21ZM16 11V7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7V11H16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
@@ -153,19 +153,19 @@ const set: React.FC = () => {
                                         initial={{ height: 0 }}
                                         animate={{ height: "100%" }}
                                         transition={{ duration: 0.5 }}
-                                        className="w-6 rounded-t bg-gradient-to-t from-teal-500 to-blue-500"
+                                        className="w-6 rounded-t bg-gradient-to-t from-teal-500 to-primary-500"
                                     />
                                     <motion.div
                                         initial={{ height: 0 }}
                                         animate={{ height: "60%" }}
                                         transition={{ delay: 0.1, duration: 0.5 }}
-                                        className="w-6 rounded-t bg-gradient-to-t from-teal-500 to-blue-500"
+                                        className="w-6 rounded-t bg-gradient-to-t from-teal-500 to-primary-500"
                                     />
                                     <motion.div
                                         initial={{ height: 0 }}
                                         animate={{ height: "80%" }}
                                         transition={{ delay: 0.2, duration: 0.5 }}
-                                        className="w-6 rounded-t bg-gradient-to-t from-teal-500 to-blue-500"
+                                        className="w-6 rounded-t bg-gradient-to-t from-teal-500 to-primary-500"
                                     />
                                 </div>
                             </div>
@@ -175,7 +175,7 @@ const set: React.FC = () => {
                                     <p className="text-xs font-medium text-gray-500">Password Reset</p>
                                     <div className="flex space-x-1">
                                         <div className="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
-                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-300"></div>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-primary-300"></div>
                                     </div>
                                 </div>
                                 <p className="text-lg font-semibold mb-1">Create New Password</p>
@@ -205,7 +205,7 @@ const set: React.FC = () => {
                     className="w-full max-w-sm"
                 >
                     <div className="flex items-center gap-2 mb-10 lg:hidden">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500 to-primary-500 flex items-center justify-center">
                             <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 15V17M6 21H18C19.1046 21 20 20.1046 20 19V13C20 11.8954 19.1046 11 18 11H6C4.89543 11 4 11.8954 4 13V19C4 20.1046 4.89543 21 6 21ZM16 11V7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7V11H16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
@@ -292,7 +292,7 @@ const set: React.FC = () => {
                                                 </div>
                                                 <span className={`text-xs font-medium ${strengthCheck.strength <= 1 ? 'text-red-500' :
                                                     strengthCheck.strength === 2 ? 'text-orange-500' :
-                                                        strengthCheck.strength === 3 ? 'text-blue-500' :
+                                                        strengthCheck.strength === 3 ? 'text-primary-500' :
                                                             'text-teal-500'
                                                     }`}>
                                                     {strengthCheck.message}
@@ -302,7 +302,7 @@ const set: React.FC = () => {
                                                 <div
                                                     className={`h-1 rounded-full ${strengthCheck.strength <= 1 ? 'bg-red-500' :
                                                         strengthCheck.strength === 2 ? 'bg-orange-500' :
-                                                            strengthCheck.strength === 3 ? 'bg-blue-500' :
+                                                            strengthCheck.strength === 3 ? 'bg-primary-500' :
                                                                 'bg-teal-500'
                                                         }`}
                                                     style={{ width: `${strengthCheck.strength * 25}%` }}
@@ -418,7 +418,7 @@ const set: React.FC = () => {
                                     type="submit"
                                     whileHover={{ scale: 1.01 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="w-full flex justify-center items-center py-2.5 px-4 mt-6 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:shadow-md focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-teal-500 transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    className="w-full flex justify-center items-center py-2.5 px-4 mt-6 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-primary-500 hover:shadow-md focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-teal-500 transition-all duration-150 disabled:opacity-70 disabled:cursor-not-allowed"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? (

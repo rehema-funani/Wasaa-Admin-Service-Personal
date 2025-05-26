@@ -48,10 +48,10 @@ export const ReportItem: React.FC<ReportItemProps> = ({ report, isSelected, onCl
                 };
             case 'reviewing':
                 return {
-                    icon: <AlertTriangle size={16} className="text-blue-600" />,
+                    icon: <AlertTriangle size={16} className="text-primary-600" />,
                     text: 'Reviewing',
-                    bgColor: 'bg-blue-100',
-                    textColor: 'text-blue-800'
+                    bgColor: 'bg-primary-100',
+                    textColor: 'text-primary-800'
                 };
             case 'resolved':
                 return {
@@ -118,7 +118,7 @@ export const ReportItem: React.FC<ReportItemProps> = ({ report, isSelected, onCl
                         </div>
 
                         <div className="flex items-center space-x-2">
-                            <button className="px-3 py-1.5 bg-indigo-600 text-white text-xs rounded-lg shadow-sm hover:bg-indigo-700">
+                            <button className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded-lg shadow-sm hover:bg-primary-700">
                                 View Video
                             </button>
                             <button className="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 text-xs rounded-lg shadow-sm hover:bg-gray-50">

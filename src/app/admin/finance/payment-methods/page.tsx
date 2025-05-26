@@ -75,11 +75,11 @@ const PaymentMethods = () => {
   const getPaymentMethodIcon = (type: string) => {
     switch (type) {
       case 'credit_card':
-        return <CreditCard size={16} className="text-indigo-500" strokeWidth={1.8} />;
+        return <CreditCard size={16} className="text-primary-500" strokeWidth={1.8} />;
       case 'bank_account':
-        return <Banknote size={16} className="text-blue-500" strokeWidth={1.8} />;
+        return <Banknote size={16} className="text-primary-500" strokeWidth={1.8} />;
       case 'paypal':
-        return <DollarSign size={16} className="text-blue-600" strokeWidth={1.8} />;
+        return <DollarSign size={16} className="text-primary-600" strokeWidth={1.8} />;
       case 'apple_pay':
         return <CreditCard size={16} className="text-gray-800" strokeWidth={1.8} />;
       case 'google_pay':
@@ -108,7 +108,7 @@ const PaymentMethods = () => {
       sortable: true,
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-purple-500 text-white flex items-center justify-center font-medium text-sm mr-3">
             {value ? value.split(' ').map((n: string) => n[0]).join('') : '??'}
           </div>
           <div>
@@ -132,13 +132,13 @@ const PaymentMethods = () => {
             return (
               <div className="flex items-center">
                 {row.details?.cardType === 'Visa' && (
-                  <span className="text-blue-600 font-medium mr-1">VISA</span>
+                  <span className="text-primary-600 font-medium mr-1">VISA</span>
                 )}
                 {row.details?.cardType === 'Mastercard' && (
                   <span className="text-orange-600 font-medium mr-1">MC</span>
                 )}
                 {row.details?.cardType === 'American Express' && (
-                  <span className="text-blue-800 font-medium mr-1">AMEX</span>
+                  <span className="text-primary-800 font-medium mr-1">AMEX</span>
                 )}
                 {row.details?.cardType === 'Discover' && (
                   <span className="text-orange-500 font-medium mr-1">DISC</span>
@@ -165,7 +165,7 @@ const PaymentMethods = () => {
               <span className="font-medium text-gray-800">
                 {title}
                 {row.isDefault && (
-                  <span className="ml-2 bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-md text-xs">
+                  <span className="ml-2 bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-md text-xs">
                     Default
                   </span>
                 )}
@@ -302,7 +302,7 @@ const PaymentMethods = () => {
                 ? 'bg-gray-100 text-gray-500'
                 : value > 20
                   ? 'bg-green-100 text-green-700'
-                  : 'bg-blue-50 text-blue-700'}
+                  : 'bg-primary-50 text-primary-700'}
             `}>
               {value || 0} {value === 1 ? 'time' : 'times'}
             </span>
@@ -335,7 +335,7 @@ const PaymentMethods = () => {
       cell: (value: string, row: any) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View payment method"
@@ -344,7 +344,7 @@ const PaymentMethods = () => {
             <Eye size={16} strokeWidth={1.8} />
           </motion.button>
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Edit payment method"
@@ -613,14 +613,14 @@ const PaymentMethods = () => {
         transition={{ duration: 0.3 }}
       >
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800 bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-semibold text-gray-800 bg-gradient-to-r from-primary-600 to-primary-600 bg-clip-text text-transparent">
             Payment Methods
           </h1>
           <p className="text-gray-500 mt-1">Manage user payment methods and security settings</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <motion.button
-            className="flex items-center px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2.5 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, boxShadow: '0 8px 16px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0, boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}
             onClick={handleCreateMethod}

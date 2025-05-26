@@ -86,7 +86,7 @@ const page = () => {
     };
     revenueOverTime: { date: string; subscriptions: number; donations: number; ads: number }[];
   }
-  
+
   const [platformData, setPlatformData] = useState<PlatformData | null>(null);
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const page = () => {
     setTimeRange(range);
   };
 
-  const formatNumber = (num : any) => {
+  const formatNumber = (num: any) => {
     if (num >= 1000000) {
       return (num / 1000000).toFixed(1) + 'M';
     }
@@ -112,7 +112,7 @@ const page = () => {
     return num;
   };
 
-  const getPercentChange = (current : any, previous : any) => {
+  const getPercentChange = (current: any, previous: any) => {
     if (!previous) return 0;
     return ((current - previous) / previous * 100).toFixed(1);
   };
@@ -135,10 +135,10 @@ const page = () => {
               <ChevronDown size={16} className="ml-2" />
             </button>
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10 hidden">
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleTimeRangeChange('24h')}>Last 24 Hours</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleTimeRangeChange('7d')}>Last 7 Days</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleTimeRangeChange('30d')}>Last 30 Days</button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50" onClick={() => handleTimeRangeChange('90d')}>Last 90 Days</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleTimeRangeChange('24h')}>Last 24 Hours</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleTimeRangeChange('7d')}>Last 7 Days</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleTimeRangeChange('30d')}>Last 30 Days</button>
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary-50" onClick={() => handleTimeRangeChange('90d')}>Last 90 Days</button>
             </div>
           </div>
           <button className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm">
@@ -158,7 +158,7 @@ const page = () => {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
         </div>
       ) : (
         <>
@@ -168,8 +168,8 @@ const page = () => {
               title="Total Viewers"
               value={platformData ? formatNumber(platformData.overview.totalViewers) : 'N/A'}
               change={getPercentChange(platformData?.overview.totalViewers, platformData?.overview.previousTotalViewers)}
-              icon={<Eye size={22} className="text-blue-500" />}
-              color="blue"
+              icon={<Eye size={22} className="text-primary-500" />}
+              color="primary"
             />
             <MetricCard
               title="Active Streams"
@@ -185,8 +185,8 @@ const page = () => {
                 parseInt((platformData?.overview?.totalWatchTime || '').replace(/[^0-9]/g, '')),
                 parseInt((platformData?.overview.previousTotalWatchTime || '').replace(/[^0-9]/g, ''))
               )}
-              icon={<Clock size={22} className="text-indigo-500" />}
-              color="indigo"
+              icon={<Clock size={22} className="text-primary-500" />}
+              color="primary"
             />
             <MetricCard
               title="New Streamers"
@@ -203,7 +203,7 @@ const page = () => {
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-base font-medium text-gray-800">Viewer Engagement Over Time</h3>
                 <div className="flex space-x-2">
-                  <button className="px-2 py-1 text-xs font-medium rounded-lg bg-indigo-50 text-indigo-600">Hourly</button>
+                  <button className="px-2 py-1 text-xs font-medium rounded-lg bg-primary-50 text-primary-600">Hourly</button>
                   <button className="px-2 py-1 text-xs font-medium rounded-lg bg-gray-50 text-gray-600">Daily</button>
                   <button className="px-2 py-1 text-xs font-medium rounded-lg bg-gray-50 text-gray-600">Weekly</button>
                 </div>
@@ -353,7 +353,7 @@ const page = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-base font-medium text-gray-800">Top Performing Streams</h3>
-              <button className="text-sm text-indigo-600 hover:text-indigo-800">View All</button>
+              <button className="text-sm text-primary-600 hover:text-primary-800">View All</button>
             </div>
 
             <div className="overflow-x-auto">
@@ -377,7 +377,7 @@ const page = () => {
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center text-xs mr-2">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 text-white flex items-center justify-center text-xs mr-2">
                             {stream.streamer.charAt(0)}
                           </div>
                           {stream.streamer}
@@ -391,7 +391,7 @@ const page = () => {
                         <div className="flex items-center">
                           <div
                             className={`w-2 h-2 rounded-full mr-2 ${stream.engagement >= 80 ? 'bg-green-500' :
-                                stream.engagement >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                              stream.engagement >= 50 ? 'bg-yellow-500' : 'bg-red-500'
                               }`}
                           ></div>
                           {stream.engagement}%
@@ -494,7 +494,7 @@ const RevenueCard = ({ title, value, change, icon }: RevenueCardProps) => {
   return (
     <div className="bg-gray-50 rounded-xl p-4">
       <div className="flex items-center mb-3">
-        <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600 mr-3">
+        <div className="p-2 bg-primary-100 rounded-lg text-primary-600 mr-3">
           {icon}
         </div>
         <h4 className="text-sm font-medium">{title}</h4>

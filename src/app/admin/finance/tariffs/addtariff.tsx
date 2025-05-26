@@ -286,7 +286,7 @@ const AddTariffPage = () => {
                             <motion.button
                                 type="submit"
                                 form="tariff-form"
-                                className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 disabled={isLoading}
@@ -334,7 +334,7 @@ const AddTariffPage = () => {
                                             value={formData.name}
                                             onChange={handleInputChange}
                                             required
-                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                             placeholder="e.g., Send Money Fee"
                                             disabled={isLoading}
                                         />
@@ -349,8 +349,8 @@ const AddTariffPage = () => {
                                                 type="button"
                                                 onClick={() => handleStatusChange('active')}
                                                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${formData.status === 'active'
-                                                        ? 'bg-white text-gray-900 shadow-sm'
-                                                        : 'text-gray-600 hover:text-gray-900'
+                                                    ? 'bg-white text-gray-900 shadow-sm'
+                                                    : 'text-gray-600 hover:text-gray-900'
                                                     }`}
                                                 disabled={isLoading}
                                             >
@@ -360,8 +360,8 @@ const AddTariffPage = () => {
                                                 type="button"
                                                 onClick={() => handleStatusChange('inactive')}
                                                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${formData.status === 'inactive'
-                                                        ? 'bg-white text-gray-900 shadow-sm'
-                                                        : 'text-gray-600 hover:text-gray-900'
+                                                    ? 'bg-white text-gray-900 shadow-sm'
+                                                    : 'text-gray-600 hover:text-gray-900'
                                                     }`}
                                                 disabled={isLoading}
                                             >
@@ -381,7 +381,7 @@ const AddTariffPage = () => {
                                         value={formData.description}
                                         onChange={handleInputChange}
                                         rows={3}
-                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all resize-none"
+                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all resize-none"
                                         placeholder="Describe the purpose of this tariff..."
                                         disabled={isLoading}
                                     />
@@ -401,8 +401,8 @@ const AddTariffPage = () => {
                                             type="button"
                                             onClick={() => handleTypeChange('flat')}
                                             className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all ${formData.type === 'flat'
-                                                    ? 'bg-white text-gray-900 shadow-sm'
-                                                    : 'text-gray-600 hover:text-gray-900'
+                                                ? 'bg-white text-gray-900 shadow-sm'
+                                                : 'text-gray-600 hover:text-gray-900'
                                                 }`}
                                             disabled={isLoading}
                                         >
@@ -413,8 +413,8 @@ const AddTariffPage = () => {
                                             type="button"
                                             onClick={() => handleTypeChange('percentage')}
                                             className={`flex-1 flex items-center justify-center py-3 px-4 rounded-lg text-sm font-medium transition-all ${formData.type === 'percentage'
-                                                    ? 'bg-white text-gray-900 shadow-sm'
-                                                    : 'text-gray-600 hover:text-gray-900'
+                                                ? 'bg-white text-gray-900 shadow-sm'
+                                                : 'text-gray-600 hover:text-gray-900'
                                                 }`}
                                             disabled={isLoading}
                                         >
@@ -438,7 +438,7 @@ const AddTariffPage = () => {
                                                 onChange={handleInputChange}
                                                 min="0"
                                                 step="0.1"
-                                                className="w-full px-4 py-3 pr-12 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500/30 focus:bg-white text-gray-900 transition-all"
+                                                className="w-full px-4 py-3 pr-12 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                                                 disabled={isLoading}
                                             />
                                             <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
@@ -458,7 +458,7 @@ const AddTariffPage = () => {
                                     <button
                                         type="button"
                                         onClick={() => addRange(formData.type === 'flat' ? 'fixed' : 'percentage')}
-                                        className="flex items-center px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-all text-sm font-medium"
+                                        className="flex items-center px-3 py-2 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all text-sm font-medium"
                                         disabled={isLoading}
                                     >
                                         <Plus size={16} className="mr-2" />
@@ -497,7 +497,7 @@ const AddTariffPage = () => {
                                                         value={range.min}
                                                         onChange={(e) => updateRange(range.id, 'min', e.target.value, formData.type === 'flat' ? 'fixed' : 'percentage')}
                                                         min="0"
-                                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 text-gray-900"
+                                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-500 text-gray-900"
                                                         disabled={isLoading}
                                                     />
                                                 </div>
@@ -511,7 +511,7 @@ const AddTariffPage = () => {
                                                         value={range.max === null ? '' : range.max}
                                                         onChange={(e) => updateRange(range.id, 'max', e.target.value, formData.type === 'flat' ? 'fixed' : 'percentage')}
                                                         placeholder="Leave empty for 'and above'"
-                                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 text-gray-900"
+                                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-500 text-gray-900"
                                                         disabled={isLoading}
                                                     />
                                                 </div>
@@ -526,7 +526,7 @@ const AddTariffPage = () => {
                                                         onChange={(e) => updateRange(range.id, 'fee', e.target.value, formData.type === 'flat' ? 'fixed' : 'percentage')}
                                                         min="0"
                                                         step="0.1"
-                                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-indigo-500 text-gray-900"
+                                                        className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-500 text-gray-900"
                                                         disabled={isLoading}
                                                     />
                                                 </div>
@@ -541,18 +541,18 @@ const AddTariffPage = () => {
 
                 {/* Info Card */}
                 <motion.div
-                    className="mt-6 bg-blue-50/70 backdrop-blur-sm rounded-2xl p-6 border border-blue-100"
+                    className="mt-6 bg-primary-50/70 backdrop-blur-sm rounded-2xl p-6 border border-primary-100"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
                 >
                     <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                            <Info size={18} className="text-blue-600" />
+                        <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                            <Info size={18} className="text-primary-600" />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-blue-900 mb-2">Tips for Creating Tariffs</h3>
-                            <ul className="text-blue-700 text-sm space-y-1">
+                            <h3 className="font-semibold text-primary-900 mb-2">Tips for Creating Tariffs</h3>
+                            <ul className="text-primary-700 text-sm space-y-1">
                                 <li>• Ensure ranges don't overlap to avoid conflicts</li>
                                 <li>• Leave maximum empty for "and above" ranges</li>
                                 <li>• Fixed rates charge specific amounts, percentages are calculated from transaction value</li>

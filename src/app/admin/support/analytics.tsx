@@ -136,7 +136,7 @@ const SupportAnalytics: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             className={`
         bg-white rounded-xl p-4 border cursor-pointer transition-all
-        ${isActive ? 'border-indigo-300 shadow-md' : 'border-gray-100 shadow-sm hover:shadow-md'}
+        ${isActive ? 'border-primary-300 shadow-md' : 'border-gray-100 shadow-sm hover:shadow-md'}
       `}
         >
             <div className="flex items-start justify-between">
@@ -190,8 +190,8 @@ const SupportAnalytics: React.FC = () => {
                                 <button
                                     onClick={() => setDateRange('last7days')}
                                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'last7days'
-                                            ? 'bg-gray-100 text-gray-900'
-                                            : 'text-gray-600 hover:text-gray-900'
+                                        ? 'bg-gray-100 text-gray-900'
+                                        : 'text-gray-600 hover:text-gray-900'
                                         }`}
                                 >
                                     7 Days
@@ -199,8 +199,8 @@ const SupportAnalytics: React.FC = () => {
                                 <button
                                     onClick={() => setDateRange('last30days')}
                                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'last30days'
-                                            ? 'bg-gray-100 text-gray-900'
-                                            : 'text-gray-600 hover:text-gray-900'
+                                        ? 'bg-gray-100 text-gray-900'
+                                        : 'text-gray-600 hover:text-gray-900'
                                         }`}
                                 >
                                     30 Days
@@ -208,8 +208,8 @@ const SupportAnalytics: React.FC = () => {
                                 <button
                                     onClick={() => setDateRange('last90days')}
                                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${dateRange === 'last90days'
-                                            ? 'bg-gray-100 text-gray-900'
-                                            : 'text-gray-600 hover:text-gray-900'
+                                        ? 'bg-gray-100 text-gray-900'
+                                        : 'text-gray-600 hover:text-gray-900'
                                         }`}
                                 >
                                     90 Days
@@ -220,7 +220,7 @@ const SupportAnalytics: React.FC = () => {
                             </button>
                             <motion.button
                                 onClick={exportReport}
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl shadow-sm transition-all text-sm font-medium"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -239,7 +239,7 @@ const SupportAnalytics: React.FC = () => {
                             value={analyticsData?.summary.totalTickets || 0}
                             change={{ value: 12, isPositive: true }}
                             icon={BarChart3}
-                            color="bg-blue-600"
+                            color="bg-primary-600"
                             isActive={selectedMetric === 'tickets'}
                         />
                     </div>
@@ -294,7 +294,7 @@ const SupportAnalytics: React.FC = () => {
                                             }}
                                         />
                                         <div
-                                            className="w-full bg-blue-500 rounded-t"
+                                            className="w-full bg-primary-500 rounded-t"
                                             style={{
                                                 height: `${(day.created / 70) * 200}px`
                                             }}
@@ -308,7 +308,7 @@ const SupportAnalytics: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-4 mt-4">
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                                <div className="w-3 h-3 bg-primary-500 rounded"></div>
                                 <span className="text-sm text-gray-600">Created</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -335,7 +335,7 @@ const SupportAnalytics: React.FC = () => {
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <div
-                                            className="bg-indigo-600 h-2 rounded-full transition-all"
+                                            className="bg-primary-600 h-2 rounded-full transition-all"
                                             style={{ width: `${category.percentage}%` }}
                                         />
                                     </div>
@@ -457,7 +457,7 @@ const SupportAnalytics: React.FC = () => {
                         </div>
                         <div className="space-y-4">
                             {analyticsData?.ticketsByPriority.map((priority, index) => {
-                                const colors = ['bg-red-600', 'bg-orange-600', 'bg-blue-600', 'bg-gray-600'];
+                                const colors = ['bg-red-600', 'bg-orange-600', 'bg-primary-600', 'bg-gray-600'];
                                 return (
                                     <div key={index} className="flex items-center gap-3">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[index] }}></div>
@@ -501,7 +501,7 @@ const SupportAnalytics: React.FC = () => {
                                         </td>
                                         <td className="text-center px-6 py-4">
                                             <span className={`text-sm font-medium ${agent.slaCompliance >= 95 ? 'text-green-600' :
-                                                    agent.slaCompliance >= 90 ? 'text-yellow-600' : 'text-red-600'
+                                                agent.slaCompliance >= 90 ? 'text-yellow-600' : 'text-red-600'
                                                 }`}>
                                                 {agent.slaCompliance}%
                                             </span>
@@ -512,8 +512,8 @@ const SupportAnalytics: React.FC = () => {
                                                     <div
                                                         key={i}
                                                         className={`w-2 h-8 rounded ${i < Math.round(agent.slaCompliance / 20)
-                                                                ? 'bg-green-500'
-                                                                : 'bg-gray-200'
+                                                            ? 'bg-green-500'
+                                                            : 'bg-gray-200'
                                                             }`}
                                                     />
                                                 ))}

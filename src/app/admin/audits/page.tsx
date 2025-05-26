@@ -192,7 +192,7 @@ const AuditLogsPage: React.FC = () => {
                         leftIcon={<Download size={16} />}
                         onClick={handleExport}
                         disabled={isLoading || filteredLogs.length === 0}
-                        className="bg-blue-500/90 hover:bg-blue-600/90 text-white"
+                        className="bg-primary-500/90 hover:bg-primary-600/90 text-white"
                     >
                         Export
                     </Button>
@@ -220,7 +220,7 @@ const AuditLogsPage: React.FC = () => {
                                     setSearchQuery(e.target.value);
                                     setPage(1);
                                 }}
-                                className="w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                className="w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
                             />
                         </div>
 
@@ -234,7 +234,7 @@ const AuditLogsPage: React.FC = () => {
                                     setEventFilter(e.target.value);
                                     setPage(1);
                                 }}
-                                className="w-full pl-10 pr-10 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                className="w-full pl-10 pr-10 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
                             >
                                 <option value="all">All Event Types</option>
                                 {eventTypes.filter(type => type !== 'all').map(type => (
@@ -258,7 +258,7 @@ const AuditLogsPage: React.FC = () => {
                                     setStatusFilter(e.target.value);
                                     setPage(1);
                                 }}
-                                className="w-full pl-10 pr-10 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                className="w-full pl-10 pr-10 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
                             >
                                 <option value="all">All Statuses</option>
                                 <option value="success">Success</option>
@@ -277,7 +277,7 @@ const AuditLogsPage: React.FC = () => {
             <Card className="overflow-hidden bg-white/60 backdrop-blur-md border border-white/30">
                 {isLoading ? (
                     <div className="p-8 flex flex-col items-center justify-center">
-                        <div className="animate-spin w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+                        <div className="animate-spin w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full mb-4"></div>
                         <p className="text-gray-500">Loading audit logs...</p>
                     </div>
                 ) : filteredLogs.length === 0 ? (
@@ -323,7 +323,7 @@ const AuditLogsPage: React.FC = () => {
                                     {paginatedLogs.map((log) => (
                                         <motion.tr
                                             key={log._id}
-                                            className="hover:bg-blue-50/30 transition-colors cursor-pointer"
+                                            className="hover:bg-primary-50/30 transition-colors cursor-pointer"
                                             whileHover={{ backgroundColor: 'rgba(239, 246, 255, 0.6)' }}
                                             onClick={() => handleViewDetails(log._id)}
                                         >
@@ -431,7 +431,7 @@ const AuditLogsPage: React.FC = () => {
                                                     key={pageNum}
                                                     onClick={() => handlePageChange(pageNum)}
                                                     className={`relative inline-flex items-center px-3 py-2 text-sm font-medium ${pageNum === page
-                                                        ? 'bg-blue-500 text-white'
+                                                        ? 'bg-primary-500 text-white'
                                                         : 'bg-white text-gray-700 hover:bg-gray-50'
                                                         } border border-gray-200 mx-1 rounded-md`}
                                                 >

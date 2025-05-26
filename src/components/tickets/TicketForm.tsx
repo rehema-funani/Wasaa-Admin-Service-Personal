@@ -50,7 +50,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
     // Priority color mapping
     const priorityColors = {
         low: 'bg-gray-100 border-gray-200 text-gray-700',
-        medium: 'bg-blue-50 border-blue-200 text-blue-700',
+        medium: 'bg-primary-50 border-primary-200 text-primary-700',
         high: 'bg-orange-50 border-orange-200 text-orange-700',
         critical: 'bg-red-50 border-red-200 text-red-700'
     };
@@ -58,7 +58,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
     // Status color mapping
     const statusColors = {
         open: 'bg-gray-100 border-gray-200 text-gray-700',
-        'in-progress': 'bg-blue-50 border-blue-200 text-blue-700',
+        'in-progress': 'bg-primary-50 border-primary-200 text-primary-700',
         pending: 'bg-yellow-50 border-yellow-200 text-yellow-700',
         resolved: 'bg-green-50 border-green-200 text-green-700',
         closed: 'bg-gray-100 border-gray-200 text-gray-700'
@@ -111,7 +111,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
                         value={formData.title}
                         onChange={handleChange}
                         required
-                        className="w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200"
                         placeholder="Enter ticket title"
                     />
                 </div>
@@ -127,7 +127,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
                     value={formData.description}
                     onChange={handleChange}
                     rows={4}
-                    className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none transition-all duration-200"
+                    className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent resize-none transition-all duration-200"
                     placeholder="Enter ticket description"
                 />
             </motion.div>
@@ -146,7 +146,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
                             name="priority"
                             value={formData.priority}
                             onChange={handleChange}
-                            className={`w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${priorityColors[formData.priority as keyof typeof priorityColors]}`}
+                            className={`w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200 ${priorityColors[formData.priority as keyof typeof priorityColors]}`}
                         >
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
@@ -174,7 +174,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
                             name="status"
                             value={formData.status}
                             onChange={handleChange}
-                            className={`w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 ${statusColors[formData.status as keyof typeof statusColors]}`}
+                            className={`w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200/80 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200 ${statusColors[formData.status as keyof typeof statusColors]}`}
                         >
                             <option value="open">Open</option>
                             <option value="in-progress">In Progress</option>
@@ -208,7 +208,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
                     type="submit"
                     isLoading={isSubmitting}
                     disabled={isSubmitting}
-                    className="bg-blue-500/90 hover:bg-blue-600/90 text-white rounded-xl shadow-sm shadow-blue-500/20 transition-all duration-200"
+                    className="bg-primary-500/90 hover:bg-primary-600/90 text-white rounded-xl shadow-sm shadow-primary-500/20 transition-all duration-200"
                     rightIcon={ticket ? <Check size={16} /> : undefined}
                 >
                     {ticket ? 'Update Ticket' : 'Create Ticket'}

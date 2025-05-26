@@ -50,8 +50,8 @@ export const TicketList: React.FC<TicketListProps> = ({
     // Quick filters for status
     const quickStatusFilters: { value: TicketStatus | 'all', label: string, color: string, count: number }[] = [
         { value: 'all', label: 'All', color: 'bg-gray-100 text-gray-800', count: tickets.length },
-        { value: 'open', label: 'Open', color: 'bg-blue-100 text-blue-800', count: tickets.filter(t => t.status === 'open').length },
-        { value: 'in-progress', label: 'In Progress', color: 'bg-indigo-100 text-indigo-800', count: tickets.filter(t => t.status === 'in-progress').length },
+        { value: 'open', label: 'Open', color: 'bg-primary-100 text-primary-800', count: tickets.filter(t => t.status === 'open').length },
+        { value: 'in-progress', label: 'In Progress', color: 'bg-primary-100 text-primary-800', count: tickets.filter(t => t.status === 'in-progress').length },
         { value: 'pending', label: 'Pending', color: 'bg-amber-100 text-amber-800', count: tickets.filter(t => t.status === 'pending').length },
         { value: 'resolved', label: 'Resolved', color: 'bg-green-100 text-green-800', count: tickets.filter(t => t.status === 'resolved').length },
         { value: 'closed', label: 'Closed', color: 'bg-gray-100 text-gray-800', count: tickets.filter(t => t.status === 'closed').length }
@@ -131,8 +131,8 @@ export const TicketList: React.FC<TicketListProps> = ({
         <div className="p-4 md:p-6">
             <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
                 <div className="flex items-center">
-                    <div className="p-2 bg-indigo-50 rounded-xl mr-3">
-                        <TicketIcon size={24} className="text-indigo-600" />
+                    <div className="p-2 bg-primary-50 rounded-xl mr-3">
+                        <TicketIcon size={24} className="text-primary-600" />
                     </div>
                     <div>
                         <h1 className="text-2xl font-semibold text-gray-900">Support Tickets</h1>
@@ -148,8 +148,8 @@ export const TicketList: React.FC<TicketListProps> = ({
                             <p className="text-sm font-medium text-gray-500">Total Tickets</p>
                             <p className="text-2xl font-semibold text-gray-900 mt-1">{ticketStats.total}</p>
                         </div>
-                        <div className="p-3 bg-indigo-50 rounded-xl">
-                            <ClipboardList size={20} className="text-indigo-600" />
+                        <div className="p-3 bg-primary-50 rounded-xl">
+                            <ClipboardList size={20} className="text-primary-600" />
                         </div>
                     </div>
                     <div className="mt-3 flex items-center text-xs">
@@ -166,8 +166,8 @@ export const TicketList: React.FC<TicketListProps> = ({
                             <p className="text-sm font-medium text-gray-500">Open Tickets</p>
                             <p className="text-2xl font-semibold text-gray-900 mt-1">{ticketStats.open}</p>
                         </div>
-                        <div className="p-3 bg-blue-50 rounded-xl">
-                            <FileText size={20} className="text-blue-600" />
+                        <div className="p-3 bg-primary-50 rounded-xl">
+                            <FileText size={20} className="text-primary-600" />
                         </div>
                     </div>
                     <div className="mt-3 flex items-center text-xs">
@@ -224,7 +224,7 @@ export const TicketList: React.FC<TicketListProps> = ({
                         className={`
                             inline-flex items-center px-3 py-1.5 rounded-lg text-sm transition-all duration-200
                             ${statusFilter === filter.value
-                                ? `${filter.color} ring-2 ring-offset-1 ring-indigo-300`
+                                ? `${filter.color} ring-2 ring-offset-1 ring-primary-300`
                                 : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'}
                         `}
                     >
@@ -248,7 +248,7 @@ export const TicketList: React.FC<TicketListProps> = ({
                             placeholder="Search tickets by title, description, or customer..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                         {searchQuery && (
                             <button
@@ -293,7 +293,7 @@ export const TicketList: React.FC<TicketListProps> = ({
                         <Button
                             variant="ghost"
                             onClick={handleRefresh}
-                            className={`${isRefreshing ? 'text-indigo-600' : 'text-gray-500'}`}
+                            className={`${isRefreshing ? 'text-primary-600' : 'text-gray-500'}`}
                         >
                             <RefreshCw size={16} className={`${isRefreshing ? 'animate-spin' : ''}`} />
                         </Button>
@@ -317,7 +317,7 @@ export const TicketList: React.FC<TicketListProps> = ({
                                     <select
                                         value={priorityFilter}
                                         onChange={(e) => setPriorityFilter(e.target.value as TicketPriority | 'all')}
-                                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                     >
                                         <option value="all">All Priorities</option>
                                         <option value="low">Low</option>
@@ -337,14 +337,14 @@ export const TicketList: React.FC<TicketListProps> = ({
                                                 className={`flex-1 flex justify-center items-center rounded-md px-3 py-1 ${viewMode === 'grid' ? 'bg-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                                                 onClick={() => setViewMode('grid')}
                                             >
-                                                <Sparkles size={16} className={viewMode === 'grid' ? 'text-indigo-600' : ''} />
+                                                <Sparkles size={16} className={viewMode === 'grid' ? 'text-primary-600' : ''} />
                                                 <span className="ml-1.5 text-sm">Grid</span>
                                             </button>
                                             <button
                                                 className={`flex-1 flex justify-center items-center rounded-md px-3 py-1 ${viewMode === 'list' ? 'bg-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                                                 onClick={() => setViewMode('list')}
                                             >
-                                                <ClipboardList size={16} className={viewMode === 'list' ? 'text-indigo-600' : ''} />
+                                                <ClipboardList size={16} className={viewMode === 'list' ? 'text-primary-600' : ''} />
                                                 <span className="ml-1.5 text-sm">List</span>
                                             </button>
                                         </div>
@@ -357,7 +357,7 @@ export const TicketList: React.FC<TicketListProps> = ({
                                             type="checkbox"
                                             checked={showEscalatedOnly}
                                             onChange={() => setShowEscalatedOnly(!showEscalatedOnly)}
-                                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                                         />
                                         <span className="ml-2 text-sm text-gray-700 flex items-center">
                                             <ArrowUpCircle size={14} className="text-red-500 mr-1.5" />
@@ -394,14 +394,14 @@ export const TicketList: React.FC<TicketListProps> = ({
                     </Badge>
 
                     {searchQuery && (
-                        <Badge variant="default" className="bg-indigo-50 border border-indigo-100 text-indigo-700 flex items-center gap-1">
+                        <Badge variant="default" className="bg-primary-50 border border-primary-100 text-primary-700 flex items-center gap-1">
                             <Search size={12} />
                             "{searchQuery}"
                         </Badge>
                     )}
 
                     {statusFilter !== 'all' && (
-                        <Badge variant="default" className="bg-blue-50 border border-blue-100 text-blue-700 flex items-center gap-1">
+                        <Badge variant="default" className="bg-primary-50 border border-primary-100 text-primary-700 flex items-center gap-1">
                             <FileText size={12} />
                             Status: {statusFilter}
                         </Badge>
@@ -444,7 +444,7 @@ export const TicketList: React.FC<TicketListProps> = ({
                         <Button
                             onClick={onAddTicket}
                             leftIcon={<Plus size={16} />}
-                            className="mt-6 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 text-white shadow-md"
+                            className="mt-6 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white shadow-md"
                         >
                             Create First Ticket
                         </Button>

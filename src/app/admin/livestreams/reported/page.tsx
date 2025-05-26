@@ -704,13 +704,13 @@ const page = () => {
   const getReportTypeColor = (type: string) => {
     switch (type) {
       case 'copyright_violation':
-        return 'bg-indigo-100 text-indigo-700';
+        return 'bg-primary-100 text-primary-700';
       case 'inappropriate_language':
         return 'bg-orange-100 text-orange-700';
       case 'misinformation':
         return 'bg-purple-100 text-purple-700';
       case 'spam':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-primary-100 text-primary-700';
       case 'harmful_advice':
         return 'bg-red-100 text-red-700';
       case 'inappropriate_content':
@@ -743,7 +743,7 @@ const page = () => {
       case 'medium':
         return 'bg-yellow-100 text-yellow-700';
       case 'low':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-primary-100 text-primary-700';
       default:
         return 'bg-gray-100 text-gray-700';
     }
@@ -757,7 +757,7 @@ const page = () => {
       case 'warning_issued':
         return <AlertTriangle size={14} className="text-yellow-500 mr-1" strokeWidth={1.8} />;
       case 'content_edited':
-        return <Edit size={14} className="text-blue-500 mr-1" strokeWidth={1.8} />;
+        return <Edit size={14} className="text-primary-500 mr-1" strokeWidth={1.8} />;
       case 'content_muted':
         return <Slash size={14} className="text-orange-500 mr-1" strokeWidth={1.8} />;
       case 'stream_terminated':
@@ -781,7 +781,7 @@ const page = () => {
       case 'food':
         return <Coffee size={14} className="text-amber-500 mr-1" strokeWidth={1.8} />;
       case 'art':
-        return <Palette size={14} className="text-blue-500 mr-1" strokeWidth={1.8} />;
+        return <Palette size={14} className="text-primary-500 mr-1" strokeWidth={1.8} />;
       case 'fitness':
         return <Activity size={14} className="text-green-500 mr-1" strokeWidth={1.8} />;
       case 'dance':
@@ -789,7 +789,7 @@ const page = () => {
       case 'travel':
         return <Globe size={14} className="text-cyan-500 mr-1" strokeWidth={1.8} />;
       case 'technology':
-        return <Cpu size={14} className="text-indigo-500 mr-1" strokeWidth={1.8} />;
+        return <Cpu size={14} className="text-primary-500 mr-1" strokeWidth={1.8} />;
       case 'just chatting':
         return <MessageCircle size={14} className="text-gray-500 mr-1" strokeWidth={1.8} />;
       case 'finance':
@@ -864,14 +864,14 @@ const page = () => {
       width: '180px',
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center font-medium text-xs mr-2">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-xs mr-2">
             {value.split(' ').map((n: string) => n[0]).join('')}
           </div>
           <div>
             <div className="flex items-center">
               <p className="font-medium text-gray-800">{value}</p>
               {row.reportedStream.streamer.verified && (
-                <ShieldCheck size={12} className="ml-1 text-blue-500" strokeWidth={2} />
+                <ShieldCheck size={12} className="ml-1 text-primary-500" strokeWidth={2} />
               )}
             </div>
             <div className="flex items-center">
@@ -952,7 +952,7 @@ const page = () => {
       cell: (value: string, row: any) => {
         const statusConfig: Record<string, any> = {
           'pending': { color: 'yellow', icon: true, label: 'Pending' },
-          'under_review': { color: 'blue', icon: true, label: 'Under Review' },
+          'under_review': { color: 'primary', icon: true, label: 'Under Review' },
           'resolved': { color: 'green', icon: true, label: 'Resolved' },
           'dismissed': { color: 'gray', icon: false, label: 'Dismissed' }
         };
@@ -1028,7 +1028,7 @@ const page = () => {
       cell: (value: string, row: any) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View stream details"
@@ -1038,7 +1038,7 @@ const page = () => {
 
           {row.status === 'pending' && (
             <motion.button
-              className="p-1.5 rounded-lg text-gray-500 hover:bg-blue-100 hover:text-blue-600"
+              className="p-1.5 rounded-lg text-gray-500 hover:bg-primary-100 hover:text-primary-600"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               aria-label="Review this report"

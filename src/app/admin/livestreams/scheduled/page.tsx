@@ -547,7 +547,7 @@ const page = () => {
       cell: (value: string, row: any) => (
         <div className="flex flex-col">
           <div className="flex items-center font-medium text-gray-800">
-            <Calendar size={14} className="text-indigo-500 mr-1.5" strokeWidth={1.8} />
+            <Calendar size={14} className="text-primary-500 mr-1.5" strokeWidth={1.8} />
             {value.split(' ')[0]}
           </div>
           <div className="flex items-center mt-1">
@@ -557,7 +557,7 @@ const page = () => {
           </div>
           {row.recurring.isRecurring && (
             <div className="flex items-center mt-1">
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800">
                 <CalendarIcon size={10} className="mr-1" strokeWidth={2} />
                 {row.recurring.frequency === 'weekly'
                   ? `Weekly on ${row.recurring.days.join(', ')}`
@@ -579,7 +579,7 @@ const page = () => {
         <div className="flex items-center">
           <div className="w-12 h-8 bg-gray-200 rounded overflow-hidden mr-3 flex-shrink-0">
             {/* Thumbnail would be here in a real implementation */}
-            <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center">
               <Video size={14} className="text-white" />
             </div>
           </div>
@@ -601,14 +601,14 @@ const page = () => {
       width: '180px',
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center font-medium text-xs mr-2">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-xs mr-2">
             {value.split(' ').map((n: string) => n[0]).join('')}
           </div>
           <div>
             <div className="flex items-center">
               <p className="font-medium text-gray-800">{value}</p>
               {row.streamer.verified && (
-                <CheckCircle size={12} className="ml-1 text-blue-500" strokeWidth={2} />
+                <CheckCircle size={12} className="ml-1 text-primary-500" strokeWidth={2} />
               )}
             </div>
             <p className="text-xs text-gray-500">{row.streamer.username}</p>
@@ -625,7 +625,7 @@ const page = () => {
       cell: (value: number, row: any) => (
         <div className="flex flex-col">
           <div className="flex items-center">
-            <Bell size={14} className="text-indigo-400 mr-1.5" strokeWidth={1.8} />
+            <Bell size={14} className="text-primary-400 mr-1.5" strokeWidth={1.8} />
             <span className="font-medium">{value.toLocaleString()} interested</span>
           </div>
           <div className="flex items-center text-xs text-gray-500 mt-1">
@@ -650,13 +650,13 @@ const page = () => {
             </span>
           )}
           {row.featured && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800">
               <Star size={10} className="mr-1" strokeWidth={2} />
               Featured
             </span>
           )}
           {value.recordAutomatically && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-100 text-primary-800">
               <Video size={10} className="mr-1" strokeWidth={2} />
               Auto Record
             </span>
@@ -699,7 +699,7 @@ const page = () => {
       cell: (value: string, row: any) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View stream details"
@@ -708,7 +708,7 @@ const page = () => {
           </motion.button>
 
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-blue-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Edit stream"
@@ -884,8 +884,8 @@ const page = () => {
       title: 'Total Scheduled',
       value: '10',
       change: '3 today, 7 future dates',
-      icon: <Calendar size={20} className="text-indigo-500" strokeWidth={1.8} />,
-      color: 'indigo'
+      icon: <Calendar size={20} className="text-primary-500" strokeWidth={1.8} />,
+      color: 'primary'
     },
     {
       title: 'Upcoming Next',
@@ -898,8 +898,8 @@ const page = () => {
       title: 'Recurring Streams',
       value: '5',
       change: '50% of total',
-      icon: <CalendarIcon size={20} className="text-blue-500" strokeWidth={1.8} />,
-      color: 'blue'
+      icon: <CalendarIcon size={20} className="text-primary-500" strokeWidth={1.8} />,
+      color: 'primary'
     },
     {
       title: 'Subscriber Reminders',
@@ -941,7 +941,7 @@ const page = () => {
             Export
           </motion.button>
           <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0 }}
           >

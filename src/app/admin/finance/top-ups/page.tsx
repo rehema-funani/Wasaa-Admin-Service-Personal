@@ -82,9 +82,9 @@ const TopUpsPage = () => {
     if (normalizedName.includes('mpesa') || normalizedName.includes('mobile')) {
       return <Phone size={14} className="text-green-500 mr-1.5" strokeWidth={1.8} />;
     } else if (normalizedName.includes('card') || normalizedName.includes('visa') || normalizedName.includes('master')) {
-      return <CreditCard size={14} className="text-indigo-500 mr-1.5" strokeWidth={1.8} />;
+      return <CreditCard size={14} className="text-primary-500 mr-1.5" strokeWidth={1.8} />;
     } else if (normalizedName.includes('bank') || normalizedName.includes('transfer')) {
-      return <Banknote size={14} className="text-blue-500 mr-1.5" strokeWidth={1.8} />;
+      return <Banknote size={14} className="text-primary-500 mr-1.5" strokeWidth={1.8} />;
     } else {
       return <DollarSign size={14} className="text-gray-500 mr-1.5" strokeWidth={1.8} />;
     }
@@ -275,7 +275,7 @@ const TopUpsPage = () => {
       cell: (value: string) => (
         <div className="flex items-center space-x-1">
           <motion.button
-            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600"
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label="View details"
@@ -362,7 +362,7 @@ const TopUpsPage = () => {
             Export
           </motion.button>
           <motion.button
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0 }}
           >

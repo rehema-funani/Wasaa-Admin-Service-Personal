@@ -32,7 +32,7 @@ const HashtagsPage: React.FC = () => {
                             placeholder="Search tags..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                            className="pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                         />
                     </div>
 
@@ -42,9 +42,9 @@ const HashtagsPage: React.FC = () => {
                             placeholder="Add new tag..."
                             value={newTag}
                             onChange={(e) => setNewTag(e.target.value)}
-                            className="pl-3 pr-10 py-2 bg-white border border-gray-200 rounded-l-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                            className="pl-3 pr-10 py-2 bg-white border border-gray-200 rounded-l-lg focus:ring-2 focus:ring-primary-500 text-sm"
                         />
-                        <button className="p-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700">
+                        <button className="p-2 bg-primary-600 text-white rounded-r-lg hover:bg-primary-700">
                             <PlusCircle size={16} />
                         </button>
                     </div>

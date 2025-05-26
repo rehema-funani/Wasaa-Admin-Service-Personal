@@ -85,7 +85,7 @@ export const TicketEscalationForm: React.FC<TicketEscalationFormProps> = ({
                     <select
                         value={escalationLevel}
                         onChange={(e) => setEscalationLevel(Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         disabled={isLoading}
                     >
                         <option value={1}>Level 1 - First Escalation</option>
@@ -101,7 +101,7 @@ export const TicketEscalationForm: React.FC<TicketEscalationFormProps> = ({
                     <textarea
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         rows={3}
                         placeholder="Explain why this ticket needs to be escalated"
                         required
@@ -122,7 +122,7 @@ export const TicketEscalationForm: React.FC<TicketEscalationFormProps> = ({
                             <select
                                 value={selectedTeamId || ''}
                                 onChange={handleTeamChange}
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                 disabled={isLoading}
                             >
                                 <option value="">Select a team</option>
@@ -142,7 +142,7 @@ export const TicketEscalationForm: React.FC<TicketEscalationFormProps> = ({
                                 <select
                                     value={selectedUserId || ''}
                                     onChange={handleUserChange}
-                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                     disabled={isLoading}
                                 >
                                     <option value="">Select a team member</option>

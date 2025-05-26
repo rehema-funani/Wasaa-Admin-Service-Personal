@@ -49,13 +49,13 @@ export const TeamList: React.FC<TeamListProps> = ({
         <div className="p-5">
             <div className="flex justify-between items-center mb-5">
                 <div className="flex items-center">
-                    <Users size={20} className="text-blue-600 mr-2" />
+                    <Users size={20} className="text-primary-600 mr-2" />
                     <h1 className="text-xl font-semibold text-gray-900">Support Teams</h1>
                 </div>
                 <Button
                     onClick={onAddTeam}
                     leftIcon={<Plus size={16} />}
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm py-1.5 px-3 rounded-lg transition-colors duration-200"
+                    className="bg-primary-600 hover:bg-primary-700 text-white text-sm py-1.5 px-3 rounded-lg transition-colors duration-200"
                 >
                     Add Team
                 </Button>
@@ -71,7 +71,7 @@ export const TeamList: React.FC<TeamListProps> = ({
                         placeholder="Search teams..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200/80 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200/80 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-all duration-200"
                     />
                 </div>
             </Card>
@@ -87,7 +87,7 @@ export const TeamList: React.FC<TeamListProps> = ({
                         <Button
                             onClick={onAddTeam}
                             leftIcon={<Plus size={14} />}
-                            className="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-xs py-1.5 px-3 rounded-lg transition-colors duration-200"
+                            className="mt-3 bg-primary-600 hover:bg-primary-700 text-white text-xs py-1.5 px-3 rounded-lg transition-colors duration-200"
                         >
                             Add Team
                         </Button>

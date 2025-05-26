@@ -103,8 +103,8 @@ const AddWallpaper: React.FC = () => {
     switch (uploadStatus) {
       case 'uploading':
         return (
-          <div className="flex items-center text-blue-500">
-            <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full mr-2"></div>
+          <div className="flex items-center text-primary-500">
+            <div className="animate-spin h-4 w-4 border-2 border-primary-500 border-t-transparent rounded-full mr-2"></div>
             <span>Uploading...</span>
           </div>
         );
@@ -156,7 +156,7 @@ const AddWallpaper: React.FC = () => {
           {/* Left column - Image preview */}
           <div className="order-2 lg:order-1">
             <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-              <Image size={22} className="mr-3 text-blue-500" />
+              <Image size={22} className="mr-3 text-primary-500" />
               Preview
             </h2>
 
@@ -185,7 +185,7 @@ const AddWallpaper: React.FC = () => {
                 <label
                   htmlFor="imageUpload"
                   className={`flex-grow flex items-center justify-center gap-3 py-5 px-6 rounded-2xl text-gray-700 border-2 ${uploadStatus === 'uploading'
-                    ? 'bg-blue-50 border-blue-100'
+                    ? 'bg-primary-50 border-primary-100'
                     : uploadStatus === 'success'
                       ? 'bg-green-50 border-green-100'
                       : uploadStatus === 'error'
@@ -193,7 +193,7 @@ const AddWallpaper: React.FC = () => {
                         : 'bg-gray-50 border-gray-100 hover:bg-gray-100'
                     } transition-colors cursor-pointer`}
                 >
-                  <Upload size={24} className={uploadStatus === 'uploading' ? 'text-blue-500 animate-bounce' : ''} />
+                  <Upload size={24} className={uploadStatus === 'uploading' ? 'text-primary-500 animate-bounce' : ''} />
                   <span className="text-lg">{uploadStatus === 'uploading' ? 'Uploading...' : 'Upload Image'}</span>
                 </label>
 
@@ -221,7 +221,7 @@ const AddWallpaper: React.FC = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full px-5 py-4 bg-white rounded-xl text-gray-800 focus:outline-none border-2 border-transparent focus:border-blue-500 transition-all"
+                className="w-full px-5 py-4 bg-white rounded-xl text-gray-800 focus:outline-none border-2 border-transparent focus:border-primary-500 transition-all"
                 placeholder="Enter a descriptive name"
                 required
               />
@@ -238,7 +238,7 @@ const AddWallpaper: React.FC = () => {
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
-                  className="w-full px-5 py-4 bg-white rounded-xl text-gray-800 focus:outline-none border-2 border-transparent focus:border-blue-500 transition-all appearance-none"
+                  className="w-full px-5 py-4 bg-white rounded-xl text-gray-800 focus:outline-none border-2 border-transparent focus:border-primary-500 transition-all appearance-none"
                   required
                 >
                   <option value="" disabled>Select a category</option>
@@ -261,7 +261,7 @@ const AddWallpaper: React.FC = () => {
           type="submit"
           disabled={!isValid || isSubmitting}
           className={`relative w-full py-5 rounded-2xl text-white font-medium text-lg transition-all ${isValid && !isSubmitting
-            ? 'bg-blue-500 hover:bg-blue-600'
+            ? 'bg-primary-500 hover:bg-primary-600'
             : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
         >

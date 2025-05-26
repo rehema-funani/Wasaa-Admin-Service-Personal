@@ -316,7 +316,7 @@ const page: React.FC = () => {
         if (type === 'credit') {
             return <ArrowDownLeft className="w-4 h-4 text-green-600" />;
         } else {
-            return <ArrowUpRight className="w-4 h-4 text-blue-600" />;
+            return <ArrowUpRight className="w-4 h-4 text-primary-600" />;
         }
     };
 
@@ -328,7 +328,7 @@ const page: React.FC = () => {
             case 'refund':
                 return <RefreshCw className="w-5 h-5 text-orange-600" />;
             case 'float':
-                return <DollarSign className="w-5 h-5 text-blue-600" />;
+                return <DollarSign className="w-5 h-5 text-primary-600" />;
             case 'promotions':
                 return <Sparkles className="w-5 h-5 text-green-600" />;
             default:
@@ -344,7 +344,7 @@ const page: React.FC = () => {
             case 'refund':
                 return 'border-l-orange-500 dark:border-l-orange-400';
             case 'float':
-                return 'border-l-blue-500 dark:border-l-blue-400';
+                return 'border-l-primary-500 dark:border-l-primary-400';
             case 'promotions':
                 return 'border-l-green-500 dark:border-l-green-400';
             default:
@@ -390,7 +390,7 @@ const page: React.FC = () => {
                             </button>
 
                             <button
-                                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 text-white rounded-xl shadow-sm hover:bg-indigo-700 transition-all text-sm"
+                                className="flex items-center gap-1.5 px-3.5 py-2 bg-primary-600 text-white rounded-xl shadow-sm hover:bg-primary-700 transition-all text-sm"
                             >
                                 <ExternalLink size={16} />
                                 <span>Banking Dashboard</span>
@@ -408,7 +408,7 @@ const page: React.FC = () => {
                                 placeholder="Search system wallets..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 text-sm"
+                                className="pl-9 pr-3 py-2 w-full bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                             />
                         </div>
 
@@ -525,7 +525,7 @@ const page: React.FC = () => {
                                     <div className="mt-5 pt-3 border-t border-gray-100 flex gap-2">
                                         <button
                                             onClick={() => openTopUpModal(wallet)}
-                                            className="flex-1 text-xs py-2 px-3 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-medium transition-colors"
+                                            className="flex-1 text-xs py-2 px-3 rounded-lg bg-primary-50 text-primary-700 hover:bg-primary-100 font-medium transition-colors"
                                         >
                                             Top Up
                                         </button>
@@ -593,8 +593,8 @@ const page: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div className="bg-gray-50 rounded-lg p-4">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="p-2 bg-indigo-100 rounded-lg">
-                                    <Wallet size={20} className="text-indigo-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <Wallet size={20} className="text-primary-600" />
                                 </div>
                                 <h3 className="text-sm font-medium text-gray-800">Total Balance</h3>
                             </div>
@@ -639,8 +639,8 @@ const page: React.FC = () => {
 
                         <div className="bg-gray-50 rounded-lg p-4">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="p-2 bg-blue-100 rounded-lg">
-                                    <ShieldCheck size={20} className="text-blue-600" />
+                                <div className="p-2 bg-primary-100 rounded-lg">
+                                    <ShieldCheck size={20} className="text-primary-600" />
                                 </div>
                                 <h3 className="text-sm font-medium text-gray-800">System Health</h3>
                             </div>
@@ -657,7 +657,7 @@ const page: React.FC = () => {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
                     <div className="flex justify-between items-center mb-5">
                         <h2 className="text-lg font-medium text-gray-800">Recent Transactions</h2>
-                        <button className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View All</button>
+                        <button className="text-sm text-primary-600 hover:text-primary-800 font-medium">View All</button>
                     </div>
 
                     <div className="overflow-x-auto">
@@ -694,7 +694,7 @@ const page: React.FC = () => {
                                                 <div className="text-sm text-gray-900">{wallet?.name || 'Unknown Wallet'}</div>
                                             </td>
                                             <td className="px-3 py-4 whitespace-nowrap">
-                                                <div className={`text-sm font-medium ${transaction.type === 'credit' ? 'text-green-600' : 'text-blue-600'
+                                                <div className={`text-sm font-medium ${transaction.type === 'credit' ? 'text-green-600' : 'text-primary-600'
                                                     }`}>
                                                     {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
                                                 </div>
@@ -708,7 +708,7 @@ const page: React.FC = () => {
                                                 {formatDate(transaction.timestamp)}
                                             </td>
                                             <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <button className="text-indigo-600 hover:text-indigo-900">Details</button>
+                                                <button className="text-primary-600 hover:text-primary-900">Details</button>
                                             </td>
                                         </tr>
                                     );
@@ -719,14 +719,14 @@ const page: React.FC = () => {
                 </div>
 
                 {/* Info Box */}
-                <div className="mt-6 bg-blue-50/70 rounded-xl p-4 border border-blue-100 backdrop-blur-sm">
+                <div className="mt-6 bg-primary-50/70 rounded-xl p-4 border border-primary-100 backdrop-blur-sm">
                     <div className="flex items-start gap-3">
-                        <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-                            <AlertTriangle size={20} className="text-blue-600" />
+                        <div className="p-2 bg-primary-100 rounded-lg flex-shrink-0">
+                            <AlertTriangle size={20} className="text-primary-600" />
                         </div>
                         <div>
-                            <h3 className="text-sm font-medium text-blue-700">About System Wallets</h3>
-                            <p className="text-blue-600 text-xs mt-1 leading-relaxed">
+                            <h3 className="text-sm font-medium text-primary-700">About System Wallets</h3>
+                            <p className="text-primary-600 text-xs mt-1 leading-relaxed">
                                 System wallets are dedicated internal accounts that serve specific financial functions:
                                 <br />• <strong>Platform Float Wallet:</strong> Maintains liquidity reserves for user and merchant payouts
                                 <br />• <strong>Fee Wallet:</strong> Collects and manages platform commissions from all transactions
@@ -751,7 +751,7 @@ const page: React.FC = () => {
             >
                 {modalType === 'topup' && selectedWallet && (
                     <div className="space-y-4 p-1">
-                        <div className="bg-indigo-50 p-4 rounded-lg mb-4">
+                        <div className="bg-primary-50 p-4 rounded-lg mb-4">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-sm font-medium text-gray-700">Current Balance</h3>
                                 <span className="text-lg font-semibold text-gray-900">{formatCurrency(selectedWallet.balance)}</span>
@@ -768,14 +768,14 @@ const page: React.FC = () => {
                                     <input
                                         type="number"
                                         placeholder="0.00"
-                                        className="pl-12 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                        className="pl-12 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                     />
                                 </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Source Account</label>
-                                <select className="w-full pl-3 pr-10 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700">
+                                <select className="w-full pl-3 pr-10 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700">
                                     <option value="main">Main Operating Account</option>
                                     <option value="reserve">Reserve Account</option>
                                     <option value="capital">Capital Account</option>
@@ -787,7 +787,7 @@ const page: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="E.g., Monthly top-up"
-                                    className="pl-3 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                    className="pl-3 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                 />
                             </div>
                         </div>
@@ -813,7 +813,7 @@ const page: React.FC = () => {
                                 Cancel
                             </button>
                             <button
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                             >
                                 Submit Top-up Request
                             </button>
@@ -823,7 +823,7 @@ const page: React.FC = () => {
 
                 {modalType === 'transfer' && selectedWallet && (
                     <div className="space-y-4 p-1">
-                        <div className="bg-indigo-50 p-4 rounded-lg mb-4">
+                        <div className="bg-primary-50 p-4 rounded-lg mb-4">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-sm font-medium text-gray-700">Available Balance</h3>
                                 <span className="text-lg font-semibold text-gray-900">{formatCurrency(selectedWallet.balance)}</span>
@@ -840,14 +840,14 @@ const page: React.FC = () => {
                                     <input
                                         type="number"
                                         placeholder="0.00"
-                                        className="pl-12 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                        className="pl-12 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                     />
                                 </div>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Destination Wallet</label>
-                                <select className="w-full pl-3 pr-10 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700">
+                                <select className="w-full pl-3 pr-10 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700">
                                     {systemWallets.filter(w => w.id !== selectedWallet.id).map(wallet => (
                                         <option key={wallet.id} value={wallet.id}>{wallet.name}</option>
                                     ))}
@@ -857,7 +857,7 @@ const page: React.FC = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Transfer Reason</label>
-                                <select className="w-full pl-3 pr-10 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 mb-2">
+                                <select className="w-full pl-3 pr-10 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 mb-2">
                                     <option value="settlement">Settlement</option>
                                     <option value="rebalancing">Wallet Rebalancing</option>
                                     <option value="correction">Error Correction</option>
@@ -866,7 +866,7 @@ const page: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="Additional notes"
-                                    className="pl-3 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                    className="pl-3 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                 />
                             </div>
                         </div>
@@ -892,7 +892,7 @@ const page: React.FC = () => {
                                 Cancel
                             </button>
                             <button
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                             >
                                 Initiate Transfer
                             </button>
@@ -960,7 +960,7 @@ const page: React.FC = () => {
                                                 <div className="text-xs text-gray-500">{transaction.relatedEntity}</div>
                                             </td>
                                             <td className="px-3 py-3 whitespace-nowrap">
-                                                <div className={`text-sm font-medium ${transaction.type === 'credit' ? 'text-green-600' : 'text-blue-600'
+                                                <div className={`text-sm font-medium ${transaction.type === 'credit' ? 'text-green-600' : 'text-primary-600'
                                                     }`}>
                                                     {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
                                                 </div>
@@ -974,7 +974,7 @@ const page: React.FC = () => {
                                                 {formatDate(transaction.timestamp)}
                                             </td>
                                             <td className="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
-                                                <button className="text-indigo-600 hover:text-indigo-900">
+                                                <button className="text-primary-600 hover:text-primary-900">
                                                     <Eye size={16} />
                                                 </button>
                                             </td>
@@ -1000,7 +1000,7 @@ const page: React.FC = () => {
                                 Close
                             </button>
                             <button
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                             >
                                 Export to CSV
                             </button>
@@ -1016,14 +1016,14 @@ const page: React.FC = () => {
                                 <input
                                     type="text"
                                     defaultValue={selectedWallet.name}
-                                    className="pl-3 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                    className="pl-3 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Wallet Status</label>
                                 <select
-                                    className="w-full pl-3 pr-10 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                    className="w-full pl-3 pr-10 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                     defaultValue={selectedWallet.status}
                                 >
                                     <option value="active">Active</option>
@@ -1037,7 +1037,7 @@ const page: React.FC = () => {
                                 <textarea
                                     defaultValue={selectedWallet.description}
                                     rows={3}
-                                    className="pl-3 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                    className="pl-3 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                 />
                             </div>
 
@@ -1051,7 +1051,7 @@ const page: React.FC = () => {
                                         <input
                                             type="number"
                                             defaultValue={100000}
-                                            className="pl-12 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                            className="pl-12 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                         />
                                     </div>
                                 </div>
@@ -1065,7 +1065,7 @@ const page: React.FC = () => {
                                         <input
                                             type="number"
                                             defaultValue={10000000}
-                                            className="pl-12 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-700"
+                                            className="pl-12 pr-3 py-2 w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                                         />
                                     </div>
                                 </div>
@@ -1137,7 +1137,7 @@ const page: React.FC = () => {
                                 Cancel
                             </button>
                             <button
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700"
+                                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-lg hover:bg-primary-700"
                             >
                                 Save Changes
                             </button>

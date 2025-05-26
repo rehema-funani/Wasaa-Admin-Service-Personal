@@ -48,7 +48,7 @@ const RangeForm: React.FC<RangeFormProps> = ({
                         onChange={handleRangeFormChange}
                         min="0"
                         required
-                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                         placeholder="e.g., 0"
                         disabled={isLoading}
                     />
@@ -66,7 +66,7 @@ const RangeForm: React.FC<RangeFormProps> = ({
                         value={rangeFormData.max === null ? '' : rangeFormData.max}
                         onChange={handleRangeFormChange}
                         min="0"
-                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                         placeholder="Leave empty for 'and above'"
                         disabled={isLoading}
                     />
@@ -86,7 +86,7 @@ const RangeForm: React.FC<RangeFormProps> = ({
                         min="0"
                         step="0.1"
                         required
-                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-400 text-gray-800 text-sm"
+                        className="w-full py-2 px-3 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary-400 text-gray-800 text-sm"
                         placeholder="e.g., 50"
                         disabled={isLoading}
                     />
@@ -106,7 +106,7 @@ const RangeForm: React.FC<RangeFormProps> = ({
                 <button
                     type="button"
                     onClick={onSubmit}
-                    className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm flex items-center gap-1.5"
+                    className="px-3 py-1.5 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm flex items-center gap-1.5"
                     disabled={isLoading}
                 >
                     {isLoading && <Loader size={14} className="animate-spin" />}

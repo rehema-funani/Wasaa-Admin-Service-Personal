@@ -153,7 +153,7 @@ const page: React.FC = () => {
         <div className="mt-6 md:mt-0">
           <button
             onClick={openAddModal}
-            className="inline-flex items-center px-6 py-2 text-[14px] bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-colors text-sm font-medium"
+            className="inline-flex items-center px-6 py-2 text-[14px] bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors text-sm font-medium"
           >
             <Plus size={18} className="mr-2" />
             Add Avatar
@@ -168,7 +168,7 @@ const page: React.FC = () => {
         <input
           type="text"
           placeholder="Search avatars..."
-          className="w-[350px] pl-14 pr-5 py-2 bg-transparent rounded-2xl text-gray-800 focus:outline-none focus:bg-white border-2 border-gray-100 focus:border-blue-500 transition-all duration-200"
+          className="w-[350px] pl-14 pr-5 py-2 bg-transparent rounded-2xl text-gray-800 focus:outline-none focus:bg-white border-2 border-gray-100 focus:border-primary-500 transition-all duration-200"
           value={searchQuery}
           onChange={handleSearchChange}
         />
@@ -177,7 +177,7 @@ const page: React.FC = () => {
       {isLoading ? (
         <div className="bg-gray-50 rounded-3xl py-16 px-6 text-center">
           <div className="inline-flex items-center justify-center">
-            <div className="h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="h-8 w-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
             <p className="ml-3 text-gray-500">Loading avatars...</p>
           </div>
         </div>
@@ -186,7 +186,7 @@ const page: React.FC = () => {
           {filteredAvatars.map((avatar, index) => (
             <div
               key={avatar.id}
-              className={`group bg-white border-2 border-gray-50 rounded-3xl p-6 transition-all hover:border-indigo-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              className={`group bg-white border-2 border-gray-50 rounded-3xl p-6 transition-all hover:border-primary-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                 }`}
               style={{ transitionDelay: `${index * 50}ms` }}
             >
@@ -228,7 +228,7 @@ const page: React.FC = () => {
           <p className="text-gray-400 mt-2 mb-6">Try a different search term or add a new avatar</p>
           <button
             onClick={openAddModal}
-            className="px-6 py-3 bg-indigo-500 text-white rounded-full inline-flex items-center gap-2 hover:bg-indigo-600 transition-colors"
+            className="px-6 py-3 bg-primary-500 text-white rounded-full inline-flex items-center gap-2 hover:bg-primary-600 transition-colors"
           >
             <Plus size={18} />
             <span>Add Avatar</span>
@@ -277,7 +277,7 @@ const page: React.FC = () => {
                   <label
                     htmlFor="avatarUpload"
                     className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium ${uploadStatus === 'uploading'
-                      ? 'bg-indigo-50 text-indigo-500 border-2 border-indigo-100'
+                      ? 'bg-primary-50 text-primary-500 border-2 border-primary-100'
                       : uploadStatus === 'success'
                         ? 'bg-green-50 text-green-500 border-2 border-green-100'
                         : 'bg-gray-50 text-gray-700 border-2 border-gray-100 hover:bg-gray-100'
@@ -285,7 +285,7 @@ const page: React.FC = () => {
                   >
                     {uploadStatus === 'uploading' ? (
                       <>
-                        <div className="h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                        <div className="h-4 w-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mr-2"></div>
                         <span>Uploading...</span>
                       </>
                     ) : uploadStatus === 'success' ? (
@@ -313,7 +313,7 @@ const page: React.FC = () => {
                   name="name"
                   value={newAvatar.name}
                   onChange={handleNewAvatarChange}
-                  className="w-full px-4 py-3 bg-gray-50 rounded-xl text-gray-800 focus:outline-none border-2 border-transparent focus:border-indigo-500 transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 rounded-xl text-gray-800 focus:outline-none border-2 border-transparent focus:border-primary-500 transition-all"
                   placeholder="Enter avatar name"
                   required
                 />
@@ -323,7 +323,7 @@ const page: React.FC = () => {
                 onClick={handleAddAvatar}
                 disabled={!newAvatar.name || !selectedFile}
                 className={`w-full py-3 rounded-xl text-white font-medium transition-colors ${newAvatar.name && selectedFile
-                  ? 'bg-indigo-500 hover:bg-indigo-600'
+                  ? 'bg-primary-500 hover:bg-primary-600'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
               >

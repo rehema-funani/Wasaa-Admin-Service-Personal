@@ -311,7 +311,7 @@ const page = () => {
                             placeholder="Search banks by name, swift code..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-10 pr-4 py-2.5 w-full bg-white border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
+                            className="pl-10 pr-4 py-2.5 w-full bg-white border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700"
                         />
                     </div>
 
@@ -319,19 +319,19 @@ const page = () => {
                         <div className="bg-white shadow-sm border border-gray-200 rounded-lg p-1 flex">
                             <button
                                 onClick={() => setStatusFilter('all')}
-                                className={`px-3 py-1.5 rounded text-sm transition-all ${statusFilter === 'all' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+                                className={`px-3 py-1.5 rounded text-sm transition-all ${statusFilter === 'all' ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
                             >
                                 All
                             </button>
                             <button
                                 onClick={() => setStatusFilter('active')}
-                                className={`px-3 py-1.5 rounded text-sm transition-all ${statusFilter === 'active' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+                                className={`px-3 py-1.5 rounded text-sm transition-all ${statusFilter === 'active' ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
                             >
                                 Active
                             </button>
                             <button
                                 onClick={() => setStatusFilter('inactive')}
-                                className={`px-3 py-1.5 rounded text-sm transition-all ${statusFilter === 'inactive' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+                                className={`px-3 py-1.5 rounded text-sm transition-all ${statusFilter === 'inactive' ? 'bg-primary-50 text-primary-600 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
                             >
                                 Inactive
                             </button>
@@ -340,7 +340,7 @@ const page = () => {
                         <div className="flex gap-2">
                             <button
                                 onClick={openAddModal}
-                                className="inline-flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                className="inline-flex items-center px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                             >
                                 <PlusCircle size={16} className="mr-2" />
                                 Add Bank
@@ -454,7 +454,7 @@ const page = () => {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {bank.allowsWithdrawal && (
-                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-50 text-primary-700">
                                                             <ArrowDownToLine size={10} className="mr-1" />
                                                             Withdrawal
                                                         </span>
@@ -469,8 +469,8 @@ const page = () => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${bank.status === 'active'
-                                                        ? 'bg-green-50 text-green-700'
-                                                        : 'bg-gray-100 text-gray-600'
+                                                    ? 'bg-green-50 text-green-700'
+                                                    : 'bg-gray-100 text-gray-600'
                                                     }`}>
                                                     {bank.status === 'active' ? 'Active' : 'Inactive'}
                                                 </span>
@@ -481,7 +481,7 @@ const page = () => {
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <button
                                                     onClick={() => openEditModal(bank)}
-                                                    className="text-blue-600 hover:text-blue-900 mr-3"
+                                                    className="text-primary-600 hover:text-primary-900 mr-3"
                                                 >
                                                     <Edit size={16} />
                                                 </button>
@@ -506,12 +506,12 @@ const page = () => {
                     </div>
                 </div>
 
-                <div className="mt-8 bg-blue-50 rounded-lg p-4 border border-blue-100 shadow-sm">
+                <div className="mt-8 bg-primary-50 rounded-lg p-4 border border-primary-100 shadow-sm">
                     <div className="flex items-start">
-                        <Info size={20} className="text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
+                        <Info size={20} className="text-primary-500 mt-0.5 mr-3 flex-shrink-0" />
                         <div>
-                            <h3 className="font-medium text-blue-800">About Bank Management</h3>
-                            <p className="mt-1 text-sm text-blue-600">
+                            <h3 className="font-medium text-primary-800">About Bank Management</h3>
+                            <p className="mt-1 text-sm text-primary-600">
                                 Configure the banks that users can withdraw to or top up from. Make sure to set the
                                 correct account number format and length to validate user inputs.
                             </p>
@@ -566,7 +566,7 @@ const page = () => {
                                         value={bankFormData.name}
                                         onChange={handleBankFormChange}
                                         required
-                                        className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                                        className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                         placeholder="e.g., Kenya Commercial Bank"
                                     />
                                 </div>
@@ -583,7 +583,7 @@ const page = () => {
                                             value={bankFormData.swiftCode}
                                             onChange={handleBankFormChange}
                                             required
-                                            className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                                            className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                             placeholder="e.g., KCBLKENX"
                                         />
                                     </div>
@@ -599,7 +599,7 @@ const page = () => {
                                             value={bankFormData.country}
                                             onChange={handleBankFormChange}
                                             required
-                                            className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                                            className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                             placeholder="e.g., Kenya"
                                         />
                                     </div>
@@ -616,7 +616,7 @@ const page = () => {
                                             name="logoUrl"
                                             value={bankFormData.logoUrl}
                                             onChange={handleBankFormChange}
-                                            className="w-full py-2 px-3 bg-white border border-r-0 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                                            className="w-full py-2 px-3 bg-white border border-r-0 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                             placeholder="/images/banks/logo.png"
                                         />
                                         <button
@@ -638,7 +638,7 @@ const page = () => {
                                             name="accountNumberFormat"
                                             value={bankFormData.accountNumberFormat}
                                             onChange={handleBankFormChange}
-                                            className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                                            className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                         >
                                             <option value="Numeric">Numeric</option>
                                             <option value="Alphanumeric">Alphanumeric</option>
@@ -658,7 +658,7 @@ const page = () => {
                                             required
                                             min="1"
                                             max="30"
-                                            className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 text-sm"
+                                            className="w-full py-2 px-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-700 text-sm"
                                             placeholder="e.g., 10"
                                         />
                                     </div>
@@ -676,7 +676,7 @@ const page = () => {
                                                     name="allowsWithdrawal"
                                                     checked={bankFormData.allowsWithdrawal}
                                                     onChange={handleBankFormChange}
-                                                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                                                    className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
                                                 />
                                                 <span className="ml-2 text-sm text-gray-700">Allow Withdrawals</span>
                                             </label>
@@ -687,7 +687,7 @@ const page = () => {
                                                     name="allowsTopUp"
                                                     checked={bankFormData.allowsTopUp}
                                                     onChange={handleBankFormChange}
-                                                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                                                    className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
                                                 />
                                                 <span className="ml-2 text-sm text-gray-700">Allow Top-up</span>
                                             </label>
@@ -703,8 +703,8 @@ const page = () => {
                                                 type="button"
                                                 onClick={() => handleBankStatusChange('active')}
                                                 className={`px-4 py-2 rounded-lg text-sm ${bankFormData.status === 'active'
-                                                        ? 'bg-green-100 text-green-800 border border-green-200 font-medium'
-                                                        : 'bg-gray-100 text-gray-600 border border-gray-200'
+                                                    ? 'bg-green-100 text-green-800 border border-green-200 font-medium'
+                                                    : 'bg-gray-100 text-gray-600 border border-gray-200'
                                                     }`}
                                             >
                                                 Active
@@ -713,8 +713,8 @@ const page = () => {
                                                 type="button"
                                                 onClick={() => handleBankStatusChange('inactive')}
                                                 className={`px-4 py-2 rounded-lg text-sm ${bankFormData.status === 'inactive'
-                                                        ? 'bg-gray-700 text-white border border-gray-800 font-medium'
-                                                        : 'bg-gray-100 text-gray-600 border border-gray-200'
+                                                    ? 'bg-gray-700 text-white border border-gray-800 font-medium'
+                                                    : 'bg-gray-100 text-gray-600 border border-gray-200'
                                                     }`}
                                             >
                                                 Inactive
@@ -739,7 +739,7 @@ const page = () => {
                                 <button
                                     type="button"
                                     onClick={handleBankFormSubmit}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium"
                                 >
                                     {modalType === 'add' ? 'Add Bank' : 'Update Bank'}
                                 </button>

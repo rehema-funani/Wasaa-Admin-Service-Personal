@@ -60,7 +60,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ video }) => {
                     {/* Progress bar */}
                     <div className="w-full bg-white/30 rounded-full h-1">
                         <div
-                            className="bg-indigo-600 h-1 rounded-full"
+                            className="bg-primary-600 h-1 rounded-full"
                             style={{ width: `${progress}%` }}
                         ></div>
                     </div>

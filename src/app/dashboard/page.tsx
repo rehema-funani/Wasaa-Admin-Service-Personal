@@ -53,8 +53,8 @@ const Dashboard = () => {
       value: '24,892',
       change: '+12.5%',
       isPositive: true,
-      icon: <Users size={20} className="text-indigo-500" strokeWidth={1.8} />,
-      bgColor: 'from-indigo-50 to-blue-50'
+      icon: <Users size={20} className="text-primary-500" strokeWidth={1.8} />,
+      bgColor: 'from-primary-50 to-primary-50'
     },
     {
       title: 'Active Users',
@@ -69,8 +69,8 @@ const Dashboard = () => {
       value: '$934,128',
       change: '+23.1%',
       isPositive: true,
-      icon: <TrendingUp size={20} className="text-blue-500" strokeWidth={1.8} />,
-      bgColor: 'from-blue-50 to-cyan-50'
+      icon: <TrendingUp size={20} className="text-primary-500" strokeWidth={1.8} />,
+      bgColor: 'from-primary-50 to-cyan-50'
     },
     {
       title: 'Revenue',
@@ -114,8 +114,8 @@ const Dashboard = () => {
             <button
               onClick={() => handleTimeframeChange('day')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all ${activeTimeframe === 'day'
-                ? 'bg-white text-indigo-600 shadow-sm'
-                : 'text-gray-600 hover:text-indigo-600'
+                ? 'bg-white text-primary-600 shadow-sm'
+                : 'text-gray-600 hover:text-primary-600'
                 }`}
             >
               Day
@@ -123,8 +123,8 @@ const Dashboard = () => {
             <button
               onClick={() => handleTimeframeChange('week')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all ${activeTimeframe === 'week'
-                ? 'bg-white text-indigo-600 shadow-sm'
-                : 'text-gray-600 hover:text-indigo-600'
+                ? 'bg-white text-primary-600 shadow-sm'
+                : 'text-gray-600 hover:text-primary-600'
                 }`}
             >
               Week
@@ -132,8 +132,8 @@ const Dashboard = () => {
             <button
               onClick={() => handleTimeframeChange('month')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all ${activeTimeframe === 'month'
-                ? 'bg-white text-indigo-600 shadow-sm'
-                : 'text-gray-600 hover:text-indigo-600'
+                ? 'bg-white text-primary-600 shadow-sm'
+                : 'text-gray-600 hover:text-primary-600'
                 }`}
             >
               Month
@@ -141,8 +141,8 @@ const Dashboard = () => {
             <button
               onClick={() => handleTimeframeChange('year')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all ${activeTimeframe === 'year'
-                ? 'bg-white text-indigo-600 shadow-sm'
-                : 'text-gray-600 hover:text-indigo-600'
+                ? 'bg-white text-primary-600 shadow-sm'
+                : 'text-gray-600 hover:text-primary-600'
                 }`}
             >
               Year
@@ -185,7 +185,7 @@ const Dashboard = () => {
               <motion.button
                 onClick={() => handleTabChange('users')}
                 className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedTab === 'users'
-                  ? 'bg-indigo-50 text-indigo-600'
+                  ? 'bg-primary-50 text-primary-600'
                   : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 whileHover={{ scale: 1.05 }}
@@ -196,7 +196,7 @@ const Dashboard = () => {
               <motion.button
                 onClick={() => handleTabChange('groups')}
                 className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedTab === 'groups'
-                  ? 'bg-indigo-50 text-indigo-600'
+                  ? 'bg-primary-50 text-primary-600'
                   : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 whileHover={{ scale: 1.05 }}
@@ -207,7 +207,7 @@ const Dashboard = () => {
               <motion.button
                 onClick={() => handleTabChange('transactions')}
                 className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedTab === 'transactions'
-                  ? 'bg-indigo-50 text-indigo-600'
+                  ? 'bg-primary-50 text-primary-600'
                   : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 whileHover={{ scale: 1.05 }}
@@ -231,8 +231,8 @@ const Dashboard = () => {
           <div className="mt-4 grid grid-cols-1 gap-2">
             <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70">
               <div className="flex items-center">
-                <div className="p-2 rounded-lg bg-blue-50 mr-3">
-                  <Smartphone size={16} className="text-blue-500" strokeWidth={1.8} />
+                <div className="p-2 rounded-lg bg-primary-50 mr-3">
+                  <Smartphone size={16} className="text-primary-500" strokeWidth={1.8} />
                 </div>
                 <span className="text-sm text-gray-700">Mobile</span>
               </div>
@@ -241,8 +241,8 @@ const Dashboard = () => {
 
             <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70">
               <div className="flex items-center">
-                <div className="p-2 rounded-lg bg-indigo-50 mr-3">
-                  <Laptop size={16} className="text-indigo-500" strokeWidth={1.8} />
+                <div className="p-2 rounded-lg bg-primary-50 mr-3">
+                  <Laptop size={16} className="text-primary-500" strokeWidth={1.8} />
                 </div>
                 <span className="text-sm text-gray-700">Desktop</span>
               </div>
@@ -278,7 +278,7 @@ const Dashboard = () => {
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold text-gray-800">Recent Users</h2>
                 <motion.button
-                  className="text-xs text-indigo-600 flex items-center"
+                  className="text-xs text-primary-600 flex items-center"
                   whileHover={{ x: 3 }}
                 >
                   View all <ChevronRight size={14} />
@@ -297,7 +297,7 @@ const Dashboard = () => {
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold text-gray-800">Recent Groups</h2>
                 <motion.button
-                  className="text-xs text-indigo-600 flex items-center"
+                  className="text-xs text-primary-600 flex items-center"
                   whileHover={{ x: 3 }}
                 >
                   View all <ChevronRight size={14} />
@@ -372,7 +372,7 @@ const Dashboard = () => {
               <h2 className="text-lg font-semibold text-gray-800">Livestream Metrics</h2>
             </div>
             <motion.button
-              className="text-xs text-indigo-600 flex items-center"
+              className="text-xs text-primary-600 flex items-center"
               whileHover={{ x: 3 }}
             >
               View details <ChevronRight size={14} />
@@ -388,13 +388,13 @@ const Dashboard = () => {
         >
           <div className="flex justify-between items-center mb-5">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mr-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-primary-500 to-cyan-500 flex items-center justify-center mr-3">
                 <Wallet size={18} className="text-white" strokeWidth={1.8} />
               </div>
               <h2 className="text-lg font-semibold text-gray-800">Wallet Analytics</h2>
             </div>
             <motion.button
-              className="text-xs text-indigo-600 flex items-center"
+              className="text-xs text-primary-600 flex items-center"
               whileHover={{ x: 3 }}
             >
               View details <ChevronRight size={14} />

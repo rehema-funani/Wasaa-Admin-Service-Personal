@@ -55,7 +55,6 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
 };
 
 export const PermissionMap = {
-  // API Keys Management
   ApiKeys: {
     create: ['can_create_apiKeys'],
     view: ['can_view_apiKeys', 'can_list_apiKeys'],
@@ -63,7 +62,6 @@ export const PermissionMap = {
     delete: ['can_delete_apiKeys']
   },
 
-  // User Management
   Users: {
     create: ['can_create_users'],
     view: ['can_view_users', 'can_list_users'],
@@ -75,7 +73,6 @@ export const PermissionMap = {
     report: ['can_report_users']
   },
 
-  // Role Management
   Roles: {
     create: ['can_create_roles'],
     view: ['can_view_roles', 'can_list_roles'],
@@ -83,7 +80,6 @@ export const PermissionMap = {
     delete: ['can_delete_roles']
   },
 
-  // Permission Management
   Permissions: {
     create: ['can_create_permissions'],
     view: ['can_list_permissions'],
@@ -91,13 +87,11 @@ export const PermissionMap = {
     delete: ['can_delete_permissions']
   },
 
-  // Settings Management
   Settings: {
     view: ['can_view_settings'],
     update: ['can_update_settings']
   },
 
-  // Language Management
   Languages: {
     create: ['can_create_languages'],
     view: ['can_view_languages', 'can_list_languages'],
@@ -105,7 +99,6 @@ export const PermissionMap = {
     delete: ['can_delete_languages']
   },
 
-  // Media Management
   Media: {
     create: ['can_create_media'],
     view: ['can_view_media', 'can_list_media'],
@@ -113,28 +106,24 @@ export const PermissionMap = {
     delete: ['can_delete_media']
   },
 
-  // Device Management
   Devices: {
     view: ['can_view_devices', 'can_list_devices'],
     update: ['can_update_devices'],
     delete: ['can_delete_devices']
   },
 
-  // Wallet Management
   Wallets: {
     view: ['can_view_wallets', 'can_list_wallets'],
     update: ['can_update_wallets'],
     delete: ['can_delete_wallets']
   },
 
-  // Transaction Management
   Transactions: {
     view: ['can_view_transactions', 'can_list_transactions'],
     update: ['can_update_transactions'],
     delete: ['can_delete_transactions']
   },
 
-  // Group Management
   Groups: {
     create: ['can_create_groups'],
     view: ['can_view_groups', 'can_list_groups'],
@@ -147,7 +136,6 @@ export const PermissionMap = {
     viewReported: ['can_view_reported_groups']
   },
 
-  // Profile Management
   Profile: {
     view: ['can_view_profile'],
     update: ['can_update_profile'],
@@ -155,21 +143,17 @@ export const PermissionMap = {
     completeSignup: ['can_complete_signup'],
     delete: ['can_delete_account']
   },
-
-  // User Preferences
   Preferences: {
     view: ['can_fetch_preferences'],
     update: ['can_update_preferences']
   },
 
-  // Contact Management
   Contacts: {
     sync: ['can_sync_contacts'],
     add: ['can_add_contacts'],
     delete: ['can_delete_contacts']
   },
 
-  // Security & Authentication
   Security: {
     checkNumber: ['can_check_number'],
     verifyPin: ['can_verify_pin'],
@@ -178,14 +162,12 @@ export const PermissionMap = {
     sendResetPassword: ['can_send_reset_password']
   },
 
-  // Session Management
   Sessions: {
     view: ['can_view_sessions', 'can_list_sessions'],
     revoke: ['can_revoke_sessions'],
     update: ['can_update_sessions']
   },
 
-  // Legacy/Combined Permissions
   Reports: {
     view: ['can_list_reports', 'can_view_reports']
   },
@@ -197,7 +179,6 @@ export const PermissionMap = {
     delete: ['can_delete_notifications']
   },
 
-  // Combined permission groups for easier route protection
   ViewReported: [
     'can_view_reported_users', 
     'can_view_reported_groups', 
@@ -219,7 +200,6 @@ export const PermissionMap = {
     'can_delete_permissions'
   ],
 
-  // Financial permissions
   Finance: [
     'can_list_transactions',
     'can_view_transactions',
@@ -236,20 +216,16 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
   const routePermissionsMap: Record<string, string[]> = {
     '/': [],
     
-    // User Management Routes
     '/admin/users/user-details': PermissionMap.Users.view,
     '/admin/users/countrywise-Analysis': PermissionMap.Users.view,
     '/admin/users/reported-user-list': [...PermissionMap.Users.view, ...PermissionMap.ViewReported],
     
-    // Group Management Routes
     '/admin/Group/all-group-list': PermissionMap.Groups.view,
     '/admin/Group/all-reported-group-list': [...PermissionMap.Groups.viewReported, ...PermissionMap.Reports.view],
     
-    // System Management Routes
     '/admin/system/users': [...PermissionMap.Users.viewStaff, ...PermissionMap.Users.view],
     '/admin/system/roles': PermissionMap.Roles.view,
     
-    // Livestream Routes
     '/admin/livestreams/all-livestreams': [],
     '/admin/livestreams/scheduled': [],
     '/admin/livestreams/settings': PermissionMap.Settings.view,
@@ -259,7 +235,6 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/livestreams/moderation': [],
     '/admin/livestreams/reported': PermissionMap.Reports.view,
     
-    // Finance Routes
     '/admin/finance/transactions': PermissionMap.Transactions.view,
     '/admin/finance/user-wallets': PermissionMap.Wallets.view,
     '/admin/finance/withdrawals': PermissionMap.Transactions.view,
@@ -273,24 +248,20 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/finance/limits': PermissionMap.Settings.view,
     '/admin/finance/compliance': PermissionMap.Settings.view,
     
-    // Gift Management Routes
     '/admin/gifts/add-gift': PermissionMap.Media.create,
     '/admin/gifts/gift-list': PermissionMap.Media.view,
     '/admin/gifts/gift-categories': PermissionMap.Media.view,
     
-    // Settings Routes
     '/admin/settings': PermissionMap.Settings.view,
     '/admin/languages': PermissionMap.Languages.view,
     '/admin/logs': PermissionMap.Admin, 
     '/admin/support': [],
     
-    // Media Routes
     '/admin/Wallpaper/list-all-wallpaper': PermissionMap.Media.view,
     '/admin/Wallpaper/add-a-new-wallpaper': PermissionMap.Media.create,
     '/admin/Avatar/list-all-avatar': PermissionMap.Media.view,
     '/admin/Avatar/add-a-new-avatar': PermissionMap.Media.create,
     
-    // Dynamic Routes
     '/admin/users/user-details/:id': PermissionMap.Users.view,
     '/admin/users/countrywise-Analysis/:id': PermissionMap.Users.view,
     '/admin/Group/all-group-list/:id': PermissionMap.Groups.view,
@@ -299,27 +270,22 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/finance/user-wallets/:id': PermissionMap.Wallets.view,
     '/admin/languages/:id/translations': PermissionMap.Languages.view,
     
-    // Support Routes
     '/admin/support/teams': [],
     '/admin/support/teams/:id': [],
     '/admin/support/tickets': [],
     '/admin/support/tickets/:id': [],
     '/admin/support/assignments': [],
 
-    // Device Management Routes
     '/admin/devices': PermissionMap.Devices.view,
     '/admin/devices/:id': PermissionMap.Devices.view,
 
-    // Session Management Routes
     '/admin/sessions': PermissionMap.Sessions.view,
     '/admin/sessions/:id': PermissionMap.Sessions.view,
 
-    // API Key Management Routes
     '/admin/api-keys': PermissionMap.ApiKeys.view,
     '/admin/api-keys/create': PermissionMap.ApiKeys.create,
     '/admin/api-keys/:id': PermissionMap.ApiKeys.view,
 
-    // Security Routes
     '/admin/security/passwords': PermissionMap.Security.setPassword,
     '/admin/security/pins': PermissionMap.Security.updatePin,
   };
