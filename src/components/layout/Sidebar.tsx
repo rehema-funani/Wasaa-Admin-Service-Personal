@@ -151,12 +151,10 @@ const shouldShowSection = (section: SectionRoute, userPermissions: string[]): bo
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [notifications, setNotifications] = useState<number>(3);
   const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
   const userPermissions = user?.permissions || [];
 
@@ -176,8 +174,29 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
     }
   }, [location.pathname, isMobile, setCollapsed]);
 
+  useEffect(() => {
+    routes.forEach((item) => {
+      if (item.type === 'section') {
+        const hasActive = hasActiveChild(item.items);
+        if (hasActive) {
+          setOpenSections(prev => ({
+            ...prev,
+            [item.title]: true
+          }));
+        }
+      }
+    });
+  }, [location.pathname]);
+
   const toggleDropdown = (key: string) => {
     setOpenDropdowns(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const toggleSection = (key: string) => {
+    setOpenSections(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
@@ -196,18 +215,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       }
       return false;
     });
-  };
-
-  const handleLogout = () => {
-    Cookies.remove('authToken');
-    Cookies.remove('userData');
-    navigate('/auth/login');
-    window.location.reload();
-  };
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    // Implement actual dark mode logic here
   };
 
   const renderIcon = (icon: React.FC<React.SVGProps<SVGSVGElement>>, isActivePage: boolean) => {
@@ -308,7 +315,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
       const isOpen = openDropdowns[item.key];
       const hasActive = hasActiveChild(filteredItems);
-      const isHovered = hoveredItem === itemKey;
 
       return (
         <div className="my-1.5 group">
@@ -389,29 +395,55 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         return null;
       }
 
+      const isOpen = openSections[item.title] || false;
+      const hasActive = hasActiveChild(item.items);
+
       return (
         <div
           className="mt-7 first:mt-3 mb-2"
         >
           {level === 0 && (
             <div className="px-5 py-1.5 relative mb-2">
-              <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-500 to-teal-400 mr-2.5"></div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-primary-600/90">{item.title}</span>
-              </div>
+              <button
+                onClick={() => toggleSection(item.title)}
+                className="flex items-center justify-between w-full group/section"
+              >
+                <div className="flex items-center">
+                  <div className={`w-2 h-2 rounded-full bg-gradient-to-r from-primary-500 to-teal-400 mr-2.5 transition-all duration-300 ${hasActive ? 'scale-125' : ''}`}></div>
+                  <span className={`text-xs font-semibold uppercase tracking-wider transition-colors duration-300 ${hasActive ? 'text-primary-700' : 'text-primary-600/90'}`}>
+                    {item.title}
+                  </span>
+                </div>
+                <div
+                  className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300
+                    ${isOpen ? 'bg-primary-50' : 'bg-transparent group-hover/section:bg-primary-50/50'} 
+                  `}
+                >
+                  <ChevronDown
+                    size={12}
+                    className={`transition-transform duration-300 
+                      ${isOpen ? "text-primary-500 transform rotate-180" : "text-gray-400 group-hover/section:text-primary-400"}`}
+                  />
+                </div>
+              </button>
               <div className="absolute bottom-0 left-5 right-5 h-px bg-gradient-to-r from-primary-100/50 via-teal-100/30 to-transparent"></div>
             </div>
           )}
-          <div className="space-y-0.5">
-            {item.items.map((subItem: any, idx: number) => (
-              <div
-                key={idx}
-                className="animate-slideIn"
-                style={{ animationDelay: `${idx * 30}ms` }}
-              >
-                {renderNavItem(subItem, level)}
-              </div>
-            ))}
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out 
+              ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
+          >
+            <div className="space-y-0.5">
+              {item.items.map((subItem: any, idx: number) => (
+                <div
+                  key={idx}
+                  className={isOpen ? "animate-slideIn" : ""}
+                  style={{ animationDelay: `${idx * 30}ms` }}
+                >
+                  {renderNavItem(subItem, level)}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       );

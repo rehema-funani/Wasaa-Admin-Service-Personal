@@ -57,7 +57,7 @@ export interface ReversalRequest {
     amount: number;
     currency: string;
     reason: string;
-    status: 'pending' | 'approved' | 'rejected' | 'completed';
+    status: 'pending' | 'approved' | 'FAILED' | 'completed';
     requestedBy: string;
     requestedAt: string;
     approvedBy?: string;
@@ -104,4 +104,36 @@ export interface RefundRequest {
         createdAt: string;
         updatedAt: string;
     };
+}
+
+export interface Withdrawal {
+  id: string;
+  user_uuid: string;
+  paymentMethodId: number;
+  amount: number;
+  phone: string;
+  description: string;
+  transactionCode: string | null;
+  status: 'pending' | 'completed' | 'failed';
+  metadata: any;
+  createdAt: string;
+  updatedAt: string;
+  PaymentMethod?: {
+    id: number;
+    name: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  user?: {
+    id: string;
+    username: string;
+    phone_number: string;
+    email: string | null;
+    profile_picture: string | null;
+    preferences: any;
+  };
+  formattedDate?: string;
+  formattedTime?: string;
+  currency?: string;
 }

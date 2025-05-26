@@ -32,7 +32,6 @@ import { Transaction } from '../../../../types/transaction';
 import toast from 'react-hot-toast';
 
 const ReversalRequestsPage: React.FC = () => {
-    // State management
     const [reversalRequests, setReversalRequests] = useState<ReversalRequest[]>([]);
     const [refunds, setRefunds] = useState<RefundRequest[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -66,7 +65,7 @@ const ReversalRequestsPage: React.FC = () => {
                         }
                     }
 
-                    let status: 'pending' | 'approved' | 'rejected' | 'completed' = 'pending';
+                    let status: 'pending' | 'approved' | 'Rejected' | 'completed' = 'pending';
                     switch (refund.status) {
                         case 'INITIATED':
                             status = 'pending';
@@ -77,8 +76,8 @@ const ReversalRequestsPage: React.FC = () => {
                         case 'COMPLETED':
                             status = 'completed';
                             break;
-                        case 'REJECTED':
-                            status = 'rejected';
+                        case 'FAILED':
+                            status = 'Rejected';
                             break;
                     }
 
@@ -139,7 +138,7 @@ const ReversalRequestsPage: React.FC = () => {
         return refunds.find(refund => refund.id === id);
     };
 
-    const handleStatusUpdate = async (requestId: string, newStatus: 'approved' | 'rejected' | 'completed', note: string = '') => {
+    const handleStatusUpdate = async (requestId: string, newStatus: 'approved' | 'FAILED' | 'completed', note: string = '') => {
         try {
             setIsLoading(true);
 
@@ -148,7 +147,7 @@ const ReversalRequestsPage: React.FC = () => {
             if (newStatus === 'approved') {
                 response = await financeService.approveRefund(requestId);
                 showSuccess('Reversal request successfully approved');
-            } else if (newStatus === 'rejected') {
+            } else if (newStatus === 'FAILED') {
                 if (!note) {
                     showError('A rejection reason is required');
                     setIsLoading(false);
@@ -168,7 +167,7 @@ const ReversalRequestsPage: React.FC = () => {
                         updatedRequest.approvedBy = 'Current Admin';
                         updatedRequest.approvedAt = new Date().toISOString();
                         if (note) updatedRequest.notes = note;
-                    } else if (newStatus === 'rejected') {
+                    } else if (newStatus === 'FAILED') {
                         updatedRequest.rejectedBy = 'Current Admin';
                         updatedRequest.rejectedAt = new Date().toISOString();
                         if (note) updatedRequest.notes = note;
@@ -283,7 +282,7 @@ const ReversalRequestsPage: React.FC = () => {
                 return 'bg-primary-50 text-primary-700 border border-primary-200';
             case 'completed':
                 return 'bg-success-50 text-success-700 border border-success-200';
-            case 'rejected':
+            case 'failed':
                 return 'bg-danger-50 text-danger-700 border border-danger-200';
             default:
                 return 'bg-neutral-50 text-neutral-700 border border-neutral-200';
@@ -299,7 +298,7 @@ const ReversalRequestsPage: React.FC = () => {
                 return <CheckCircle2 className="w-4 h-4" />;
             case 'completed':
                 return <CheckCircle2 className="w-4 h-4" />;
-            case 'rejected':
+            case 'failed':
                 return <XCircle className="w-4 h-4" />;
             default:
                 return <Clock className="w-4 h-4" />;
@@ -448,7 +447,6 @@ const ReversalRequestsPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Reversal Requests Summary */}
                 <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div className="bg-white rounded-lg shadow-card border border-neutral-200 p-4">
                         <div className="flex items-center gap-3 mb-2">
@@ -497,7 +495,7 @@ const ReversalRequestsPage: React.FC = () => {
                             <h3 className="text-sm font-medium text-neutral-800">Rejected</h3>
                         </div>
                         <p className="text-2xl font-semibold text-neutral-900 font-finance">
-                            {reversalRequests.filter(r => r.status === 'rejected').length}
+                            {reversalRequests.filter(r => r.status === 'FAILED').length}
                         </p>
                         <p className="text-xs text-neutral-500 mt-1">Denied by administrators</p>
                     </div>
@@ -765,7 +763,7 @@ const ReversalRequestsPage: React.FC = () => {
                         formatCurrency={formatCurrency}
                         formatDate={formatDate}
                         getWalletTypeDisplay={getWalletTypeDisplay}
-                     />
+                    />
                 )}
             </Modal>
         </div>

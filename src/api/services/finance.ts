@@ -248,7 +248,7 @@ export const financeService = {
   // Get all withdrawal requests
   async getAllWithdrawalRequests(filters = {}): Promise<any> {
     try {
-      const response = await finance.get('/withdrawal-requests', { params: filters });
+      const response = await finance.get('/withdrawals', { params: filters });
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
