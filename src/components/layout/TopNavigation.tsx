@@ -1,26 +1,73 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
     ChevronDown, Search, X, Bell,
-    ArrowRight, Zap, Menu, User,
+    ArrowRight, Menu, User,
     Settings, LogOut, CreditCard,
-    Clock, AlertCircle, BarChart3,
+    AlertCircle, BarChart3,
     Shield, Wallet, DollarSign
 } from 'lucide-react';
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 
-// Permission utilities (from Sidebar.tsx)
-const getRequiredPermissionsForRoute = (path) => {
+const getRequiredPermissionsForRoute = (path: string) => {
     const routePermissionsMap = {
         '/': [],
+
         '/admin/users/user-details': ['can_list_users', 'can_view_users'],
+        '/admin/users/countrywise-Analysis': ['can_list_users', 'can_view_users'],
         '/admin/users/reported-user-list': ['can_view_reported_users', 'can_list_reports', 'can_view_reports'],
+
         '/admin/Group/all-group-list': ['can_list_groups', 'can_view_groups'],
         '/admin/Group/all-reported-group-list': ['can_view_reported_groups', 'can_list_reports', 'can_view_reports'],
+
+        '/admin/system/users': ['can_list_staff', 'can_view_users'],
+        '/admin/system/roles': ['can_list_roles', 'can_view_roles'],
+
+        '/admin/livestreams/all-livestreams': [],
+        '/admin/livestreams/scheduled': [],
+        '/admin/livestreams/settings': [],
+        '/admin/livestreams/categories': [],
+        '/admin/livestreams/featured': [],
+        '/admin/livestreams/analytics': [],
+        '/admin/livestreams/moderation': [],
+        '/admin/livestreams/reported': ['can_list_reports', 'can_view_reports'],
+
         '/admin/finance/transactions': [],
         '/admin/finance/user-wallets': [],
-        // Add more routes as needed
+        '/admin/finance/withdrawals': [],
+        '/admin/finance/top-ups': [],
+        '/admin/finance/payment-methods': [],
+        '/admin/finance/reports': [],
+        '/admin/finance/gift-history': [],
+
+        '/admin/gifts/add-gift': ['can_create_media'],
+        '/admin/gifts/gift-list': ['can_list_media', 'can_view_media'],
+        '/admin/gifts/gift-categories': ['can_list_media', 'can_view_media'],
+
+        '/admin/settings': ['can_view_settings', 'can_update_settings'],
+        '/admin/languages': ['can_list_languages', 'can_view_languages'],
+        '/admin/logs': [],
+        '/admin/support': [],
+
+        '/admin/Wallpaper/list-all-wallpaper': ['can_list_media', 'can_view_media'],
+        '/admin/Wallpaper/add-a-new-wallpaper': ['can_create_media'],
+        '/admin/Avatar/list-all-avatar': ['can_list_media', 'can_view_media'],
+        '/admin/Avatar/add-a-new-avatar': ['can_create_media'],
+
+        '/admin/users/user-details/:id': ['can_view_users'],
+        '/admin/users/countrywise-Analysis/:id': ['can_view_users'],
+        '/admin/Group/all-group-list/:id': ['can_view_groups'],
+        '/admin/system/roles/:id': ['can_view_roles'],
+        '/admin/system/roles/create': ['can_create_roles'],
+        '/admin/finance/user-wallets/:id': [],
+        '/admin/languages/:id/translations': ['can_view_languages'],
+
+        '/admin/support/teams': [],
+        '/admin/support/teams/:id': [],
+        '/admin/support/tickets': [],
+        '/admin/support/tickets/:id': [],
+        '/admin/support/assignments': [],
     };
 
     if (!routePermissionsMap[path]) {
@@ -52,7 +99,7 @@ const getRequiredPermissionsForRoute = (path) => {
     return routePermissionsMap[path] || [];
 };
 
-const hasPermissionForRoute = (path, userPermissions) => {
+const hasPermissionForRoute = (path: string, userPermissions: any) => {
     const requiredPermissions = getRequiredPermissionsForRoute(path);
     if (requiredPermissions.length === 0) {
         return true;
@@ -61,45 +108,32 @@ const hasPermissionForRoute = (path, userPermissions) => {
 };
 
 const TopNavigation = () => {
-    // Core state
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [activeNestedDropdown, setActiveNestedDropdown] = useState(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
-    // Search state (from Header.tsx)
     const [searchValue, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [selectedResultIndex, setSelectedResultIndex] = useState(-1);
     const [showSearchResults, setShowSearchResults] = useState(false);
 
-    // Notifications and user menu state
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [unreadNotifications, setUnreadNotifications] = useState(3);
 
-    // Refs for click outside detection
     const dropdownRefs = useRef({});
     const searchInputRef = useRef(null);
     const searchResultsRef = useRef(null);
     const notificationsRef = useRef(null);
     const userMenuRef = useRef(null);
 
-    // Router hooks
-    const location = useLocation();
     const navigate = useNavigate();
 
-    // Get user data from cookies
-    const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : {
-        name: 'Admin User',
-        email: 'admin@example.com',
-        role: 'Administrator',
-        permissions: ['can_list_users', 'can_view_users', 'can_view_transactions', 'can_view_wallets']
-    };
+    const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null;
     const userPermissions = user?.permissions || [];
 
-    // Example notifications
     const notifications = [
         { id: 1, title: 'New transaction', description: 'Payment of $5,000 received', time: '2m ago', read: false, type: 'transaction' },
         { id: 2, title: 'Risk alert', description: 'Unusual activity detected on wallet #4829', time: '1h ago', read: false, type: 'alert' },
@@ -185,7 +219,7 @@ const TopNavigation = () => {
         return searchableRoutes;
     };
 
-    const performSearch = (searchTerm) => {
+    const performSearch = (searchTerm: string) => {
         if (!searchTerm.trim()) {
             setSearchResults([]);
             setSelectedResultIndex(-1);
@@ -230,7 +264,7 @@ const TopNavigation = () => {
         }
     };
 
-    const handleSearchKeyDown = (e) => {
+    const handleSearchKeyDown = (e: any) => {
         if (!showSearchResults || searchResults.length === 0) return;
 
         switch (e.key) {
@@ -265,21 +299,11 @@ const TopNavigation = () => {
         setIsSearchOpen(false);
     };
 
-    const clearSearch = () => {
-        setSearchValue('');
-        setSearchResults([]);
-        setShowSearchResults(false);
-        if (searchInputRef.current) {
-            searchInputRef.current.focus();
-        }
-    };
-
-    // Notification utilities
     const markAllAsRead = () => {
         setUnreadNotifications(0);
     };
 
-    const getNotificationIcon = (type) => {
+    const getNotificationIcon = (type: any) => {
         switch (type) {
             case 'transaction':
                 return (
@@ -308,13 +332,11 @@ const TopNavigation = () => {
         }
     };
 
-    // Dropdown handlers
-    const handleNestedDropdownToggle = (key) => {
+    const handleNestedDropdownToggle = (key: any) => {
         setActiveNestedDropdown(activeNestedDropdown === key ? null : key);
     };
 
-    // Permission-based filtering of items
-    const filterItems = (items) => {
+    const filterItems = (items: any) => {
         return items.filter(item => {
             if (item.type === 'link') {
                 return hasPermissionForRoute(item.path, userPermissions);
