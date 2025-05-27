@@ -1,34 +1,140 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
     ChevronDown, Search, X, Bell,
-    ArrowRight,
-    Zap,
-    Menu,
-    User,
-    Settings
+    ArrowRight, Zap, Menu, User,
+    Settings, LogOut, CreditCard,
+    Clock, AlertCircle, BarChart3,
+    Shield, Wallet, DollarSign
 } from 'lucide-react';
+import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 
-const TopNavigation: React.FC = () => {
+// Permission utilities (from Sidebar.tsx)
+const getRequiredPermissionsForRoute = (path) => {
+    const routePermissionsMap = {
+        '/': [],
+        '/admin/users/user-details': ['can_list_users', 'can_view_users'],
+        '/admin/users/reported-user-list': ['can_view_reported_users', 'can_list_reports', 'can_view_reports'],
+        '/admin/Group/all-group-list': ['can_list_groups', 'can_view_groups'],
+        '/admin/Group/all-reported-group-list': ['can_view_reported_groups', 'can_list_reports', 'can_view_reports'],
+        '/admin/finance/transactions': [],
+        '/admin/finance/user-wallets': [],
+        // Add more routes as needed
+    };
+
+    if (!routePermissionsMap[path]) {
+        const pathParts = path.split('/');
+        const possibleRoutes = Object.keys(routePermissionsMap);
+
+        for (const route of possibleRoutes) {
+            const routeParts = route.split('/');
+
+            if (routeParts.length === pathParts.length) {
+                let isMatch = true;
+
+                for (let i = 0; i < routeParts.length; i++) {
+                    if (routeParts[i].startsWith(':') || routeParts[i] === pathParts[i]) {
+                        continue;
+                    } else {
+                        isMatch = false;
+                        break;
+                    }
+                }
+
+                if (isMatch) {
+                    return routePermissionsMap[route];
+                }
+            }
+        }
+    }
+
+    return routePermissionsMap[path] || [];
+};
+
+const hasPermissionForRoute = (path, userPermissions) => {
+    const requiredPermissions = getRequiredPermissionsForRoute(path);
+    if (requiredPermissions.length === 0) {
+        return true;
+    }
+    return requiredPermissions.some(permission => userPermissions.includes(permission));
+};
+
+const TopNavigation = () => {
+    // Core state
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [activeNestedDropdown, setActiveNestedDropdown] = useState(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+
+    // Search state (from Header.tsx)
+    const [searchValue, setSearchValue] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [selectedResultIndex, setSelectedResultIndex] = useState(-1);
+    const [showSearchResults, setShowSearchResults] = useState(false);
+
+    // Notifications and user menu state
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [unreadNotifications, setUnreadNotifications] = useState(3);
+
+    // Refs for click outside detection
     const dropdownRefs = useRef({});
+    const searchInputRef = useRef(null);
+    const searchResultsRef = useRef(null);
+    const notificationsRef = useRef(null);
+    const userMenuRef = useRef(null);
+
+    // Router hooks
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Get user data from cookies
+    const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : {
+        name: 'Admin User',
+        email: 'admin@example.com',
+        role: 'Administrator',
+        permissions: ['can_list_users', 'can_view_users', 'can_view_transactions', 'can_view_wallets']
+    };
+    const userPermissions = user?.permissions || [];
+
+    // Example notifications
+    const notifications = [
+        { id: 1, title: 'New transaction', description: 'Payment of $5,000 received', time: '2m ago', read: false, type: 'transaction' },
+        { id: 2, title: 'Risk alert', description: 'Unusual activity detected on wallet #4829', time: '1h ago', read: false, type: 'alert' },
+        { id: 3, title: 'System update', description: 'System maintenance completed successfully', time: '3h ago', read: false, type: 'system' },
+    ];
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
         };
 
-        const handleClickOutside = (event: any) => {
+        const handleClickOutside = (event) => {
+            // Handle dropdown clicks
             if (activeDropdown) {
                 const ref = dropdownRefs.current[activeDropdown];
                 if (ref && !ref.contains(event.target)) {
                     setActiveDropdown(null);
                     setActiveNestedDropdown(null);
                 }
+            }
+
+            // Handle search results clicks
+            if (searchResultsRef.current && !searchResultsRef.current.contains(event.target) &&
+                searchInputRef.current && !searchInputRef.current.contains(event.target)) {
+                setShowSearchResults(false);
+            }
+
+            // Handle notifications clicks
+            if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+                setNotificationsOpen(false);
+            }
+
+            // Handle user menu clicks
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+                setUserMenuOpen(false);
             }
         };
 
@@ -41,12 +147,205 @@ const TopNavigation: React.FC = () => {
         };
     }, [activeDropdown]);
 
+    // Search functionality (from Header.tsx)
+    const getAllSearchableRoutes = () => {
+        const searchableRoutes = [];
+
+        const processRoutes = (items, category = '') => {
+            items.forEach(item => {
+                if (item.type === 'section') {
+                    processRoutes(item.items, item.title);
+                } else if (item.type === 'link') {
+                    // Only add routes the user has permission for
+                    if (hasPermissionForRoute(item.path, userPermissions)) {
+                        searchableRoutes.push({
+                            title: item.title,
+                            path: item.path,
+                            category: category,
+                            icon: item.icon
+                        });
+                    }
+                } else if (item.type === 'dropdown') {
+                    item.items.forEach(subItem => {
+                        // Only add routes the user has permission for
+                        if (hasPermissionForRoute(subItem.path, userPermissions)) {
+                            searchableRoutes.push({
+                                title: subItem.title,
+                                path: subItem.path,
+                                category: item.title,
+                                icon: item.icon
+                            });
+                        }
+                    });
+                }
+            });
+        };
+
+        processRoutes(routes);
+        return searchableRoutes;
+    };
+
+    const performSearch = (searchTerm) => {
+        if (!searchTerm.trim()) {
+            setSearchResults([]);
+            setSelectedResultIndex(-1);
+            return;
+        }
+
+        const allRoutes = getAllSearchableRoutes();
+        const term = searchTerm.toLowerCase();
+
+        const filteredResults = allRoutes.filter(route =>
+            route.title.toLowerCase().includes(term) ||
+            route.category.toLowerCase().includes(term) ||
+            route.path.toLowerCase().includes(term)
+        );
+
+        const sortedResults = filteredResults.sort((a, b) => {
+            const aExactMatch = a.title.toLowerCase() === term ? -1 : 0;
+            const bExactMatch = b.title.toLowerCase() === term ? -1 : 0;
+
+            if (aExactMatch !== bExactMatch) return aExactMatch - bExactMatch;
+
+            if (a.category !== b.category) {
+                return a.category.localeCompare(b.category);
+            }
+
+            return a.title.localeCompare(b.title);
+        });
+
+        setSearchResults(sortedResults.slice(0, 8));
+        setSelectedResultIndex(-1);
+    };
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchValue(value);
+        performSearch(value);
+
+        if (value.trim()) {
+            setShowSearchResults(true);
+        } else {
+            setShowSearchResults(false);
+        }
+    };
+
+    const handleSearchKeyDown = (e) => {
+        if (!showSearchResults || searchResults.length === 0) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                setSelectedResultIndex(prev => (prev < searchResults.length - 1 ? prev + 1 : prev));
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                setSelectedResultIndex(prev => (prev > 0 ? prev - 1 : 0));
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedResultIndex >= 0 && selectedResultIndex < searchResults.length) {
+                    handleResultClick(searchResults[selectedResultIndex]);
+                } else if (searchResults.length > 0) {
+                    handleResultClick(searchResults[0]);
+                }
+                break;
+            case 'Escape':
+                e.preventDefault();
+                setShowSearchResults(false);
+                setIsSearchOpen(false);
+                break;
+        }
+    };
+
+    const handleResultClick = (result) => {
+        navigate(result.path);
+        setSearchValue('');
+        setShowSearchResults(false);
+        setIsSearchOpen(false);
+    };
+
+    const clearSearch = () => {
+        setSearchValue('');
+        setSearchResults([]);
+        setShowSearchResults(false);
+        if (searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    };
+
+    // Notification utilities
+    const markAllAsRead = () => {
+        setUnreadNotifications(0);
+    };
+
+    const getNotificationIcon = (type) => {
+        switch (type) {
+            case 'transaction':
+                return (
+                    <div className="p-2 rounded-full bg-emerald-50 border border-emerald-100">
+                        <CreditCard size={16} className="text-emerald-500" />
+                    </div>
+                );
+            case 'alert':
+                return (
+                    <div className="p-2 rounded-full bg-amber-50 border border-amber-100">
+                        <AlertCircle size={16} className="text-amber-500" />
+                    </div>
+                );
+            case 'system':
+                return (
+                    <div className="p-2 rounded-full bg-primary-50 border border-primary-100">
+                        <Shield size={16} className="text-primary-500" />
+                    </div>
+                );
+            default:
+                return (
+                    <div className="p-2 rounded-full bg-secondary-50 border border-secondary-100">
+                        <Bell size={16} className="text-secondary-500" />
+                    </div>
+                );
+        }
+    };
+
+    // Dropdown handlers
     const handleNestedDropdownToggle = (key) => {
         setActiveNestedDropdown(activeNestedDropdown === key ? null : key);
     };
 
+    // Permission-based filtering of items
+    const filterItems = (items) => {
+        return items.filter(item => {
+            if (item.type === 'link') {
+                return hasPermissionForRoute(item.path, userPermissions);
+            } else if (item.type === 'dropdown') {
+                const filteredDropdownItems = item.items.filter(subItem =>
+                    hasPermissionForRoute(subItem.path, userPermissions)
+                );
+                return filteredDropdownItems.length > 0;
+            }
+            return true;
+        });
+    };
+
+    // Only show sections that have at least one permitted item
+    const filterSections = (sections) => {
+        return sections.filter(section => {
+            if (section.type !== 'section') return true;
+
+            const filteredItems = filterItems(section.items);
+            return filteredItems.length > 0;
+        });
+    };
+
+    // Navigation rendering
     const renderNestedDropdown = (dropdown) => {
         const isActive = activeNestedDropdown === dropdown.key;
+        const filteredItems = dropdown.items.filter(item =>
+            hasPermissionForRoute(item.path, userPermissions)
+        );
+
+        if (filteredItems.length === 0) return null;
 
         return (
             <div key={dropdown.key} className="relative">
@@ -81,10 +380,10 @@ const TopNavigation: React.FC = () => {
 
                 {isActive && (
                     <div className="ml-4 mt-2 space-y-1 animate-fadeIn">
-                        {dropdown.items.map((subItem, subIdx) => (
-                            <a
+                        {filteredItems.map((subItem, subIdx) => (
+                            <NavLink
                                 key={subIdx}
-                                href={subItem.path}
+                                to={subItem.path}
                                 className="group flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-secondary-50/60 hover:to-primary-50/60 transition-all duration-300 transform hover:translate-x-1"
                             >
                                 <div className="w-3 h-3 rounded-full bg-slate-300 group-hover:bg-secondary-400 transition-colors duration-300 mr-4 flex-shrink-0"></div>
@@ -92,7 +391,7 @@ const TopNavigation: React.FC = () => {
                                     {subItem.title}
                                 </span>
                                 <ArrowRight size={14} className="text-slate-300 group-hover:text-secondary-400 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 ml-auto" />
-                            </a>
+                            </NavLink>
                         ))}
                     </div>
                 )}
@@ -100,7 +399,11 @@ const TopNavigation: React.FC = () => {
         );
     };
 
-    const renderMegaMenu = (section: any) => {
+    const renderMegaMenu = (section) => {
+        const filteredItems = filterItems(section.items);
+
+        if (filteredItems.length === 0) return null;
+
         return (
             <div className="absolute top-full left-0 mt-3 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden z-50 animate-fadeIn min-w-[400px] max-w-[500px]">
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50/80 to-white/40 -z-10"></div>
@@ -110,12 +413,12 @@ const TopNavigation: React.FC = () => {
                         <div className="w-12 h-0.5 bg-gradient-to-r from-secondary-500 to-primary-500 rounded-full"></div>
                     </div>
                     <div className="space-y-2">
-                        {section.items.map((item: any, idx: any) => {
+                        {filteredItems.map((item, idx) => {
                             if (item.type === 'link') {
                                 return (
-                                    <a
+                                    <NavLink
                                         key={idx}
-                                        href={item.path}
+                                        to={item.path}
                                         className="group flex items-center p-4 rounded-2xl hover:bg-gradient-to-r hover:from-secondary-50/80 hover:to-primary-50/80 transition-all duration-300 transform hover:translate-x-1"
                                     >
                                         <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 group-hover:from-secondary-100 group-hover:to-primary-100 transition-all duration-300 mr-4 shadow-sm group-hover:shadow-md">
@@ -132,11 +435,12 @@ const TopNavigation: React.FC = () => {
                                             )}
                                         </div>
                                         <ArrowRight size={16} className="text-slate-400 group-hover:text-secondary-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
-                                    </a>
+                                    </NavLink>
                                 );
                             } else if (item.type === 'dropdown') {
                                 return renderNestedDropdown(item);
                             }
+                            return null;
                         })}
                     </div>
                 </div>
@@ -144,18 +448,34 @@ const TopNavigation: React.FC = () => {
         );
     };
 
-    const renderNavItem = (item: any) => {
+    const renderNavItem = (item) => {
         if (item.type === 'link') {
+            if (!hasPermissionForRoute(item.path, userPermissions)) {
+                return null;
+            }
+
             return (
-                <a
-                    href={item.path}
-                    className="group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold text-slate-600 hover:text-secondary-700 hover:bg-gradient-to-r hover:from-secondary-50/50 hover:to-primary-50/50 transition-all duration-300 transform hover:scale-105"
+                <NavLink
+                    to={item.path}
+                    className={({ isActive }) => `
+                        group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105
+                        ${isActive
+                            ? 'text-secondary-700 bg-gradient-to-r from-secondary-50/80 to-primary-50/80 shadow-sm'
+                            : 'text-slate-600 hover:text-secondary-700 hover:bg-gradient-to-r hover:from-secondary-50/50 hover:to-primary-50/50'
+                        }
+                    `}
                 >
                     <item.icon size={18} className="mr-3 group-hover:scale-110 transition-transform duration-300" />
                     <span>{item.title}</span>
-                </a>
+                </NavLink>
             );
         } else if (item.type === 'section') {
+            const filteredItems = filterItems(item.items);
+
+            if (filteredItems.length === 0) {
+                return null;
+            }
+
             return (
                 <div
                     className="relative"
@@ -185,27 +505,61 @@ const TopNavigation: React.FC = () => {
                 </div>
             );
         }
+        return null;
+    };
+
+    // Group search results by category
+    const groupedResults = searchResults.reduce<Record<string, typeof searchResults>>((acc, result) => {
+        if (!acc[result.category]) {
+            acc[result.category] = [];
+        }
+        acc[result.category].push(result);
+        return acc;
+    }, {});
+
+    // Handle logout
+    const handleLogout = () => {
+        Cookies.remove('authToken');
+        Cookies.remove('userData');
+        navigate('/auth/login');
+    };
+
+    // Get icon for search result category
+    const getCategoryIcon = (category) => {
+        const iconMap = {
+            'Dashboard': BarChart3,
+            'User Management': User,
+            'Finance': Wallet,
+            'Settings': Settings,
+            'Transactions': CreditCard,
+            'System': Shield,
+        };
+
+        return iconMap[category] || BarChart3;
     };
 
     return (
-        <div className="fixed top-0 left-20 right-0 z-40">
+        <div className="fixed top-0 left-0 right-0 z-40">
             <div className={`transition-all duration-500 ${scrolled
-                ? 'bg-primary-300 backdrop-blur-3xl border-b border-slate-200/50 shadow-xl shadow-slate-900/5'
-                : 'bg-white/95 backdrop-blur-2xl border-b border-slate-100/50'
+                ? 'bg-gradient-to-r from-white via-white to-white backdrop-blur-xl shadow-xl shadow-secondary-900/20'
+                : 'bg-gradient-to-r from-white via-white to-white backdrop-blur-2xl'
                 }`}>
-                <div className="px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center mr-12">
+                <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between">
+                    <div className="flex items-center mr-4 lg:mr-12">
                         <div className="relative">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-secondary-600 via-primary-600 to-secondary-700 flex items-center justify-center shadow-lg shadow-secondary-500/25 transform hover:scale-110 transition-all duration-300">
-                                <Zap size={24} className="text-white" />
+                            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-gradient-to-br from-primary-400 via-secondary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-secondary-500/25 transform hover:scale-110 transition-all duration-300">
+                                <DollarSign size={24} className="text-gray-800" />
                             </div>
-                            <div className="absolute -inset-1 bg-gradient-to-br from-secondary-400 to-primary-400 rounded-2xl opacity-30 blur animate-pulse"></div>
+                            <div className="absolute -inset-1 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-2xl opacity-30 blur animate-pulse"></div>
+                        </div>
+                        <div className="ml-3 hidden md:block">
+                            <h1 className="text-lg lg:text-xl font-bold text-gray-800">Wasaa</h1>
                         </div>
                     </div>
 
                     <nav className="hidden xl:flex items-center flex-1 justify-center">
-                        <div className="flex items-center space-x-2 bg-slate-50/50 rounded-3xl p-2 shadow-inner">
-                            {routes.map((item: any, idx: any) => (
+                        <div className="flex items-center space-x-2 bg-white backdrop-blur-md rounded-3xl p-2 shadow-inner shadow-primary-400">
+                            {filterSections(routes).map((item: any, idx: any) => (
                                 <div key={idx}>
                                     {renderNavItem(item)}
                                 </div>
@@ -213,104 +567,294 @@ const TopNavigation: React.FC = () => {
                         </div>
                     </nav>
 
-                    <div className="flex items-center space-x-3">
-                        <div className="relative">
+                    <div className="flex items-center space-x-1 md:space-x-3">
+                        <div className="relative" ref={searchInputRef}>
                             {isSearchOpen ? (
                                 <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center">
                                     <div className="relative">
                                         <input
                                             type="text"
+                                            value={searchValue}
+                                            onChange={handleSearchChange}
+                                            onKeyDown={handleSearchKeyDown}
                                             placeholder="Search anything..."
-                                            className="w-80 pl-5 pr-12 py-3.5 rounded-2xl border border-slate-200 focus:border-secondary-400 focus:outline-none focus:ring-4 focus:ring-secondary-100 transition-all duration-300 text-sm font-medium bg-white/90 backdrop-blur-sm shadow-lg"
+                                            className="w-56 md:w-80 pl-5 pr-12 py-3 rounded-2xl border border-secondary-200/20 focus:border-secondary-400 focus:outline-none focus:ring-4 focus:ring-secondary-300/20 transition-all duration-300 text-sm font-medium bg-white/10 backdrop-blur-sm shadow-lg text-gray-800 placeholder-secondary-200/60"
                                             autoFocus
                                         />
                                         <button
-                                            onClick={() => setIsSearchOpen(false)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-slate-100 transition-all duration-200"
+                                            onClick={() => {
+                                                setIsSearchOpen(false);
+                                                setSearchValue('');
+                                                setShowSearchResults(false);
+                                            }}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-secondary-700/30 transition-all duration-200 text-secondary-200"
                                         >
-                                            <X size={16} className="text-slate-500" />
+                                            <X size={16} />
                                         </button>
                                     </div>
                                 </div>
                             ) : (
                                 <button
                                     onClick={() => setIsSearchOpen(true)}
-                                    className="p-3 rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-110 group"
+                                    className="p-2.5 rounded-xl hover:bg-secondary-600/40 transition-all duration-300 transform hover:scale-110 group text-gray-800/70 hover:text-gray-800"
                                 >
-                                    <Search size={20} className="text-slate-600 group-hover:text-secondary-600 transition-colors duration-300" />
+                                    <Search size={18} className="transition-colors duration-300" />
                                 </button>
+                            )}
+
+                            {/* Search Results */}
+                            {showSearchResults && searchResults.length > 0 && (
+                                <div
+                                    ref={searchResultsRef}
+                                    className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 shadow-xl z-50 overflow-hidden animate-fadeIn"
+                                >
+                                    <div className="p-4">
+                                        <div className="text-xs text-gray-500 mb-3">
+                                            {searchResults.length} results found for "{searchValue}"
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            {Object.entries(groupedResults).map(([category, results]) => (
+                                                <div key={category}>
+                                                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
+                                                        {React.createElement(getCategoryIcon(category), { size: 14, className: "inline mr-1 text-gray-400" })}
+                                                        {category}
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        {results.map((result, index) => {
+                                                            const globalIndex = searchResults.findIndex(r =>
+                                                                r.title === result.title && r.path === result.path && r.category === result.category
+                                                            );
+                                                            const isSelected = globalIndex === selectedResultIndex;
+
+                                                            return (
+                                                                <div
+                                                                    key={`${result.path}-${index}`}
+                                                                    onClick={() => handleResultClick(result)}
+                                                                    onMouseEnter={() => setSelectedResultIndex(globalIndex)}
+                                                                    className={`
+                                                                        cursor-pointer p-2 rounded-lg transition-all duration-150 flex items-center
+                                                                        ${isSelected ? 'bg-secondary-50/80 text-secondary-700' : 'hover:bg-gray-50/80'}
+                                                                    `}
+                                                                >
+                                                                    <div className={`
+                                                                        p-1.5 rounded-lg mr-2
+                                                                        ${isSelected ? 'bg-secondary-100' : 'bg-gray-50'}
+                                                                    `}>
+                                                                        {result.icon ? <result.icon size={16} className="text-secondary-500" /> :
+                                                                            React.createElement(getCategoryIcon(result.category), { size: 16, className: "text-secondary-500" })}
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="font-medium text-sm truncate">
+                                                                            {result.title}
+                                                                        </div>
+                                                                        <div className="text-xs text-gray-500 truncate">
+                                                                            {result.path}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className={`
+                                                                        ml-2 p-1 rounded-full
+                                                                        ${isSelected ? 'bg-secondary-100 text-secondary-600' : 'text-gray-400'}
+                                                                    `}>
+                                                                        <ArrowRight size={14} />
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500 flex items-center justify-between">
+                                            <span>
+                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">↑</kbd>
+                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">↓</kbd>
+                                                to navigate
+                                            </span>
+                                            <span>
+                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">Enter</kbd>
+                                                to select
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             )}
                         </div>
 
-                        <button className="relative p-3 rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-110 group">
-                            <Bell size={20} className="text-slate-600 group-hover:text-secondary-600 transition-colors duration-300" />
-                            <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-gradient-to-r from-red-500 to-pink-500 rounded-full shadow-lg shadow-red-500/50 animate-pulse"></span>
-                        </button>
-
-                        <div className="hidden lg:flex items-center ml-4">
-                            <button className="flex items-center space-x-3 p-2 rounded-2xl hover:bg-slate-100 transition-all duration-300 group">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary-100 to-primary-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                    <User size={18} className="text-secondary-600" />
-                                </div>
-                                <ChevronDown size={14} className="text-slate-400 group-hover:text-secondary-500 transition-colors duration-300" />
+                        {/* Notifications */}
+                        <div className="relative" ref={notificationsRef}>
+                            <button
+                                className="p-2.5 rounded-xl hover:bg-secondary-600/40 transition-all duration-300 transform hover:scale-110 group text-gray-800/70 hover:text-gray-800 relative"
+                                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                            >
+                                <Bell size={18} className="transition-colors duration-300" />
+                                {unreadNotifications > 0 && (
+                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50 animate-pulse"></span>
+                                )}
                             </button>
+
+                            {notificationsOpen && (
+                                <div className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 shadow-xl z-50 overflow-hidden animate-fadeIn">
+                                    <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+                                        <h3 className="font-medium text-gray-800">Notifications</h3>
+                                        {unreadNotifications > 0 && (
+                                            <button
+                                                onClick={markAllAsRead}
+                                                className="text-xs text-secondary-600 hover:text-secondary-700 font-medium"
+                                            >
+                                                Mark all as read
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="max-h-80 overflow-y-auto">
+                                        {notifications.map((notification) => (
+                                            <div
+                                                key={notification.id}
+                                                className={`
+                                                    px-4 py-3 hover:bg-secondary-50/50 cursor-pointer relative
+                                                    ${!notification.read ? 'bg-secondary-50/30' : ''}
+                                                `}
+                                            >
+                                                <div className="flex items-start">
+                                                    <div className="mt-0.5 mr-3">
+                                                        {getNotificationIcon(notification.type)}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-gray-800">{notification.title}</p>
+                                                        <p className="text-xs text-gray-500 mt-0.5">{notification.description}</p>
+                                                        <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
+                                                    </div>
+                                                    {!notification.read && (
+                                                        <div className="absolute top-3 right-3 w-2 h-2 bg-secondary-500 rounded-full"></div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="px-4 py-2 border-t border-gray-100">
+                                        <button className="w-full text-xs text-center text-secondary-600 hover:text-secondary-700 font-medium py-1">
+                                            View all notifications
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* User Menu */}
+                        <div className="relative ml-2" ref={userMenuRef}>
+                            <button
+                                className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all hover:bg-secondary-600/40 text-gray-800/90 hover:text-gray-800 group"
+                                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                            >
+                                <div className="w-8 h-8 rounded-xl bg-secondary-600/60 backdrop-blur-sm flex items-center justify-center border border-secondary-500/30 group-hover:bg-secondary-500/80 transition-colors duration-300">
+                                    <User size={16} />
+                                </div>
+                                <span className="hidden md:block text-sm font-medium">{user.name.split(' ')[0]}</span>
+                                <ChevronDown size={14} className="hidden md:block text-secondary-300 group-hover:text-gray-800 transition-colors duration-300" />
+                            </button>
+
+                            {userMenuOpen && (
+                                <div className="absolute right-0 mt-3 w-64 bg-white/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 shadow-xl z-50 overflow-hidden animate-fadeIn">
+                                    <div className="px-4 py-3 border-b border-gray-100">
+                                        <p className="font-medium text-gray-800">{user.name}</p>
+                                        <p className="text-xs text-gray-500">{user.email}</p>
+                                        <div className="mt-1.5 flex items-center">
+                                            <span className="text-[10px] font-medium px-2 py-0.5 bg-secondary-100 text-secondary-700 rounded-full">
+                                                {user.role}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="px-1 py-1">
+                                        <NavLink to="/profile" className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 text-sm flex items-center">
+                                            <User size={16} className="mr-3 text-gray-500" />
+                                            <span>My Profile</span>
+                                        </NavLink>
+                                        <NavLink to="/settings" className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 text-sm flex items-center">
+                                            <Settings size={16} className="mr-3 text-gray-500" />
+                                            <span>Settings</span>
+                                        </NavLink>
+                                    </div>
+
+                                    <div className="border-t border-gray-100 mt-1 px-1 py-1">
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50/70 text-sm flex items-center text-red-600"
+                                        >
+                                            <LogOut size={16} className="mr-3" />
+                                            <span>Logout</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="xl:hidden p-3 rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-110"
+                            className="xl:hidden p-2.5 rounded-xl hover:bg-secondary-600/40 transition-all duration-300 text-gray-800/70 hover:text-gray-800 ml-1"
                         >
-                            <Menu size={20} className="text-slate-600" />
+                            <Menu size={20} />
                         </button>
                     </div>
                 </div>
             </div>
 
+            {/* Mobile Menu */}
             {isMobileMenuOpen && (
-                <div className="xl:hidden fixed inset-0 z-50 bg-white/95 backdrop-blur-2xl">
+                <div className="xl:hidden fixed inset-0 z-50 bg-gradient-to-br from-secondary-900/98 via-primary-900/98 to-secondary-900/98 backdrop-blur-xl">
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary-600 to-primary-600 flex items-center justify-center mr-3">
-                                    <Zap size={20} className="text-white" />
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 via-secondary-500 to-primary-600 flex items-center justify-center mr-3">
+                                    <DollarSign size={20} className="text-gray-800" />
                                 </div>
-                                <h2 className="text-xl font-bold text-slate-800">Menu</h2>
+                                <h2 className="text-xl font-bold text-gray-800">FinTech Portal</h2>
                             </div>
                             <button
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="p-2.5 rounded-xl hover:bg-slate-100 transition-all duration-200"
+                                className="p-2.5 rounded-xl bg-secondary-800/50 hover:bg-secondary-700/60 transition-all duration-200 text-gray-800"
                             >
-                                <X size={22} className="text-slate-600" />
+                                <X size={22} />
                             </button>
                         </div>
 
                         <nav className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-                            {routes.map((item, idx) => (
+                            {filterSections(routes).map((item, idx) => (
                                 <div key={idx} className="py-2">
                                     {item.type === 'section' && (
                                         <>
                                             <div className="flex items-center mb-4">
-                                                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.15em]">
+                                                <h3 className="text-xs font-bold text-secondary-300 uppercase tracking-[0.15em]">
                                                     {item.title}
                                                 </h3>
-                                                <div className="flex-1 h-px bg-gradient-to-r from-slate-200 to-transparent ml-4"></div>
+                                                <div className="flex-1 h-px bg-gradient-to-r from-secondary-500/30 to-transparent ml-4"></div>
                                             </div>
-                                            <div className="space-y-1">
-                                                {item.items.map((subItem, subIdx) => {
+                                            <div className="space-y-2">
+                                                {filterItems(item.items).map((subItem, subIdx) => {
                                                     if (subItem.type === 'link') {
                                                         return (
-                                                            <a
+                                                            <NavLink
                                                                 key={subIdx}
-                                                                href={subItem.path}
-                                                                className="flex items-center px-5 py-4 rounded-2xl hover:bg-gradient-to-r hover:from-secondary-50 hover:to-primary-50 transition-all duration-300 group"
+                                                                to={subItem.path}
+                                                                className={({ isActive }) => `
+                                                                    flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 group
+                                                                    ${isActive
+                                                                        ? 'bg-secondary-700/50 border border-secondary-600/50'
+                                                                        : 'hover:bg-secondary-800/50'
+                                                                    }
+                                                                `}
+                                                                onClick={() => setIsMobileMenuOpen(false)}
                                                             >
                                                                 {subItem.icon && (
-                                                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-gradient-to-br group-hover:from-secondary-100 group-hover:to-primary-100 transition-all duration-300 mr-4">
-                                                                        <subItem.icon width={18} height={18} className="text-slate-600 group-hover:text-secondary-600 transition-colors duration-300" />
+                                                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-secondary-800/80 group-hover:bg-secondary-700/80 transition-all duration-300 mr-4">
+                                                                        <subItem.icon width={18} height={18} className="text-secondary-200" />
                                                                     </div>
                                                                 )}
-                                                                <span className="text-sm font-semibold text-slate-700 group-hover:text-secondary-700 transition-colors duration-300">{subItem.title}</span>
-                                                            </a>
+                                                                <span className="text-sm font-semibold text-gray-800">{subItem.title}</span>
+                                                            </NavLink>
                                                         );
                                                     } else if (subItem.type === 'dropdown') {
                                                         return renderNestedDropdown(subItem);
@@ -324,16 +868,21 @@ const TopNavigation: React.FC = () => {
                             ))}
                         </nav>
 
-                        <div className="mt-8 pt-6 border-t border-slate-200">
-                            <div className="flex items-center p-4 rounded-2xl bg-gradient-to-r from-secondary-50 to-primary-50">
-                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary-100 to-primary-100 flex items-center justify-center mr-4">
-                                    <User size={20} className="text-secondary-600" />
+                        <div className="mt-8 pt-6 border-t border-secondary-800/50">
+                            <div className="flex items-center p-4 rounded-2xl bg-secondary-800/30 border border-secondary-700/30">
+                                <div className="w-12 h-12 rounded-xl bg-secondary-700/80 flex items-center justify-center mr-4">
+                                    <User size={20} className="text-secondary-200" />
                                 </div>
                                 <div className="flex-1">
-                                    <div className="text-sm font-semibold text-slate-700">John Doe</div>
-                                    <div className="text-xs text-slate-500">Premium Member</div>
+                                    <div className="text-sm font-semibold text-gray-800">{user.name}</div>
+                                    <div className="text-xs text-secondary-300">{user.role}</div>
                                 </div>
-                                <Settings size={18} className="text-slate-400" />
+                                <button
+                                    onClick={handleLogout}
+                                    className="p-2 rounded-xl bg-secondary-700/50 hover:bg-secondary-600/60 transition-all duration-200 text-secondary-200"
+                                >
+                                    <LogOut size={16} />
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -347,6 +896,13 @@ const TopNavigation: React.FC = () => {
                 }
                 .animate-fadeIn {
                     animation: fadeIn 0.3s ease-out;
+                }
+                
+                /* Better styles for keyboard shortcuts */
+                kbd {
+                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                    font-size: 0.75rem;
+                    font-weight: 500;
                 }
             `}</style>
         </div>
