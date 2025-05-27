@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   ChevronDown,
   Home,
@@ -26,15 +26,12 @@ const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/users/countrywise-Analysis': ['can_list_users', 'can_view_users'],
     '/admin/users/reported-user-list': ['can_view_reported_users', 'can_list_reports', 'can_view_reports'],
 
-    // Group routes with group-specific permissions
     '/admin/Group/all-group-list': ['can_list_groups', 'can_view_groups'],
     '/admin/Group/all-reported-group-list': ['can_view_reported_groups', 'can_list_reports', 'can_view_reports'],
 
-    // User management routes
     '/admin/system/users': ['can_list_staff', 'can_view_users'],
     '/admin/system/roles': ['can_list_roles', 'can_view_roles'],
 
-    // Livestream routes
     '/admin/livestreams/all-livestreams': [],
     '/admin/livestreams/scheduled': [],
     '/admin/livestreams/settings': [],
@@ -44,7 +41,6 @@ const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/livestreams/moderation': [],
     '/admin/livestreams/reported': ['can_list_reports', 'can_view_reports'],
 
-    // Finance routes
     '/admin/finance/transactions': [],
     '/admin/finance/user-wallets': [],
     '/admin/finance/withdrawals': [],
@@ -53,24 +49,20 @@ const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/finance/reports': [],
     '/admin/finance/gift-history': [],
 
-    // Gift routes with media permissions
     '/admin/gifts/add-gift': ['can_create_media'],
     '/admin/gifts/gift-list': ['can_list_media', 'can_view_media'],
     '/admin/gifts/gift-categories': ['can_list_media', 'can_view_media'],
 
-    // Settings routes
     '/admin/settings': ['can_view_settings', 'can_update_settings'],
     '/admin/languages': ['can_list_languages', 'can_view_languages'],
     '/admin/logs': [],
     '/admin/support': [],
 
-    // Media routes
     '/admin/Wallpaper/list-all-wallpaper': ['can_list_media', 'can_view_media'],
     '/admin/Wallpaper/add-a-new-wallpaper': ['can_create_media'],
     '/admin/Avatar/list-all-avatar': ['can_list_media', 'can_view_media'],
     '/admin/Avatar/add-a-new-avatar': ['can_create_media'],
 
-    // Detail routes that need the same permissions as their list views
     '/admin/users/user-details/:id': ['can_view_users'],
     '/admin/users/countrywise-Analysis/:id': ['can_view_users'],
     '/admin/Group/all-group-list/:id': ['can_view_groups'],
@@ -79,7 +71,6 @@ const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/finance/user-wallets/:id': [],
     '/admin/languages/:id/translations': ['can_view_languages'],
 
-    // Support routes
     '/admin/support/teams': [],
     '/admin/support/teams/:id': [],
     '/admin/support/tickets': [],
