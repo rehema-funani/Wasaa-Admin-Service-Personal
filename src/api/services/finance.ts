@@ -178,6 +178,30 @@ export const financeService = {
     }
   },
 
+  async getWalletById(walletId: string): Promise<any> {
+    try {
+      const response = await finance.get(`/userWallets/${walletId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get wallet by ID');
+      }
+      throw new Error('Failed to get wallet by ID. Please check your network connection.');
+    }
+  },
+
+  async getWalletTransactions(walletId: string, filters = {}): Promise<any> {
+    try {
+      const response = await finance.get(`/userWalletTransactions/${walletId}`, { params: filters });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get wallet transactions');
+      }
+      throw new Error('Failed to get wallet transactions. Please check your network connection.');
+    }
+  },
+
   // Create a new wallet
   async createWallet(walletData: any): Promise<any> {
     try {

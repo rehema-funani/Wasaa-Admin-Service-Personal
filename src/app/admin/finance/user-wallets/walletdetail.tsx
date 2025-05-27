@@ -22,160 +22,24 @@ import {
     Copy,
     Eye,
     EyeOff,
-    Bell
+    Bell,
+    ArrowUpRight,
+    ArrowDownRight,
+    Wallet,
+    PieChart,
+    Wallet as WalletIcon,
+    Lock,
+    Settings,
+    FileText,
+    Filter,
+    Search,
+    X
 } from 'lucide-react';
-
-// TypeScript interfaces, but with relaxed typing
-interface Currency {
-    id: string;
-    name: string;
-    symbol: string;
-    createdAt?: string;
-    updatedAt?: string;
-}
-
-interface UserPreferences {
-    id?: string;
-    user_id?: string;
-    default_language?: string;
-    default_currency?: string;
-    default_timezone?: string;
-    more_info?: any;
-    notification_preferences?: any;
-    privacy_preferences?: any;
-    security_preferences?: any;
-    theme_preferences?: any;
-    createdAt?: string;
-    updatedAt?: string;
-    deletedAt?: string | null;
-}
-
-interface User {
-    id?: string;
-    username?: string | null;
-    phone_number?: string | null;
-    email?: string | null;
-    profile_picture?: string | null;
-    preferences?: UserPreferences;
-}
-
-interface Group {
-    id?: string;
-    title?: string;
-    description?: string;
-    icon?: string | null;
-    status?: string;
-    created_by?: string | null;
-    creator?: any | null;
-}
-
-interface Wallet {
-    id: string;
-    user_uuid: string | null;
-    group_uuid: string | null;
-    type: string;
-    currencyId: string;
-    debit: string;
-    credit: string;
-    balance: string;
-    status: string;
-    createdAt: string;
-    updatedAt: string;
-    Currency: Currency;
-    user: User | null;
-    group: Group | null;
-}
-
-interface Transaction {
-    id: string;
-    type: 'incoming' | 'outgoing';
-    amount: string;
-    from?: string;
-    to?: string;
-    description: string;
-    timestamp: string;
-}
-
-// This would be your actual wallet service
-const walletService = {
-    getWalletById: async (id: string): Promise<Wallet> => {
-        // In a real app, this would be an API call
-        // For this example, I'll simulate a fetch with the sample data
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // This simulates finding the wallet with the given ID
-                const wallet = {
-                    "id": "f3bdd2c2-5404-4f6e-9dd4-8f6eb318ee71",
-                    "user_uuid": null,
-                    "group_uuid": "a9fb57c0-24bf-45dc-ba2c-cc651fcf88a7",
-                    "type": "group",
-                    "currencyId": "b46a3d9d-e465-42d8-928b-862c85fa67a3",
-                    "debit": "0.00",
-                    "credit": "0.00",
-                    "balance": "0.00",
-                    "status": "Active",
-                    "createdAt": "2025-05-02T08:14:40.341Z",
-                    "updatedAt": "2025-05-02T08:14:40.341Z",
-                    "Currency": {
-                        "id": "b46a3d9d-e465-42d8-928b-862c85fa67a3",
-                        "name": "Kenya Shillings",
-                        "symbol": "KES",
-                        "createdAt": "2025-04-28T14:33:38.550Z",
-                        "updatedAt": "2025-04-28T14:33:38.550Z"
-                    },
-                    "user": null,
-                    "group": {
-                        "id": "a9fb57c0-24bf-45dc-ba2c-cc651fcf88a7",
-                        "title": "Alvin Group",
-                        "description": "Alvin Group",
-                        "icon": null,
-                        "status": "active",
-                        "created_by": null,
-                        "creator": null
-                    }
-                };
-                resolve(wallet as Wallet);
-            }, 800);
-        });
-    },
-
-    // Mock function for recent transactions
-    getRecentTransactions: async (walletId: string): Promise<Transaction[]> => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve([
-                    {
-                        id: "t1",
-                        type: "incoming",
-                        amount: "1,500.00",
-                        from: "Jane Smith",
-                        description: "Monthly contribution",
-                        timestamp: "2025-05-01T14:30:22.341Z"
-                    },
-                    {
-                        id: "t2",
-                        type: "outgoing",
-                        amount: "800.00",
-                        to: "John Doe",
-                        description: "Group expense",
-                        timestamp: "2025-04-28T09:15:40.341Z"
-                    },
-                    {
-                        id: "t3",
-                        type: "incoming",
-                        amount: "2,000.00",
-                        from: "Mark Johnson",
-                        description: "Project fund",
-                        timestamp: "2025-04-25T16:45:10.341Z"
-                    }
-                ] as Transaction[]);
-            }, 1000);
-        });
-    }
-};
+import financeService from '../../../../api/services/finance';
+import toast from 'react-hot-toast';
 
 // Helper functions
-const formatDate = (dateString: string): string => {
+const formatDate = (dateString) => {
     if (!dateString) return '';
     try {
         const date = new Date(dateString);
@@ -185,7 +49,7 @@ const formatDate = (dateString: string): string => {
     }
 };
 
-const timeAgo = (dateString: string): string => {
+const timeAgo = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     const now = new Date();
@@ -206,7 +70,7 @@ const timeAgo = (dateString: string): string => {
     }
 };
 
-const formatCurrency = (amount: string, symbol: string): string => {
+const formatCurrency = (amount, symbol) => {
     // Format the currency with the symbol
     return `${symbol} ${parseFloat(amount).toLocaleString('en-US', {
         minimumFractionDigits: 2,
@@ -214,76 +78,75 @@ const formatCurrency = (amount: string, symbol: string): string => {
     })}`;
 };
 
-// Custom components
-interface SectionHeaderProps {
-    title: string;
-    children?: React.ReactNode;
-}
+// Animation keyframes for skeleton loading and other effects
+const animationKeyframes = `
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    @keyframes floatUp {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0); }
+    }
+    
+    .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear;
+    }
+    
+    .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    .animate-slideIn {
+        animation: slideIn 0.3s ease-out forwards;
+    }
+    
+    .animate-float {
+        animation: floatUp 3s ease-in-out infinite;
+    }
+    
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+`;
 
-const SectionHeader: React.FC<SectionHeaderProps> = ({ title, children = null }) => (
-    <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-        {children}
-    </div>
-);
-
-interface StatCardProps {
-    icon: React.ReactNode;
-    label: string;
-    value: string | number;
-    color?: "primary" | "green" | "red" | "purple";
-}
-
-const StatCard: React.FC<StatCardProps> = ({ icon, label, value, color = "primary" }) => {
-    const colorClasses = {
-        primary: "from-primary-50 to-primary-50 text-primary-600",
-        green: "from-green-50 to-emerald-50 text-green-600",
-        red: "from-red-50 to-rose-50 text-red-600",
-        purple: "from-purple-50 to-violet-50 text-purple-600"
-    };
-
-    return (
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
-            <div className="flex items-center">
-                <div className={`mr-3 p-3 rounded-xl bg-gradient-to-tr ${colorClasses[color]}`}>
-                    {icon}
-                </div>
-                <div className="flex-1">
-                    <p className="text-sm text-gray-500 font-medium">{label}</p>
-                    <p className="text-xl font-bold text-gray-800">{value}</p>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-interface InfoItemProps {
-    label: string;
-    value: React.ReactNode;
-    icon: React.ReactNode;
-}
-
-const InfoItem: React.FC<InfoItemProps> = ({ label, value, icon }) => (
-    <div className="flex items-center py-3 border-b border-gray-100 last:border-b-0">
-        <div className="text-gray-400 mr-3">{icon}</div>
-        <div className="flex-1">
-            <p className="text-sm text-gray-500">{label}</p>
-            <p className="text-base font-medium text-gray-800">{value}</p>
-        </div>
-    </div>
-);
-
-const walletdetail: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+const WalletDetailPage = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
-    const [wallet, setWallet] = useState<Wallet | null>(null);
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [wallet, setWallet] = useState(null);
+    const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
     const [hideBalance, setHideBalance] = useState(false);
     const [tabIndex, setTabIndex] = useState(0);
-    const tabs = ["Overview", "Transactions", "Settings"];
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterType, setFilterType] = useState('all');
+    const [dateRange, setDateRange] = useState('all');
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    const tabs = ["Overview", "Transactions", "Analytics", "Settings"];
+
+    // Fetch wallet data
     useEffect(() => {
         const fetchWalletData = async () => {
             try {
@@ -292,16 +155,18 @@ const walletdetail: React.FC = () => {
                     throw new Error("Wallet ID is missing");
                 }
 
-                const walletData = await walletService.getWalletById(id);
-                setWallet(walletData);
+                // Fetch wallet details from the API
+                const response = await financeService.getWalletById(id);
+                setWallet(response);
 
-                // Also fetch transactions
-                const transactionsData = await walletService.getRecentTransactions(id);
-                setTransactions(transactionsData);
+                // Fetch transactions for this wallet
+                const transactionsResponse = await financeService.getWalletTransactions(id);
+                setTransactions(transactionsResponse.data || []);
 
                 setLoading(false);
             } catch (error) {
                 console.error("Failed to fetch wallet details:", error);
+                toast.error("Failed to load wallet details. Please try again.");
                 setError("Failed to load wallet details. Please try again.");
                 setLoading(false);
             }
@@ -312,14 +177,118 @@ const walletdetail: React.FC = () => {
         }
     }, [id]);
 
-    // Loading state
+    // Refresh wallet data
+    const handleRefreshWallet = async () => {
+        try {
+            setIsRefreshing(true);
+            // Fetch updated wallet details
+            const response = await financeService.getWalletById(id);
+            setWallet(response);
+
+            // Show success toast
+            toast.success("Wallet balance updated");
+            setIsRefreshing(false);
+        } catch (error) {
+            console.error("Failed to refresh wallet:", error);
+            toast.error("Failed to refresh wallet. Please try again.");
+            setIsRefreshing(false);
+        }
+    };
+
+    // Load more transactions
+    const handleLoadMoreTransactions = async () => {
+        try {
+            setLoadingMore(true);
+            // Get the last transaction's timestamp for pagination
+            const lastTransaction = transactions[transactions.length - 1];
+            const lastTimestamp = lastTransaction ? lastTransaction.timestamp : null;
+
+            // Fetch more transactions with pagination
+            const moreTransactions = await financeService.getWalletTransactions(id, {
+                before: lastTimestamp,
+                limit: 10
+            });
+
+            // Append new transactions to existing ones
+            setTransactions([...transactions, ...(moreTransactions.data || [])]);
+            setLoadingMore(false);
+        } catch (error) {
+            console.error("Failed to load more transactions:", error);
+            toast.error("Failed to load more transactions");
+            setLoadingMore(false);
+        }
+    };
+
+    // Filter transactions
+    const filteredTransactions = transactions.filter(transaction => {
+        // Filter by search term
+        const searchMatch = searchTerm === '' ||
+            (transaction.description && transaction.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (transaction.from && transaction.from.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (transaction.to && transaction.to.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        // Filter by type
+        const typeMatch = filterType === 'all' || transaction.type === filterType;
+
+        // Filter by date range
+        let dateMatch = true;
+        if (dateRange !== 'all') {
+            const txDate = new Date(transaction.timestamp);
+            const now = new Date();
+
+            if (dateRange === 'today') {
+                dateMatch = txDate.toDateString() === now.toDateString();
+            } else if (dateRange === 'week') {
+                const weekAgo = new Date(now);
+                weekAgo.setDate(now.getDate() - 7);
+                dateMatch = txDate >= weekAgo;
+            } else if (dateRange === 'month') {
+                const monthAgo = new Date(now);
+                monthAgo.setMonth(now.getMonth() - 1);
+                dateMatch = txDate >= monthAgo;
+            }
+        }
+
+        return searchMatch && typeMatch && dateMatch;
+    });
+
+    // Generate sample data for analytics (in a real app this would come from the API)
+    const generateAnalyticsData = () => {
+        if (!transactions.length) return null;
+
+        const incoming = transactions.filter(tx => tx.type === 'incoming')
+            .reduce((sum, tx) => sum + parseFloat(tx.amount.replace(/,/g, '')), 0);
+
+        const outgoing = transactions.filter(tx => tx.type === 'outgoing')
+            .reduce((sum, tx) => sum + parseFloat(tx.amount.replace(/,/g, '')), 0);
+
+        // Categories for spending (in a real app this would be actual data)
+        const categories = [
+            { name: "Transfers", amount: outgoing * 0.4, color: "bg-indigo-500" },
+            { name: "Payments", amount: outgoing * 0.3, color: "bg-blue-500" },
+            { name: "Fees", amount: outgoing * 0.15, color: "bg-emerald-500" },
+            { name: "Other", amount: outgoing * 0.15, color: "bg-amber-500" },
+        ];
+
+        return { incoming, outgoing, categories };
+    };
+
+    const analyticsData = generateAnalyticsData();
+
+    // Copy wallet ID to clipboard
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
+        toast.success("Copied to clipboard");
+    };
+
+    // Loading skeleton
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50">
                 <div className="bg-white border-b border-gray-100 shadow-sm backdrop-blur-sm bg-opacity-90 sticky top-0 z-10">
                     <div className="max-w-7xl mx-auto px-6 py-6">
-                        <div className="w-48 h-8 bg-gray-200 rounded-lg animate-pulse mb-4"></div>
-                        <div className="w-64 h-6 bg-gray-200 rounded-lg animate-pulse"></div>
+                        <div className="w-48 h-8 skeleton rounded-lg mb-4"></div>
+                        <div className="w-64 h-6 skeleton rounded-lg"></div>
                     </div>
                 </div>
 
@@ -327,22 +296,33 @@ const walletdetail: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="md:col-span-2">
                             <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 animate-pulse">
-                                <div className="w-1/3 h-6 bg-gray-200 rounded-lg mb-4"></div>
-                                <div className="w-full h-24 bg-gray-200 rounded-lg"></div>
+                                <div className="w-1/3 h-6 skeleton rounded-lg mb-4"></div>
+                                <div className="w-full h-24 skeleton rounded-lg"></div>
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm p-8 animate-pulse">
+                                <div className="w-1/3 h-6 skeleton rounded-lg mb-4"></div>
+                                <div className="space-y-4">
+                                    <div className="w-full h-16 skeleton rounded-lg"></div>
+                                    <div className="w-full h-16 skeleton rounded-lg"></div>
+                                    <div className="w-full h-16 skeleton rounded-lg"></div>
+                                </div>
                             </div>
                         </div>
                         <div className="md:col-span-1">
                             <div className="bg-white rounded-2xl shadow-sm p-8 animate-pulse">
-                                <div className="w-1/2 h-6 bg-gray-200 rounded-lg mb-4"></div>
+                                <div className="w-1/2 h-6 skeleton rounded-lg mb-4"></div>
                                 <div className="space-y-4">
-                                    <div className="w-full h-12 bg-gray-200 rounded-lg"></div>
-                                    <div className="w-full h-12 bg-gray-200 rounded-lg"></div>
-                                    <div className="w-full h-12 bg-gray-200 rounded-lg"></div>
+                                    <div className="w-full h-12 skeleton rounded-lg"></div>
+                                    <div className="w-full h-12 skeleton rounded-lg"></div>
+                                    <div className="w-full h-12 skeleton rounded-lg"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <style>{animationKeyframes}</style>
             </div>
         );
     }
@@ -350,7 +330,7 @@ const walletdetail: React.FC = () => {
     // Error state
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 flex items-center justify-center">
                 <div className="bg-white rounded-2xl shadow-md p-8 max-w-md backdrop-blur-sm bg-opacity-95">
                     <div className="text-red-500 text-center mb-6">
                         <div className="w-16 h-16 mx-auto bg-red-50 rounded-full flex items-center justify-center mb-4">
@@ -361,13 +341,15 @@ const walletdetail: React.FC = () => {
                     <p className="text-gray-600 mb-8 text-center">{error}</p>
                     <div className="flex justify-center">
                         <button
-                            className="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300"
+                            className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300"
                             onClick={() => navigate(-1)}
                         >
                             Back to Wallets
                         </button>
                     </div>
                 </div>
+
+                <style>{animationKeyframes}</style>
             </div>
         );
     }
@@ -380,32 +362,42 @@ const walletdetail: React.FC = () => {
         : (wallet.group?.title || 'Group');
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 pb-12">
             {/* Header */}
             <div className="bg-white border-b border-gray-100 shadow-sm backdrop-blur-sm bg-opacity-90 sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-6 py-6">
                     <div className="flex items-center mb-4">
                         <button
                             onClick={() => navigate(-1)}
-                            className="mr-4 p-2 rounded-xl hover:bg-gray-100 transition-colors duration-300"
+                            className="mr-4 p-2 rounded-xl hover:bg-indigo-50 transition-colors duration-300 text-indigo-600"
                         >
-                            <ArrowLeft size={20} className="text-gray-500" />
+                            <ArrowLeft size={20} />
                         </button>
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">Wallet Details</h1>
                             <p className="text-gray-500 mt-1">
-                                {ownerType === 'user' ? 'Personal' : 'Group'} wallet for {ownerName}
+                                {ownerType === 'user' ? 'Personal' : ownerType === 'group' ? 'Group' : 'System'} wallet for {ownerName}
                             </p>
                         </div>
                     </div>
 
                     <div className="flex flex-wrap items-center justify-between">
                         <div className="flex items-center space-x-3">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700">
-                                {wallet.type === 'user' ? <User size={14} className="mr-1" /> : <Users size={14} className="mr-1" />}
-                                {wallet.type === 'user' ? 'Personal Wallet' : 'Group Wallet'}
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${ownerType === 'user'
+                                    ? 'bg-indigo-100 text-indigo-700'
+                                    : ownerType === 'group'
+                                        ? 'bg-emerald-100 text-emerald-700'
+                                        : 'bg-amber-100 text-amber-700'
+                                }`}>
+                                {ownerType === 'user'
+                                    ? <User size={14} className="mr-1" />
+                                    : ownerType === 'group'
+                                        ? <Users size={14} className="mr-1" />
+                                        : <Shield size={14} className="mr-1" />
+                                }
+                                {ownerType === 'user' ? 'Personal Wallet' : ownerType === 'group' ? 'Group Wallet' : 'System Wallet'}
                             </span>
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${wallet.status === 'Active' ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700' : 'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700'}`}>
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${wallet.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'}`}>
                                 {wallet.status === 'Active' ? <CheckCircle size={14} className="mr-1" /> : <AlertCircle size={14} className="mr-1" />}
                                 {wallet.status}
                             </span>
@@ -425,7 +417,7 @@ const walletdetail: React.FC = () => {
                             <button
                                 key={index}
                                 className={`py-5 px-6 text-sm font-medium border-b-2 transition-colors duration-300 ${tabIndex === index
-                                    ? 'border-primary-500 text-primary-600'
+                                    ? 'border-indigo-500 text-indigo-600'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                                 onClick={() => setTabIndex(index)}
@@ -438,76 +430,137 @@ const walletdetail: React.FC = () => {
             </div>
 
             <div className="max-w-7xl mx-auto px-6 py-8">
+                {/* Overview Tab */}
                 {tabIndex === 0 && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-fadeIn">
                         <div className="md:col-span-2">
-                            <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 hover:shadow-md transition-shadow duration-300 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-primary-50 to-transparent opacity-50 rounded-bl-full"></div>
+                            {/* Balance Card */}
+                            <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl shadow-lg shadow-indigo-500/20 p-8 mb-8 hover:shadow-xl transition-shadow duration-300 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-bl-full -z-0"></div>
+                                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-tr-full -z-0"></div>
+                                <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white/5 rounded-full animate-float -z-0"></div>
 
-                                <div className="flex justify-between items-center mb-6">
-                                    <h2 className="text-lg font-semibold text-gray-800">Wallet Balance</h2>
+                                <div className="flex justify-between items-center mb-6 relative z-10">
+                                    <h2 className="text-lg font-semibold text-indigo-100">Wallet Balance</h2>
                                     <button
                                         onClick={() => setHideBalance(!hideBalance)}
-                                        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-300"
+                                        className="p-2 rounded-full hover:bg-white/10 transition-colors duration-300 text-white"
                                     >
-                                        {hideBalance ? <Eye size={18} className="text-gray-500" /> : <EyeOff size={18} className="text-gray-500" />}
+                                        {hideBalance ? <Eye size={18} /> : <EyeOff size={18} />}
                                     </button>
                                 </div>
 
                                 <div className="relative z-10">
-                                    <div className="flex flex-col mb-6">
-                                        <p className="text-sm text-gray-500 mb-1">Available Balance</p>
-                                        <h1 className="text-4xl font-bold text-gray-900">
+                                    <div className="flex flex-col mb-8">
+                                        <p className="text-sm text-indigo-200 mb-2">Available Balance</p>
+                                        <h1 className="text-4xl md:text-5xl font-bold text-white">
                                             {hideBalance
                                                 ? '••••••••'
                                                 : formatCurrency(wallet.balance, wallet.Currency.symbol)}
                                         </h1>
-                                        <div className="mt-2 flex items-center">
-                                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                        <div className="mt-3 flex items-center">
+                                            <span className="text-xs text-indigo-200 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full">
                                                 Updated {timeAgo(wallet.updatedAt)}
                                             </span>
-                                            <button className="ml-2 p-1 rounded-full hover:bg-gray-100 transition-colors duration-300">
-                                                <RefreshCw size={12} className="text-gray-500" />
+                                            <button
+                                                className={`ml-2 p-1.5 rounded-full hover:bg-white/10 transition-colors duration-300 text-white ${isRefreshing ? 'animate-spin' : ''}`}
+                                                onClick={handleRefreshWallet}
+                                                disabled={isRefreshing}
+                                            >
+                                                <RefreshCw size={14} />
                                             </button>
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-gradient-to-tr from-primary-50 to-primary-50 rounded-xl p-4">
-                                            <p className="text-sm text-gray-600 mb-1">Total Credit</p>
-                                            <p className="text-xl font-bold text-gray-800">
+                                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <p className="text-sm text-indigo-200 mb-1">Total Credit</p>
+                                            <p className="text-xl font-bold text-white">
                                                 {hideBalance
                                                     ? '••••••••'
                                                     : formatCurrency(wallet.credit, wallet.Currency.symbol)}
                                             </p>
+                                            <div className="flex items-center mt-2 text-xs text-indigo-200">
+                                                <ArrowUpRight size={14} className="mr-1" />
+                                                Money In
+                                            </div>
                                         </div>
-                                        <div className="bg-gradient-to-tr from-primary-50 to-primary-50 rounded-xl p-4">
-                                            <p className="text-sm text-gray-600 mb-1">Total Debit</p>
-                                            <p className="text-xl font-bold text-gray-800">
+                                        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                                            <p className="text-sm text-indigo-200 mb-1">Total Debit</p>
+                                            <p className="text-xl font-bold text-white">
                                                 {hideBalance
                                                     ? '••••••••'
                                                     : formatCurrency(wallet.debit, wallet.Currency.symbol)}
                                             </p>
+                                            <div className="flex items-center mt-2 text-xs text-indigo-200">
+                                                <ArrowDownRight size={14} className="mr-1" />
+                                                Money Out
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            {/* Action Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                                <div className="bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow duration-300 group">
+                                    <div className="flex items-center">
+                                        <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 mr-4 group-hover:scale-110 transition-transform duration-300">
+                                            <Send size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium text-gray-800">Send Money</h3>
+                                            <p className="text-xs text-gray-500 mt-0.5">Transfer to others</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow duration-300 group">
+                                    <div className="flex items-center">
+                                        <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 mr-4 group-hover:scale-110 transition-transform duration-300">
+                                            <Download size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium text-gray-800">Receive</h3>
+                                            <p className="text-xs text-gray-500 mt-0.5">Accept payments</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-2xl shadow-sm p-5 hover:shadow-md transition-shadow duration-300 group">
+                                    <div className="flex items-center">
+                                        <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 mr-4 group-hover:scale-110 transition-transform duration-300">
+                                            <Activity size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium text-gray-800">History</h3>
+                                            <p className="text-xs text-gray-500 mt-0.5">View all activity</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Recent Transactions */}
                             <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition-shadow duration-300">
-                                <SectionHeader title="Recent Transactions">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-lg font-semibold text-gray-800">Recent Transactions</h2>
                                     <button
-                                        className="text-sm text-primary-600 hover:text-primary-800 font-medium flex items-center"
+                                        className="text-sm text-indigo-600 hover:text-indigo-800 font-medium flex items-center"
                                         onClick={() => setTabIndex(1)}
                                     >
                                         View all <ChevronRight size={16} />
                                     </button>
-                                </SectionHeader>
+                                </div>
 
                                 {transactions.length > 0 ? (
                                     <div className="space-y-4">
-                                        {transactions.map((transaction) => (
-                                            <div key={transaction.id} className="flex items-center p-4 border border-gray-100 rounded-xl hover:border-primary-100 transition-colors duration-300">
-                                                <div className={`h-10 w-10 rounded-full ${transaction.type === 'incoming' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} flex items-center justify-center mr-4`}>
+                                        {transactions.slice(0, 5).map((transaction, index) => (
+                                            <div
+                                                key={transaction.id}
+                                                className="flex items-center p-4 border border-gray-100 rounded-xl hover:border-indigo-100 transition-colors duration-300 hover:bg-indigo-50/30"
+                                                style={{ animationDelay: `${index * 50}ms` }}
+                                            >
+                                                <div className={`h-10 w-10 rounded-full ${transaction.type === 'incoming' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'} flex items-center justify-center mr-4`}>
                                                     {transaction.type === 'incoming' ? <Download size={18} /> : <Send size={18} />}
                                                 </div>
                                                 <div className="flex-1">
@@ -519,7 +572,7 @@ const walletdetail: React.FC = () => {
                                                             <p className="text-sm text-gray-500">{transaction.description}</p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <p className={`font-bold ${transaction.type === 'incoming' ? 'text-green-600' : 'text-red-600'}`}>
+                                                            <p className={`font-bold ${transaction.type === 'incoming' ? 'text-emerald-600' : 'text-red-600'}`}>
                                                                 {transaction.type === 'incoming' ? '+' : '-'} {wallet.Currency.symbol} {transaction.amount}
                                                             </p>
                                                             <p className="text-xs text-gray-500">{formatDate(transaction.timestamp)}</p>
@@ -541,66 +594,97 @@ const walletdetail: React.FC = () => {
 
                         <div className="md:col-span-1">
                             {/* Wallet Info */}
-                            <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 hover:shadow-md transition-shadow duration-300">
-                                <SectionHeader title="Wallet Information" />
+                            <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-6">Wallet Information</h2>
                                 <div>
-                                    <InfoItem
-                                        label="Wallet ID"
-                                        value={
-                                            <div className="flex items-center">
-                                                <span className="truncate mr-2">{wallet.id}</span>
-                                                <button className="p-1 rounded-full hover:bg-gray-100 transition-colors duration-300">
-                                                    <Copy size={14} className="text-gray-500" />
-                                                </button>
+                                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                                        <div className="flex items-center">
+                                            <div className="text-indigo-500 mr-3">
+                                                <CreditCard size={18} />
                                             </div>
-                                        }
-                                        icon={<CreditCard size={18} />}
-                                    />
-                                    <InfoItem
-                                        label="Currency"
-                                        value={`${wallet.Currency.name} (${wallet.Currency.symbol})`}
-                                        icon={<DollarSign size={18} />}
-                                    />
-                                    <InfoItem
-                                        label="Wallet Type"
-                                        value={wallet.type === 'user' ? 'Personal Wallet' : 'Group Wallet'}
-                                        icon={wallet.type === 'user' ? <User size={18} /> : <Users size={18} />}
-                                    />
-                                    <InfoItem
-                                        label="Status"
-                                        value={
-                                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${wallet.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
-                                                {wallet.status}
-                                            </span>
-                                        }
-                                        icon={<Shield size={18} />}
-                                    />
-                                    <InfoItem
-                                        label="Created On"
-                                        value={formatDate(wallet.createdAt)}
-                                        icon={<Calendar size={18} />}
-                                    />
-                                    <InfoItem
-                                        label="Last Updated"
-                                        value={timeAgo(wallet.updatedAt)}
-                                        icon={<Clock size={18} />}
-                                    />
+                                            <div>
+                                                <p className="text-sm text-gray-500">Wallet ID</p>
+                                                <p className="text-base font-medium text-gray-800 truncate max-w-[180px]">{wallet.id.substring(0, 12)}...</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => copyToClipboard(wallet.id)}
+                                            className="p-1.5 rounded-lg hover:bg-indigo-50 text-indigo-500 transition-colors"
+                                        >
+                                            <Copy size={16} />
+                                        </button>
+                                    </div>
+
+                                    <div className="flex items-center py-3 border-b border-gray-100">
+                                        <div className="text-indigo-500 mr-3">
+                                            <DollarSign size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Currency</p>
+                                            <p className="text-base font-medium text-gray-800">{wallet.Currency.name} ({wallet.Currency.symbol})</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center py-3 border-b border-gray-100">
+                                        <div className="text-indigo-500 mr-3">
+                                            {wallet.type === 'user' ? <User size={18} /> : wallet.type === 'group' ? <Users size={18} /> : <Shield size={18} />}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Wallet Type</p>
+                                            <p className="text-base font-medium text-gray-800 capitalize">{wallet.type} Wallet</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center py-3 border-b border-gray-100">
+                                        <div className="text-indigo-500 mr-3">
+                                            <CheckCircle size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Status</p>
+                                            <div className="mt-1">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${wallet.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'}`}>
+                                                    {wallet.status === 'Active' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>}
+                                                    {wallet.status}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center py-3 border-b border-gray-100">
+                                        <div className="text-indigo-500 mr-3">
+                                            <Calendar size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Created On</p>
+                                            <p className="text-base font-medium text-gray-800">{formatDate(wallet.createdAt)}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center py-3">
+                                        <div className="text-indigo-500 mr-3">
+                                            <Clock size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Last Updated</p>
+                                            <p className="text-base font-medium text-gray-800">{timeAgo(wallet.updatedAt)}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Owner Info */}
-                            <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition-shadow duration-300">
-                                <SectionHeader title={wallet.type === 'user' ? 'User Information' : 'Group Information'} />
+                            <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-6">{wallet.type === 'user' ? 'User Information' : wallet.type === 'group' ? 'Group Information' : 'System Information'}</h2>
 
                                 {wallet.type === 'user' && wallet.user ? (
                                     <div>
                                         <div className="flex items-center mb-6">
-                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary-100 to-primary-100 flex items-center justify-center text-primary-600 mr-4">
+                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-600 mr-4">
                                                 {wallet.user.profile_picture ? (
                                                     <img
                                                         src={wallet.user.profile_picture}
                                                         alt="Profile"
-                                                        className="h-12 w-12 rounded-full object-cover"
+                                                        className="h-12 w-12 rounded-xl object-cover"
                                                     />
                                                 ) : (
                                                     <User size={24} />
@@ -617,7 +701,7 @@ const walletdetail: React.FC = () => {
                                         </div>
 
                                         {wallet.user.preferences && (
-                                            <div className="bg-gradient-to-r from-gray-50 to-primary-50 rounded-xl p-4">
+                                            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-4">
                                                 <p className="text-sm font-medium text-gray-700 mb-2">Preferences</p>
                                                 <div className="grid grid-cols-2 gap-3 text-xs">
                                                     <div>
@@ -639,12 +723,12 @@ const walletdetail: React.FC = () => {
                                 ) : wallet.type === 'group' && wallet.group ? (
                                     <div>
                                         <div className="flex items-center mb-6">
-                                            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary-100 to-primary-100 flex items-center justify-center text-primary-600 mr-4">
+                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center text-emerald-600 mr-4">
                                                 {wallet.group.icon ? (
                                                     <img
                                                         src={wallet.group.icon}
                                                         alt="Group"
-                                                        className="h-12 w-12 rounded-full object-cover"
+                                                        className="h-12 w-12 rounded-xl object-cover"
                                                     />
                                                 ) : (
                                                     <Users size={24} />
@@ -656,17 +740,45 @@ const walletdetail: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="bg-gradient-to-r from-gray-50 to-primary-50 rounded-xl p-4">
+                                        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4">
                                             <p className="text-sm font-medium text-gray-700 mb-2">Group Details</p>
                                             <div className="space-y-2 text-sm">
                                                 <div className="flex justify-between">
                                                     <p className="text-gray-500">Status</p>
-                                                    <p className="font-medium">{wallet.group.status}</p>
+                                                    <p className="font-medium capitalize">{wallet.group.status}</p>
                                                 </div>
-                                                <button className="w-full mt-2 px-4 py-2 text-sm text-primary-600 bg-white rounded-lg border border-primary-100 hover:bg-primary-50 transition-colors duration-300 flex items-center justify-center">
+                                                <button className="w-full mt-2 px-4 py-2 text-sm text-emerald-600 bg-white rounded-lg border border-emerald-100 hover:bg-emerald-50 transition-colors duration-300 flex items-center justify-center">
                                                     <ExternalLink size={14} className="mr-2" />
                                                     View Group Details
                                                 </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : wallet.type === 'system' ? (
+                                    <div>
+                                        <div className="flex items-center mb-6">
+                                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center text-amber-600 mr-4">
+                                                <Shield size={24} />
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-gray-800">System Wallet</p>
+                                                <p className="text-sm text-gray-500">
+                                                    {wallet.purpose ? wallet.purpose.replace(/_/g, ' ') : 'Platform Wallet'}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4">
+                                            <p className="text-sm font-medium text-gray-700 mb-2">System Details</p>
+                                            <div className="space-y-2 text-sm">
+                                                <div className="flex justify-between">
+                                                    <p className="text-gray-500">Purpose</p>
+                                                    <p className="font-medium capitalize">{wallet.purpose ? wallet.purpose.replace(/_/g, ' ') : 'General'}</p>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <p className="text-gray-500">Security Level</p>
+                                                    <p className="font-medium">High</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -682,100 +794,388 @@ const walletdetail: React.FC = () => {
 
                 {/* Transactions Tab */}
                 {tabIndex === 1 && (
-                    <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition-shadow duration-300">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-lg font-semibold text-gray-800">Transaction History</h2>
-                            <div className="flex space-x-2">
-                                <button className="px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-300">
-                                    Filter
-                                </button>
-                                <button className="px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-300">
-                                    Export
-                                </button>
+                    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 animate-fadeIn">
+                        <div className="p-6 border-b border-gray-100">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <h2 className="text-lg font-semibold text-gray-800">Transaction History</h2>
+
+                                <div className="flex space-x-2">
+                                    <button className="px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors duration-300 flex items-center">
+                                        <Filter size={16} className="mr-2" />
+                                        Filter
+                                    </button>
+                                    <button className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors duration-300 flex items-center">
+                                        <Download size={16} className="mr-2" />
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Search and Filters */}
+                            <div className="mt-6 flex flex-col md:flex-row gap-4">
+                                <div className="flex-1 relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <Search size={16} className="text-gray-400" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Search transactions..."
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-colors"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                    {searchTerm && (
+                                        <button
+                                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                            onClick={() => setSearchTerm('')}
+                                        >
+                                            <X size={16} className="text-gray-400 hover:text-gray-600" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="flex flex-wrap gap-2">
+                                    <button
+                                        className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filterType === 'all'
+                                                ? 'bg-indigo-100 text-indigo-700'
+                                                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                            }`}
+                                        onClick={() => setFilterType('all')}
+                                    >
+                                        All Types
+                                    </button>
+                                    <button
+                                        className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filterType === 'incoming'
+                                                ? 'bg-emerald-100 text-emerald-700'
+                                                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                            }`}
+                                        onClick={() => setFilterType('incoming')}
+                                    >
+                                        <Download size={14} className="inline mr-1" /> Incoming
+                                    </button>
+                                    <button
+                                        className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filterType === 'outgoing'
+                                                ? 'bg-red-100 text-red-700'
+                                                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                            }`}
+                                        onClick={() => setFilterType('outgoing')}
+                                    >
+                                        <Send size={14} className="inline mr-1" /> Outgoing
+                                    </button>
+                                </div>
+
+                                <div>
+                                    <select
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-colors"
+                                        value={dateRange}
+                                        onChange={(e) => setDateRange(e.target.value)}
+                                    >
+                                        <option value="all">All Time</option>
+                                        <option value="today">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month">This Month</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        {transactions.length > 0 ? (
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
-                                    <thead>
-                                        <tr className="bg-gray-50/80 text-left">
-                                            <th className="px-6 py-4 text-xs font-medium text-gray-600">Transaction</th>
-                                            <th className="px-6 py-4 text-xs font-medium text-gray-600">Description</th>
-                                            <th className="px-6 py-4 text-xs font-medium text-gray-600">Date</th>
-                                            <th className="px-6 py-4 text-xs font-medium text-gray-600 text-right">Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-100">
-                                        {transactions.map((transaction) => (
-                                            <tr key={transaction.id} className="hover:bg-gray-50/50 transition-colors duration-300">
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center">
-                                                        <div className={`h-8 w-8 rounded-full ${transaction.type === 'incoming' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} flex items-center justify-center mr-3`}>
-                                                            {transaction.type === 'incoming' ? <Download size={16} /> : <Send size={16} />}
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-sm font-medium text-gray-800">
-                                                                {transaction.type === 'incoming' ? `From ${transaction.from}` : `To ${transaction.to}`}
-                                                            </p>
-                                                            <p className="text-xs text-gray-500">{transaction.type === 'incoming' ? 'Received' : 'Sent'}</p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 text-sm text-gray-600">{transaction.description}</td>
-                                                <td className="px-6 py-4 text-sm text-gray-600">{formatDate(transaction.timestamp)}</td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <span className={`font-medium ${transaction.type === 'incoming' ? 'text-green-600' : 'text-red-600'}`}>
-                                                        {transaction.type === 'incoming' ? '+' : '-'} {wallet.Currency.symbol} {transaction.amount}
-                                                    </span>
-                                                </td>
+                        {filteredTransactions.length > 0 ? (
+                            <div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead>
+                                            <tr className="bg-gray-50/80 text-left">
+                                                <th className="px-6 py-4 text-xs font-medium text-gray-600">Transaction</th>
+                                                <th className="px-6 py-4 text-xs font-medium text-gray-600">Description</th>
+                                                <th className="px-6 py-4 text-xs font-medium text-gray-600">Date</th>
+                                                <th className="px-6 py-4 text-xs font-medium text-gray-600 text-right">Amount</th>
+                                                <th className="px-6 py-4 text-xs font-medium text-gray-600 text-center">Status</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {filteredTransactions.map((transaction, index) => (
+                                                <tr
+                                                    key={transaction.id}
+                                                    className="hover:bg-indigo-50/20 transition-colors duration-300 animate-fadeIn"
+                                                    style={{ animationDelay: `${index * 50}ms` }}
+                                                >
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center">
+                                                            <div className={`h-10 w-10 rounded-xl ${transaction.type === 'incoming' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'} flex items-center justify-center mr-3 shadow-sm`}>
+                                                                {transaction.type === 'incoming' ? <Download size={18} /> : <Send size={18} />}
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm font-medium text-gray-800">
+                                                                    {transaction.type === 'incoming' ? `From ${transaction.from}` : `To ${transaction.to}`}
+                                                                </p>
+                                                                <p className="text-xs text-gray-500">{transaction.type === 'incoming' ? 'Received' : 'Sent'}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-600">{transaction.description}</td>
+                                                    <td className="px-6 py-4">
+                                                        <div>
+                                                            <p className="text-sm text-gray-700">{formatDate(transaction.timestamp)}</p>
+                                                            <p className="text-xs text-gray-500">{timeAgo(transaction.timestamp)}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        <span className={`font-medium ${transaction.type === 'incoming' ? 'text-emerald-600' : 'text-red-600'}`}>
+                                                            {transaction.type === 'incoming' ? '+' : '-'} {wallet.Currency.symbol} {transaction.amount}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                                            <CheckCircle size={12} className="mr-1" /> Completed
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div className="p-6 border-t border-gray-100 flex justify-center">
+                                    <button
+                                        className="px-4 py-2 bg-white border border-indigo-200 text-indigo-600 rounded-xl hover:bg-indigo-50 transition-colors duration-300 flex items-center"
+                                        onClick={handleLoadMoreTransactions}
+                                        disabled={loadingMore}
+                                    >
+                                        {loadingMore ? (
+                                            <>
+                                                <RefreshCw size={16} className="mr-2 animate-spin" />
+                                                Loading...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Plus size={16} className="mr-2" />
+                                                Load More Transactions
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         ) : (
-                            <div className="text-center p-12 bg-gray-50 rounded-xl">
+                            <div className="text-center p-12 animate-fadeIn">
                                 <Activity size={64} className="mx-auto text-gray-300 mb-4" />
                                 <p className="text-gray-600 mb-2">No transactions found</p>
-                                <p className="text-sm text-gray-500 mb-6">Your transaction history will appear here</p>
-                                <button className="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300 flex items-center justify-center mx-auto">
-                                    <Plus size={18} className="mr-2" />
-                                    Make First Transaction
-                                </button>
+                                <p className="text-sm text-gray-500 mb-6">No transactions match your current filters</p>
+                                {(searchTerm || filterType !== 'all' || dateRange !== 'all') && (
+                                    <button
+                                        className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm hover:shadow transition-all duration-300 flex items-center justify-center mx-auto"
+                                        onClick={() => {
+                                            setSearchTerm('');
+                                            setFilterType('all');
+                                            setDateRange('all');
+                                        }}
+                                    >
+                                        <RefreshCw size={16} className="mr-2" />
+                                        Reset Filters
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>
                 )}
 
-                {/* Settings Tab */}
+                {/* Analytics Tab */}
                 {tabIndex === 2 && (
-                    <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition-shadow duration-300">
-                        <SectionHeader title="Wallet Settings" />
+                    <div className="animate-fadeIn">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                                <div className="flex items-center mb-4">
+                                    <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 mr-3">
+                                        <WalletIcon size={20} />
+                                    </div>
+                                    <h3 className="text-lg font-medium text-gray-800">Total Balance</h3>
+                                </div>
+                                <div className="text-3xl font-bold text-gray-800 mb-2">
+                                    {formatCurrency(wallet.balance, wallet.Currency.symbol)}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                    Updated {timeAgo(wallet.updatedAt)}
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                                <div className="flex items-center mb-4">
+                                    <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 mr-3">
+                                        <ArrowUpRight size={20} />
+                                    </div>
+                                    <h3 className="text-lg font-medium text-gray-800">Income</h3>
+                                </div>
+                                <div className="text-3xl font-bold text-emerald-600 mb-2">
+                                    {analyticsData ? formatCurrency(analyticsData.incoming, wallet.Currency.symbol) : "0.00"}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                    From {transactions.filter(tx => tx.type === 'incoming').length} incoming transactions
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                                <div className="flex items-center mb-4">
+                                    <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 mr-3">
+                                        <ArrowDownRight size={20} />
+                                    </div>
+                                    <h3 className="text-lg font-medium text-gray-800">Expenses</h3>
+                                </div>
+                                <div className="text-3xl font-bold text-red-600 mb-2">
+                                    {analyticsData ? formatCurrency(analyticsData.outgoing, wallet.Currency.symbol) : "0.00"}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                    From {transactions.filter(tx => tx.type === 'outgoing').length} outgoing transactions
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                                <h3 className="text-lg font-medium text-gray-800 mb-4">Transaction Distribution</h3>
+                                {analyticsData ? (
+                                    <div>
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center">
+                                                <div className="w-3 h-3 rounded-full bg-emerald-500 mr-2"></div>
+                                                <span className="text-sm text-gray-600">Income</span>
+                                            </div>
+                                            <span className="text-sm font-medium">{analyticsData.incoming.toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="flex items-center">
+                                                <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                                                <span className="text-sm text-gray-600">Expenses</span>
+                                            </div>
+                                            <span className="text-sm font-medium">{analyticsData.outgoing.toFixed(2)}</span>
+                                        </div>
+
+                                        <div className="w-full h-8 bg-gray-100 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-emerald-500"
+                                                style={{
+                                                    width: `${(analyticsData.incoming / (analyticsData.incoming + analyticsData.outgoing)) * 100}%`
+                                                }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-center p-8">
+                                        <PieChart size={48} className="mx-auto text-gray-300 mb-4" />
+                                        <p className="text-gray-600">Not enough transaction data</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                                <h3 className="text-lg font-medium text-gray-800 mb-4">Spending by Category</h3>
+                                {analyticsData && analyticsData.categories ? (
+                                    <div className="space-y-4">
+                                        {analyticsData.categories.map((category, index) => (
+                                            <div key={index}>
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <span className="text-sm text-gray-600">{category.name}</span>
+                                                    <span className="text-sm font-medium">{formatCurrency(category.amount, wallet.Currency.symbol)}</span>
+                                                </div>
+                                                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                    <div
+                                                        className={`h-full ${category.color}`}
+                                                        style={{
+                                                            width: `${(category.amount / analyticsData.outgoing) * 100}%`
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center p-8">
+                                        <PieChart size={48} className="mx-auto text-gray-300 mb-4" />
+                                        <p className="text-gray-600">Not enough transaction data</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-medium text-gray-800">Recent Activity</h3>
+                                <button
+                                    className="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors duration-300 flex items-center"
+                                    onClick={() => setTabIndex(1)}
+                                >
+                                    View All
+                                </button>
+                            </div>
+
+                            {transactions.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {transactions.slice(0, 4).map((transaction, index) => (
+                                        <div
+                                            key={transaction.id}
+                                            className="p-4 rounded-xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/20 transition-colors duration-300"
+                                        >
+                                            <div className="flex items-start">
+                                                <div className={`h-10 w-10 rounded-xl ${transaction.type === 'incoming' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'} flex items-center justify-center mr-3`}>
+                                                    {transaction.type === 'incoming' ? <Download size={18} /> : <Send size={18} />}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between">
+                                                        <p className="font-medium text-gray-800">
+                                                            {transaction.description}
+                                                        </p>
+                                                        <p className={`font-medium ${transaction.type === 'incoming' ? 'text-emerald-600' : 'text-red-600'}`}>
+                                                            {transaction.type === 'incoming' ? '+' : '-'} {wallet.Currency.symbol} {transaction.amount}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex justify-between mt-1">
+                                                        <p className="text-xs text-gray-500">
+                                                            {transaction.type === 'incoming' ? `From ${transaction.from}` : `To ${transaction.to}`}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">{timeAgo(transaction.timestamp)}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center p-8 bg-gray-50 rounded-xl">
+                                    <Activity size={48} className="mx-auto text-gray-300 mb-4" />
+                                    <p className="text-gray-600 mb-2">No transaction history yet</p>
+                                    <p className="text-sm text-gray-500">Analytics will be available once you have transactions</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Settings Tab */}
+                {tabIndex === 3 && (
+                    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 p-8 animate-fadeIn">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-6">Wallet Settings</h2>
 
                         <div className="space-y-6">
-                            <div className="p-4 border border-gray-200 rounded-xl hover:border-primary-200 transition-colors duration-300">
+                            <div className="p-5 border border-gray-200 rounded-xl hover:border-indigo-200 transition-colors duration-300 hover:bg-indigo-50/10">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 mr-4">
-                                            <DollarSign size={18} />
+                                        <div className="h-12 w-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 mr-4">
+                                            <DollarSign size={20} />
                                         </div>
                                         <div>
                                             <p className="font-medium text-gray-800">Default Currency</p>
                                             <p className="text-sm text-gray-500">{wallet.Currency.name} ({wallet.Currency.symbol})</p>
                                         </div>
                                     </div>
-                                    <button className="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-300">
+                                    <button className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-300">
                                         Change
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="p-4 border border-gray-200 rounded-xl hover:border-primary-200 transition-colors duration-300">
+                            <div className="p-5 border border-gray-200 rounded-xl hover:border-indigo-200 transition-colors duration-300 hover:bg-indigo-50/10">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 mr-4">
-                                            <Eye size={18} />
+                                        <div className="h-12 w-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 mr-4">
+                                            <Eye size={20} />
                                         </div>
                                         <div>
                                             <p className="font-medium text-gray-800">Balance Visibility</p>
@@ -789,16 +1189,33 @@ const walletdetail: React.FC = () => {
                                             checked={!hideBalance}
                                             onChange={() => setHideBalance(!hideBalance)}
                                         />
-                                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                                        <div className="relative w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                     </label>
                                 </div>
                             </div>
 
-                            <div className="p-4 border border-gray-200 rounded-xl hover:border-primary-200 transition-colors duration-300">
+                            <div className="p-5 border border-gray-200 rounded-xl hover:border-indigo-200 transition-colors duration-300 hover:bg-indigo-50/10">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 mr-4">
-                                            <Bell size={18} />
+                                        <div className="h-12 w-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 mr-4">
+                                            <Lock size={20} />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-gray-800">Transaction Limit</p>
+                                            <p className="text-sm text-gray-500">Set maximum transaction amount</p>
+                                        </div>
+                                    </div>
+                                    <button className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-300">
+                                        Configure
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="p-5 border border-gray-200 rounded-xl hover:border-indigo-200 transition-colors duration-300 hover:bg-indigo-50/10">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <div className="h-12 w-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 mr-4">
+                                            <Bell size={20} />
                                         </div>
                                         <div>
                                             <p className="font-medium text-gray-800">Transaction Notifications</p>
@@ -807,23 +1224,40 @@ const walletdetail: React.FC = () => {
                                     </div>
                                     <label className="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" className="sr-only peer" defaultChecked />
-                                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                                        <div className="relative w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-100 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                     </label>
                                 </div>
                             </div>
 
-                            <div className="p-4 border border-red-100 rounded-xl hover:border-red-200 transition-colors duration-300">
+                            <div className="p-5 border border-gray-200 rounded-xl hover:border-indigo-200 transition-colors duration-300 hover:bg-indigo-50/10">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 mr-4">
-                                            <AlertCircle size={18} />
+                                        <div className="h-12 w-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 mr-4">
+                                            <FileText size={20} />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-gray-800">Statement Settings</p>
+                                            <p className="text-sm text-gray-500">Configure statement delivery</p>
+                                        </div>
+                                    </div>
+                                    <button className="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-300">
+                                        Configure
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="p-5 border border-red-100 rounded-xl hover:border-red-200 transition-colors duration-300 hover:bg-red-50/10">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <div className="h-12 w-12 rounded-xl bg-red-100 flex items-center justify-center text-red-600 mr-4">
+                                            <AlertCircle size={20} />
                                         </div>
                                         <div>
                                             <p className="font-medium text-gray-800">Deactivate Wallet</p>
                                             <p className="text-sm text-gray-500">Temporarily suspend this wallet</p>
                                         </div>
                                     </div>
-                                    <button className="px-3 py-1.5 text-sm bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors duration-300">
+                                    <button className="px-4 py-2 text-sm bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors duration-300">
                                         Deactivate
                                     </button>
                                 </div>
@@ -832,8 +1266,10 @@ const walletdetail: React.FC = () => {
                     </div>
                 )}
             </div>
+
+            <style>{animationKeyframes}</style>
         </div>
     );
 };
 
-export default walletdetail;
+export default WalletDetailPage;
