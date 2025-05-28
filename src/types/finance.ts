@@ -137,3 +137,76 @@ export interface Withdrawal {
   formattedTime?: string;
   currency?: string;
 }
+
+export interface AlertType {
+    id: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface RiskLevel {
+    id: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface GroupedCount {
+    riskLevelId: string;
+    riskLevelName: 'low' | 'medium' | 'high';
+    statuses: {
+        new: number;
+        under_review: number;
+        escalated: number;
+        resolved: number;
+    };
+}
+
+export interface AMLAlert {
+    id: string;
+    userUuid: string;
+    alertTypeUuid: string;
+    riskLevelId: string;
+    status: 'new' | 'under_review' | 'escalated' | 'resolved' | 'false_positive';
+    description: string;
+    assignedTo: string | null;
+    reviewedAt: string | null;
+    resolvedAt: string | null;
+    userWalletTransactionIds: string[];
+    createdAt: string;
+    updatedAt: string;
+    AlertType: AlertType;
+    RiskLevel: RiskLevel;
+    // Adding extra fields for display purposes
+    userName?: string;
+}
+
+export interface APIResponse {
+    status: boolean;
+    message: string;
+    data: {
+        groupedCounts: GroupedCount[];
+        amlAlerts: AMLAlert[];
+    };
+}
+
+export interface RiskMetrics {
+    totalAlerts: number;
+    newAlerts: number;
+    underReviewAlerts: number;
+    escalatedAlerts: number;
+    resolvedAlerts: number;
+    falsePositives: number;
+    highRiskAlerts: number;
+    mediumRiskAlerts: number;
+    lowRiskAlerts: number;
+    alertsByType: {
+        name: string;
+        value: number;
+    }[];
+    alertsByRisk: {
+        name: string;
+        value: number;
+    }[];
+}

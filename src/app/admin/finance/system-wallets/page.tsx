@@ -354,7 +354,7 @@ const SystemWalletsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-finance-navy/5 via-white to-primary-50/30 p-4 md:p-6 font-finance">
+        <div className="min-h-screen bg-transparent font-finance">
             <div className="w-full mx-auto">
                 <div className="mb-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-4">

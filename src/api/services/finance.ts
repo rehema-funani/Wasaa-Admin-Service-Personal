@@ -571,6 +571,20 @@ async rejectRefund(refundId: string, reason: string): Promise<any> {
     throw new Error('Failed to reject refund. Please check your network connection.');
   }
 },
+
+// ======== antimoney laundering ========
+
+async getAMLChecks(filters = {}): Promise<any> {
+  try {
+    const response = await finance.get('/amlAlerts', { params: filters });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get AML checks');
+    }
+    throw new Error('Failed to get AML checks. Please check your network connection.');
+  }
+},
 };
 
 export default financeService;
