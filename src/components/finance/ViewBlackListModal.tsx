@@ -33,7 +33,6 @@ const ViewBlackListModal = ({
           </span>
         </div>
 
-        {/* Wallet Information */}
         <div className="bg-white p-4 rounded-lg border border-slate-200/50">
           <h4 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
             <Wallet className="w-4 h-4" />
@@ -60,7 +59,6 @@ const ViewBlackListModal = ({
         </div>
       </div>
 
-      {/* Entry Details */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
@@ -139,7 +137,6 @@ const ViewBlackListModal = ({
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex justify-end gap-3 pt-6 border-t border-slate-200">
         <button
           onClick={() => setIsModalOpen(false)}

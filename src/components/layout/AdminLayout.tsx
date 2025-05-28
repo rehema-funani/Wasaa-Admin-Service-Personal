@@ -1,10 +1,12 @@
 import { Outlet } from 'react-router-dom'
 import SlimSidebar from './LeftMenu'
 import TopNavigation from './TopNavigation'
+import PageTitle from '../../elements/PageTitle'
 
 const AdminLayout = () => {
   return (
     <div className="flex h-screen bg-gray-50">
+      <PageTitle />
       <SlimSidebar />
 
       <div className="flex-1 flex flex-col">

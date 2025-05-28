@@ -37,7 +37,6 @@ const BlacklistWhitelistManager: React.FC = () => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [selectedEntry, setSelectedEntry] = useState<ListEntry | null>(null);
-
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalType, setModalType] = useState<'view' | 'add' | 'edit' | 'delete' | null>(null);
 
@@ -171,7 +170,6 @@ const BlacklistWhitelistManager: React.FC = () => {
         });
     };
 
-    // Modal handlers
     const openViewModal = (entry: ListEntry) => {
         setSelectedEntry(entry);
         setModalType('view');
@@ -202,7 +200,6 @@ const BlacklistWhitelistManager: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    // Utility functions
     const showSuccess = (message: string) => {
         setSuccessMessage(message);
         setErrorMessage(null);
@@ -331,8 +328,8 @@ const BlacklistWhitelistManager: React.FC = () => {
     const activeCount = entries.filter(e => e.status === 'active' || e.status === 'approved').length;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
-            <div className="max-w-7xl mx-auto p-6">
+        <div className="min-h-screen bg-transparent">
+            <div className="w-full mx-auto">
                 <div className="mb-8">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                         <div>
