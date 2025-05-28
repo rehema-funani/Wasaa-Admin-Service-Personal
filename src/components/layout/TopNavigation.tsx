@@ -5,7 +5,7 @@ import {
     ArrowRight, Menu, User,
     Settings, LogOut, CreditCard,
     AlertCircle, BarChart3,
-    Shield, Wallet, DollarSign
+    Shield, Wallet
 } from 'lucide-react';
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';

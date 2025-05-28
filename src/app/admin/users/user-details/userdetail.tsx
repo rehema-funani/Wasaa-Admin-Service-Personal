@@ -123,39 +123,6 @@ const userService = {
     }
 };
 
-interface User {
-    id: string;
-    username: string | null;
-    first_name: string | null;
-    last_name: string | null;
-    email: string | null;
-    phone_number: string | null;
-    is_verified: boolean;
-    kyc_status: boolean;
-    city: string | null;
-    town: string | null;
-    country: string | null;
-    about: string | null;
-    dob: string | null;
-    country_code: string | null;
-    gender: string | null;
-    passport_photo: string | null;
-    avatar_id: string | null;
-    identity_type: string | null;
-    identity_number: string | null;
-    verification_status: string;
-    account_status: string;
-    fcm_token: string;
-    last_login: string | null;
-    id_front: string | null;
-    id_back: string | null;
-    profile_picture: string | null;
-    profile_background: string | null;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null;
-}
-
 interface Wallet {
     id: string;
     type: string;
@@ -216,7 +183,6 @@ const timeAgo = (dateString: string | null): string => {
     }
 };
 
-// Custom components
 interface SectionHeaderProps {
     title: string;
     children?: React.ReactNode;
@@ -311,7 +277,7 @@ const userdetail: React.FC = () => {
                     throw new Error("User ID is missing");
                 }
 
-                const userData = await userService.getUserById(id) as User;
+                const userData = await userService.getUserById(id);
                 setUser(userData);
 
                 // Fetch user wallets
@@ -340,13 +306,13 @@ const userdetail: React.FC = () => {
         return (
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
                 <div className="bg-white border-b border-gray-100 shadow-sm backdrop-blur-sm bg-opacity-90 sticky top-0 z-10">
-                    <div className="max-w-7xl mx-auto px-6 py-6">
+                    <div className="w-full mx-auto px-6 py-6">
                         <div className="w-48 h-8 bg-gray-200 rounded-lg animate-pulse mb-4"></div>
                         <div className="w-64 h-6 bg-gray-200 rounded-lg animate-pulse"></div>
                     </div>
                 </div>
 
-                <div className="max-w-7xl mx-auto px-6 py-8">
+                <div className="w-full mx-auto px-6 py-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="md:col-span-1">
                             <div className="bg-white rounded-2xl shadow-sm p-8 animate-pulse">
@@ -411,9 +377,8 @@ const userdetail: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
-            {/* Header */}
             <div className="bg-white border-b border-gray-100 shadow-sm backdrop-blur-sm bg-opacity-90 sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-6 py-6">
+                <div className="w-full mx-auto px-6 py-6">
                     <div className="flex items-center mb-4">
                         <button
                             onClick={() => navigate(-1)}
@@ -448,7 +413,7 @@ const userdetail: React.FC = () => {
 
             {/* Tabs */}
             <div className="border-b border-gray-100 bg-white bg-opacity-90 backdrop-blur-sm sticky top-24 z-10">
-                <div className="max-w-7xl mx-auto px-6">
+                <div className="w-full mx-auto px-6">
                     <div className="flex overflow-x-auto">
                         <button
                             className={`py-5 px-6 text-sm font-medium border-b-2 transition-colors duration-300 ${activeTab === 'profile'
@@ -490,13 +455,10 @@ const userdetail: React.FC = () => {
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="max-w-7xl mx-auto px-6 py-8">
-                {/* Profile Tab */}
+            <div className="w-full mx-auto px-6 py-8">
                 {activeTab === 'profile' && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="md:col-span-1">
-                            {/* User Profile Card */}
                             <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300 mb-8">
                                 <div className="flex flex-col items-center">
                                     <div className="relative">
@@ -549,7 +511,6 @@ const userdetail: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* User Actions */}
                             <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
                                 <SectionHeader title="Quick Actions" />
                                 <div className="space-y-3">
@@ -799,7 +760,6 @@ const userdetail: React.FC = () => {
                     </div>
                 )}
 
-                {/* Wallets Tab */}
                 {activeTab === 'wallets' && (
                     <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition-shadow duration-300">
                         <SectionHeader title="User Wallets">

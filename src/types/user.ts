@@ -1,0 +1,32 @@
+export interface User {
+    id: string;
+    username: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    phone_number: string | null;
+    is_verified: boolean;
+    kyc_status: boolean;
+    city: string | null;
+    town: string | null;
+    country: string | null;
+    about: string | null;
+    dob: string | null;
+    country_code: string | null;
+    gender: string | null;
+    passport_photo: string | null;
+    avatar_id: string | null;
+    identity_type: string | null;
+    identity_number: string | null;
+    verification_status: string;
+    account_status: string;
+    fcm_token: string;
+    last_login: string | null;
+    id_front: string | null;
+    id_back: string | null;
+    profile_picture: string | null;
+    profile_background: string | null;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+}

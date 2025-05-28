@@ -251,12 +251,6 @@ const page = () => {
     setCurrentPage(1);
   };
 
-  const handleResetFilters = () => {
-    setAppliedFilters({});
-    setFilteredUsers(users);
-  };
-
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -271,7 +265,7 @@ const page = () => {
   };
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto">
+    <div className="w-full mx-auto">
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
         initial={{ opacity: 0, y: -20 }}
