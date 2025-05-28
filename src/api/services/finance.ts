@@ -585,6 +585,18 @@ async getAMLChecks(filters = {}): Promise<any> {
     throw new Error('Failed to get AML checks. Please check your network connection.');
   }
 },
+
+async getAllBlacklistEntries(filters = {}): Promise<any> {
+  try {
+    const response = await finance.get('/blackList', { params: filters });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get blacklist entries');
+    }
+    throw new Error('Failed to get blacklist entries. Please check your network connection.');
+  }
+},
 };
 
 export default financeService;

@@ -24,7 +24,6 @@ import {
     Shield
 } from 'lucide-react';
 import { Modal } from '../../../../components/common/Modal';
-// import walletService from '../../../../api/services/wallet';
 
 interface SystemWallet {
     id: string;
@@ -335,7 +334,6 @@ const SystemWalletsPage: React.FC = () => {
         }
     };
 
-    // Get modal title
     const getModalTitle = () => {
         if (!selectedWallet) return '';
 

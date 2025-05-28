@@ -210,3 +210,35 @@ export interface RiskMetrics {
         value: number;
     }[];
 }
+
+export interface ListEntry {
+    id: string;
+    type: 'blacklist' | 'whitelist';
+    entityType: 'user' | 'email' | 'phone' | 'ip_address' | 'device_id' | 'account';
+    userWalletId: string;
+    reason: string | null;
+    status: 'pending' | 'active' | 'inactive' | 'approved' | 'rejected';
+    addedBy: string | null;
+    addedAt: string;
+    notes: string | null;
+    lastTriggered: string | null;
+    triggerCount: number;
+    riskScore: number | null;
+    createdAt: string;
+    updatedAt: string;
+    UserWallet: {
+        id: string;
+        user_uuid: string | null;
+        group_uuid: string;
+        type: string;
+        purpose: string | null;
+        currencyId: string;
+        debit: string;
+        credit: string;
+        balance: string;
+        status: string;
+        createdAt: string;
+        updatedAt: string;
+    };
+    user: any | null;
+}
