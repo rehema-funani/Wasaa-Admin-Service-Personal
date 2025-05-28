@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Home,
     Settings,
@@ -7,26 +7,21 @@ import {
     UserCheck,
     Activity
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
-const user = {
-    name: 'John Doe',
-    role: 'Admin',
-    avatar: null,
-    email: 'john@example.com'
-};
-
-const SlimSidebar = () => {
+const SlimSidebar: React.FC = () => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null;
 
     return (
         <div
-            className={`flex flex-col h-full bg-gradient-to-b from-primary-900 to-primary-800 transition-all duration-300 z-50 shadow-xl ${isExpanded ? 'w-64' : 'w-20'
+            className={`flex flex-col h-full bg-gradient-to-b from-primary-900 to-primary-800 transition-all duration-300 z-50 shadow-xl ${isExpanded ? 'w-64' : 'w-[65px]'
                 }`}
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => setIsExpanded(false)}
         >
-            <div className="flex flex-col h-full p-4">
-                {/* User Profile */}
+            <div className={`flex flex-col h-full p-4 space-y-4 ${isExpanded ? 'px-6' : 'px-2'}`}>
                 <div className="mb-8">
                     <div className="flex items-center">
                         <div className="relative">
@@ -49,30 +44,29 @@ const SlimSidebar = () => {
                 </div>
 
                 <div className="flex-1 space-y-2">
-                    <button className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
+                    <Link to='/' className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
                         <Home size={20} />
                         {isExpanded && <span className="ml-3 text-sm animate-fadeIn">Home</span>}
-                    </button>
-                    <button className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
+                    </Link>
+                    <Link to='/admin/logs' className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
                         <Activity size={20} />
                         {isExpanded && <span className="ml-3 text-sm animate-fadeIn">Activity</span>}
-                    </button>
-                    <button className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
+                    </Link>
+                    <Link to='/admin/finance/reports' className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
                         <BarChart3 size={20} />
                         {isExpanded && <span className="ml-3 text-sm animate-fadeIn">Analytics</span>}
-                    </button>
-                    <button className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
+                    </Link>
+                    <Link to='/accounts/profile' className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
                         <UserCheck size={20} />
                         {isExpanded && <span className="ml-3 text-sm animate-fadeIn">Profile</span>}
-                    </button>
+                    </Link>
                 </div>
 
-                {/* Bottom Actions */}
                 <div className="space-y-2 pt-4 border-t border-primary-700">
-                    <button className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
+                    <Link to='/admin/settings' className="w-full flex items-center p-3 rounded-xl text-primary-200 hover:text-white hover:bg-primary-700/50 transition-all duration-200 group active:bg-primary-600">
                         <Settings size={20} />
                         {isExpanded && <span className="ml-3 text-sm animate-fadeIn">Settings</span>}
-                    </button>
+                    </Link>
                     <button className="w-full flex items-center p-3 rounded-xl text-red-300 hover:text-white hover:bg-red-600/50 transition-all duration-200 group active:bg-red-500">
                         <LogOut size={20} />
                         {isExpanded && <span className="ml-3 text-sm animate-fadeIn">Logout</span>}

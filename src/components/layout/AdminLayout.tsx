@@ -9,7 +9,7 @@ const AdminLayout = () => {
 
       <div className="flex-1 flex flex-col">
         <TopNavigation />
-        <main className="w-full mt-[70px] overflow-x-hidden overflow-y-auto bg-gray-50 p-4">
+        <main className="w-full mt-[70px] overflow-x-hidden overflow-y-auto bg-gray-50 p-12">
           <Outlet />
         </main>
       </div>

@@ -252,7 +252,7 @@ const AuditLogDetailsPage: React.FC = () => {
     ];
 
     return (
-        <div className="p-6">
+        <div className="w-full py-6 mx-auto">
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <div className="flex items-center">
                     <Button

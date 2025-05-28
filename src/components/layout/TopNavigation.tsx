@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
+import logo from '../../assets/images/logo-wasaa.png';
 
 const getRequiredPermissionsForRoute = (path: string) => {
     const routePermissionsMap = {
@@ -145,8 +146,7 @@ const TopNavigation = () => {
             setScrolled(window.scrollY > 20);
         };
 
-        const handleClickOutside = (event) => {
-            // Handle dropdown clicks
+        const handleClickOutside = (event: any) => {
             if (activeDropdown) {
                 const ref = dropdownRefs.current[activeDropdown];
                 if (ref && !ref.contains(event.target)) {
@@ -155,18 +155,15 @@ const TopNavigation = () => {
                 }
             }
 
-            // Handle search results clicks
             if (searchResultsRef.current && !searchResultsRef.current.contains(event.target) &&
                 searchInputRef.current && !searchInputRef.current.contains(event.target)) {
                 setShowSearchResults(false);
             }
 
-            // Handle notifications clicks
             if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
                 setNotificationsOpen(false);
             }
 
-            // Handle user menu clicks
             if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
                 setUserMenuOpen(false);
             }
@@ -181,7 +178,6 @@ const TopNavigation = () => {
         };
     }, [activeDropdown]);
 
-    // Search functionality (from Header.tsx)
     const getAllSearchableRoutes = () => {
         const searchableRoutes = [];
 
@@ -190,7 +186,6 @@ const TopNavigation = () => {
                 if (item.type === 'section') {
                     processRoutes(item.items, item.title);
                 } else if (item.type === 'link') {
-                    // Only add routes the user has permission for
                     if (hasPermissionForRoute(item.path, userPermissions)) {
                         searchableRoutes.push({
                             title: item.title,
@@ -201,7 +196,6 @@ const TopNavigation = () => {
                     }
                 } else if (item.type === 'dropdown') {
                     item.items.forEach(subItem => {
-                        // Only add routes the user has permission for
                         if (hasPermissionForRoute(subItem.path, userPermissions)) {
                             searchableRoutes.push({
                                 title: subItem.title,
@@ -350,8 +344,7 @@ const TopNavigation = () => {
         });
     };
 
-    // Only show sections that have at least one permitted item
-    const filterSections = (sections) => {
+    const filterSections = (sections: any) => {
         return sections.filter(section => {
             if (section.type !== 'section') return true;
 
@@ -360,8 +353,7 @@ const TopNavigation = () => {
         });
     };
 
-    // Navigation rendering
-    const renderNestedDropdown = (dropdown) => {
+    const renderNestedDropdown = (dropdown: any) => {
         const isActive = activeNestedDropdown === dropdown.key;
         const filteredItems = dropdown.items.filter(item =>
             hasPermissionForRoute(item.path, userPermissions)
@@ -421,7 +413,7 @@ const TopNavigation = () => {
         );
     };
 
-    const renderMegaMenu = (section) => {
+    const renderMegaMenu = (section: any) => {
         const filteredItems = filterItems(section.items);
 
         if (filteredItems.length === 0) return null;
@@ -470,7 +462,7 @@ const TopNavigation = () => {
         );
     };
 
-    const renderNavItem = (item) => {
+    const renderNavItem = (item: any) => {
         if (item.type === 'link') {
             if (!hasPermissionForRoute(item.path, userPermissions)) {
                 return null;
@@ -530,7 +522,6 @@ const TopNavigation = () => {
         return null;
     };
 
-    // Group search results by category
     const groupedResults = searchResults.reduce<Record<string, typeof searchResults>>((acc, result) => {
         if (!acc[result.category]) {
             acc[result.category] = [];
@@ -539,15 +530,14 @@ const TopNavigation = () => {
         return acc;
     }, {});
 
-    // Handle logout
     const handleLogout = () => {
         Cookies.remove('authToken');
+        Cookies.remove('refreshToken');
         Cookies.remove('userData');
         navigate('/auth/login');
     };
 
-    // Get icon for search result category
-    const getCategoryIcon = (category) => {
+    const getCategoryIcon = (category: any) => {
         const iconMap = {
             'Dashboard': BarChart3,
             'User Management': User,
@@ -561,22 +551,20 @@ const TopNavigation = () => {
     };
 
     return (
-        <div className="fixed top-0 left-0 right-0 z-40">
+        <div className="fixed top-0 right-0 z-40 left-[60px] w-[calc(100%-60px)]">
             <div className={`transition-all duration-500 ${scrolled
                 ? 'bg-gradient-to-r from-white via-white to-white backdrop-blur-xl shadow-xl shadow-secondary-900/20'
                 : 'bg-gradient-to-r from-white via-white to-white backdrop-blur-2xl'
                 }`}>
                 <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between">
                     <div className="flex items-center mr-4 lg:mr-12">
-                        <div className="relative">
-                            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-gradient-to-br from-primary-400 via-secondary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-secondary-500/25 transform hover:scale-110 transition-all duration-300">
-                                <DollarSign size={24} className="text-gray-800" />
-                            </div>
-                            <div className="absolute -inset-1 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-2xl opacity-30 blur animate-pulse"></div>
-                        </div>
-                        <div className="ml-3 hidden md:block">
-                            <h1 className="text-lg lg:text-xl font-bold text-gray-800">Wasaa</h1>
-                        </div>
+                        <img
+                            src={logo}
+                            alt="Logo"
+                            className="w-[150px] h-auto cursor-pointer"
+                            onClick={() => navigate('/')}
+                            style={{ cursor: 'pointer' }}
+                        />
                     </div>
 
                     <nav className="hidden xl:flex items-center flex-1 justify-center">
@@ -824,16 +812,18 @@ const TopNavigation = () => {
                 </div>
             </div>
 
-            {/* Mobile Menu */}
             {isMobileMenuOpen && (
-                <div className="xl:hidden fixed inset-0 z-50 bg-gradient-to-br from-secondary-900/98 via-primary-900/98 to-secondary-900/98 backdrop-blur-xl">
+                <div className="xl:hidden fixed inset-0 z-50 left-[60px] w-[calc(100%-60px)] bg-gradient-to-br from-secondary-900/98 via-primary-900/98 to-secondary-900/98 backdrop-blur-xl">
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 via-secondary-500 to-primary-600 flex items-center justify-center mr-3">
-                                    <DollarSign size={20} className="text-gray-800" />
-                                </div>
-                                <h2 className="text-xl font-bold text-gray-800">FinTech Portal</h2>
+                                <img
+                                    src={logo}
+                                    alt="Logo"
+                                    className="w-[150px] h-auto cursor-pointer"
+                                    onClick={() => navigate('/')}
+                                    style={{ cursor: 'pointer' }}
+                                />
                             </div>
                             <button
                                 onClick={() => setIsMobileMenuOpen(false)}

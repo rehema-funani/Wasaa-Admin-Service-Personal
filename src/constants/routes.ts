@@ -1,59 +1,29 @@
 import { 
-  Home, 
   Globe,
   UserCircle,
-  Group,
   MonitorPlay,
-  Clock,
   Video,
   BarChart3,
-  ShieldCheck,
   Receipt,
   Wallet,
-  CreditCard,
-  PieChart,
   Gift,
   AlertTriangle,
   ImageIcon,
-  Palette,
   Settings,
   Users,
-  Key,
-  Shield,
   Languages,
-  DollarSign,
-  Monitor,
   TicketIcon,
   UsersIcon,
   Film,
   Hash,
-  MessageSquare,
-  TrendingUp,
-  Award,
   Bell,
   Cog,
-  User,
-  Scale,
-  RefreshCw,
   FileText,
-  HelpCircle,
   LifeBuoy,
-  Banknote,
-  LineChart,
-  BarChart,
-  AreaChart,
-  CircleDollarSign,
   Building,
-  BadgeDollarSign,
-  FileSpreadsheet,
-  Landmark,
   CreditCardIcon,
-  BanknoteIcon,
   FilePieChart,
-  FolderArchive,
-  FileCheck,
-  FolderClosed,
-  Calculator
+  FileCheck
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -222,9 +192,9 @@ const routes: Route[] = [
         {
           type: 'link',
           path: '/admin/Group/all-group-list',
-          title: 'Corporate Accounts',
+          title: 'Group Accounts',
           icon: Building,
-          description: 'Manage business accounts'
+          description: 'Manage group accounts'
         },
         {
           type: 'link',
@@ -405,7 +375,7 @@ const routes: Route[] = [
       items: [
         {
           type: 'dropdown',
-          title: 'Visual Assets',
+          title: 'Wallpapers & Avatars',
           icon: ImageIcon,
           key: 'visual-assets',
           items: [
@@ -548,6 +518,6 @@ const routes: Route[] = [
         },
       ],
     },
-  ];
+];
 
 export default routes;
