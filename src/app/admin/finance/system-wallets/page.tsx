@@ -59,10 +59,8 @@ const SystemWalletsPage: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [selectedWallet, setSelectedWallet] = useState<SystemWallet | null>(null);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState<'topup' | 'transfer' | 'history' | 'settings' | null>(null);
-
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [selectedTimeframe, setSelectedTimeframe] = useState<'24h' | '7d' | '30d' | '90d'>('7d');
 
