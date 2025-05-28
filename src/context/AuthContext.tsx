@@ -175,7 +175,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     sameSite: 'strict' as const
                 };
 
-                // Store tokens using the normalized response
                 Cookies.set('authToken', response.accessToken || '', cookieOptions);
                 Cookies.set('refreshToken', response.refreshToken || '', cookieOptions);
 
@@ -194,14 +193,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     Cookies.set('userData', JSON.stringify(userData), cookieOptions);
                 }
 
-                // Optional: Log for debugging
-                console.log('Auth tokens stored successfully');
 
             } catch (storageError) {
                 console.error('Error storing auth data in cookies:', storageError);
             }
 
-            // Return the normalized response
             return response;
 
         } catch (err) {
@@ -210,7 +206,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             } else {
                 setError('Failed to verify OTP');
             }
-            console.error('OTP verification failed:', err);
             throw err;
         } finally {
             setIsLoading(false);
@@ -225,7 +220,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } catch (err) {
             console.error('Logout API error:', err);
         } finally {
-            // Clear all auth-related cookies and storage
             Cookies.remove('authToken');
             Cookies.remove('refreshToken');
             Cookies.remove('userData');
