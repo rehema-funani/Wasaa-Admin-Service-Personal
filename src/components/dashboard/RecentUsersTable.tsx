@@ -44,11 +44,11 @@ const RecentUsersTable: React.FC = () => {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'active':
-                return 'bg-green-500';
+                return 'bg-green-500 dark:bg-green-500';
             case 'inactive':
-                return 'bg-gray-400';
+                return 'bg-gray-400 dark:bg-gray-500';
             default:
-                return 'bg-gray-400';
+                return 'bg-gray-400 dark:bg-gray-500';
         }
     };
 
@@ -59,27 +59,27 @@ const RecentUsersTable: React.FC = () => {
                     {recentUsers.map((user, index) => (
                         <motion.div
                             key={user.id}
-                            className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
+                            className="border-b border-gray-50 dark:border-dark-border last:border-0 hover:bg-gray-50/50 dark:hover:bg-dark-active/50 transition-colors"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.05 }}
                             whileHover={{ x: 3 }}
                         >
                             <div className="flex items-center p-4">
-                                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center mr-3 shrink-0">
-                                    <User size={16} className="text-primary-600" strokeWidth={1.8} />
+                                <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mr-3 shrink-0">
+                                    <User size={16} className="text-primary-600 dark:text-primary-400" strokeWidth={1.8} />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-800 truncate">{user.name}</p>
-                                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                    <p className="text-sm font-medium text-gray-800 dark:text-neutral-200 truncate">{user.name}</p>
+                                    <p className="text-xs text-gray-500 dark:text-neutral-400 truncate">{user.email}</p>
                                 </div>
                                 <div className="flex items-center ml-3">
-                                    <span className="text-xs text-gray-500 mr-2 text-right whitespace-nowrap">
+                                    <span className="text-xs text-gray-500 dark:text-neutral-500 mr-2 text-right whitespace-nowrap">
                                         {user.joinedAt}
                                     </span>
                                     <div className={`w-2 h-2 rounded-full ${getStatusColor(user.status)}`}></div>
                                     <motion.button
-                                        className="p-1.5 ml-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                                        className="p-1.5 ml-2 rounded-lg text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-300 hover:bg-gray-100 dark:hover:bg-dark-hover"
                                         whileHover={{ scale: 1.1 }}
                                         whileTap={{ scale: 0.95 }}
                                     >

@@ -47,21 +47,21 @@ const TransactionReceiptPage: React.FC = () => {
 
     if (!transaction) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center p-6">
+            <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white dark:from-dark-surface dark:to-charcoal-900 flex items-center justify-center p-6">
                 <motion.div
-                    className="bg-white/90 backdrop-blur-xl p-8 rounded-xl border border-primary-100 shadow-card text-center max-w-md"
+                    className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-xl p-8 rounded-xl border border-primary-100 dark:border-dark-border shadow-card dark:shadow-dark-lg text-center max-w-md"
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
                 >
-                    <div className="w-16 h-16 bg-primary-50 rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <FileText size={24} className="text-primary-400" />
+                    <div className="w-16 h-16 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <FileText size={24} className="text-primary-400 dark:text-primary-400" />
                     </div>
-                    <h2 className="text-xl font-bold text-neutral-900 mb-2">Transaction Not Found</h2>
-                    <p className="text-neutral-600 mb-6">We couldn't locate the requested transaction record.</p>
+                    <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">Transaction Not Found</h2>
+                    <p className="text-neutral-600 dark:text-neutral-400 mb-6">We couldn't locate the requested transaction record.</p>
                     <button
                         onClick={() => navigate('/admin/finance/transactions')}
-                        className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors shadow-button"
+                        className="px-6 py-3 bg-primary-600 dark:bg-primary-700 text-white rounded-lg font-semibold hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors shadow-button dark:shadow-dark-glow"
                     >
                         Return to Transaction Registry
                     </button>
@@ -129,13 +129,13 @@ const TransactionReceiptPage: React.FC = () => {
     const getTransactionIcon = () => {
         switch (transactionType) {
             case 'Deposit':
-                return <BanknoteIcon size={22} strokeWidth={2} className="text-success-600" />;
+                return <BanknoteIcon size={22} strokeWidth={2} className="text-success-600 dark:text-success-400" />;
             case 'Withdrawal':
-                return <CircleDollarSign size={22} strokeWidth={2} className="text-danger-600" />;
+                return <CircleDollarSign size={22} strokeWidth={2} className="text-danger-600 dark:text-danger-400" />;
             case 'Transfer':
-                return <ArrowDownUp size={22} strokeWidth={2} className="text-primary-600" />;
+                return <ArrowDownUp size={22} strokeWidth={2} className="text-primary-600 dark:text-primary-400" />;
             default:
-                return <Activity size={22} strokeWidth={2} className="text-neutral-600" />;
+                return <Activity size={22} strokeWidth={2} className="text-neutral-600 dark:text-neutral-400" />;
         }
     };
 
@@ -143,39 +143,39 @@ const TransactionReceiptPage: React.FC = () => {
         switch (transactionType) {
             case 'Deposit':
                 return {
-                    primary: 'text-success-600',
-                    bg: 'from-success-50 to-success-50/30',
-                    accent: 'bg-success-100/70',
-                    ring: 'ring-success-500/20',
-                    statusBg: 'bg-success-50',
-                    statusBorder: 'border-success-200'
+                    primary: 'text-success-600 dark:text-success-400',
+                    bg: 'from-success-50 to-success-50/30 dark:from-success-900/20 dark:to-success-900/10',
+                    accent: 'bg-success-100/70 dark:bg-success-900/30',
+                    ring: 'ring-success-500/20 dark:ring-success-700/20',
+                    statusBg: 'bg-success-50 dark:bg-success-900/20',
+                    statusBorder: 'border-success-200 dark:border-success-800/30'
                 };
             case 'Withdrawal':
                 return {
-                    primary: 'text-danger-600',
-                    bg: 'from-danger-50 to-danger-50/30',
-                    accent: 'bg-danger-100/70',
-                    ring: 'ring-danger-500/20',
-                    statusBg: 'bg-danger-50',
-                    statusBorder: 'border-danger-200'
+                    primary: 'text-danger-600 dark:text-danger-400',
+                    bg: 'from-danger-50 to-danger-50/30 dark:from-danger-900/20 dark:to-danger-900/10',
+                    accent: 'bg-danger-100/70 dark:bg-danger-900/30',
+                    ring: 'ring-danger-500/20 dark:ring-danger-700/20',
+                    statusBg: 'bg-danger-50 dark:bg-danger-900/20',
+                    statusBorder: 'border-danger-200 dark:border-danger-800/30'
                 };
             case 'Transfer':
                 return {
-                    primary: 'text-primary-600',
-                    bg: 'from-primary-50 to-primary-50/30',
-                    accent: 'bg-primary-100/70',
-                    ring: 'ring-primary-500/20',
-                    statusBg: 'bg-primary-50',
-                    statusBorder: 'border-primary-200'
+                    primary: 'text-primary-600 dark:text-primary-400',
+                    bg: 'from-primary-50 to-primary-50/30 dark:from-primary-900/20 dark:to-primary-900/10',
+                    accent: 'bg-primary-100/70 dark:bg-primary-900/30',
+                    ring: 'ring-primary-500/20 dark:ring-primary-700/20',
+                    statusBg: 'bg-primary-50 dark:bg-primary-900/20',
+                    statusBorder: 'border-primary-200 dark:border-primary-800/30'
                 };
             default:
                 return {
-                    primary: 'text-neutral-600',
-                    bg: 'from-neutral-50 to-neutral-50/30',
-                    accent: 'bg-neutral-100/70',
-                    ring: 'ring-neutral-500/20',
-                    statusBg: 'bg-neutral-50',
-                    statusBorder: 'border-neutral-200'
+                    primary: 'text-neutral-600 dark:text-neutral-400',
+                    bg: 'from-neutral-50 to-neutral-50/30 dark:from-dark-hover dark:to-dark-hover/60',
+                    accent: 'bg-neutral-100/70 dark:bg-dark-active/70',
+                    ring: 'ring-neutral-500/20 dark:ring-neutral-700/20',
+                    statusBg: 'bg-neutral-50 dark:bg-dark-active',
+                    statusBorder: 'border-neutral-200 dark:border-dark-border'
                 };
         }
     };
@@ -185,26 +185,26 @@ const TransactionReceiptPage: React.FC = () => {
     const getStatusIcon = () => {
         switch (transaction.status) {
             case 'Complete':
-                return <CheckSquare size={16} className="mr-2 text-success-600" />;
+                return <CheckSquare size={16} className="mr-2 text-success-600 dark:text-success-400" />;
             case 'Pending':
-                return <Clock size={16} className="mr-2 text-warning-600" />;
+                return <Clock size={16} className="mr-2 text-warning-600 dark:text-warning-400" />;
             case 'Failed':
-                return <XCircle size={16} className="mr-2 text-danger-600" />;
+                return <XCircle size={16} className="mr-2 text-danger-600 dark:text-danger-400" />;
             default:
-                return <AlertCircle size={16} className="mr-2 text-neutral-600" />;
+                return <AlertCircle size={16} className="mr-2 text-neutral-600 dark:text-neutral-400" />;
         }
     };
 
     const getStatusColor = () => {
         switch (transaction.status) {
             case 'Complete':
-                return 'bg-success-50 border-success-200 text-success-700';
+                return 'bg-success-50 dark:bg-success-900/20 border-success-200 dark:border-success-800/30 text-success-700 dark:text-success-400';
             case 'Pending':
-                return 'bg-warning-50 border-warning-200 text-warning-700';
+                return 'bg-warning-50 dark:bg-warning-900/20 border-warning-200 dark:border-warning-800/30 text-warning-700 dark:text-warning-400';
             case 'Failed':
-                return 'bg-danger-50 border-danger-200 text-danger-700';
+                return 'bg-danger-50 dark:bg-danger-900/20 border-danger-200 dark:border-danger-800/30 text-danger-700 dark:text-danger-400';
             default:
-                return 'bg-neutral-50 border-neutral-200 text-neutral-700';
+                return 'bg-neutral-50 dark:bg-dark-active border-neutral-200 dark:border-dark-border text-neutral-700 dark:text-neutral-400';
         }
     };
 
@@ -217,9 +217,9 @@ const TransactionReceiptPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-finance-navy/5 via-white to-primary-50/30">
+        <div className="min-h-screen bg-gradient-to-br from-finance-navy/5 via-white to-primary-50/30 dark:from-dark-surface dark:via-charcoal-900 dark:to-dark-surface">
             <motion.div
-                className="bg-white/90 backdrop-blur-xl border-b border-primary-100 print:hidden sticky top-0 z-10 shadow-nav"
+                className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-xl border-b border-primary-100 dark:border-dark-border print:hidden sticky top-0 z-10 shadow-nav dark:shadow-dark-md"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -228,7 +228,7 @@ const TransactionReceiptPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                         <button
                             onClick={() => navigate('/admin/finance/transactions')}
-                            className="flex items-center text-neutral-600 hover:text-neutral-900 transition-colors"
+                            className="flex items-center text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 transition-colors"
                         >
                             <ArrowLeft size={18} className="mr-2" />
                             <span className="font-medium">Back to Transaction Registry</span>
@@ -237,7 +237,7 @@ const TransactionReceiptPage: React.FC = () => {
                         <div className="flex items-center space-x-2">
                             <motion.button
                                 onClick={() => copyToClipboard(transaction.id, 'Transaction ID')}
-                                className="flex items-center px-3 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-primary-50 rounded-lg transition-all"
+                                className="flex items-center px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-primary-50 dark:hover:bg-dark-hover rounded-lg transition-all"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -246,7 +246,7 @@ const TransactionReceiptPage: React.FC = () => {
                             </motion.button>
                             <motion.button
                                 onClick={() => window.print()}
-                                className="flex items-center px-3 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-primary-50 rounded-lg transition-all"
+                                className="flex items-center px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-primary-50 dark:hover:bg-dark-hover rounded-lg transition-all"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -254,7 +254,7 @@ const TransactionReceiptPage: React.FC = () => {
                                 Print
                             </motion.button>
                             <motion.button
-                                className="flex items-center px-4 py-2 bg-primary-600 text-white text-sm rounded-lg font-medium hover:bg-primary-700 transition-all shadow-button"
+                                className="flex items-center px-4 py-2 bg-primary-600 dark:bg-primary-700 text-white text-sm rounded-lg font-medium hover:bg-primary-700 dark:hover:bg-primary-600 transition-all shadow-button dark:shadow-dark-glow"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
@@ -267,13 +267,13 @@ const TransactionReceiptPage: React.FC = () => {
             </motion.div>
             <div className="max-w-4xl mx-auto p-6">
                 <div className="text-center mb-3">
-                    <div className="inline-block px-3 py-1 bg-primary-50 border border-primary-100 rounded-lg text-primary-600 text-xs font-medium">
+                    <div className="inline-block px-3 py-1 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800/30 rounded-lg text-primary-600 dark:text-primary-400 text-xs font-medium">
                         Official Transaction Record
                     </div>
                 </div>
 
                 <motion.div
-                    className="bg-white/90 backdrop-blur-xl rounded-xl border border-primary-100/80 shadow-card overflow-hidden"
+                    className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-xl rounded-xl border border-primary-100/80 dark:border-dark-border shadow-card dark:shadow-dark-lg overflow-hidden"
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
@@ -287,18 +287,18 @@ const TransactionReceiptPage: React.FC = () => {
                         </div>
 
                         <div className="absolute top-3 right-3 opacity-10">
-                            <Landmark size={120} className="text-finance-navy" />
+                            <Landmark size={120} className="text-finance-navy dark:text-finance-highlight" />
                         </div>
 
                         <div className="relative">
                             <div className="flex items-center justify-between mb-8">
                                 <div>
                                     <div className="flex items-center space-x-3 mb-2">
-                                        <div className={`w-12 h-12 ${colors.accent} rounded-lg flex items-center justify-center shadow-sm`}>
+                                        <div className={`w-12 h-12 ${colors.accent} rounded-lg flex items-center justify-center shadow-sm dark:shadow-dark-sm`}>
                                             {getTransactionIcon()}
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-neutral-600">Transaction Receipt</p>
+                                            <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Transaction Receipt</p>
                                             <p className={`text-lg font-bold ${colors.primary}`}>{transactionType}</p>
                                         </div>
                                     </div>
@@ -316,12 +316,12 @@ const TransactionReceiptPage: React.FC = () => {
                                 <div className={`text-4xl font-bold ${colors.primary} mb-2 font-finance`}>
                                     {isDebit ? '+' : '-'}{formatCurrency(amount)}
                                 </div>
-                                <div className="flex items-center text-neutral-600 space-x-4">
+                                <div className="flex items-center text-neutral-600 dark:text-neutral-400 space-x-4">
                                     <div className="flex items-center">
                                         <Calendar size={16} className="mr-2" />
                                         <span className="font-medium">{fullDate}</span>
                                     </div>
-                                    <div className="text-neutral-400">•</div>
+                                    <div className="text-neutral-400 dark:text-neutral-600">•</div>
                                     <span className="font-medium">{time}</span>
                                 </div>
                             </div>
@@ -332,73 +332,73 @@ const TransactionReceiptPage: React.FC = () => {
                 <div className="p-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div className="space-y-6">
-                            <h3 className="text-lg font-bold text-neutral-900 mb-6 flex items-center">
-                                <FileCheck size={18} className="mr-2 text-primary-600" />
+                            <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-6 flex items-center">
+                                <FileCheck size={18} className="mr-2 text-primary-600 dark:text-primary-400" />
                                 Transaction Details
                             </h3>
 
                             <motion.div
-                                className="bg-white border border-primary-100 p-5 rounded-lg hover:bg-primary-50/40 transition-all group cursor-pointer shadow-sm"
+                                className="bg-white dark:bg-dark-elevated border border-primary-100 dark:border-dark-border p-5 rounded-lg hover:bg-primary-50/40 dark:hover:bg-primary-900/20 transition-all group cursor-pointer shadow-sm dark:shadow-dark-sm"
                                 whileHover={{ scale: 1.01 }}
                                 onClick={() => copyToClipboard(transaction.id, 'Transaction ID')}
                             >
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center">
-                                        <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
-                                            <Hash size={18} className="text-primary-600" />
+                                        <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mr-4">
+                                            <Hash size={18} className="text-primary-600 dark:text-primary-400" />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-neutral-500">Transaction ID</p>
-                                            <p className="font-mono text-sm text-neutral-900 mt-1">{transaction.id}</p>
+                                            <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Transaction ID</p>
+                                            <p className="font-mono text-sm text-neutral-900 dark:text-neutral-200 mt-1">{transaction.id}</p>
                                         </div>
                                     </div>
-                                    <Copy size={16} className="text-neutral-400 group-hover:text-primary-600 transition-colors" />
+                                    <Copy size={16} className="text-neutral-400 dark:text-neutral-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
                                 </div>
                             </motion.div>
 
                             {transaction.external_id && (
                                 <motion.div
-                                    className="bg-white border border-primary-100 p-5 rounded-lg hover:bg-primary-50/40 transition-all group cursor-pointer shadow-sm"
+                                    className="bg-white dark:bg-dark-elevated border border-primary-100 dark:border-dark-border p-5 rounded-lg hover:bg-primary-50/40 dark:hover:bg-primary-900/20 transition-all group cursor-pointer shadow-sm dark:shadow-dark-sm"
                                     whileHover={{ scale: 1.01 }}
                                     onClick={() => copyToClipboard(transaction.external_id!, 'Reference')}
                                 >
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
-                                                <FileText size={18} className="text-primary-600" />
+                                            <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mr-4">
+                                                <FileText size={18} className="text-primary-600 dark:text-primary-400" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-neutral-500">External Reference</p>
-                                                <p className="font-medium text-neutral-900 mt-1">{transaction.external_id}</p>
+                                                <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">External Reference</p>
+                                                <p className="font-medium text-neutral-900 dark:text-neutral-200 mt-1">{transaction.external_id}</p>
                                             </div>
                                         </div>
-                                        <Copy size={16} className="text-neutral-400 group-hover:text-primary-600 transition-colors" />
+                                        <Copy size={16} className="text-neutral-400 dark:text-neutral-500 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
                                     </div>
                                 </motion.div>
                             )}
 
-                            <div className="bg-white border border-primary-100 p-5 rounded-lg shadow-sm">
+                            <div className="bg-white dark:bg-dark-elevated border border-primary-100 dark:border-dark-border p-5 rounded-lg shadow-sm dark:shadow-dark-sm">
                                 <div className="flex items-start">
-                                    <div className="w-10 h-10 bg-secondary-100 rounded-lg flex items-center justify-center mr-4 mt-1">
-                                        <FileText size={18} className="text-secondary-600" />
+                                    <div className="w-10 h-10 bg-secondary-100 dark:bg-secondary-900/30 rounded-lg flex items-center justify-center mr-4 mt-1">
+                                        <FileText size={18} className="text-secondary-600 dark:text-secondary-400" />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-sm font-medium text-neutral-500 mb-2">Description</p>
-                                        <p className="text-neutral-900 text-[12px] leading-relaxed">
+                                        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-2">Description</p>
+                                        <p className="text-neutral-900 dark:text-neutral-300 text-[12px] leading-relaxed">
                                             {transaction.description || 'No description provided for this transaction'}
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white border border-primary-100 p-5 rounded-lg shadow-sm">
+                            <div className="bg-white dark:bg-dark-elevated border border-primary-100 dark:border-dark-border p-5 rounded-lg shadow-sm dark:shadow-dark-sm">
                                 <div className="flex items-center">
-                                    <div className="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center mr-4">
-                                        <DollarSign size={18} className="text-success-600" />
+                                    <div className="w-10 h-10 bg-success-100 dark:bg-success-900/30 rounded-lg flex items-center justify-center mr-4">
+                                        <DollarSign size={18} className="text-success-600 dark:text-success-400" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-neutral-500">Final Balance</p>
-                                        <p className="text-2xl font-bold text-neutral-900 mt-1 font-finance">
+                                        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Final Balance</p>
+                                        <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mt-1 font-finance">
                                             {formatCurrency(transaction.balance)}
                                         </p>
                                     </div>
@@ -407,15 +407,15 @@ const TransactionReceiptPage: React.FC = () => {
                         </div>
 
                         <div className="space-y-6">
-                            <h3 className="text-lg font-bold text-neutral-900 mb-6 flex items-center">
+                            <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-6 flex items-center">
                                 {transaction.user ? (
                                     <>
-                                        <User size={18} className="mr-2 text-primary-600" />
+                                        <User size={18} className="mr-2 text-primary-600 dark:text-primary-400" />
                                         Account Information
                                     </>
                                 ) : (
                                     <>
-                                        <Shield size={18} className="mr-2 text-primary-600" />
+                                        <Shield size={18} className="mr-2 text-primary-600 dark:text-primary-400" />
                                         System Transaction
                                     </>
                                 )}
@@ -423,41 +423,41 @@ const TransactionReceiptPage: React.FC = () => {
 
                             {transaction.user ? (
                                 <>
-                                    <div className="bg-white border border-primary-100 p-5 rounded-lg shadow-sm">
+                                    <div className="bg-white dark:bg-dark-elevated border border-primary-100 dark:border-dark-border p-5 rounded-lg shadow-sm dark:shadow-dark-sm">
                                         <div className="flex items-start">
-                                            <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
-                                                <User size={18} className="text-primary-600" />
+                                            <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mr-4">
+                                                <User size={18} className="text-primary-600 dark:text-primary-400" />
                                             </div>
                                             <div className="flex-1">
-                                                <p className="text-sm font-medium text-neutral-500 mb-3">Account Holder</p>
+                                                <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-3">Account Holder</p>
                                                 <div className="space-y-3">
                                                     <div>
-                                                        <p className="font-semibold text-neutral-900 text-lg">
+                                                        <p className="font-semibold text-neutral-900 dark:text-neutral-100 text-lg">
                                                             {transaction.user.first_name} {transaction.user.last_name}
                                                         </p>
-                                                        <p className="text-neutral-600">@{transaction.user.username}</p>
+                                                        <p className="text-neutral-600 dark:text-neutral-400">@{transaction.user.username}</p>
                                                     </div>
 
-                                                    <div className="flex items-center text-neutral-600">
+                                                    <div className="flex items-center text-neutral-600 dark:text-neutral-400">
                                                         <Smartphone size={16} className="mr-2" />
                                                         <span>{transaction.user.phone_number}</span>
                                                     </div>
 
-                                                    <div className="flex items-center text-neutral-600">
+                                                    <div className="flex items-center text-neutral-600 dark:text-neutral-400">
                                                         <Mail size={16} className="mr-2" />
                                                         <span>{transaction.user.email}</span>
                                                     </div>
 
                                                     <div className="flex items-center space-x-3 pt-2">
                                                         <span className={`px-3 py-1 rounded-lg text-xs font-semibold border ${transaction.user.phone_verified
-                                                            ? 'bg-success-50 text-success-700 border-success-200'
-                                                            : 'bg-danger-50 text-danger-700 border-danger-200'
+                                                            ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-400 border-success-200 dark:border-success-800/30'
+                                                            : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-400 border-danger-200 dark:border-danger-800/30'
                                                             }`}>
                                                             {transaction.user.phone_verified ? '✓ Phone Verified' : '✗ Phone Unverified'}
                                                         </span>
                                                         <span className={`px-3 py-1 rounded-lg text-xs font-semibold border ${transaction.user.email_verified
-                                                            ? 'bg-success-50 text-success-700 border-success-200'
-                                                            : 'bg-danger-50 text-danger-700 border-danger-200'
+                                                            ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-400 border-success-200 dark:border-success-800/30'
+                                                            : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-400 border-danger-200 dark:border-danger-800/30'
                                                             }`}>
                                                             {transaction.user.email_verified ? '✓ Email Verified' : '✗ Email Unverified'}
                                                         </span>
@@ -468,39 +468,39 @@ const TransactionReceiptPage: React.FC = () => {
                                     </div>
                                 </>
                             ) : (
-                                <div className="bg-white border border-primary-100 p-6 rounded-lg shadow-sm text-center">
-                                    <div className="w-16 h-16 bg-finance-navy/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                        <Shield size={24} className="text-finance-navy" />
+                                <div className="bg-white dark:bg-dark-elevated border border-primary-100 dark:border-dark-border p-6 rounded-lg shadow-sm dark:shadow-dark-sm text-center">
+                                    <div className="w-16 h-16 bg-finance-navy/10 dark:bg-finance-navy/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                        <Shield size={24} className="text-finance-navy dark:text-finance-accent" />
                                     </div>
-                                    <p className="font-semibold text-neutral-900 text-lg mb-2">System Transaction</p>
-                                    <p className="text-neutral-600">This transaction was automatically processed by the system</p>
+                                    <p className="font-semibold text-neutral-900 dark:text-neutral-100 text-lg mb-2">System Transaction</p>
+                                    <p className="text-neutral-600 dark:text-neutral-400">This transaction was automatically processed by the system</p>
                                 </div>
                             )}
 
                             {transaction.UserWallet && (
-                                <div className="bg-white border border-primary-100 p-5 rounded-lg shadow-sm">
+                                <div className="bg-white dark:bg-dark-elevated border border-primary-100 dark:border-dark-border p-5 rounded-lg shadow-sm dark:shadow-dark-sm">
                                     <div className="flex items-start">
-                                        <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center mr-4">
-                                            <CreditCard size={18} className="text-primary-600" />
+                                        <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mr-4">
+                                            <CreditCard size={18} className="text-primary-600 dark:text-primary-400" />
                                         </div>
                                         <div className="flex-1">
-                                            <p className="text-sm font-medium text-neutral-500 mb-3">Wallet Details</p>
+                                            <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-3">Wallet Details</p>
                                             <div className="space-y-3">
                                                 <div>
-                                                    <p className="text-xs text-neutral-500">Wallet ID</p>
-                                                    <p className="font-mono text-sm text-neutral-800">{transaction.UserWallet.id}</p>
+                                                    <p className="text-xs text-neutral-500 dark:text-neutral-500">Wallet ID</p>
+                                                    <p className="font-mono text-sm text-neutral-800 dark:text-neutral-300">{transaction.UserWallet.id}</p>
                                                 </div>
                                                 <div className="flex items-center justify-between">
                                                     <div>
-                                                        <p className="text-xs text-neutral-500">Type</p>
-                                                        <p className="font-medium text-neutral-900 capitalize">
+                                                        <p className="text-xs text-neutral-500 dark:text-neutral-500">Type</p>
+                                                        <p className="font-medium text-neutral-900 dark:text-neutral-200 capitalize">
                                                             {transaction.UserWallet.type}
                                                             {transaction.UserWallet.purpose && ` (${transaction.UserWallet.purpose.replace('_', ' ')})`}
                                                         </p>
                                                     </div>
                                                     <span className={`px-3 py-1 rounded-lg text-xs font-semibold border ${transaction.UserWallet.status === 'Active'
-                                                        ? 'bg-success-50 text-success-700 border-success-200'
-                                                        : 'bg-danger-50 text-danger-700 border-danger-200'
+                                                        ? 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-400 border-success-200 dark:border-success-800/30'
+                                                        : 'bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-400 border-danger-200 dark:border-danger-800/30'
                                                         }`}>
                                                         {transaction.UserWallet.status}
                                                     </span>
@@ -515,28 +515,28 @@ const TransactionReceiptPage: React.FC = () => {
                 </div>
 
                 <div className="mt-4">
-                    <div className="bg-white/90 border border-primary-100 rounded-lg overflow-hidden shadow-sm">
-                        <div className="py-4 px-6 bg-primary-50/50 border-b border-primary-100 flex items-center space-x-2">
-                            <CheckCircle size={16} className="text-primary-600" />
-                            <h4 className="font-medium text-primary-700">Verification</h4>
+                    <div className="bg-white/90 dark:bg-dark-elevated/90 border border-primary-100 dark:border-dark-border rounded-lg overflow-hidden shadow-sm dark:shadow-dark-sm">
+                        <div className="py-4 px-6 bg-primary-50/50 dark:bg-primary-900/20 border-b border-primary-100 dark:border-dark-border flex items-center space-x-2">
+                            <CheckCircle size={16} className="text-primary-600 dark:text-primary-400" />
+                            <h4 className="font-medium text-primary-700 dark:text-primary-400">Verification</h4>
                         </div>
                         <div className="p-5">
                             <div className="flex items-center justify-between text-sm">
-                                <p className="text-neutral-500">
+                                <p className="text-neutral-500 dark:text-neutral-400">
                                     This is an official receipt issued by the system. Transaction details have been verified and recorded in the financial ledger.
                                 </p>
                                 <div className="flex items-center">
-                                    <Shield size={16} className="text-primary-600 mr-2" />
-                                    <span className="text-primary-700 font-medium">Secure Record</span>
+                                    <Shield size={16} className="text-primary-600 dark:text-primary-400 mr-2" />
+                                    <span className="text-primary-700 dark:text-primary-400 font-medium">Secure Record</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="px-8 py-6 bg-neutral-50/50 border-t border-neutral-100 print:hidden mt-6 rounded-b-lg">
+                <div className="px-8 py-6 bg-neutral-50/50 dark:bg-dark-active/30 border-t border-neutral-100 dark:border-dark-border print:hidden mt-6 rounded-b-lg">
                     <div className="flex items-center justify-between">
-                        <p className="text-sm text-neutral-500">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-500">
                             Receipt generated on {new Date(transaction.createdAt).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
@@ -547,7 +547,7 @@ const TransactionReceiptPage: React.FC = () => {
                         </p>
                         <button
                             onClick={() => navigate('/admin/finance/transactions')}
-                            className="px-6 py-2 text-primary-600 hover:text-primary-700 font-medium transition-colors"
+                            className="px-6 py-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors"
                         >
                             Return to Transaction Registry
                         </button>

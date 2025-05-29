@@ -53,32 +53,32 @@ const Dashboard = () => {
       value: '24,892',
       change: '+12.5%',
       isPositive: true,
-      icon: <Users size={20} className="text-primary-500" strokeWidth={1.8} />,
-      bgColor: 'from-primary-50 to-primary-50'
+      icon: <Users size={20} className="text-primary-500 dark:text-primary-400" strokeWidth={1.8} />,
+      bgColor: 'from-primary-50 to-primary-50 dark:from-primary-950/30 dark:to-primary-900/20'
     },
     {
       title: 'Active Users',
       value: '3,745',
       change: '+8.2%',
       isPositive: true,
-      icon: <UserCheck size={20} className="text-green-500" strokeWidth={1.8} />,
-      bgColor: 'from-green-50 to-emerald-50'
+      icon: <UserCheck size={20} className="text-green-500 dark:text-green-400" strokeWidth={1.8} />,
+      bgColor: 'from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-900/20'
     },
     {
       title: 'Transaction Volume',
       value: '$934,128',
       change: '+23.1%',
       isPositive: true,
-      icon: <TrendingUp size={20} className="text-primary-500" strokeWidth={1.8} />,
-      bgColor: 'from-primary-50 to-cyan-50'
+      icon: <TrendingUp size={20} className="text-primary-500 dark:text-primary-400" strokeWidth={1.8} />,
+      bgColor: 'from-primary-50 to-cyan-50 dark:from-primary-950/30 dark:to-cyan-900/20'
     },
     {
       title: 'Revenue',
       value: '$87,291',
       change: '-2.4%',
       isPositive: false,
-      icon: <DollarSign size={20} className="text-amber-500" strokeWidth={1.8} />,
-      bgColor: 'from-amber-50 to-yellow-50'
+      icon: <DollarSign size={20} className="text-amber-500 dark:text-amber-400" strokeWidth={1.8} />,
+      bgColor: 'from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-900/20'
     }
   ];
 
@@ -92,30 +92,29 @@ const Dashboard = () => {
 
   return (
     <motion.div
-      className="p-6 max-w-[1600px] mx-auto"
+      className="w-full mx-auto"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
-      {/* Dashboard Header */}
       <motion.div
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6"
         variants={itemVariants}
       >
         <div>
-          <h1 className="text-[24px] font-semibold text-gray-800">Dashboard</h1>
-          <p className="text-gray-500 mt-1 text-[13px]">Welcome back, see the latest updates</p>
+          <h1 className="text-[24px] font-semibold text-gray-800 dark:text-neutral-100">Dashboard</h1>
+          <p className="text-gray-500 dark:text-neutral-400 mt-1 text-[13px]">Welcome back, see the latest updates</p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center space-x-2">
           <motion.div
-            className="flex items-center py-1 px-1.5 bg-gray-100/80 backdrop-blur-sm rounded-xl"
+            className="flex items-center py-1 px-1.5 bg-gray-100/80 dark:bg-dark-elevated backdrop-blur-sm rounded-xl"
             whileHover={{ scale: 1.02 }}
           >
             <button
               onClick={() => handleTimeframeChange('day')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all ${activeTimeframe === 'day'
-                ? 'bg-white text-primary-600 shadow-sm'
-                : 'text-gray-600 hover:text-primary-600'
+                ? 'bg-white dark:bg-dark-active text-primary-600 dark:text-primary-400 shadow-sm dark:shadow-dark-sm'
+                : 'text-gray-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
             >
               Day
@@ -123,8 +122,8 @@ const Dashboard = () => {
             <button
               onClick={() => handleTimeframeChange('week')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all ${activeTimeframe === 'week'
-                ? 'bg-white text-primary-600 shadow-sm'
-                : 'text-gray-600 hover:text-primary-600'
+                ? 'bg-white dark:bg-dark-active text-primary-600 dark:text-primary-400 shadow-sm dark:shadow-dark-sm'
+                : 'text-gray-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
             >
               Week
@@ -132,8 +131,8 @@ const Dashboard = () => {
             <button
               onClick={() => handleTimeframeChange('month')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all ${activeTimeframe === 'month'
-                ? 'bg-white text-primary-600 shadow-sm'
-                : 'text-gray-600 hover:text-primary-600'
+                ? 'bg-white dark:bg-dark-active text-primary-600 dark:text-primary-400 shadow-sm dark:shadow-dark-sm'
+                : 'text-gray-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
             >
               Month
@@ -141,8 +140,8 @@ const Dashboard = () => {
             <button
               onClick={() => handleTimeframeChange('year')}
               className={`px-3 py-1.5 text-sm rounded-lg transition-all ${activeTimeframe === 'year'
-                ? 'bg-white text-primary-600 shadow-sm'
-                : 'text-gray-600 hover:text-primary-600'
+                ? 'bg-white dark:bg-dark-active text-primary-600 dark:text-primary-400 shadow-sm dark:shadow-dark-sm'
+                : 'text-gray-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400'
                 }`}
             >
               Year
@@ -176,17 +175,17 @@ const Dashboard = () => {
       >
         {/* User Activity Chart - Takes up 2/3 of the space */}
         <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 lg:col-span-2 overflow-hidden"
+          className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border p-5 lg:col-span-2 overflow-hidden"
           whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
         >
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">User Activity</h2>
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">User Activity</h2>
             <div className="flex items-center space-x-2">
               <motion.button
                 onClick={() => handleTabChange('users')}
                 className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedTab === 'users'
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'
+                  : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
                   }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -196,8 +195,8 @@ const Dashboard = () => {
               <motion.button
                 onClick={() => handleTabChange('groups')}
                 className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedTab === 'groups'
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'
+                  : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
                   }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -207,8 +206,8 @@ const Dashboard = () => {
               <motion.button
                 onClick={() => handleTabChange('transactions')}
                 className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedTab === 'transactions'
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'
+                  : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
                   }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -222,41 +221,41 @@ const Dashboard = () => {
 
         {/* Login Types Pie Chart */}
         <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 overflow-hidden"
+          className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border p-5 overflow-hidden"
           whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
         >
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Login Devices</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200 mb-4">Login Devices</h2>
           <LoginTypesPieChart />
 
           <div className="mt-4 grid grid-cols-1 gap-2">
-            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50">
               <div className="flex items-center">
-                <div className="p-2 rounded-lg bg-primary-50 mr-3">
-                  <Smartphone size={16} className="text-primary-500" strokeWidth={1.8} />
+                <div className="p-2 rounded-lg bg-primary-50 dark:bg-primary-900/30 mr-3">
+                  <Smartphone size={16} className="text-primary-500 dark:text-primary-400" strokeWidth={1.8} />
                 </div>
-                <span className="text-sm text-gray-700">Mobile</span>
+                <span className="text-sm text-gray-700 dark:text-neutral-300">Mobile</span>
               </div>
-              <span className="text-sm font-medium text-gray-700">68%</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-neutral-300">68%</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50">
               <div className="flex items-center">
-                <div className="p-2 rounded-lg bg-primary-50 mr-3">
-                  <Laptop size={16} className="text-primary-500" strokeWidth={1.8} />
+                <div className="p-2 rounded-lg bg-primary-50 dark:bg-primary-900/30 mr-3">
+                  <Laptop size={16} className="text-primary-500 dark:text-primary-400" strokeWidth={1.8} />
                 </div>
-                <span className="text-sm text-gray-700">Desktop</span>
+                <span className="text-sm text-gray-700 dark:text-neutral-300">Desktop</span>
               </div>
-              <span className="text-sm font-medium text-gray-700">26%</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-neutral-300">26%</span>
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50">
               <div className="flex items-center">
-                <div className="p-2 rounded-lg bg-violet-50 mr-3">
-                  <Tablet size={16} className="text-violet-500" strokeWidth={1.8} />
+                <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30 mr-3">
+                  <Tablet size={16} className="text-violet-500 dark:text-violet-400" strokeWidth={1.8} />
                 </div>
-                <span className="text-sm text-gray-700">Tablet</span>
+                <span className="text-sm text-gray-700 dark:text-neutral-300">Tablet</span>
               </div>
-              <span className="text-sm font-medium text-gray-700">6%</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-neutral-300">6%</span>
             </div>
           </div>
         </motion.div>
@@ -271,14 +270,14 @@ const Dashboard = () => {
         <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Recent Users */}
           <motion.div
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+            className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border overflow-hidden"
             whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
           >
-            <div className="p-5 border-b border-gray-50">
+            <div className="p-5 border-b border-gray-50 dark:border-dark-border">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-gray-800">Recent Users</h2>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Recent Users</h2>
                 <motion.button
-                  className="text-xs text-primary-600 flex items-center"
+                  className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
                   whileHover={{ x: 3 }}
                 >
                   View all <ChevronRight size={14} />
@@ -290,14 +289,14 @@ const Dashboard = () => {
 
           {/* Recent Groups */}
           <motion.div
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+            className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border overflow-hidden"
             whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
           >
-            <div className="p-5 border-b border-gray-50">
+            <div className="p-5 border-b border-gray-50 dark:border-dark-border">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-gray-800">Recent Groups</h2>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Recent Groups</h2>
                 <motion.button
-                  className="text-xs text-primary-600 flex items-center"
+                  className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
                   whileHover={{ x: 3 }}
                 >
                   View all <ChevronRight size={14} />
@@ -310,20 +309,19 @@ const Dashboard = () => {
 
         {/* Active Users & Groups Split Panel */}
         <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Active Users */}
           <motion.div
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+            className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border overflow-hidden"
             whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
           >
-            <div className="p-5 border-b border-gray-50">
+            <div className="p-5 border-b border-gray-50 dark:border-dark-border">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <h2 className="text-lg font-semibold text-gray-800">Active Users</h2>
-                  <div className="ml-2 px-2 py-0.5 bg-green-100 rounded-full text-xs text-green-700 flex items-center">
+                  <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Active Users</h2>
+                  <div className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 rounded-full text-xs text-green-700 dark:text-green-400 flex items-center">
                     <Clock size={10} className="mr-1" /> 30m
                   </div>
                 </div>
-                <div className="bg-gray-50 py-1 px-2 rounded-lg text-sm text-gray-800 font-medium">
+                <div className="bg-gray-50 dark:bg-dark-active py-1 px-2 rounded-lg text-sm text-gray-800 dark:text-neutral-200 font-medium">
                   328
                 </div>
               </div>
@@ -333,18 +331,18 @@ const Dashboard = () => {
 
           {/* Active Groups */}
           <motion.div
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+            className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border overflow-hidden"
             whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
           >
-            <div className="p-5 border-b border-gray-50">
+            <div className="p-5 border-b border-gray-50 dark:border-dark-border">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <h2 className="text-lg font-semibold text-gray-800">Active Groups</h2>
-                  <div className="ml-2 px-2 py-0.5 bg-green-100 rounded-full text-xs text-green-700 flex items-center">
+                  <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Active Groups</h2>
+                  <div className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 rounded-full text-xs text-green-700 dark:text-green-400 flex items-center">
                     <Clock size={10} className="mr-1" /> 30m
                   </div>
                 </div>
-                <div className="bg-gray-50 py-1 px-2 rounded-lg text-sm text-gray-800 font-medium">
+                <div className="bg-gray-50 dark:bg-dark-active py-1 px-2 rounded-lg text-sm text-gray-800 dark:text-neutral-200 font-medium">
                   42
                 </div>
               </div>
@@ -361,7 +359,7 @@ const Dashboard = () => {
       >
         {/* Livestream Metrics */}
         <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 overflow-hidden"
+          className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border p-5 overflow-hidden"
           whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
         >
           <div className="flex justify-between items-center mb-5">
@@ -369,10 +367,10 @@ const Dashboard = () => {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-3">
                 <Activity size={18} className="text-white" strokeWidth={1.8} />
               </div>
-              <h2 className="text-lg font-semibold text-gray-800">Livestream Metrics</h2>
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Livestream Metrics</h2>
             </div>
             <motion.button
-              className="text-xs text-primary-600 flex items-center"
+              className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
               whileHover={{ x: 3 }}
             >
               View details <ChevronRight size={14} />
@@ -383,7 +381,7 @@ const Dashboard = () => {
 
         {/* Wallet Analytics */}
         <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 overflow-hidden"
+          className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border p-5 overflow-hidden"
           whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
         >
           <div className="flex justify-between items-center mb-5">
@@ -391,10 +389,10 @@ const Dashboard = () => {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-primary-500 to-cyan-500 flex items-center justify-center mr-3">
                 <Wallet size={18} className="text-white" strokeWidth={1.8} />
               </div>
-              <h2 className="text-lg font-semibold text-gray-800">Wallet Analytics</h2>
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Wallet Analytics</h2>
             </div>
             <motion.button
-              className="text-xs text-primary-600 flex items-center"
+              className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
               whileHover={{ x: 3 }}
             >
               View details <ChevronRight size={14} />

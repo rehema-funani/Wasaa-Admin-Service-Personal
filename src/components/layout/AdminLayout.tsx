@@ -32,7 +32,7 @@ const AdminLayout = () => {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const handleChange = (e) => {
+    const handleChange = (e: any) => {
       if (localStorage.getItem('darkMode') === null) {
         setIsDarkMode(e.matches)
       }
