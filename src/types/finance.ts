@@ -242,3 +242,29 @@ export interface ListEntry {
     };
     user: any | null;
 }
+
+export interface SystemWallet {
+    id: string;
+    name: string;
+    type: 'float' | 'fee' | 'refund' | 'promotions';
+    balance: number;
+    currency: string;
+    accountNumber: string;
+    status: 'active' | 'inactive' | 'pending';
+    lastUpdated: string;
+    transactionCount: number;
+    monthlyVolume: number;
+    description: string;
+}
+
+export interface WalletTransaction {
+    id: string;
+    walletId: string;
+    type: 'credit' | 'debit';
+    amount: number;
+    reference: string;
+    description: string;
+    status: 'completed' | 'pending' | 'failed';
+    timestamp: string;
+    relatedEntity?: string;
+}
