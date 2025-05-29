@@ -56,6 +56,7 @@ const Limits = lazy(() => import('./app/admin/finance/limits/page'));
 const AddLimit = lazy(() => import('./app/admin/finance/limits/addkyc'));
 const EditLimit = lazy(() => import('./app/admin/finance/limits/editkyc'));
 const Compliance = lazy(() => import('./app/admin/finance/system-wallets/amlcompliance'));
+const ViewRule = lazy(() => import('./app/admin/finance/system-wallets/view-rule'));
 const Verification = lazy(() => import('./app/admin/finance/limits/verification'));
 const Wallets = lazy(() => import('./app/admin/finance/system-wallets/page'));
 const ReversalRequests = lazy(() => import('./app/admin/finance/system-wallets/reversalrequests'));
@@ -267,6 +268,11 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/finance/compliance" element={
                         <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
                             <Compliance />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/compliance/rules/:id" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                            <ViewRule />
                         </PermissionRouteGuard>
                     } />
                     <Route path="admin/finance/limits/verification" element={

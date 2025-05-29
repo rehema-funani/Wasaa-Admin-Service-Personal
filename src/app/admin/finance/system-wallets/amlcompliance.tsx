@@ -3,30 +3,19 @@ import {
     AlertTriangle,
     Shield,
     AlertCircle,
-    Search,
-    RefreshCw,
-    Filter,
     Clock,
     CheckCircle2,
     XCircle,
     Download,
     Sliders,
     UserX,
-    UserCheck,
     Globe,
     FileCheck,
-    Calendar,
     BarChart3,
     PieChart,
-    ChevronDown,
     Eye,
-    FileText,
     Flag,
-    ArrowRight,
-    X,
-    ChevronRight,
-    Plus,
-    User
+    Plus
 } from 'lucide-react';
 import { Modal } from '../../../../components/common/Modal';
 import BlacklistWhitelistManager from './blacklistwhitelistmanager';
@@ -39,7 +28,6 @@ import UpdateAlertModal from '../../../../components/finance/UpdateAlertModal';
 import renderDashboard from '../../../../components/finance/renderDashboard';
 
 const AMLComplianceDashboard: React.FC = () => {
-    // State management
     const [alerts, setAlerts] = useState<AMLAlert[]>([]);
     const [metrics, setMetrics] = useState<RiskMetrics | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -55,7 +43,6 @@ const AMLComplianceDashboard: React.FC = () => {
     const [modalType, setModalType] = useState<'view' | 'update' | null>(null);
     const [filterOpen, setFilterOpen] = useState<boolean>(false);
 
-    // Load AML alert data
     useEffect(() => {
         fetchAMLData();
     }, []);
@@ -66,16 +53,13 @@ const AMLComplianceDashboard: React.FC = () => {
             const response = await financeService.getAMLChecks();
 
             if (response && response.data) {
-                // Process alerts
                 const processedAlerts = response.data.amlAlerts.map(alert => ({
                     ...alert,
-                    // Mock user names since they aren't in the API response
                     userName: `User ${alert.userUuid.substring(0, 8)}`
                 }));
 
                 setAlerts(processedAlerts);
 
-                // Calculate metrics from grouped counts
                 calculateMetrics(response.data.groupedCounts, processedAlerts);
             } else {
                 throw new Error('Invalid response format');
@@ -89,22 +73,18 @@ const AMLComplianceDashboard: React.FC = () => {
         }
     };
 
-    // Calculate metrics from API response
     const calculateMetrics = (groupedCounts: GroupedCount[], alerts: AMLAlert[]) => {
-        // Count alerts by type
         const alertTypes = alerts.reduce((acc, alert) => {
             const typeName = formatAlertType(alert.AlertType.name);
             acc[typeName] = (acc[typeName] || 0) + 1;
             return acc;
         }, {} as Record<string, number>);
 
-        // Prepare alert type array for chart
         const alertsByType = Object.entries(alertTypes).map(([name, value]) => ({
             name,
             value
         }));
 
-        // Count alerts by risk level from grouped counts
         let highRiskAlerts = 0;
         let mediumRiskAlerts = 0;
         let lowRiskAlerts = 0;
@@ -136,10 +116,8 @@ const AMLComplianceDashboard: React.FC = () => {
 
         const totalAlerts = newAlerts + underReviewAlerts + escalatedAlerts + resolvedAlerts;
 
-        // Count false positives (not in API, using mocked value)
         const falsePositives = alerts.filter(a => a.status === 'false_positive').length;
 
-        // Prepare risk level array for chart
         const alertsByRisk = [
             { name: 'High', value: highRiskAlerts },
             { name: 'Medium', value: mediumRiskAlerts },
@@ -161,7 +139,6 @@ const AMLComplianceDashboard: React.FC = () => {
         });
     };
 
-    // Filter alerts based on search, status, risk level and timeframe
     const filteredAlerts = alerts.filter(alert => {
         const matchesSearch =
             (alert.userName?.toLowerCase().includes(searchQuery.toLowerCase()) || false) ||
@@ -187,9 +164,7 @@ const AMLComplianceDashboard: React.FC = () => {
         return matchesSearch && matchesStatus && matchesRisk && matchesTimeframe;
     });
 
-    // Handle alert status update
     const handleStatusUpdate = (alertId: string, newStatus: AMLAlert['status'], resolution?: string) => {
-        // In a real implementation, this would call an API
         const updatedAlerts = alerts.map(alert => {
             if (alert.id === alertId) {
                 const updatedAlert = { ...alert, status: newStatus };
@@ -228,7 +203,6 @@ const AMLComplianceDashboard: React.FC = () => {
         setSelectedAlert(null);
     };
 
-    // Show success message with a timeout
     const showSuccess = (message: string) => {
         setSuccessMessage(message);
         setErrorMessage(null);
@@ -237,30 +211,18 @@ const AMLComplianceDashboard: React.FC = () => {
         }, 3000);
     };
 
-    // Show error message with a timeout
-    const showError = (message: string) => {
-        setErrorMessage(message);
-        setSuccessMessage(null);
-        setTimeout(() => {
-            setErrorMessage(null);
-        }, 3000);
-    };
-
-    // Open alert view modal
     const openAlertViewModal = (alert: AMLAlert) => {
         setSelectedAlert(alert);
         setModalType('view');
         setIsModalOpen(true);
     };
 
-    // Open alert update modal
     const openUpdateStatusModal = (alert: AMLAlert) => {
         setSelectedAlert(alert);
         setModalType('update');
         setIsModalOpen(true);
     };
 
-    // Format date
     const formatDate = (dateString: string | null) => {
         if (!dateString) return 'N/A';
 
@@ -274,7 +236,6 @@ const AMLComplianceDashboard: React.FC = () => {
         });
     };
 
-    // Format alert type
     const formatAlertType = (type: string) => {
         switch (type) {
             case 'high_frequency':
@@ -296,7 +257,6 @@ const AMLComplianceDashboard: React.FC = () => {
         }
     };
 
-    // Get status badge color
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'new':
@@ -314,7 +274,6 @@ const AMLComplianceDashboard: React.FC = () => {
         }
     };
 
-    // Get risk level badge color
     const getRiskLevelColor = (level: string) => {
         switch (level) {
             case 'low':
@@ -328,7 +287,6 @@ const AMLComplianceDashboard: React.FC = () => {
         }
     };
 
-    // Get risk level icon
     const getRiskLevelIcon = (level: string) => {
         switch (level) {
             case 'low':
@@ -342,7 +300,6 @@ const AMLComplianceDashboard: React.FC = () => {
         }
     };
 
-    // Get status icon
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'new':
@@ -360,7 +317,6 @@ const AMLComplianceDashboard: React.FC = () => {
         }
     };
 
-    // Get alert type icon
     const getAlertTypeIcon = (type: string) => {
         switch (type) {
             case 'high_frequency':
@@ -381,7 +337,6 @@ const AMLComplianceDashboard: React.FC = () => {
         }
     };
 
-    // Get modal title
     const getModalTitle = () => {
         if (!selectedAlert) return '';
 
@@ -549,7 +504,6 @@ const AMLComplianceDashboard: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* Tab Content */}
                     {renderTabContent()}
                 </div>
             </div>
@@ -622,7 +576,6 @@ const AMLComplianceDashboard: React.FC = () => {
     );
 };
 
-// Custom SVG components (if not available from lucide-react)
 function Layers(props: any) {
     return (
         <svg

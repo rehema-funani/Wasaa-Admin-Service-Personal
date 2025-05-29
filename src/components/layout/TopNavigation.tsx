@@ -556,12 +556,12 @@ const TopNavigation = () => {
                 ? 'bg-gradient-to-r from-white via-white to-white backdrop-blur-xl shadow-xl shadow-secondary-900/20'
                 : 'bg-gradient-to-r from-white via-white to-white backdrop-blur-2xl'
                 }`}>
-                <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between">
-                    <div className="flex items-center mr-4 lg:mr-12">
+                <div className="px-4 py-2 flex items-center justify-between">
+                    <div className="flex items-center mr-2 lg:mr-12">
                         <img
                             src={logo}
                             alt="Logo"
-                            className="w-[150px] h-auto cursor-pointer"
+                            className="w-[200px] h-auto cursor-pointer"
                             onClick={() => navigate('/')}
                             style={{ cursor: 'pointer' }}
                         />
@@ -612,7 +612,6 @@ const TopNavigation = () => {
                                 </button>
                             )}
 
-                            {/* Search Results */}
                             {showSearchResults && searchResults.length > 0 && (
                                 <div
                                     ref={searchResultsRef}
