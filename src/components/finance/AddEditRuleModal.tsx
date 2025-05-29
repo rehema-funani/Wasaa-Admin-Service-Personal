@@ -1,5 +1,4 @@
 import { AlertTriangle, Info } from 'lucide-react';
-import React from 'react'
 
 const AddEditRuleModal = ({
     modalType,

@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 const forms = require('@tailwindcss/forms')
-
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -95,6 +94,30 @@ module.exports = {
           highlight: '#2176FF',
           accent: '#33A1FD',
         },
+        charcoal: {
+          50: '#f8f9fa',
+          100: '#e9eaec',
+          200: '#d4d6d9',
+          300: '#b3b6bc',
+          400: '#8e939c',
+          500: '#6e7480',
+          600: '#555c6b',
+          700: '#444a58',
+          800: '#333842',
+          900: '#24272f',
+          950: '#17191e',
+        },
+        dark: {
+          surface: '#121317',   
+          elevated: '#1e2028',  
+          border: '#2a2d36',      
+          input: '#252830',     
+          hover: '#2c303a',     
+          active: '#36394a',   
+          divider: '#272a33',  
+          muted: '#9095a0',   
+          subtle: '#5a5f6d',
+        },
       },
       boxShadow: {
         'soft-sm': '0 2px 4px 0 rgba(0, 0, 0, 0.05)',
@@ -106,6 +129,12 @@ module.exports = {
         'card': '0 10px 15px -3px rgba(7, 81, 138, 0.08), 0 4px 6px -2px rgba(7, 81, 138, 0.04)',
         'button': '0 2px 4px rgba(13, 153, 242, 0.15)',
         'nav': '0 4px 12px rgba(7, 81, 138, 0.06)',
+        'dark-sm': '0 2px 4px 0 rgba(0, 0, 0, 0.3)',
+        'dark': '0 2px 10px 0 rgba(0, 0, 0, 0.4)',
+        'dark-md': '0 4px 16px 0 rgba(0, 0, 0, 0.5)',
+        'dark-lg': '0 6px 20px 0 rgba(0, 0, 0, 0.6)',
+        'dark-card': '0 4px 12px rgba(0, 0, 0, 0.5)',
+        'dark-glow': '0 0 10px rgba(13, 153, 242, 0.15)',
       },
       borderRadius: {
         'xl': '0.75rem',
@@ -136,6 +165,8 @@ module.exports = {
         'gradient-primary': 'linear-gradient(135deg, #0D99F2 0%, #0260A7 100%)',
         'gradient-navy': 'linear-gradient(135deg, #0A2342 0%, #126872 100%)',
         'gradient-light': 'linear-gradient(135deg, #F0F7FF 0%, #E0EEFE 100%)',
+        'gradient-dark': 'linear-gradient(135deg, #17191e 0%, #24272f 100%)',
+        'gradient-charcoal': 'linear-gradient(135deg, #24272f 0%, #333842 100%)',
       },
     },
   },

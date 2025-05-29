@@ -5,7 +5,9 @@ import {
     ArrowRight, Menu, User,
     Settings, LogOut, CreditCard,
     AlertCircle, BarChart3,
-    Shield, Wallet
+    Shield, Wallet,
+    Sun,
+    Moon
 } from 'lucide-react';
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
@@ -108,7 +110,7 @@ const hasPermissionForRoute = (path: string, userPermissions: any) => {
     return requiredPermissions.some(permission => userPermissions.includes(permission));
 };
 
-const TopNavigation = () => {
+const TopNavigation = ({ toggleDarkMode, isDarkMode }) => {
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [activeNestedDropdown, setActiveNestedDropdown] = useState(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -366,19 +368,23 @@ const TopNavigation = () => {
                 <button
                     onClick={() => handleNestedDropdownToggle(dropdown.key)}
                     className={`w-full flex items-center p-4 rounded-2xl transition-all duration-300 ${isActive
-                        ? 'bg-gradient-to-r from-secondary-100/80 to-primary-100/80 text-secondary-700'
-                        : 'hover:bg-gradient-to-r hover:from-secondary-50/80 hover:to-primary-50/80'
+                        ? 'bg-gradient-to-r from-secondary-100/80 to-primary-100/80 text-secondary-700 dark:from-secondary-900/40 dark:to-primary-900/40 dark:text-secondary-300'
+                        : 'hover:bg-gradient-to-r hover:from-secondary-50/80 hover:to-primary-50/80 dark:hover:from-dark-hover dark:hover:to-dark-active/70'
                         }`}
                 >
                     <div className={`flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 mr-4 shadow-sm ${isActive
-                        ? 'bg-gradient-to-br from-secondary-200 to-primary-200'
-                        : 'bg-gradient-to-br from-slate-100 to-slate-50 group-hover:from-secondary-100 group-hover:to-primary-100'
+                        ? 'bg-gradient-to-br from-secondary-200 to-primary-200 dark:from-secondary-800/40 dark:to-primary-800/40'
+                        : 'bg-gradient-to-br from-slate-100 to-slate-50 group-hover:from-secondary-100 group-hover:to-primary-100 dark:from-dark-elevated dark:to-dark-active dark:group-hover:from-secondary-900/30 dark:group-hover:to-primary-900/30'
                         }`}>
-                        <dropdown.icon size={20} className={`transition-colors duration-300 ${isActive ? 'text-secondary-700' : 'text-slate-600 group-hover:text-secondary-600'
+                        <dropdown.icon size={20} className={`transition-colors duration-300 ${isActive
+                            ? 'text-secondary-700 dark:text-secondary-300'
+                            : 'text-slate-600 dark:text-neutral-400 group-hover:text-secondary-600 dark:group-hover:text-secondary-400'
                             }`} />
                     </div>
                     <div className="flex-1 text-left">
-                        <span className={`text-sm font-semibold transition-colors duration-300 ${isActive ? 'text-secondary-700' : 'text-slate-700 group-hover:text-secondary-700'
+                        <span className={`text-sm font-semibold transition-colors duration-300 ${isActive
+                            ? 'text-secondary-700 dark:text-secondary-300'
+                            : 'text-slate-700 dark:text-neutral-300 group-hover:text-secondary-700 dark:group-hover:text-secondary-400'
                             }`}>
                             {dropdown.title}
                         </span>
@@ -386,8 +392,8 @@ const TopNavigation = () => {
                     <ChevronDown
                         size={16}
                         className={`transition-all duration-300 ${isActive
-                            ? 'rotate-180 text-secondary-600'
-                            : 'text-slate-400 group-hover:text-secondary-500'
+                            ? 'rotate-180 text-secondary-600 dark:text-secondary-400'
+                            : 'text-slate-400 dark:text-neutral-500 group-hover:text-secondary-500 dark:group-hover:text-secondary-500'
                             }`}
                     />
                 </button>
@@ -398,13 +404,20 @@ const TopNavigation = () => {
                             <NavLink
                                 key={subIdx}
                                 to={subItem.path}
-                                className="group flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-secondary-50/60 hover:to-primary-50/60 transition-all duration-300 transform hover:translate-x-1"
+                                className="group flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-secondary-50/60 hover:to-primary-50/60 
+                                    dark:hover:from-dark-hover dark:hover:to-dark-active/50
+                                    transition-all duration-300 transform hover:translate-x-1"
+                            // activeClassName="bg-secondary-50/80 dark:bg-dark-active/80"
                             >
-                                <div className="w-3 h-3 rounded-full bg-slate-300 group-hover:bg-secondary-400 transition-colors duration-300 mr-4 flex-shrink-0"></div>
-                                <span className="text-sm text-slate-600 group-hover:text-secondary-600 transition-colors duration-300">
+                                <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-dark-border group-hover:bg-secondary-400 dark:group-hover:bg-secondary-600 transition-colors duration-300 mr-4 flex-shrink-0
+                                    navlink-active:bg-secondary-400 dark:navlink-active:bg-secondary-500"
+                                ></div>
+                                <span className="text-sm text-slate-600 dark:text-neutral-400 group-hover:text-secondary-600 dark:group-hover:text-secondary-400 transition-colors duration-300
+                                    navlink-active:text-secondary-700 dark:navlink-active:text-secondary-300"
+                                >
                                     {subItem.title}
                                 </span>
-                                <ArrowRight size={14} className="text-slate-300 group-hover:text-secondary-400 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 ml-auto" />
+                                <ArrowRight size={14} className="text-slate-300 dark:text-neutral-600 group-hover:text-secondary-400 dark:group-hover:text-secondary-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 ml-auto" />
                             </NavLink>
                         ))}
                     </div>
@@ -419,36 +432,56 @@ const TopNavigation = () => {
         if (filteredItems.length === 0) return null;
 
         return (
-            <div className="absolute top-full left-0 mt-3 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden z-50 animate-fadeIn min-w-[400px] max-w-[500px]">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-50/80 to-white/40 -z-10"></div>
+            <div className="absolute top-full left-0 mt-3 bg-white/95 dark:bg-dark-elevated/95 backdrop-blur-2xl rounded-3xl shadow-2xl dark:shadow-dark-lg border border-white/20 dark:border-dark-border overflow-hidden z-50 animate-fadeIn min-w-[400px] max-w-[500px]">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50/80 to-white/40 dark:from-dark-elevated dark:via-dark-elevated dark:to-dark-surface -z-10"></div>
                 <div className="p-8 max-h-[80vh] overflow-y-auto">
                     <div className="mb-6">
-                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.15em] mb-1">{section.title}</h3>
+                        <h3 className="text-xs font-bold text-slate-500 dark:text-neutral-400 uppercase tracking-[0.15em] mb-1">{section.title}</h3>
                         <div className="w-12 h-0.5 bg-gradient-to-r from-secondary-500 to-primary-500 rounded-full"></div>
                     </div>
                     <div className="space-y-2">
-                        {filteredItems.map((item, idx) => {
+                        {filteredItems.map((item: any, idx: any) => {
                             if (item.type === 'link') {
                                 return (
                                     <NavLink
                                         key={idx}
                                         to={item.path}
-                                        className="group flex items-center p-4 rounded-2xl hover:bg-gradient-to-r hover:from-secondary-50/80 hover:to-primary-50/80 transition-all duration-300 transform hover:translate-x-1"
+                                        className="group flex items-center p-4 rounded-2xl 
+                                            hover:bg-gradient-to-r hover:from-secondary-50/80 hover:to-primary-50/80 
+                                            dark:hover:from-dark-hover dark:hover:to-dark-active/70
+                                            transition-all duration-300 transform hover:translate-x-1"
+                                    // activeClassName="bg-secondary-50/60 dark:bg-dark-active/60"
                                     >
-                                        <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 group-hover:from-secondary-100 group-hover:to-primary-100 transition-all duration-300 mr-4 shadow-sm group-hover:shadow-md">
-                                            <item.icon size={20} className="text-slate-600 group-hover:text-secondary-600 transition-colors duration-300" />
+                                        <div className="flex items-center justify-center w-12 h-12 rounded-2xl
+                                            bg-gradient-to-br from-slate-100 to-slate-50 dark:from-dark-elevated dark:to-dark-active 
+                                            group-hover:from-secondary-100 group-hover:to-primary-100 
+                                            dark:group-hover:from-secondary-900/30 dark:group-hover:to-primary-900/30
+                                            group-[.active]:from-secondary-100 group-[.active]:to-primary-100 
+                                            dark:group-[.active]:from-secondary-900/30 dark:group-[.active]:to-primary-900/30
+                                            transition-all duration-300 mr-4 shadow-sm dark:shadow-dark-sm group-hover:shadow-md dark:group-hover:shadow-dark"
+                                        >
+                                            <item.icon size={20} className="text-slate-600 dark:text-neutral-400 
+                                                group-hover:text-secondary-600 dark:group-hover:text-secondary-400
+                                                group-[.active]:text-secondary-600 dark:group-[.active]:text-secondary-400
+                                                transition-colors duration-300" />
                                         </div>
                                         <div className="flex-1">
-                                            <span className="text-sm font-semibold text-slate-700 group-hover:text-secondary-700 transition-colors duration-300 block">
+                                            <span className="text-sm font-semibold text-slate-700 dark:text-neutral-300 
+                                                group-hover:text-secondary-700 dark:group-hover:text-secondary-400
+                                                group-[.active]:text-secondary-700 dark:group-[.active]:text-secondary-300
+                                                transition-colors duration-300 block">
                                                 {item.title}
                                             </span>
                                             {item.description && (
-                                                <span className="text-xs text-slate-500 group-hover:text-secondary-500 transition-colors duration-300 mt-1 block">
+                                                <span className="text-xs text-slate-500 dark:text-neutral-500 
+                                                    group-hover:text-secondary-500 dark:group-hover:text-secondary-500
+                                                    group-[.active]:text-secondary-500 dark:group-[.active]:text-secondary-500
+                                                    transition-colors duration-300 mt-1 block">
                                                     {item.description}
                                                 </span>
                                             )}
                                         </div>
-                                        <ArrowRight size={16} className="text-slate-400 group-hover:text-secondary-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
+                                        <ArrowRight size={16} className="text-slate-400 dark:text-neutral-600 group-hover:text-secondary-500 dark:group-hover:text-secondary-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
                                     </NavLink>
                                 );
                             } else if (item.type === 'dropdown') {
@@ -471,15 +504,13 @@ const TopNavigation = () => {
             return (
                 <NavLink
                     to={item.path}
-                    className={({ isActive }) => `
-                        group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105
-                        ${isActive
-                            ? 'text-secondary-700 bg-gradient-to-r from-secondary-50/80 to-primary-50/80 shadow-sm'
-                            : 'text-slate-600 hover:text-secondary-700 hover:bg-gradient-to-r hover:from-secondary-50/50 hover:to-primary-50/50'
-                        }
-                    `}
+                    className="group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105
+                        text-slate-600 dark:text-neutral-300 hover:text-secondary-700 dark:hover:text-secondary-400 
+                        hover:bg-gradient-to-r hover:from-secondary-50/50 hover:to-primary-50/50 
+                        dark:hover:from-dark-hover dark:hover:to-dark-active/70"
+                // activeClassName="text-secondary-700 dark:text-secondary-300 bg-gradient-to-r from-secondary-50/80 to-primary-50/80 dark:from-secondary-900/30 dark:to-primary-900/30 shadow-sm dark:shadow-dark-sm"
                 >
-                    <item.icon size={18} className="mr-3 group-hover:scale-110 transition-transform duration-300" />
+                    <item.icon size={18} className="mr-3 group-hover:scale-110 transition-transform duration-300 dark:text-neutral-400 group-[.active]:text-secondary-600 dark:group-[.active]:text-secondary-400" />
                     <span>{item.title}</span>
                 </NavLink>
             );
@@ -501,17 +532,21 @@ const TopNavigation = () => {
                             setActiveDropdown(newActiveDropdown);
                             setActiveNestedDropdown(null);
                         }}
-                        className={`group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${activeDropdown === item.title
-                            ? 'text-secondary-700 bg-gradient-to-r from-secondary-50 to-primary-50 shadow-sm'
-                            : 'text-slate-600 hover:text-secondary-700 hover:bg-gradient-to-r hover:from-secondary-50/50 hover:to-primary-50/50'
-                            }`}
+                        className={`group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 
+                            text-slate-600 dark:text-neutral-300 hover:text-secondary-700 dark:hover:text-secondary-400 
+                            hover:bg-gradient-to-r hover:from-secondary-50/50 hover:to-primary-50/50 
+                            dark:hover:from-dark-hover dark:hover:to-dark-active/70
+                            ${activeDropdown === item.title
+                                ? '!text-secondary-700 dark:!text-secondary-300 !bg-gradient-to-r !from-secondary-50 !to-primary-50 dark:!from-secondary-900/30 dark:!to-primary-900/30 shadow-sm dark:shadow-dark-sm'
+                                : ''}
+                        `}
                     >
                         <span>{item.title}</span>
                         <ChevronDown
                             size={16}
                             className={`ml-2 transition-all duration-300 ${activeDropdown === item.title
-                                ? 'rotate-180 text-secondary-600'
-                                : 'text-slate-400 group-hover:text-secondary-500'
+                                ? 'rotate-180 text-secondary-600 dark:text-secondary-400'
+                                : 'text-slate-400 dark:text-neutral-500 group-hover:text-secondary-500 dark:group-hover:text-secondary-500'
                                 }`}
                         />
                     </button>
@@ -553,8 +588,8 @@ const TopNavigation = () => {
     return (
         <div className="fixed top-0 right-0 z-40 left-[60px] w-[calc(100%-60px)]">
             <div className={`transition-all duration-500 ${scrolled
-                ? 'bg-gradient-to-r from-white via-white to-white backdrop-blur-xl shadow-xl shadow-secondary-900/20'
-                : 'bg-gradient-to-r from-white via-white to-white backdrop-blur-2xl'
+                ? 'bg-white dark:bg-dark-surface backdrop-blur-xl shadow-xl shadow-secondary-900/20 dark:shadow-dark-lg'
+                : 'bg-whitee dark:bg-dark-surface backdrop-blur-2xl'
                 }`}>
                 <div className="px-4 py-2 flex items-center justify-between">
                     <div className="flex items-center mr-2 lg:mr-12">
@@ -568,7 +603,7 @@ const TopNavigation = () => {
                     </div>
 
                     <nav className="hidden xl:flex items-center flex-1 justify-center">
-                        <div className="flex items-center space-x-2 bg-white backdrop-blur-md rounded-3xl p-2 shadow-inner shadow-primary-400">
+                        <div className="flex items-center space-x-2 bg-white dark:bg-dark-elevated backdrop-blur-md rounded-3xl p-2 shadow-inner shadow-primary-400 dark:shadow-dark-sm">
                             {filterSections(routes).map((item: any, idx: any) => (
                                 <div key={idx}>
                                     {renderNavItem(item)}
@@ -578,6 +613,18 @@ const TopNavigation = () => {
                     </nav>
 
                     <div className="flex items-center space-x-1 md:space-x-3">
+                        {/* Dark Mode Toggle */}
+                        <button
+                            onClick={toggleDarkMode}
+                            className="p-2.5 rounded-xl hover:bg-secondary-600/40 dark:hover:bg-dark-hover transition-all duration-300 transform hover:scale-110 group text-gray-800/70 dark:text-neutral-300 hover:text-gray-800 dark:hover:text-white"
+                        >
+                            {isDarkMode ? (
+                                <Sun size={18} className="text-amber-400" />
+                            ) : (
+                                <Moon size={18} className="text-secondary-600" />
+                            )}
+                        </button>
+
                         <div className="relative" ref={searchInputRef}>
                             {isSearchOpen ? (
                                 <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center">
@@ -588,7 +635,7 @@ const TopNavigation = () => {
                                             onChange={handleSearchChange}
                                             onKeyDown={handleSearchKeyDown}
                                             placeholder="Search anything..."
-                                            className="w-56 md:w-80 pl-5 pr-12 py-3 rounded-2xl border border-secondary-200/20 focus:border-secondary-400 focus:outline-none focus:ring-4 focus:ring-secondary-300/20 transition-all duration-300 text-sm font-medium bg-white/10 backdrop-blur-sm shadow-lg text-gray-800 placeholder-secondary-200/60"
+                                            className="w-56 md:w-80 pl-5 pr-12 py-3 rounded-2xl border border-secondary-200/20 dark:border-dark-border focus:border-secondary-400 dark:focus:border-secondary-600 focus:outline-none focus:ring-4 focus:ring-secondary-300/20 dark:focus:ring-secondary-700/20 transition-all duration-300 text-sm font-medium bg-white/10 dark:bg-dark-input backdrop-blur-sm shadow-lg text-gray-800 dark:text-neutral-200 placeholder-secondary-200/60 dark:placeholder-neutral-500"
                                             autoFocus
                                         />
                                         <button
@@ -597,7 +644,7 @@ const TopNavigation = () => {
                                                 setSearchValue('');
                                                 setShowSearchResults(false);
                                             }}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-secondary-700/30 transition-all duration-200 text-secondary-200"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-secondary-700/30 dark:hover:bg-dark-hover transition-all duration-200 text-secondary-200 dark:text-neutral-500"
                                         >
                                             <X size={16} />
                                         </button>
@@ -606,7 +653,7 @@ const TopNavigation = () => {
                             ) : (
                                 <button
                                     onClick={() => setIsSearchOpen(true)}
-                                    className="p-2.5 rounded-xl hover:bg-secondary-600/40 transition-all duration-300 transform hover:scale-110 group text-gray-800/70 hover:text-gray-800"
+                                    className="p-2.5 rounded-xl hover:bg-secondary-600/40 dark:hover:bg-dark-hover transition-all duration-300 transform hover:scale-110 group text-gray-800/70 dark:text-neutral-300 hover:text-gray-800 dark:hover:text-white"
                                 >
                                     <Search size={18} className="transition-colors duration-300" />
                                 </button>
@@ -615,18 +662,18 @@ const TopNavigation = () => {
                             {showSearchResults && searchResults.length > 0 && (
                                 <div
                                     ref={searchResultsRef}
-                                    className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 shadow-xl z-50 overflow-hidden animate-fadeIn"
+                                    className="absolute right-0 mt-3 w-80 bg-white/95 dark:bg-dark-elevated/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 dark:border-dark-border shadow-xl dark:shadow-dark-md z-50 overflow-hidden animate-fadeIn"
                                 >
                                     <div className="p-4">
-                                        <div className="text-xs text-gray-500 mb-3">
+                                        <div className="text-xs text-gray-500 dark:text-neutral-400 mb-3">
                                             {searchResults.length} results found for "{searchValue}"
                                         </div>
 
                                         <div className="space-y-4">
                                             {Object.entries(groupedResults).map(([category, results]) => (
                                                 <div key={category}>
-                                                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
-                                                        {React.createElement(getCategoryIcon(category), { size: 14, className: "inline mr-1 text-gray-400" })}
+                                                    <div className="text-xs font-semibold text-gray-400 dark:text-neutral-500 uppercase tracking-wider mb-1.5 flex items-center">
+                                                        {React.createElement(getCategoryIcon(category), { size: 14, className: "inline mr-1 text-gray-400 dark:text-neutral-500" })}
                                                         {category}
                                                     </div>
                                                     <div className="space-y-1">
@@ -643,27 +690,27 @@ const TopNavigation = () => {
                                                                     onMouseEnter={() => setSelectedResultIndex(globalIndex)}
                                                                     className={`
                                                                         cursor-pointer p-2 rounded-lg transition-all duration-150 flex items-center
-                                                                        ${isSelected ? 'bg-secondary-50/80 text-secondary-700' : 'hover:bg-gray-50/80'}
+                                                                        ${isSelected ? 'bg-secondary-50/80 dark:bg-dark-active text-secondary-700 dark:text-secondary-300' : 'hover:bg-gray-50/80 dark:hover:bg-dark-hover'}
                                                                     `}
                                                                 >
                                                                     <div className={`
                                                                         p-1.5 rounded-lg mr-2
-                                                                        ${isSelected ? 'bg-secondary-100' : 'bg-gray-50'}
+                                                                        ${isSelected ? 'bg-secondary-100 dark:bg-secondary-900/30' : 'bg-gray-50 dark:bg-dark-hover'}
                                                                     `}>
-                                                                        {result.icon ? <result.icon size={16} className="text-secondary-500" /> :
-                                                                            React.createElement(getCategoryIcon(result.category), { size: 16, className: "text-secondary-500" })}
+                                                                        {result.icon ? <result.icon size={16} className="text-secondary-500 dark:text-secondary-400" /> :
+                                                                            React.createElement(getCategoryIcon(result.category), { size: 16, className: "text-secondary-500 dark:text-secondary-400" })}
                                                                     </div>
                                                                     <div className="flex-1 min-w-0">
-                                                                        <div className="font-medium text-sm truncate">
+                                                                        <div className="font-medium text-sm truncate dark:text-neutral-200">
                                                                             {result.title}
                                                                         </div>
-                                                                        <div className="text-xs text-gray-500 truncate">
+                                                                        <div className="text-xs text-gray-500 dark:text-neutral-400 truncate">
                                                                             {result.path}
                                                                         </div>
                                                                     </div>
                                                                     <div className={`
                                                                         ml-2 p-1 rounded-full
-                                                                        ${isSelected ? 'bg-secondary-100 text-secondary-600' : 'text-gray-400'}
+                                                                        ${isSelected ? 'bg-secondary-100 dark:bg-secondary-900/30 text-secondary-600 dark:text-secondary-400' : 'text-gray-400 dark:text-neutral-500'}
                                                                     `}>
                                                                         <ArrowRight size={14} />
                                                                     </div>
@@ -675,14 +722,14 @@ const TopNavigation = () => {
                                             ))}
                                         </div>
 
-                                        <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500 flex items-center justify-between">
+                                        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-dark-border text-xs text-gray-500 dark:text-neutral-500 flex items-center justify-between">
                                             <span>
-                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">↑</kbd>
-                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">↓</kbd>
+                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-dark-hover text-gray-700 dark:text-neutral-400 mx-1">↑</kbd>
+                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-dark-hover text-gray-700 dark:text-neutral-400 mx-1">↓</kbd>
                                                 to navigate
                                             </span>
                                             <span>
-                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 mx-1">Enter</kbd>
+                                                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-dark-hover text-gray-700 dark:text-neutral-400 mx-1">Enter</kbd>
                                                 to select
                                             </span>
                                         </div>
@@ -691,26 +738,25 @@ const TopNavigation = () => {
                             )}
                         </div>
 
-                        {/* Notifications */}
                         <div className="relative" ref={notificationsRef}>
                             <button
-                                className="p-2.5 rounded-xl hover:bg-secondary-600/40 transition-all duration-300 transform hover:scale-110 group text-gray-800/70 hover:text-gray-800 relative"
+                                className="p-2.5 rounded-xl hover:bg-secondary-600/40 dark:hover:bg-dark-hover transition-all duration-300 transform hover:scale-110 group text-gray-800/70 dark:text-neutral-300 hover:text-gray-800 dark:hover:text-white relative"
                                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                             >
                                 <Bell size={18} className="transition-colors duration-300" />
                                 {unreadNotifications > 0 && (
-                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50 animate-pulse"></span>
+                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 dark:bg-rose-600 rounded-full shadow-lg shadow-rose-500/50 dark:shadow-rose-600/50 animate-pulse"></span>
                                 )}
                             </button>
 
                             {notificationsOpen && (
-                                <div className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 shadow-xl z-50 overflow-hidden animate-fadeIn">
-                                    <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-                                        <h3 className="font-medium text-gray-800">Notifications</h3>
+                                <div className="absolute right-0 mt-3 w-80 bg-white/95 dark:bg-dark-elevated/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 dark:border-dark-border shadow-xl dark:shadow-dark-md z-50 overflow-hidden animate-fadeIn">
+                                    <div className="px-4 py-3 border-b border-gray-100 dark:border-dark-border flex justify-between items-center">
+                                        <h3 className="font-medium text-gray-800 dark:text-neutral-200">Notifications</h3>
                                         {unreadNotifications > 0 && (
                                             <button
                                                 onClick={markAllAsRead}
-                                                className="text-xs text-secondary-600 hover:text-secondary-700 font-medium"
+                                                className="text-xs text-secondary-600 hover:text-secondary-700 dark:text-secondary-400 dark:hover:text-secondary-300 font-medium"
                                             >
                                                 Mark all as read
                                             </button>
@@ -722,8 +768,8 @@ const TopNavigation = () => {
                                             <div
                                                 key={notification.id}
                                                 className={`
-                                                    px-4 py-3 hover:bg-secondary-50/50 cursor-pointer relative
-                                                    ${!notification.read ? 'bg-secondary-50/30' : ''}
+                                                    px-4 py-3 hover:bg-secondary-50/50 dark:hover:bg-dark-hover cursor-pointer relative
+                                                    ${!notification.read ? 'bg-secondary-50/30 dark:bg-dark-active/30' : ''}
                                                 `}
                                             >
                                                 <div className="flex items-start">
@@ -731,20 +777,20 @@ const TopNavigation = () => {
                                                         {getNotificationIcon(notification.type)}
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm font-medium text-gray-800">{notification.title}</p>
-                                                        <p className="text-xs text-gray-500 mt-0.5">{notification.description}</p>
-                                                        <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
+                                                        <p className="text-sm font-medium text-gray-800 dark:text-neutral-200">{notification.title}</p>
+                                                        <p className="text-xs text-gray-500 dark:text-neutral-400 mt-0.5">{notification.description}</p>
+                                                        <p className="text-xs text-gray-400 dark:text-neutral-500 mt-1">{notification.time}</p>
                                                     </div>
                                                     {!notification.read && (
-                                                        <div className="absolute top-3 right-3 w-2 h-2 bg-secondary-500 rounded-full"></div>
+                                                        <div className="absolute top-3 right-3 w-2 h-2 bg-secondary-500 dark:bg-secondary-400 rounded-full"></div>
                                                     )}
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
 
-                                    <div className="px-4 py-2 border-t border-gray-100">
-                                        <button className="w-full text-xs text-center text-secondary-600 hover:text-secondary-700 font-medium py-1">
+                                    <div className="px-4 py-2 border-t border-gray-100 dark:border-dark-border">
+                                        <button className="w-full text-xs text-center text-secondary-600 hover:text-secondary-700 dark:text-secondary-400 dark:hover:text-secondary-300 font-medium py-1">
                                             View all notifications
                                         </button>
                                     </div>
@@ -755,43 +801,43 @@ const TopNavigation = () => {
                         {/* User Menu */}
                         <div className="relative ml-2" ref={userMenuRef}>
                             <button
-                                className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all hover:bg-secondary-600/40 text-gray-800/90 hover:text-gray-800 group"
+                                className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all hover:bg-secondary-600/40 dark:hover:bg-dark-hover text-gray-800/90 dark:text-neutral-300 hover:text-gray-800 dark:hover:text-white group"
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                             >
-                                <div className="w-8 h-8 rounded-xl bg-secondary-600/60 backdrop-blur-sm flex items-center justify-center border border-secondary-500/30 group-hover:bg-secondary-500/80 transition-colors duration-300">
-                                    <User size={16} />
+                                <div className="w-8 h-8 rounded-xl bg-secondary-600/60 dark:bg-secondary-700/40 backdrop-blur-sm flex items-center justify-center border border-secondary-500/30 dark:border-secondary-600/30 group-hover:bg-secondary-500/80 dark:group-hover:bg-secondary-600/60 transition-colors duration-300">
+                                    <User size={16} className="text-white" />
                                 </div>
                                 <span className="hidden md:block text-sm font-medium">{user.name.split(' ')[0]}</span>
-                                <ChevronDown size={14} className="hidden md:block text-secondary-300 group-hover:text-gray-800 transition-colors duration-300" />
+                                <ChevronDown size={14} className="hidden md:block text-secondary-300 dark:text-neutral-500 group-hover:text-gray-800 dark:group-hover:text-white transition-colors duration-300" />
                             </button>
 
                             {userMenuOpen && (
-                                <div className="absolute right-0 mt-3 w-64 bg-white/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 shadow-xl z-50 overflow-hidden animate-fadeIn">
-                                    <div className="px-4 py-3 border-b border-gray-100">
-                                        <p className="font-medium text-gray-800">{user.name}</p>
-                                        <p className="text-xs text-gray-500">{user.email}</p>
+                                <div className="absolute right-0 mt-3 w-64 bg-white/95 dark:bg-dark-elevated/95 backdrop-blur-md rounded-2xl border border-secondary-100/30 dark:border-dark-border shadow-xl dark:shadow-dark-md z-50 overflow-hidden animate-fadeIn">
+                                    <div className="px-4 py-3 border-b border-gray-100 dark:border-dark-border">
+                                        <p className="font-medium text-gray-800 dark:text-neutral-200">{user.name}</p>
+                                        <p className="text-xs text-gray-500 dark:text-neutral-400">{user.email}</p>
                                         <div className="mt-1.5 flex items-center">
-                                            <span className="text-[10px] font-medium px-2 py-0.5 bg-secondary-100 text-secondary-700 rounded-full">
+                                            <span className="text-[10px] font-medium px-2 py-0.5 bg-secondary-100 dark:bg-secondary-900/30 text-secondary-700 dark:text-secondary-300 rounded-full">
                                                 {user.role}
                                             </span>
                                         </div>
                                     </div>
 
                                     <div className="px-1 py-1">
-                                        <NavLink to="/profile" className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 text-sm flex items-center">
-                                            <User size={16} className="mr-3 text-gray-500" />
+                                        <NavLink to="/profile" className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 dark:hover:bg-dark-hover text-sm flex items-center text-gray-700 dark:text-neutral-300">
+                                            <User size={16} className="mr-3 text-gray-500 dark:text-neutral-400" />
                                             <span>My Profile</span>
                                         </NavLink>
-                                        <NavLink to="/settings" className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 text-sm flex items-center">
-                                            <Settings size={16} className="mr-3 text-gray-500" />
+                                        <NavLink to="/settings" className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 dark:hover:bg-dark-hover text-sm flex items-center text-gray-700 dark:text-neutral-300">
+                                            <Settings size={16} className="mr-3 text-gray-500 dark:text-neutral-400" />
                                             <span>Settings</span>
                                         </NavLink>
                                     </div>
 
-                                    <div className="border-t border-gray-100 mt-1 px-1 py-1">
+                                    <div className="border-t border-gray-100 dark:border-dark-border mt-1 px-1 py-1">
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50/70 text-sm flex items-center text-red-600"
+                                            className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50/70 dark:hover:bg-red-900/20 text-sm flex items-center text-red-600 dark:text-red-400"
                                         >
                                             <LogOut size={16} className="mr-3" />
                                             <span>Logout</span>
@@ -803,7 +849,7 @@ const TopNavigation = () => {
 
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="xl:hidden p-2.5 rounded-xl hover:bg-secondary-600/40 transition-all duration-300 text-gray-800/70 hover:text-gray-800 ml-1"
+                            className="xl:hidden p-2.5 rounded-xl hover:bg-secondary-600/40 dark:hover:bg-dark-hover transition-all duration-300 text-gray-800/70 dark:text-neutral-300 hover:text-gray-800 dark:hover:text-white ml-1"
                         >
                             <Menu size={20} />
                         </button>
@@ -812,7 +858,7 @@ const TopNavigation = () => {
             </div>
 
             {isMobileMenuOpen && (
-                <div className="xl:hidden fixed inset-0 z-50 left-[60px] w-[calc(100%-60px)] bg-gradient-to-br from-secondary-900/98 via-primary-900/98 to-secondary-900/98 backdrop-blur-xl">
+                <div className="xl:hidden fixed inset-0 z-50 left-[60px] w-[calc(100%-60px)] bg-gradient-to-br from-secondary-900/98 via-primary-900/98 to-secondary-900/98 dark:from-charcoal-950/98 dark:via-dark-surface/98 dark:to-charcoal-950/98 backdrop-blur-xl">
                     <div className="p-6">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center">
@@ -826,7 +872,7 @@ const TopNavigation = () => {
                             </div>
                             <button
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="p-2.5 rounded-xl bg-secondary-800/50 hover:bg-secondary-700/60 transition-all duration-200 text-gray-800"
+                                className="p-2.5 rounded-xl bg-secondary-800/50 dark:bg-dark-hover hover:bg-secondary-700/60 dark:hover:bg-dark-active transition-all duration-200 text-gray-800"
                             >
                                 <X size={22} />
                             </button>
@@ -838,10 +884,10 @@ const TopNavigation = () => {
                                     {item.type === 'section' && (
                                         <>
                                             <div className="flex items-center mb-4">
-                                                <h3 className="text-xs font-bold text-secondary-300 uppercase tracking-[0.15em]">
+                                                <h3 className="text-xs font-bold text-secondary-300 dark:text-neutral-400 uppercase tracking-[0.15em]">
                                                     {item.title}
                                                 </h3>
-                                                <div className="flex-1 h-px bg-gradient-to-r from-secondary-500/30 to-transparent ml-4"></div>
+                                                <div className="flex-1 h-px bg-gradient-to-r from-secondary-500/30 dark:from-secondary-700/30 to-transparent ml-4"></div>
                                             </div>
                                             <div className="space-y-2">
                                                 {filterItems(item.items).map((subItem, subIdx) => {
@@ -853,18 +899,18 @@ const TopNavigation = () => {
                                                                 className={({ isActive }) => `
                                                                     flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 group
                                                                     ${isActive
-                                                                        ? 'bg-secondary-700/50 border border-secondary-600/50'
-                                                                        : 'hover:bg-secondary-800/50'
+                                                                        ? 'bg-secondary-700/50 dark:bg-dark-active border border-secondary-600/50 dark:border-dark-border'
+                                                                        : 'hover:bg-secondary-800/50 dark:hover:bg-dark-hover'
                                                                     }
                                                                 `}
                                                                 onClick={() => setIsMobileMenuOpen(false)}
                                                             >
                                                                 {subItem.icon && (
-                                                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-secondary-800/80 group-hover:bg-secondary-700/80 transition-all duration-300 mr-4">
-                                                                        <subItem.icon width={18} height={18} className="text-secondary-200" />
+                                                                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-secondary-800/80 dark:bg-dark-border group-hover:bg-secondary-700/80 dark:group-hover:bg-dark-hover transition-all duration-300 mr-4">
+                                                                        <subItem.icon width={18} height={18} className="text-secondary-200 dark:text-secondary-300" />
                                                                     </div>
                                                                 )}
-                                                                <span className="text-sm font-semibold text-gray-800">{subItem.title}</span>
+                                                                <span className="text-sm font-semibold text-gray-800 dark:text-neutral-200">{subItem.title}</span>
                                                             </NavLink>
                                                         );
                                                     } else if (subItem.type === 'dropdown') {
@@ -879,18 +925,18 @@ const TopNavigation = () => {
                             ))}
                         </nav>
 
-                        <div className="mt-8 pt-6 border-t border-secondary-800/50">
-                            <div className="flex items-center p-4 rounded-2xl bg-secondary-800/30 border border-secondary-700/30">
-                                <div className="w-12 h-12 rounded-xl bg-secondary-700/80 flex items-center justify-center mr-4">
-                                    <User size={20} className="text-secondary-200" />
+                        <div className="mt-8 pt-6 border-t border-secondary-800/50 dark:border-dark-border">
+                            <div className="flex items-center p-4 rounded-2xl bg-secondary-800/30 dark:bg-dark-elevated border border-secondary-700/30 dark:border-dark-border">
+                                <div className="w-12 h-12 rounded-xl bg-secondary-700/80 dark:bg-dark-active flex items-center justify-center mr-4">
+                                    <User size={20} className="text-secondary-200 dark:text-secondary-300" />
                                 </div>
                                 <div className="flex-1">
-                                    <div className="text-sm font-semibold text-gray-800">{user.name}</div>
-                                    <div className="text-xs text-secondary-300">{user.role}</div>
+                                    <div className="text-sm font-semibold text-gray-800 dark:text-neutral-200">{user.name}</div>
+                                    <div className="text-xs text-secondary-300 dark:text-neutral-400">{user.role}</div>
                                 </div>
                                 <button
                                     onClick={handleLogout}
-                                    className="p-2 rounded-xl bg-secondary-700/50 hover:bg-secondary-600/60 transition-all duration-200 text-secondary-200"
+                                    className="p-2 rounded-xl bg-secondary-700/50 dark:bg-dark-active hover:bg-secondary-600/60 dark:hover:bg-dark-hover transition-all duration-200 text-secondary-200 dark:text-secondary-300"
                                 >
                                     <LogOut size={16} />
                                 </button>
