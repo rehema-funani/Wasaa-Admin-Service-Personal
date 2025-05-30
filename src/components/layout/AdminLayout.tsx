@@ -55,7 +55,7 @@ const AdminLayout = () => {
       <div className="flex-1 flex flex-col">
         <TopNavigation toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode} />
         <main className="w-full mt-[70px] overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-charcoal-900 p-12 transition-colors duration-300">
-          <button
+          {/* <button
             className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-dark-elevated shadow-soft-lg dark:shadow-dark-lg border border-neutral-200 dark:border-charcoal-800 transition-all duration-300 hover:scale-110"
             onClick={toggleDarkMode}
             aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
@@ -65,7 +65,7 @@ const AdminLayout = () => {
             ) : (
               <Moon size={20} className="text-secondary-700" />
             )}
-          </button>
+          </button> */}
           <Outlet />
         </main>
       </div>

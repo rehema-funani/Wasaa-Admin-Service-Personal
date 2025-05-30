@@ -573,7 +573,7 @@ const createrole: React.FC = () => {
                     )}
                 </div>
 
-                <div className="sticky bottom-6 bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex items-center justify-between">
+                <div className="bg-white rounded-2xl shadow-sm p-4 border border-gray-100 flex items-center justify-between">
                     <div className="flex items-center">
                         <div className="bg-primary-100 p-2 rounded-lg mr-3">
                             <CheckCircle size={24} className="text-primary-600" />

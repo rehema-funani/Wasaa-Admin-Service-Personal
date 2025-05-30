@@ -5,9 +5,8 @@ import {
     ArrowRight, Menu, User,
     Settings, LogOut, CreditCard,
     AlertCircle, BarChart3,
-    Shield, Wallet,
-    Sun,
-    Moon
+    Shield, 
+    Wallet
 } from 'lucide-react';
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
@@ -248,7 +247,7 @@ const TopNavigation = ({ toggleDarkMode, isDarkMode }) => {
         setSelectedResultIndex(-1);
     };
 
-    const handleSearchChange = (e) => {
+    const handleSearchChange = (e:any) => {
         const value = e.target.value;
         setSearchValue(value);
         performSearch(value);
@@ -288,7 +287,7 @@ const TopNavigation = ({ toggleDarkMode, isDarkMode }) => {
         }
     };
 
-    const handleResultClick = (result) => {
+    const handleResultClick = (result: any) => {
         navigate(result.path);
         setSearchValue('');
         setShowSearchResults(false);
@@ -614,7 +613,7 @@ const TopNavigation = ({ toggleDarkMode, isDarkMode }) => {
 
                     <div className="flex items-center space-x-1 md:space-x-3">
                         {/* Dark Mode Toggle */}
-                        <button
+                        {/* <button
                             onClick={toggleDarkMode}
                             className="p-2.5 rounded-xl hover:bg-secondary-600/40 dark:hover:bg-dark-hover transition-all duration-300 transform hover:scale-110 group text-gray-800/70 dark:text-neutral-300 hover:text-gray-800 dark:hover:text-white"
                         >
@@ -623,7 +622,7 @@ const TopNavigation = ({ toggleDarkMode, isDarkMode }) => {
                             ) : (
                                 <Moon size={18} className="text-secondary-600" />
                             )}
-                        </button>
+                        </button> */}
 
                         <div className="relative" ref={searchInputRef}>
                             {isSearchOpen ? (

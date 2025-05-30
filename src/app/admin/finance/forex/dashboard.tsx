@@ -6,8 +6,7 @@ import {
 
 const ForexDashboard = () => {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-charcoal-900 dark:via-charcoal-900 dark:to-charcoal-900">
-            {/* Header Section */}
+        <div className="min-h-screen bg-transparent">
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-2xl font-semibold text-charcoal-900 dark:text-white">
@@ -129,7 +128,6 @@ const ForexDashboard = () => {
                     </div>
                 </motion.div>
 
-                {/* System Health */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -251,7 +249,6 @@ const ForexDashboard = () => {
                     </div>
                 </motion.div>
 
-                {/* Activity Feed */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
