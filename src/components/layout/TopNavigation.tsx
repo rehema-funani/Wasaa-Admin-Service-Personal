@@ -807,7 +807,7 @@ const TopNavigation = ({ toggleDarkMode, isDarkMode }) => {
                                 <div className="w-8 h-8 rounded-xl bg-secondary-600/60 dark:bg-secondary-700/40 backdrop-blur-sm flex items-center justify-center border border-secondary-500/30 dark:border-secondary-600/30 group-hover:bg-secondary-500/80 dark:group-hover:bg-secondary-600/60 transition-colors duration-300">
                                     <User size={16} className="text-white" />
                                 </div>
-                                <span className="hidden md:block text-sm font-medium">{user.name.split(' ')[0]}</span>
+                                <span className="hidden md:block text-sm font-medium">{user?.name?.split(' ')[0]}</span>
                                 <ChevronDown size={14} className="hidden md:block text-secondary-300 dark:text-neutral-500 group-hover:text-gray-800 dark:group-hover:text-white transition-colors duration-300" />
                             </button>
 
@@ -931,8 +931,8 @@ const TopNavigation = ({ toggleDarkMode, isDarkMode }) => {
                                     <User size={20} className="text-secondary-200 dark:text-secondary-300" />
                                 </div>
                                 <div className="flex-1">
-                                    <div className="text-sm font-semibold text-gray-800 dark:text-neutral-200">{user.name}</div>
-                                    <div className="text-xs text-secondary-300 dark:text-neutral-400">{user.role}</div>
+                                    <div className="text-sm font-semibold text-gray-800 dark:text-neutral-200">{user?.name}</div>
+                                    <div className="text-xs text-secondary-300 dark:text-neutral-400">{user?.role}</div>
                                 </div>
                                 <button
                                     onClick={handleLogout}

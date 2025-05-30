@@ -25,19 +25,15 @@ const SlimSidebar: React.FC = () => {
                 <div className="mb-8">
                     <div className="flex items-center">
                         <div className="relative">
-                            {user.avatar ? (
-                                <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-xl" />
-                            ) : (
-                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 dark:from-primary-600 dark:to-primary-800 flex items-center justify-center text-white font-medium shadow-lg dark:shadow-dark-lg">
-                                    {user.name.charAt(0)}
-                                </div>
-                            )}
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 dark:from-primary-600 dark:to-primary-800 flex items-center justify-center text-white font-medium shadow-lg dark:shadow-dark-lg">
+                                {user?.name?.charAt(0)}
+                            </div>
                             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 dark:bg-green-400 rounded-full border-2 border-primary-800 dark:border-dark-surface"></div>
                         </div>
                         {isExpanded && (
                             <div className="ml-3 animate-fadeIn">
-                                <p className="text-sm font-medium text-white">{user.name}</p>
-                                <p className="text-xs text-primary-300 dark:text-primary-400">{user.role}</p>
+                                <p className="text-sm font-medium text-white">{user?.name}</p>
+                                <p className="text-xs text-primary-300 dark:text-primary-400">{user?.role}</p>
                             </div>
                         )}
                     </div>

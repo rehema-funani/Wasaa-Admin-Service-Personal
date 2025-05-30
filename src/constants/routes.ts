@@ -23,7 +23,11 @@ import {
   Building,
   CreditCardIcon,
   FilePieChart,
-  FileCheck
+  FileCheck,
+  BarChart2,
+  DollarSign,
+  Clock,
+  RefreshCw, 
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -98,6 +102,44 @@ const routes: Route[] = [
               type: 'link',
               path: '/admin/finance/wallets/reversal-requests',
               title: 'Reversal Requests',
+            },
+          ],
+        },
+        {
+          type: 'dropdown',
+          title: 'Forex Exchange',
+          icon: DollarSign,
+          key: 'forex',
+          items: [
+            {
+              type: 'link',
+              path: '/admin/finance/forex/dashboard',
+              title: 'Forex Dashboard',
+            },
+            {
+              type: 'link',
+              path: '/admin/finance/forex/currencies',
+              title: 'Currency Management',
+            },
+            {
+              type: 'link',
+              path: '/admin/finance/forex/currency-pairs',
+              title: 'Currency Pairs',
+            },
+            {
+              type: 'link',
+              path: '/admin/finance/forex/exchange-rates',
+              title: 'Exchange Rate Viewer',
+            },
+            {
+              type: 'link',
+              path: '/admin/finance/forex/alerts',
+              title: 'User Alerts',
+            },
+            {
+              type: 'link',
+              path: '/admin/finance/forex/settings',
+              title: 'Forex Settings',
             },
           ],
         },

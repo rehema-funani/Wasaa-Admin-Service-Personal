@@ -47,6 +47,13 @@ const StreamAnalytics = lazy(() => import('./app/admin/livestreams/analytics/pag
 const StreamModeration = lazy(() => import('./app/admin/livestreams/moderation/page'));
 const ReportedStreams = lazy(() => import('./app/admin/livestreams/reported/page'));
 
+const ForexDashboard = lazy(() => import('./app/admin/finance/forex/dashboard'));
+const Currencies = lazy(() => import('./app/admin/finance/forex/currency-management'));
+const CurrencyPairs = lazy(() => import('./app/admin/finance/forex/currency-pair'));
+const ExchangeRates = lazy(() => import('./app/admin/finance/forex/exchange-rate-viewer'));
+const UserAlerts = lazy(() => import('./app/admin/finance/forex/user-alerts'));
+const ForexSettings = lazy(() => import('./app/admin/finance/forex/settings'));
+
 const Transactions = lazy(() => import('./app/admin/finance/transactions/page'));
 const Receipt = lazy(() => import('./app/admin/finance/transactions/receipt'));
 const Tarrifs = lazy(() => import('./app/admin/finance/tariffs/page'));
@@ -222,6 +229,38 @@ const AppRouter: React.FC = () => {
                     <Route path="admin/livestreams/reported" element={
                         <PermissionRouteGuard permissions={PermissionMap.ViewReported}>
                             <ReportedStreams />
+                        </PermissionRouteGuard>
+                    } />
+
+                    {/* forex routes */}
+                    <Route path="admin/finance/forex/dashboard" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <ForexDashboard />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/forex/currencies" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <Currencies />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/forex/currency-pairs" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <CurrencyPairs />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/forex/exchange-rates" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <ExchangeRates />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/forex/alerts" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <UserAlerts />
+                        </PermissionRouteGuard>
+                    } />
+                    <Route path="admin/finance/forex/settings" element={
+                        <PermissionRouteGuard permissions={PermissionMap.Transactions.view}>
+                            <ForexSettings />
                         </PermissionRouteGuard>
                     } />
 

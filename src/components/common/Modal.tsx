@@ -60,32 +60,31 @@ export const Modal: React.FC<ModalProps> = ({
             onClick={handleBackdropClick}
         >
             <div
-                className="absolute inset-0 backdrop-blur-[6px] bg-black/10 transition-opacity duration-200 ease-in-out"
+                className="absolute inset-0 backdrop-blur-[6px] bg-black/10 dark:bg-black/40 transition-opacity duration-200 ease-in-out"
             />
-
             <div
                 className={`
                 relative w-full ${sizeClasses[size]} mx-auto max-h-[96vh] overflow-y-auto
                 rounded-3xl overflow-hidden 
-                bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-xl
-                border border-white/20
-                shadow-[0_15px_50px_-12px_rgba(0,0,0,0.25)]
+                bg-gradient-to-br from-white/20 to-white/10 dark:from-dark-elevated/80 dark:to-dark-surface/90 backdrop-blur-xl
+                border border-white/20 dark:border-dark-border/40
+                shadow-[0_15px_50px_-12px_rgba(0,0,0,0.25)] dark:shadow-dark-lg
                 transition-all duration-200 ease-in-out
                 ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}
               `}
             >
-                <div className="absolute inset-[1px] rounded-[23px] pointer-events-none bg-gradient-to-b from-white/30 to-white/5 overflow-hidden">
-                    <div className="absolute -inset-x-20 -top-40 h-80 w-[200%] bg-gradient-to-b from-white/50 to-transparent opacity-60 transform rotate-12"></div>
-                    <div className="absolute -inset-x-20 bottom-0 h-40 w-[200%] bg-gradient-to-t from-white/10 to-transparent opacity-60"></div>
+                <div className="absolute inset-[1px] rounded-[23px] pointer-events-none bg-gradient-to-b from-white/30 to-white/5 dark:from-white/5 dark:to-transparent overflow-hidden">
+                    <div className="absolute -inset-x-20 -top-40 h-80 w-[200%] bg-gradient-to-b from-white/50 dark:from-white/10 to-transparent opacity-60 transform rotate-12"></div>
+                    <div className="absolute -inset-x-20 bottom-0 h-40 w-[200%] bg-gradient-to-t from-white/10 dark:from-dark-surface/20 to-transparent opacity-60"></div>
                 </div>
 
                 <div className="absolute inset-0 bg-gradient-to-br pointer-events-none"></div>
 
                 {title && (
-                    <div className="relative px-6 py-4 border-b border-white/20 bg-white/15 backdrop-blur-xl">
+                    <div className="relative px-6 py-4 border-b border-white/20 dark:border-dark-border/60 bg-white/15 dark:bg-dark-elevated/30 backdrop-blur-xl">
                         <div className="flex items-center justify-between">
                             <h3
-                                className="text-lg font-medium text-gray-800"
+                                className="text-lg font-medium text-gray-800 dark:text-neutral-100"
                             >
                                 {title}
                             </h3>
@@ -93,7 +92,7 @@ export const Modal: React.FC<ModalProps> = ({
                                 <button
                                     type="button"
                                     onClick={onClose}
-                                    className="relative text-gray-600 hover:text-gray-800 rounded-full p-2 bg-white/20 hover:bg-white/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400"
+                                    className="relative text-gray-600 dark:text-neutral-400 hover:text-gray-800 dark:hover:text-white rounded-full p-2 bg-white/20 dark:bg-dark-active/50 hover:bg-white/40 dark:hover:bg-dark-active/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:focus:ring-primary-700"
                                 >
                                     <X size={16} />
                                 </button>
@@ -102,15 +101,15 @@ export const Modal: React.FC<ModalProps> = ({
                     </div>
                 )}
 
-                <div className="relative p-6 bg-white/5 backdrop-blur-xl">
+                <div className="relative p-6 bg-white/5 dark:bg-dark-surface/20 backdrop-blur-xl">
                     <div
-                        className="text-gray-800"
+                        className="text-gray-800 dark:text-neutral-200"
                     >
                         {children}
                     </div>
                 </div>
 
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-white/40 rounded-full"></div>
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-white/40 dark:bg-dark-active/60 rounded-full"></div>
             </div>
         </div>
     );

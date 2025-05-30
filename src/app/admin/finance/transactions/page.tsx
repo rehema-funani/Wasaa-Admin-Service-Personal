@@ -394,7 +394,7 @@ const TransactionsPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-finance-navy/5 via-white to-primary-50/30 dark:from-dark-surface dark:via-charcoal-900 dark:to-dark-surface">
+        <div className="min-h-screen ">
             <div className="bg-white dark:bg-dark-elevated backdrop-blur-xl border-b border-primary-100 dark:border-dark-border">
                 <div className="w-full mx-auto px-6 py-6">
                     <div className="flex items-center justify-between">
