@@ -548,6 +548,18 @@ async getRefunds(filters = {}): Promise<any> {
   }
 },
 
+async getRefund(refundId: string): Promise<any> {
+  try {
+    const response = await finance.get(`/walletRefunds/${refundId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get refund');
+    }
+    throw new Error('Failed to get refund. Please check your network connection.');
+  }
+},
+
 async approveRefund(refundId: string): Promise<any> {
   try {
     const response = await finance.put(`/walletRefunds/${refundId}/approve`);

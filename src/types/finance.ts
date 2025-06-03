@@ -57,7 +57,11 @@ export interface ReversalRequest {
     amount: number;
     currency: string;
     reason: string;
-    status: 'pending' | 'approved' | 'FAILED' | 'completed';
+    status: string;
+    isDebit?: boolean;
+    walletType?: string;
+    walletPurpose?: string;
+    walletBalance?: any;
     requestedBy: string;
     requestedAt: string;
     approvedBy?: string;

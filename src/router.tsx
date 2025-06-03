@@ -69,6 +69,7 @@ const ViewRule = lazy(() => import('./app/admin/finance/system-wallets/view-rule
 const Verification = lazy(() => import('./app/admin/finance/limits/verification'));
 const Wallets = lazy(() => import('./app/admin/finance/system-wallets/page'));
 const ReversalRequests = lazy(() => import('./app/admin/finance/system-wallets/reversalrequests'));
+const ReversalRequestDetails = lazy(() => import('./app/admin/finance/system-wallets/reversal-detail'));
 const Banks = lazy(() => import('./app/admin/finance/banks/page'));
 const UserWallets = lazy(() => import('./app/admin/finance/user-wallets/page'));
 const WalletDetail = lazy(() => import('./app/admin/finance/user-wallets/walletdetail'));
@@ -417,6 +418,11 @@ const AppRouter: React.FC = () => {
             <Route path="admin/finance/wallets/reversal-requests" element={
               <PermissionRouteGuard permissions={PermissionMap.Wallets.view}>
                 <ReversalRequests />
+              </PermissionRouteGuard>
+            } />
+            <Route path="admin/finance/wallets/reversal-requests/:id" element={
+              <PermissionRouteGuard permissions={PermissionMap.Wallets.view}>
+                <ReversalRequestDetails />
               </PermissionRouteGuard>
             } />
             <Route path="admin/finance/banks" element={
