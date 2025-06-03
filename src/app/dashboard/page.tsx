@@ -11,7 +11,16 @@ import {
   Laptop,
   Tablet,
   Activity,
-  Wallet
+  Wallet,
+  Bell,
+  Percent,
+  RefreshCw,
+  Radio,
+  ArrowUp,
+  ArrowDown,
+  Shield,
+  AlertCircle,
+  Check
 } from 'lucide-react';
 
 import StatCard from '../../components/dashboard/StatCard';
@@ -22,10 +31,15 @@ import RecentGroupsTable from '../../components/dashboard/RecentGroupsTable';
 import ActiveEntitiesList from '../../components/dashboard/ActiveEntitiesList';
 import LivestreamMetrics from '../../components/dashboard/LivestreamMetrics';
 import WalletMetrics from '../../components/dashboard/WalletMetrics';
+// import ExchangeRateTicker from '../../components/dashboard/forex/ExchangeRateTicker';
+// import AlertStatusChart from '../../components/dashboard/forex/AlertStatusChart';
+// import SystemHealthStatus from '../../components/dashboard/forex/SystemHealthStatus';
+// import RecentConversionsTable from '../../components/dashboard/forex/RecentConversionsTable';
 
 const Dashboard = () => {
   const [activeTimeframe, setActiveTimeframe] = useState('week');
   const [selectedTab, setSelectedTab] = useState('users');
+  const [forexTab, setForexTab] = useState('rates');
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -47,6 +61,7 @@ const Dashboard = () => {
     }
   };
 
+  // Original stats data
   const statsData = [
     {
       title: 'Total Users',
@@ -82,7 +97,43 @@ const Dashboard = () => {
     }
   ];
 
-  const handleTimeframeChange = (timeframe: any) => {
+  // New Forex stats data
+  const forexStatsData = [
+    {
+      title: 'Forex Conversions',
+      value: '1,487',
+      change: '+15.3%',
+      isPositive: true,
+      icon: <RefreshCw size={20} className="text-cyan-500 dark:text-cyan-400" strokeWidth={1.8} />,
+      bgColor: 'from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-900/20'
+    },
+    {
+      title: 'Active Alerts',
+      value: '258',
+      change: '+5.7%',
+      isPositive: true,
+      icon: <Bell size={20} className="text-violet-500 dark:text-violet-400" strokeWidth={1.8} />,
+      bgColor: 'from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-900/20'
+    },
+    {
+      title: 'Current Spread',
+      value: '1.85%',
+      change: '-0.2%',
+      isPositive: true,
+      icon: <Percent size={20} className="text-indigo-500 dark:text-indigo-400" strokeWidth={1.8} />,
+      bgColor: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-900/20'
+    },
+    {
+      title: 'Rate Sources',
+      value: '4/4',
+      change: 'All Active',
+      isPositive: true,
+      icon: <Radio size={20} className="text-emerald-500 dark:text-emerald-400" strokeWidth={1.8} />,
+      bgColor: 'from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-900/20'
+    }
+  ];
+
+  const handleTimeframeChange = (timeframe) => {
     setActiveTimeframe(timeframe);
   };
 
@@ -90,9 +141,23 @@ const Dashboard = () => {
     setSelectedTab(tab);
   };
 
+  const handleForexTabChange = (tab: any) => {
+    setForexTab(tab);
+  };
+
+  // Sample exchange rate data
+  const exchangeRates = [
+    { pair: 'USD/KES', rate: '130.45', change: '+0.3%', isUp: true, source: 'Fixer.io' },
+    { pair: 'EUR/KES', rate: '142.18', change: '-0.2%', isUp: false, source: 'OpenExchangeRates' },
+    { pair: 'GBP/KES', rate: '168.92', change: '+0.5%', isUp: true, source: 'Fixer.io' },
+    { pair: 'JPY/KES', rate: '0.8734', change: '+0.1%', isUp: true, source: 'Central Bank' },
+    { pair: 'USD/UGX', rate: '3710.25', change: '-0.4%', isUp: false, source: 'OpenExchangeRates' },
+    { pair: 'USD/TZS', rate: '2513.75', change: '+0.2%', isUp: true, source: 'Central Bank' }
+  ];
+
   return (
     <motion.div
-      className="w-full mx-auto"
+      className="w-full"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -150,7 +215,7 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* Stats Cards */}
+      {/* Original Stats Cards */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"
         variants={itemVariants}
@@ -158,6 +223,24 @@ const Dashboard = () => {
         {statsData.map((stat, index) => (
           <StatCard
             key={index}
+            title={stat.title}
+            value={stat.value}
+            change={stat.change}
+            isPositive={stat.isPositive}
+            icon={stat.icon}
+            bgColor={stat.bgColor}
+          />
+        ))}
+      </motion.div>
+
+      {/* Forex Stats Cards */}
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"
+        variants={itemVariants}
+      >
+        {forexStatsData.map((stat, index) => (
+          <StatCard
+            key={`forex-${index}`}
             title={stat.title}
             value={stat.value}
             change={stat.change}
@@ -259,6 +342,311 @@ const Dashboard = () => {
             </div>
           </div>
         </motion.div>
+      </motion.div>
+
+      {/* Forex Section */}
+      <motion.div
+        className="mb-8"
+        variants={itemVariants}
+      >
+
+        {/* Live Exchange Rate Ticker */}
+        <motion.div
+          className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border p-5 mb-6 overflow-hidden"
+          whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Live Exchange Rates</h3>
+            <motion.button
+              className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
+              whileHover={{ x: 3 }}
+            >
+              View all rates <ChevronRight size={14} />
+            </motion.button>
+          </div>
+
+          {/* Custom Exchange Rate Ticker Component */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {exchangeRates.map((rate, index) => (
+              <motion.div
+                key={index}
+                className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50 border border-gray-100/80 dark:border-dark-border/50 hover:bg-gray-100/80 dark:hover:bg-dark-active/70 transition-all duration-200"
+                whileHover={{ y: -3, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+              >
+                <div className="flex items-center">
+                  <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-900/30 mr-3">
+                    <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" strokeWidth={1.8} />
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-gray-800 dark:text-neutral-200">{rate.pair}</span>
+                    <div className="text-xs text-gray-500 dark:text-neutral-400">{rate.source}</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-gray-800 dark:text-neutral-200">{rate.rate}</div>
+                  <div className={`text-xs flex items-center justify-end ${rate.isUp ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                    {rate.isUp ? <ArrowUp size={12} className="mr-0.5" /> : <ArrowDown size={12} className="mr-0.5" />}
+                    {rate.change}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Forex Charts & Status */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Alert Status Chart */}
+          <motion.div
+            className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border p-5 overflow-hidden"
+            whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center">
+                <div className="p-1.5 rounded-lg bg-violet-50 dark:bg-violet-900/30 mr-2">
+                  <Bell size={14} className="text-violet-500 dark:text-violet-400" strokeWidth={1.8} />
+                </div>
+                <h3 className="text-base font-semibold text-gray-800 dark:text-neutral-200">Alert Status</h3>
+              </div>
+              <div className="flex items-center space-x-1">
+                <motion.button
+                  onClick={() => handleForexTabChange('day')}
+                  className={`px-2 py-1 text-xs rounded-lg transition-all ${forexTab === 'day'
+                    ? 'bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400'
+                    : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
+                    }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  24h
+                </motion.button>
+                <motion.button
+                  onClick={() => handleForexTabChange('week')}
+                  className={`px-2 py-1 text-xs rounded-lg transition-all ${forexTab === 'week'
+                    ? 'bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400'
+                    : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
+                    }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  7d
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Alert Status Chart Component Would Go Here */}
+            <div className="mb-3 flex justify-center">
+              {/* Placeholder for chart */}
+              <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-dark-active/50 flex items-center justify-center relative">
+                <div className="absolute inset-0 rounded-full border-8 border-violet-500/20 dark:border-violet-500/10"></div>
+                <div className="absolute inset-0 rounded-full border-8 border-transparent border-t-violet-500 border-r-violet-500 rotate-45"></div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-800 dark:text-neutral-200">63%</div>
+                  <div className="text-xs text-gray-500 dark:text-neutral-400">Triggered</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50/70 dark:bg-dark-active/50">
+                <div className="flex items-center">
+                  <div className="p-1.5 rounded-md bg-green-100 dark:bg-green-900/30 mr-2">
+                    <Check size={12} className="text-green-500 dark:text-green-400" strokeWidth={2} />
+                  </div>
+                  <span className="text-xs text-gray-700 dark:text-neutral-300">Triggered</span>
+                </div>
+                <span className="text-xs font-medium text-gray-700 dark:text-neutral-300">162</span>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50/70 dark:bg-dark-active/50">
+                <div className="flex items-center">
+                  <div className="p-1.5 rounded-md bg-amber-100 dark:bg-amber-900/30 mr-2">
+                    <Clock size={12} className="text-amber-500 dark:text-amber-400" strokeWidth={2} />
+                  </div>
+                  <span className="text-xs text-gray-700 dark:text-neutral-300">Pending</span>
+                </div>
+                <span className="text-xs font-medium text-gray-700 dark:text-neutral-300">96</span>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50/70 dark:bg-dark-active/50">
+                <div className="flex items-center">
+                  <div className="p-1.5 rounded-md bg-red-100 dark:bg-red-900/30 mr-2">
+                    <AlertCircle size={12} className="text-red-500 dark:text-red-400" strokeWidth={2} />
+                  </div>
+                  <span className="text-xs text-gray-700 dark:text-neutral-300">Expired</span>
+                </div>
+                <span className="text-xs font-medium text-gray-700 dark:text-neutral-300">45</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* System Health & Last Sync Status */}
+          <motion.div
+            className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border p-5 overflow-hidden"
+            whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center">
+                <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 mr-2">
+                  <Shield size={14} className="text-emerald-500 dark:text-emerald-400" strokeWidth={1.8} />
+                </div>
+                <h3 className="text-base font-semibold text-gray-800 dark:text-neutral-200">System Health</h3>
+              </div>
+              <div className="px-2 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                All Systems Online
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3">
+              <div className="p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50 border border-gray-100/80 dark:border-dark-border/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-medium text-gray-500 dark:text-neutral-400">Last Rate Sync</span>
+                  <div className="flex items-center text-emerald-600 dark:text-emerald-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 mr-1"></div>
+                    <span className="text-xs">Online</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-800 dark:text-neutral-200">2 minutes ago</span>
+                  <span className="text-xs text-gray-500 dark:text-neutral-400">28ms</span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50 border border-gray-100/80 dark:border-dark-border/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-medium text-gray-500 dark:text-neutral-400">Alert Evaluator</span>
+                  <div className="flex items-center text-emerald-600 dark:text-emerald-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 mr-1"></div>
+                    <span className="text-xs">Online</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-800 dark:text-neutral-200">5 minutes ago</span>
+                  <span className="text-xs text-gray-500 dark:text-neutral-400">357ms</span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50 border border-gray-100/80 dark:border-dark-border/50">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-medium text-gray-500 dark:text-neutral-400">WebSocket/API</span>
+                  <div className="flex items-center text-emerald-600 dark:text-emerald-400">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 mr-1"></div>
+                    <span className="text-xs">Connected</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-800 dark:text-neutral-200">Real-time</span>
+                  <motion.button
+                    className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    Force sync
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Recent Conversions */}
+          <motion.div
+            className="bg-white dark:bg-dark-elevated rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border overflow-hidden"
+            whileHover={{ boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)' }}
+          >
+            <div className="p-5 border-b border-gray-50 dark:border-dark-border">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <div className="p-1.5 rounded-lg bg-cyan-50 dark:bg-cyan-900/30 mr-2">
+                    <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" strokeWidth={1.8} />
+                  </div>
+                  <h3 className="text-base font-semibold text-gray-800 dark:text-neutral-200">Recent Conversions</h3>
+                </div>
+                <motion.button
+                  className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
+                  whileHover={{ x: 3 }}
+                >
+                  View all <ChevronRight size={14} />
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Recent Conversions Table */}
+            <div className="p-3">
+              {/* Conversion 1 */}
+              <div className="p-3 rounded-xl hover:bg-gray-50/70 dark:hover:bg-dark-active/50 transition-colors mb-2">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center">
+                    <div className="bg-cyan-100 dark:bg-cyan-900/30 h-8 w-8 rounded-lg flex items-center justify-center mr-3">
+                      <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">USD → KES</div>
+                      <div className="text-xs text-gray-500 dark:text-neutral-400">User #3829</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">$500 → KSh 65,225</div>
+                    <div className="text-xs text-gray-500 dark:text-neutral-400">3 mins ago</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Conversion 2 */}
+              <div className="p-3 rounded-xl hover:bg-gray-50/70 dark:hover:bg-dark-active/50 transition-colors mb-2">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center">
+                    <div className="bg-cyan-100 dark:bg-cyan-900/30 h-8 w-8 rounded-lg flex items-center justify-center mr-3">
+                      <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">EUR → KES</div>
+                      <div className="text-xs text-gray-500 dark:text-neutral-400">User #2771</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">€200 → KSh 28,436</div>
+                    <div className="text-xs text-gray-500 dark:text-neutral-400">12 mins ago</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Conversion 3 */}
+              <div className="p-3 rounded-xl hover:bg-gray-50/70 dark:hover:bg-dark-active/50 transition-colors mb-2">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center">
+                    <div className="bg-cyan-100 dark:bg-cyan-900/30 h-8 w-8 rounded-lg flex items-center justify-center mr-3">
+                      <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">GBP → KES</div>
+                      <div className="text-xs text-gray-500 dark:text-neutral-400">User #4526</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">£750 → KSh 126,690</div>
+                    <div className="text-xs text-gray-500 dark:text-neutral-400">23 mins ago</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Conversion 4 */}
+              <div className="p-3 rounded-xl hover:bg-gray-50/70 dark:hover:bg-dark-active/50 transition-colors">
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center">
+                    <div className="bg-cyan-100 dark:bg-cyan-900/30 h-8 w-8 rounded-lg flex items-center justify-center mr-3">
+                      <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">USD → UGX</div>
+                      <div className="text-xs text-gray-500 dark:text-neutral-400">User #1845</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">$300 → UGX 1,113,075</div>
+                    <div className="text-xs text-gray-500 dark:text-neutral-400">45 mins ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </motion.div>
 
       {/* Activity and Live Data Section */}
