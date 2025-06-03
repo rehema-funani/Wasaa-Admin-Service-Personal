@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { finance } from '../finance-axios';
+import { add } from 'date-fns';
 
 export interface Tariff {
   id?: string;
@@ -609,6 +610,56 @@ async getAllBlacklistEntries(filters = {}): Promise<any> {
     throw new Error('Failed to get blacklist entries. Please check your network connection.');
   }
 },
+
+
+async getAllBanks() : Promise<any> {
+  try {
+    const response = await finance.get('/banks');
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to get banks');
+    }
+    throw new Error('Failed to get banks. Please check your network connection.');
+  }
+},
+
+async addBank(bankData: any): Promise<any> {
+  try {
+    const response = await finance.post('/banks', bankData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to add bank');
+    }
+    throw new Error('Failed to add bank. Please check your network connection.');
+  }
+},
+
+async updateBank(bankId: string, bankData: any): Promise<any> {
+  try {
+    const response = await finance.put(`/banks/${bankId}`, bankData);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to update bank');
+    }
+    throw new Error('Failed to update bank. Please check your network connection.');
+  }
+},
+
+async deleteBank(bankId: string): Promise<any> {
+  try {
+    const response = await finance.delete(`/banks/${bankId}`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Failed to delete bank');
+    }
+    throw new Error('Failed to delete bank. Please check your network connection.');
+  }
+},
+
 };
 
 export default financeService;

@@ -15,11 +15,9 @@ import {
     Landmark,
     Download,
     FileText,
-    Info,
     AlertTriangle,
     BarChart2,
     Send,
-    Repeat,
     RefreshCw
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -27,7 +25,6 @@ import financeService from '../../../../api/services/finance';
 import { RefundRequest, ReversalRequest } from '../../../../types/finance';
 import toast from 'react-hot-toast';
 
-// This component serves as a dedicated page for viewing reversal details
 const ReversalDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -46,13 +43,11 @@ const ReversalDetailPage: React.FC = () => {
 
             setIsLoading(true);
             try {
-                // Fetch the specific refund by ID
                 const response = await financeService.getRefund(id);
 
                 if (response && response.refund) {
                     setRefund(response.refund);
 
-                    // Transform refund data to create a request object
                     const isDebit = response.refund.OriginalTransaction.debit < 0 ||
                         parseFloat(response.refund.OriginalTransaction.debit.toString()) < 0;
 
@@ -65,7 +60,6 @@ const ReversalDetailPage: React.FC = () => {
                         amount = transactionAmount;
                     }
 
-                    // Extract user name from transaction description
                     let userName = "Client";
                     if (response.refund.OriginalTransaction.description) {
                         let toMatch = response.refund.OriginalTransaction.description.match(/to\s+(.+)$/);
@@ -79,7 +73,6 @@ const ReversalDetailPage: React.FC = () => {
                         }
                     }
 
-                    // Determine status
                     let status: 'pending' | 'approved' | 'rejected' | 'completed' = 'pending';
                     switch (response.refund.status) {
                         case 'INITIATED':
@@ -153,7 +146,6 @@ const ReversalDetailPage: React.FC = () => {
                 toast.error('Action not supported');
             }
 
-            // After successful update, navigate back to the list
             navigate(-1);
         } catch (error) {
             console.error('Failed to update refund status:', error);
@@ -270,7 +262,6 @@ const ReversalDetailPage: React.FC = () => {
     return (
         <div className="min-h-screen p-4">
             <div className="max-w-6xl mx-auto">
-                {/* Header section */}
                 <motion.div
                     className="mb-6"
                     initial={{ opacity: 0, y: 20 }}
@@ -320,7 +311,6 @@ const ReversalDetailPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Status Bar */}
                     <div className="bg-neutral-50 dark:bg-dark-elevated/80 border border-neutral-200 dark:border-dark-border rounded-lg p-4 mb-6">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center">
@@ -374,7 +364,6 @@ const ReversalDetailPage: React.FC = () => {
                     </div>
                 </motion.div>
 
-                {/* Approval Panel */}
                 {showApprovePanel && (
                     <motion.div
                         className="mb-6 bg-white border border-success-200 rounded-lg p-5 shadow-lg"
@@ -433,7 +422,6 @@ const ReversalDetailPage: React.FC = () => {
                     </motion.div>
                 )}
 
-                {/* Reject Panel */}
                 {showRejectPanel && (
                     <motion.div
                         className="mb-6 bg-white border border-danger-200 rounded-lg p-5 shadow-lg"
@@ -496,7 +484,6 @@ const ReversalDetailPage: React.FC = () => {
                     </motion.div>
                 )}
 
-                {/* Tabs */}
                 <div className="flex border-b border-neutral-200 mb-6">
                     <button
                         className={`px-4 py-3 text-sm font-medium transition-colors duration-200 relative ${activeTab === 'details'
@@ -527,9 +514,7 @@ const ReversalDetailPage: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Main Content */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Left Column - Main content based on selected tab */}
                     <div className="lg:col-span-2">
                         {activeTab === 'details' && (
                             <motion.div
@@ -720,7 +705,6 @@ const ReversalDetailPage: React.FC = () => {
                                             </div>
                                         )}
 
-                                        {/* This would ideally be populated from actual audit logs if available */}
                                         <div className="text-center py-3 text-neutral-500 text-sm">
                                             <p>Additional audit logs would appear here</p>
                                         </div>
@@ -730,9 +714,7 @@ const ReversalDetailPage: React.FC = () => {
                         )}
                     </div>
 
-                    {/* Right Column - Fixed sidebar with wallet and actions */}
                     <div className="lg:col-span-1">
-                        {/* Wallet Information */}
                         <motion.div
                             className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden mb-6"
                             initial={{ opacity: 0, y: 20 }}
@@ -845,7 +827,6 @@ const ReversalDetailPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Info Box */}
                 <motion.div
                     className="mt-6 bg-gradient-to-r from-primary-50/80 to-primary-50/60 dark:from-primary-900/10 dark:to-primary-800/10 rounded-lg p-4 border border-primary-100 dark:border-primary-800/20 shadow-sm"
                     initial={{ opacity: 0, y: 20 }}

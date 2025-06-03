@@ -151,11 +151,6 @@ const routes: Route[] = [
           items: [
             {
               type: 'link',
-              path: '/admin/finance/payment-methods',
-              title: 'Payment Methods',
-            },
-            {
-              type: 'link',
               path: '/admin/finance/banks',
               title: 'Banking Partners',
             },
