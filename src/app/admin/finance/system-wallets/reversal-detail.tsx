@@ -26,8 +26,6 @@ import { motion } from 'framer-motion';
 import financeService from '../../../../api/services/finance';
 import { RefundRequest, ReversalRequest } from '../../../../types/finance';
 import toast from 'react-hot-toast';
-import ApproveRefund from '../../../../components/finance/ApproveRefund';
-import RejectRefund from '../../../../components/finance/RejectRefund';
 
 // This component serves as a dedicated page for viewing reversal details
 const ReversalDetailPage: React.FC = () => {
@@ -120,12 +118,12 @@ const ReversalDetailPage: React.FC = () => {
                     setRequest(requestData);
                 } else {
                     toast.error('Failed to load reversal details');
-                    navigate('/finance/reversals');
+                    navigate(-1);
                 }
             } catch (error) {
                 console.error('Error fetching reversal details:', error);
                 toast.error('Error loading reversal details');
-                navigate('/finance/reversals');
+                navigate(-1);
             } finally {
                 setIsLoading(false);
             }
@@ -156,7 +154,7 @@ const ReversalDetailPage: React.FC = () => {
             }
 
             // After successful update, navigate back to the list
-            navigate('/finance/reversals');
+            navigate(-1);
         } catch (error) {
             console.error('Failed to update refund status:', error);
             let errorMessage = 'Failed to process the request. Please try again.';
@@ -258,7 +256,7 @@ const ReversalDetailPage: React.FC = () => {
                         <div>
                             <h3 className="text-danger-700 font-medium">Error Loading Reversal Details</h3>
                             <p className="text-danger-600 mt-1">The requested reversal details could not be found or loaded.</p>
-                            <Link to="/finance/reversals" className="mt-3 inline-flex items-center text-primary-600 hover:text-primary-700">
+                            <Link to="/admin/finance/wallets/reversal-requests" className="mt-3 inline-flex items-center text-primary-600 hover:text-primary-700">
                                 <ArrowLeft size={16} className="mr-1" />
                                 Return to Reversal Requests
                             </Link>
@@ -801,7 +799,6 @@ const ReversalDetailPage: React.FC = () => {
                             </div>
                         </motion.div>
 
-                        {/* Quick Actions */}
                         <motion.div
                             className="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden"
                             initial={{ opacity: 0, y: 20 }}
@@ -815,7 +812,7 @@ const ReversalDetailPage: React.FC = () => {
                             <div className="p-5">
                                 <div className="space-y-3">
                                     <Link
-                                        to="/finance/reversals"
+                                        to="/admin/finance/wallets/reversal-requests"
                                         className="flex items-center w-full p-3 text-sm text-neutral-700 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors"
                                     >
                                         <ArrowLeft size={16} className="text-neutral-500 mr-2" />
