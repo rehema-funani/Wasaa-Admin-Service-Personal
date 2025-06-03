@@ -25,7 +25,9 @@ import {
     Globe,
     Server,
     Cpu,
-    FileText
+    FileText,
+    X,
+    Edit
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'react-hot-toast';
@@ -33,31 +35,13 @@ import userService from '../../../api/services/users';
 import StatusBadge from '../../../components/common/StatusBadge';
 import DataTable from '../../../components/common/DataTable';
 import TabNavigation from '../../../components/common/TabNavigation';
+import EditAdmin from '../../../components/users/EditAdmin';
+import { UserAdmin } from '../../../types/user';
 
 const UserDetailsPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    type User = {
-        id: string;
-        email?: string;
-        first_name?: string;
-        last_name?: string;
-        name?: string;
-        lastActive?: string;
-        last_login?: string;
-        status?: string;
-        role?: any;
-        mfa_enabled?: boolean;
-        phone_number?: string;
-        location?: string;
-        createdAt?: string;
-        transactions_count?: number;
-        avatar?: string;
-        roleId?: string;
-        permissions?: string[];
-    };
-
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<UserAdmin | null>(null);
     const [activeTab, setActiveTab] = useState('overview');
     const [isSendingReset, setIsSendingReset] = useState(false);
     const [resetSent, setResetSent] = useState(false);
@@ -66,7 +50,50 @@ const UserDetailsPage = () => {
     const [isLoadingLogs, setIsLoadingLogs] = useState(true);
     const [activeSessions, setActiveSessions] = useState([]);
     const [loginHistory, setLoginHistory] = useState([]);
-    const [connectedApps, setConnectedApps] = useState([]);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editFormData, setEditFormData] = useState({
+        email: '',
+        first_name: '',
+        last_name: '',
+        phone_number: '',
+        role_id: '',
+        account_status: 'active'
+    });
+
+    // Add this function to handle opening the edit modal
+    const openEditModal = () => {
+        if (!user) return;
+
+        setEditFormData({
+            email: user.email || '',
+            first_name: user.first_name || '',
+            last_name: user.last_name || '',
+            phone_number: user.phone_number || '',
+            role_id: user.role?.id || '',
+            account_status: user.status || 'active'
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const handleEditFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setEditFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleEditSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await userService.updateUser(id, editFormData);
+            toast.success('User updated successfully');
+            setIsEditModalOpen(false);
+        } catch (error) {
+            console.error('Failed to update user:', error);
+            toast.error('Failed to update user');
+        }
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -96,8 +123,6 @@ const UserDetailsPage = () => {
             fetchUserSessions();
         } else if (activeTab === 'login-history' && user) {
             fetchLoginHistory();
-        } else if (activeTab === 'connected-apps' && user) {
-            fetchConnectedApps();
         }
     }, [activeTab, user]);
 
@@ -124,16 +149,6 @@ const UserDetailsPage = () => {
             toast.error('Failed to load login history');
         } finally {
             setIsLoadingLogs(false);
-        }
-    };
-
-    const fetchConnectedApps = async () => {
-        try {
-            const apps = await userService.getUserConnectedApps(id);
-            setConnectedApps(apps);
-        } catch (error) {
-            console.error('Failed to fetch connected apps:', error);
-            toast.error('Failed to load connected applications');
         }
     };
 
@@ -195,17 +210,6 @@ const UserDetailsPage = () => {
         }
     };
 
-    const handleRevokeApp = async (appId: any) => {
-        try {
-            await userService.revokeUserApp(id, appId);
-            toast.success('Application access revoked successfully');
-            fetchConnectedApps();
-        } catch (error) {
-            console.error('Failed to revoke app access:', error);
-            toast.error('Failed to revoke application access');
-        }
-    };
-
     const handleResetMFA = async () => {
         try {
             await userService.resetUserMFA(id);
@@ -234,7 +238,6 @@ const UserDetailsPage = () => {
         { id: 'security', label: 'Security', icon: <Shield size={16} /> },
     ];
 
-    // Table columns for sessions
     const sessionColumns = [
         {
             id: 'device',
@@ -347,71 +350,6 @@ const UserDetailsPage = () => {
         }
     ];
 
-    // Table columns for connected apps
-    const connectedAppsColumns = [
-        {
-            id: 'app',
-            header: 'Application',
-            accessor: (row) => row.name,
-            cell: (value, row) => (
-                <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-md bg-primary-100 flex items-center justify-center mr-3">
-                        <Server size={16} className="text-primary-600" />
-                    </div>
-                    <div>
-                        <p className="font-medium">{value}</p>
-                        <p className="text-xs text-gray-500">{row.client_id.substring(0, 12)}...</p>
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'scopes',
-            header: 'Permissions',
-            accessor: (row) => row.scopes,
-            cell: (value) => (
-                <div className="flex flex-wrap gap-1">
-                    {value && value.map((scope, idx) => (
-                        <span key={idx} className="inline-flex px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
-                            {scope}
-                        </span>
-                    ))}
-                </div>
-            )
-        },
-        {
-            id: 'issued',
-            header: 'Authorized',
-            accessor: (row) => row.issued_at,
-            cell: (value) => (
-                <span>{value ? formatDistanceToNow(new Date(value), { addSuffix: true }) : 'Unknown'}</span>
-            )
-        },
-        {
-            id: 'last_used',
-            header: 'Last Used',
-            accessor: (row) => row.last_used,
-            cell: (value) => (
-                <span>{value ? formatDistanceToNow(new Date(value), { addSuffix: true }) : 'Never'}</span>
-            )
-        },
-        {
-            id: 'actions',
-            header: 'Actions',
-            accessor: (row) => row.id,
-            cell: (value) => (
-                <motion.button
-                    className="px-2 py-1 bg-red-50 text-red-600 rounded-md text-xs font-medium hover:bg-red-100"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleRevokeApp(value)}
-                >
-                    Revoke
-                </motion.button>
-            )
-        }
-    ];
-
     const InfoCard = ({
         icon,
         label,
@@ -499,7 +437,6 @@ const UserDetailsPage = () => {
                 </h1>
             </div>
 
-            {/* User Profile Header */}
             <div className="relative h-40 bg-gradient-to-r from-primary-500 to-primary-600 rounded-t-2xl p-6 flex items-end mb-14">
                 <motion.div
                     initial={{ scale: 0.8, y: 20, opacity: 0 }}
@@ -512,13 +449,17 @@ const UserDetailsPage = () => {
 
                 <div className="absolute right-6 bottom-6 flex space-x-2">
                     <ActionButton
+                        icon={<Edit size={16} />}
+                        label="Edit Profile"
+                        onClick={openEditModal}
+                    />
+                    <ActionButton
                         icon={user.status === 'active' ? <Lock size={16} /> : <Unlock size={16} />}
                         label={user.status === 'active' ? 'Deactivate User' : 'Activate User'}
                         onClick={handleToggleUserStatus}
                         isDanger={user.status === 'active'}
                         isPrimary={user.status !== 'active'}
                     />
-
                     <ActionButton
                         icon={<LogOut size={16} />}
                         label="Terminate All Sessions"
@@ -790,23 +731,6 @@ const UserDetailsPage = () => {
                     </div>
                 )}
 
-                {activeTab === 'connected-apps' && (
-                    <div className="p-6">
-                        <h3 className="text-lg font-medium text-gray-800 mb-4">Connected Applications</h3>
-                        <DataTable
-                            columns={connectedAppsColumns}
-                            data={connectedApps}
-                            isLoading={isLoadingLogs}
-                            emptyMessage="This user has no connected applications."
-                        />
-
-                        <div className="mt-4 bg-primary-50 border border-primary-200 text-primary-700 px-4 py-3 rounded-xl text-sm">
-                            <AlertCircle size={16} className="inline-block mr-2" />
-                            Revoking access will immediately remove the application's ability to access the user's data.
-                        </div>
-                    </div>
-                )}
-
                 {activeTab === 'security' && (
                     <div className="p-6">
                         <h3 className="text-lg font-medium text-gray-800 mb-4">Security Settings</h3>
@@ -908,6 +832,17 @@ const UserDetailsPage = () => {
                     </div>
                 )}
             </div>
+            {/* Edit User Modal */}
+            {isEditModalOpen && (
+                <EditAdmin
+                    isEditModalOpen={isEditModalOpen}
+                    setIsEditModalOpen={setIsEditModalOpen}
+                    editFormData={editFormData}
+                    setEditFormData={setEditFormData}
+                    handleEditFormChange={handleEditFormChange}
+                    handleEditSubmit={handleEditSubmit}
+                />
+            )}
         </div>
     );
 };

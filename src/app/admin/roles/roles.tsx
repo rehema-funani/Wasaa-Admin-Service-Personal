@@ -181,62 +181,6 @@ const roles = () => {
         setCurrentPage(1);
     };
 
-    const handleApplyFilters = (filters: Record<string, any>) => {
-        setAppliedFilters(filters);
-
-        let filtered = [...roles];
-
-        if (filters.status && filters.status.length > 0) {
-            filtered = filtered.filter(role => filters.status.includes(role.status));
-        }
-
-        if (filters.userCount) {
-            const count = parseInt(filters.userCount);
-            if (!isNaN(count)) {
-                filtered = filtered.filter(role => role.userCount >= count);
-            }
-        }
-
-        if (filters.permissionCount) {
-            filtered = filtered.filter(role => role.permissions.length > 0);
-        }
-
-        if (filters.createdAt && (filters.createdAt.from || filters.createdAt.to)) {
-            if (filters.createdAt.from) {
-                const fromDate = new Date(filters.createdAt.from);
-                filtered = filtered.filter(role => {
-                    const roleDate = new Date(role.createdAt);
-                    return roleDate >= fromDate;
-                });
-            }
-
-            if (filters.createdAt.to) {
-                const toDate = new Date(filters.createdAt.to);
-                filtered = filtered.filter(role => {
-                    const roleDate = new Date(role.createdAt);
-                    return roleDate <= toDate;
-                });
-            }
-        }
-
-        // Apply search query if it exists
-        if (searchQuery.trim() !== '') {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            filtered = filtered.filter(role =>
-                (role.title?.toLowerCase() || '').includes(lowercasedQuery) ||
-                (role.description?.toLowerCase() || '').includes(lowercasedQuery)
-            );
-        }
-
-        setFilteredRoles(filtered);
-        setCurrentPage(1);
-    };
-
-    const handleResetFilters = () => {
-        setAppliedFilters({});
-        setFilteredRoles(roles);
-    };
-
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };

@@ -30,3 +30,23 @@ export interface User {
     updatedAt: string;
     deletedAt: string | null;
 }
+
+export interface UserAdmin {
+        id: string;
+        email?: string;
+        first_name?: string;
+        last_name?: string;
+        name?: string;
+        lastActive?: string;
+        last_login?: string;
+        status?: string;
+        role?: any;
+        mfa_enabled?: boolean;
+        phone_number?: string;
+        location?: string;
+        createdAt?: string;
+        transactions_count?: number;
+        avatar?: string;
+        roleId?: string;
+        permissions?: string[];
+    };
