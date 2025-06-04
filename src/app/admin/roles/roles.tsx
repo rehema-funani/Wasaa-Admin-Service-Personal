@@ -13,21 +13,10 @@ import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../../../components/common/StatusBadge';
 import SearchBox from '../../../components/common/SearchBox';
-import FilterPanel from '../../../components/common/FilterPanel';
 import DataTable from '../../../components/common/DataTable';
 import Pagination from '../../../components/common/Pagination';
 import { roleService } from '../../../api/services/roles';
-
-interface Role {
-    id: string;
-    title: string;
-    description: string;
-    permissions: string[];
-    status: string;
-    userCount: number;
-    createdAt: string;
-    updatedAt: string;
-}
+import { Role } from '../../../types/user';
 
 const roles = () => {
     const navigate = useNavigate();
@@ -38,7 +27,6 @@ const roles = () => {
     const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
     const [recentSearches, setRecentSearches] = useState<string[]>([
         'admin', 'inactive', 'moderator'
     ]);
@@ -191,7 +179,7 @@ const roles = () => {
     };
 
     return (
-        <div className="p-6 max-w-[1600px] mx-auto">
+        <div className="p-6 w-full mx-auto">
             <motion.div
                 className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
                 initial={{ opacity: 0, y: -20 }}

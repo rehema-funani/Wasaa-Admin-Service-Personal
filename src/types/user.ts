@@ -50,3 +50,15 @@ export interface UserAdmin {
         roleId?: string;
         permissions?: string[];
     };
+
+
+export interface Role {
+    id: string;
+    title: string;
+    description: string;
+    permissions: string[];
+    status: string;
+    userCount: number;
+    createdAt: string;
+    updatedAt: string;
+}

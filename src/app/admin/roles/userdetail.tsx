@@ -60,7 +60,6 @@ const UserDetailsPage = () => {
         account_status: 'active'
     });
 
-    // Add this function to handle opening the edit modal
     const openEditModal = () => {
         if (!user) return;
 
@@ -229,7 +228,6 @@ const UserDetailsPage = () => {
         }
     };
 
-    // Tabs configuration
     const tabs = [
         { id: 'overview', label: 'Overview', icon: <Eye size={16} /> },
         { id: 'sessions', label: 'Active Sessions', icon: <Globe size={16} /> },
@@ -302,7 +300,6 @@ const UserDetailsPage = () => {
         }
     ];
 
-    // Table columns for login history
     const loginHistoryColumns = [
         {
             id: 'timestamp',

@@ -138,42 +138,6 @@ const UserManagementPage: React.FC = () => {
         }
     };
 
-    const filterOptions = [
-        {
-            id: 'role',
-            label: 'Role',
-            type: 'select' as const,
-            options: roles.map(role => ({ value: role.title, label: role.title }))
-        },
-        {
-            id: 'status',
-            label: 'Status',
-            type: 'multiselect' as const,
-            options: [
-                { value: 'active', label: 'Active' },
-                { value: 'inactive', label: 'Inactive' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'blocked', label: 'Blocked' },
-                { value: 'processing', label: 'Processing' }
-            ]
-        },
-        {
-            id: 'joinDate',
-            label: 'Join Date',
-            type: 'daterange' as const
-        },
-        {
-            id: 'transactions',
-            label: 'Transactions',
-            type: 'number' as const
-        },
-        {
-            id: 'verified',
-            label: 'Verified Email',
-            type: 'boolean' as const
-        }
-    ];
-
     const columns = [
         {
             id: 'name',
@@ -276,7 +240,6 @@ const UserManagementPage: React.FC = () => {
     ];
 
     const handleViewUser = (user: User) => {
-        // Navigate to user details page instead of opening modal
         navigate(`/admin/users/${user.id}`);
     };
 

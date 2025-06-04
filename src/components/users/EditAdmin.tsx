@@ -1,7 +1,5 @@
 import { X, Loader2 } from 'lucide-react'
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import userService from '../../api/services/users';
+import { useState, useEffect } from 'react'
 import { roleService } from '../../api/services/roles';
 
 const EditAdmin = ({
