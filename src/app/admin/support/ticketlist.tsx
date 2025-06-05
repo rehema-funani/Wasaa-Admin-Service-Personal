@@ -1,10 +1,8 @@
-// pages/support/TicketList.tsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-    Search, SlidersHorizontal, PlusCircle, Download,
-    MessageSquare, CheckSquare, Filter, RefreshCw
+    SlidersHorizontal, PlusCircle, Download,
+    MessageSquare, CheckSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
@@ -25,7 +23,6 @@ const TicketList: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    // State
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [totalTickets, setTotalTickets] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
@@ -87,7 +84,6 @@ const TicketList: React.FC = () => {
         if (!bulkAction || selectedTickets.length === 0) return;
 
         try {
-            // Mock bulk action
             await support.bulkUpdateTickets(selectedTickets, { status: 'closed' });
             toast.success(`Successfully ${bulkAction}ed ${selectedTickets.length} tickets`);
             setSelectedTickets([]);
@@ -101,7 +97,6 @@ const TicketList: React.FC = () => {
 
     const totalPages = Math.ceil(totalTickets / pageSize);
 
-    // Filter options
     const statusOptions = [
         { value: 'all', label: 'All Status', count: totalTickets },
         { value: 'open', label: 'Open', count: 23 },
@@ -128,9 +123,8 @@ const TicketList: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-[#FCFCFD] p-4 md:p-6 font-['Inter',sans-serif]">
-            <div className="max-w-7xl mx-auto">
-                {/* Header */}
+        <div className="min-h-screen font-['Inter',sans-serif]">
+            <div className="w-full mx-auto">
                 <div className="mb-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-4">
                         <div>
@@ -154,7 +148,6 @@ const TicketList: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Filters */}
                     <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
                         <div className="flex-grow">
                             <SearchBar
@@ -190,7 +183,6 @@ const TicketList: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Selected tickets actions */}
                 <AnimatePresence>
                     {selectedTickets.length > 0 && (
                         <motion.div
@@ -244,7 +236,6 @@ const TicketList: React.FC = () => {
                     )}
                 </AnimatePresence>
 
-                {/* Tickets Table */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     {isLoading ? (
                         <div className="flex items-center justify-center py-12">
@@ -371,7 +362,6 @@ const TicketList: React.FC = () => {
                     )}
                 </div>
 
-                {/* Pagination */}
                 {!isLoading && tickets.length > 0 && (
                     <div className="mt-6">
                         <Pagination
@@ -385,7 +375,6 @@ const TicketList: React.FC = () => {
                     </div>
                 )}
 
-                {/* Bulk Action Modal */}
                 <ConfirmationModal
                     isOpen={showBulkActions}
                     onClose={() => {

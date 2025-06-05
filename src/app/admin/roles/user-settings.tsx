@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
-    Download,
-    Upload,
     Eye,
     Edit,
     Trash2,
@@ -18,7 +16,6 @@ import userService from '../../../api/services/users';
 import { roleService } from '../../../api/services/roles';
 import StatusBadge from '../../../components/common/StatusBadge';
 import SearchBox from '../../../components/common/SearchBox';
-import FilterPanel from '../../../components/common/FilterPanel';
 import DataTable from '../../../components/common/DataTable';
 import Pagination from '../../../components/common/Pagination';
 import {

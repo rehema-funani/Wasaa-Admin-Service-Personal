@@ -184,8 +184,6 @@ export const userService = {
     }
   },
 
-
-  // tbd 
   async getAdminUserbyId (id: string): Promise<any> {
     try {
       const response = await api.get(`/admin/${id}`);
@@ -422,6 +420,18 @@ export const userService = {
         throw new Error(error.response.data.message || 'Failed to resolve report');
       }
       throw new Error('Failed to resolve report. Please check your network connection.');
+    }
+  },
+
+  async getReports (): Promise<any> {
+    try {
+      const response = await api.get('/reports/stats');
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to get reports');
+      }
+      throw new Error('Failed to get reports. Please check your network connection.');
     }
   }
 

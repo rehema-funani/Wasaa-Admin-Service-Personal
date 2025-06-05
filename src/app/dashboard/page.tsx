@@ -41,6 +41,7 @@ import RecentGroupsTable from '../../components/dashboard/RecentGroupsTable';
 import ActiveEntitiesList from '../../components/dashboard/ActiveEntitiesList';
 import LivestreamMetrics from '../../components/dashboard/LivestreamMetrics';
 import WalletMetrics from '../../components/dashboard/WalletMetrics';
+import userService from '../../api/services/users';
 
 const Dashboard = () => {
   const [activeTimeframe, setActiveTimeframe] = useState('week');
@@ -50,14 +51,26 @@ const Dashboard = () => {
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [notificationCount, setNotificationCount] = useState(4);
   const [securityScore, setSecurityScore] = useState(86);
+  const [stats, setStats] = useState([]);
 
-  // New state for the advanced filters
+  const getStats = async () => {
+    try {
+      const response = await userService.getReports();
+      setStats(response.data);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  }
+
+  useEffect(() => {
+    getStats();
+  }, [])
+
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [dateRange, setDateRange] = useState('last30');
   const [userSegment, setUserSegment] = useState('all');
 
   useEffect(() => {
-    // Simulate security score changing occasionally
     const timer = setInterval(() => {
       setSecurityScore(prev => Math.min(100, prev + Math.floor(Math.random() * 3) - 1));
     }, 10000);
@@ -85,7 +98,6 @@ const Dashboard = () => {
     }
   };
 
-  // Original stats data
   const statsData = [
     {
       title: 'Total Users',
@@ -121,7 +133,6 @@ const Dashboard = () => {
     }
   ];
 
-  // New user engagement stats
   const engagementStatsData = [
     {
       title: 'Avg. Session Time',
@@ -157,7 +168,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Forex stats data
   const forexStatsData = [
     {
       title: 'Forex Conversions',
@@ -193,7 +203,6 @@ const Dashboard = () => {
     }
   ];
 
-  // New regional performance data
   const regionalPerformance = [
     { region: 'Kenya', users: 12583, growth: '+14.2%', revenue: '$43,291', color: 'emerald' },
     { region: 'Uganda', users: 5721, growth: '+22.5%', revenue: '$18,490', color: 'violet' },
@@ -218,7 +227,6 @@ const Dashboard = () => {
     setSelectedRegion(region);
   };
 
-  // Sample exchange rate data
   const exchangeRates = [
     { pair: 'USD/KES', rate: '130.45', change: '+0.3%', isUp: true, source: 'Fixer.io' },
     { pair: 'EUR/KES', rate: '142.18', change: '-0.2%', isUp: false, source: 'OpenExchangeRates' },
@@ -228,7 +236,6 @@ const Dashboard = () => {
     { pair: 'USD/TZS', rate: '2513.75', change: '+0.2%', isUp: true, source: 'Central Bank' }
   ];
 
-  // AI-generated insights
   const aiInsights = [
     { id: 1, title: 'User Growth Opportunity', message: 'Kenyan user signups spike on weekends. Consider weekend-targeted promotions.', impact: 'High', category: 'growth' },
     { id: 2, title: 'Conversion Rate Drop', message: 'Forex conversions from USD to KES dropped 12% this week. Check for rate competitiveness.', impact: 'Medium', category: 'alert' },
@@ -242,7 +249,6 @@ const Dashboard = () => {
       animate="visible"
       variants={containerVariants}
     >
-      {/* Enhanced Header with Notifications and User Info */}
       <motion.div
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6"
         variants={itemVariants}
@@ -315,8 +321,8 @@ const Dashboard = () => {
           <motion.button
             onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm rounded-full transition-all border ${showAdvancedFilters
-                ? 'bg-primary-50 border-primary-200 text-primary-600 dark:bg-primary-900/30 dark:border-primary-700/30 dark:text-primary-400'
-                : 'bg-white border-gray-200 text-gray-600 dark:bg-dark-elevated dark:border-dark-border dark:text-neutral-300'
+              ? 'bg-primary-50 border-primary-200 text-primary-600 dark:bg-primary-900/30 dark:border-primary-700/30 dark:text-primary-400'
+              : 'bg-white border-gray-200 text-gray-600 dark:bg-dark-elevated dark:border-dark-border dark:text-neutral-300'
               }`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -515,8 +521,8 @@ const Dashboard = () => {
                   >
                     <div className="flex items-start gap-3">
                       <div className={`p-2.5 rounded-lg flex-shrink-0 ${insight.category === 'growth' ? 'bg-emerald-500/20' :
-                          insight.category === 'alert' ? 'bg-amber-500/20' :
-                            'bg-blue-500/20'
+                        insight.category === 'alert' ? 'bg-amber-500/20' :
+                          'bg-blue-500/20'
                         }`}>
                         {insight.category === 'growth' ? <TrendingUp size={16} className="text-emerald-100" /> :
                           insight.category === 'alert' ? <AlertCircle size={16} className="text-amber-100" /> :
@@ -725,8 +731,8 @@ const Dashboard = () => {
               <div className="flex justify-between items-center mb-3">
                 <h3 className="text-sm font-medium text-gray-700 dark:text-neutral-300">Security Score</h3>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${securityScore >= 80 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                    securityScore >= 60 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                  securityScore >= 60 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
+                    'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                   }`}>
                   {securityScore >= 80 ? 'Good' : securityScore >= 60 ? 'Fair' : 'Poor'}
                 </span>
@@ -736,8 +742,8 @@ const Dashboard = () => {
               <div className="w-full h-3 bg-gray-200 dark:bg-dark-hover rounded-full overflow-hidden mb-2">
                 <motion.div
                   className={`h-full rounded-full ${securityScore >= 80 ? 'bg-green-500' :
-                      securityScore >= 60 ? 'bg-amber-500' :
-                        'bg-red-500'
+                    securityScore >= 60 ? 'bg-amber-500' :
+                      'bg-red-500'
                     }`}
                   initial={{ width: 0 }}
                   animate={{ width: `${securityScore}%` }}
