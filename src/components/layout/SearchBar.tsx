@@ -1,4 +1,3 @@
-// SearchBar.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, ArrowRight, BarChart3, User, Wallet, Settings, CreditCard, Shield } from 'lucide-react';
@@ -17,7 +16,6 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ userPermissions }) => {
-    // State
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);

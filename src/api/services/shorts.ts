@@ -48,7 +48,7 @@ export const shortsService = {
   },
 
 
-//   ============ TAGS SERVICES =============
+    //   ============ TAGS SERVICES =============
 
     getTags: async (params: any) => {
         const response = await shortaxios.get('/admin/tags', { params });
