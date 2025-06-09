@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronDown, Menu, X, ArrowRight, Sparkles, CircleDot } from 'lucide-react';
+import { ChevronDown, Menu, X, ArrowRight, Sparkles, MoreHorizontal } from 'lucide-react';
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 import logo from '../../assets/images/logo-wasaa.png';
@@ -14,22 +15,121 @@ interface TopNavigationProps {
     isDarkMode: boolean;
 }
 
-const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMode }) => {
+const TopNavigation: React.FC<TopNavigationProps> = () => {
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [activeNestedDropdown, setActiveNestedDropdown] = useState<string | null>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [overflowMenuOpen, setOverflowMenuOpen] = useState(false);
+    const [visibleItems, setVisibleItems] = useState<any[]>([]);
+    const [overflowItems, setOverflowItems] = useState<any[]>([]);
+    const [navMeasured, setNavMeasured] = useState(false);
 
-    // Refs
+    const [overflowActiveDropdown, setOverflowActiveDropdown] = useState<string | null>(null);
+    const [overflowActiveNestedDropdown, setOverflowActiveNestedDropdown] = useState<string | null>(null);
     const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
+    const navContainerRef = useRef<HTMLDivElement>(null);
+    const navItemsRef = useRef<Record<string, HTMLDivElement | HTMLAnchorElement | null>>({});
+    const overflowRef = useRef<HTMLDivElement | null>(null);
+    const overflowButtonRef = useRef<HTMLButtonElement>(null);
     const navigate = useNavigate();
     const location = useLocation();
 
-    // User data
+    useEffect(() => {
+        const handleBodyClick = (e: MouseEvent) => {
+            console.log('Body click detected', e.target);
+
+            const clickedDropdownButton = e.target instanceof Element &&
+                (e.target.closest('button[data-dropdown="true"]') ||
+                    e.target.closest('.mega-menu-container') ||
+                    e.target.closest('.overflow-menu-container'));
+
+            console.log('Clicked dropdown button?', !!clickedDropdownButton);
+        };
+
+        document.body.addEventListener('click', handleBodyClick);
+
+        return () => {
+            document.body.removeEventListener('click', handleBodyClick);
+        };
+    }, []);
+
     const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null;
     const userPermissions = user?.permissions || [];
 
-    // Effects
+    useEffect(() => {
+        console.log('Active dropdown changed to:', activeDropdown);
+    }, [activeDropdown]);
+
+    useEffect(() => {
+        console.log('Active nested dropdown changed to:', activeNestedDropdown);
+    }, [activeNestedDropdown]);
+
+    useEffect(() => {
+        console.log('Overflow menu open:', overflowMenuOpen);
+    }, [overflowMenuOpen]);
+
+    const updateVisibleItems = useCallback(() => {
+        if (!navContainerRef.current) return;
+
+        const navContainer = navContainerRef.current;
+        const containerWidth = navContainer.clientWidth;
+        const filteredSections = filterSections(routes);
+
+        const availableWidth = containerWidth - 100;
+
+        let currentWidth = 0;
+        const visible: any[] = [];
+        const overflow: any[] = [];
+
+        filteredSections.forEach((item, index) => {
+            const itemRef = navItemsRef.current[`nav-item-${index}`];
+            const itemWidth = itemRef ? itemRef.offsetWidth : 120;
+
+            if (currentWidth + itemWidth < availableWidth) {
+                visible.push(item);
+                currentWidth += itemWidth;
+            } else {
+                overflow.push(item);
+            }
+        });
+
+        setVisibleItems(visible);
+        setOverflowItems(overflow);
+
+        if (!navMeasured) {
+            setNavMeasured(true);
+        }
+    }, [navMeasured, routes]);
+
+    useEffect(() => {
+        const initialTimer = setTimeout(() => {
+            if (navContainerRef.current) {
+                console.log('Initial measurement - Nav container width:', navContainerRef.current.clientWidth);
+
+                Object.entries(navItemsRef.current).forEach(([key, el]) => {
+                    if (el) {
+                        console.log(`${key} width:`, el.offsetWidth);
+                    }
+                });
+
+                updateVisibleItems();
+            }
+        }, 300);
+
+        return () => clearTimeout(initialTimer);
+    }, []); 
+
+    useEffect(() => {
+        const handleResize = () => {
+            console.log('Window resized - updating navigation');
+            updateVisibleItems();
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [updateVisibleItems]);
+
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
@@ -38,9 +138,27 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
         const handleClickOutside = (event: MouseEvent) => {
             if (activeDropdown) {
                 const ref = dropdownRefs.current[activeDropdown];
-                if (ref && !ref.contains(event.target as Node)) {
+                // If the click is on a dropdown button or its content, don't close it
+                const isClickInsideDropdown = ref && ref.contains(event.target as Node);
+                const isClickOnMegaMenu = document.querySelector('.mega-menu-container')?.contains(event.target as Node);
+
+                if (!isClickInsideDropdown && !isClickOnMegaMenu) {
+                    console.log('Closing dropdown due to outside click');
                     setActiveDropdown(null);
                     setActiveNestedDropdown(null);
+                }
+            }
+
+            // Handle overflow menu outside clicks
+            if (overflowMenuOpen) {
+                const isClickInsideOverflowButton = overflowButtonRef.current?.contains(event.target as Node);
+                const isClickInsideOverflowMenu = document.querySelector('.overflow-menu-container')?.contains(event.target as Node);
+
+                if (!isClickInsideOverflowButton && !isClickInsideOverflowMenu) {
+                    console.log('Closing overflow menu due to outside click');
+                    setOverflowMenuOpen(false);
+                    setOverflowActiveDropdown(null);
+                    setOverflowActiveNestedDropdown(null);
                 }
             }
         };
@@ -48,22 +166,89 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
         window.addEventListener('scroll', handleScroll);
         document.addEventListener('mousedown', handleClickOutside);
 
+        if (activeDropdown) {
+            const ref = dropdownRefs.current[activeDropdown];
+            if (ref) {
+                const rect = ref.getBoundingClientRect();
+                console.log('Dropdown positioned at:', rect.left, rect.top);
+            }
+        }
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [activeDropdown]);
+    }, [activeDropdown, overflowMenuOpen]);
 
-    // Close menus when route changes
     useEffect(() => {
         setActiveDropdown(null);
         setActiveNestedDropdown(null);
         setIsMobileMenuOpen(false);
+        setOverflowMenuOpen(false);
+        setOverflowActiveDropdown(null);
+        setOverflowActiveNestedDropdown(null);
     }, [location.pathname]);
 
-    // Handler functions
-    const handleNestedDropdownToggle = (key: string) => {
-        setActiveNestedDropdown(activeNestedDropdown === key ? null : key);
+    const handleNestedDropdownToggle = (key: string, e: React.MouseEvent) => {
+        console.log('Nested dropdown toggle clicked:', key);
+        e.preventDefault();
+        e.stopPropagation();
+
+        setActiveNestedDropdown(prevState =>
+            prevState === key ? null : key
+        );
+    };
+
+    const handleOverflowNestedDropdownToggle = (key: string, e: React.MouseEvent) => {
+        console.log('Overflow nested dropdown toggle clicked:', key);
+        e.preventDefault();
+        e.stopPropagation();
+
+        setOverflowActiveNestedDropdown(prevState =>
+            prevState === key ? null : key
+        );
+    };
+
+    const handleOverflowDropdownToggle = (title: string, e: React.MouseEvent) => {
+        console.log('Overflow dropdown toggle clicked:', title);
+        e.preventDefault();
+        e.stopPropagation();
+
+        setOverflowActiveDropdown(prevState =>
+            prevState === title ? null : title
+        );
+        setOverflowActiveNestedDropdown(null);
+    };
+
+    const handleDropdownToggle = (title: string, e: React.MouseEvent) => {
+        console.log('Dropdown toggle clicked:', title);
+        e.preventDefault();
+        e.stopPropagation();
+
+        setTimeout(() => {
+            setActiveDropdown(prevState => {
+                const newState = prevState === title ? null : title;
+                console.log('Setting active dropdown to:', newState);
+                return newState;
+            });
+
+            setActiveNestedDropdown(null);
+        }, 50);
+    };
+
+    const handleOverflowToggle = (e: React.MouseEvent) => {
+        console.log('Overflow toggle clicked');
+        e.preventDefault();
+        e.stopPropagation();
+
+        setTimeout(() => {
+            setOverflowMenuOpen(prev => !prev);
+            setActiveDropdown(null);
+            if (!overflowMenuOpen) {
+                setOverflowActiveDropdown(null);
+                setOverflowActiveNestedDropdown(null);
+            }
+        }, 50);
     };
 
     const handleLogout = () => {
@@ -97,25 +282,27 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
         });
     };
 
-    // Render functions
-    const renderNestedDropdown = (dropdown: any) => {
-        const isActive = activeNestedDropdown === dropdown.key;
+    const renderNestedDropdown = (dropdown: any, inOverflow = false) => {
+        const isActive = inOverflow
+            ? overflowActiveNestedDropdown === dropdown.key
+            : activeNestedDropdown === dropdown.key;
         const filteredItems = dropdown.items.filter((item: any) =>
             hasPermissionForRoute(item.path)
         );
 
         if (filteredItems.length === 0) return null;
 
+        const toggleHandler = inOverflow ? handleOverflowNestedDropdownToggle : handleNestedDropdownToggle;
+
         return (
             <div key={dropdown.key} className="relative">
                 <button
-                    onClick={() => handleNestedDropdownToggle(dropdown.key)}
+                    onClick={(e) => toggleHandler(dropdown.key, e)}
                     className={`w-full flex items-center p-3.5 rounded-xl transition-all duration-300 ${isActive
                         ? 'bg-gradient-to-r from-secondary-100/90 to-primary-100/90 text-secondary-700 dark:from-secondary-800/60 dark:to-primary-800/60 dark:text-secondary-100 shadow-lg shadow-secondary-300/15 dark:shadow-secondary-900/25'
                         : 'hover:bg-gradient-to-r hover:from-secondary-50/90 hover:to-primary-50/90 dark:hover:from-dark-hover/90 dark:hover:to-dark-active/80'
                         } relative overflow-hidden`}
                 >
-                    {/* Add hover effect */}
                     <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-secondary-100/0 via-primary-100/0 to-secondary-100/0 dark:from-secondary-800/0 dark:via-primary-800/0 dark:to-secondary-800/0 group-hover:from-secondary-100/20 group-hover:via-primary-100/20 group-hover:to-secondary-100/20 dark:group-hover:from-secondary-800/10 dark:group-hover:via-primary-800/10 dark:group-hover:to-secondary-800/10 opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-xl -z-10"></span>
 
                     <div className={`flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300 mr-4 ${isActive
@@ -150,19 +337,28 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                             <NavLink
                                 key={subIdx}
                                 to={subItem.path}
+                                onClick={(e) => {
+                                    if (inOverflow) {
+                                        setOverflowActiveNestedDropdown(null);
+                                        setOverflowActiveDropdown(null);
+                                        setOverflowMenuOpen(false);
+                                    } else {
+                                        setActiveNestedDropdown(null);
+                                        setActiveDropdown(null);
+                                    }
+                                }}
                                 className={({ isActive }) => `group flex items-center p-2.5 rounded-lg hover:bg-gradient-to-r hover:from-secondary-50/70 hover:to-primary-50/70 
-                                dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60
-                                transition-all duration-300 transform hover:translate-x-1 relative overflow-hidden
-                                ${isActive ? 'bg-white/70 dark:bg-dark-elevated/70 shadow-sm shadow-secondary-300/10 dark:shadow-dark-border/20' : ''}`}
+                            dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60
+                            transition-all duration-300 transform hover:translate-x-1 relative overflow-hidden
+                            ${isActive ? 'bg-white/70 dark:bg-dark-elevated/70 shadow-sm shadow-secondary-300/10 dark:shadow-dark-border/20' : ''}`}
                             >
-                                {/* Hover background effect */}
                                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-secondary-100/0 to-primary-100/0 dark:from-secondary-900/0 dark:to-primary-900/0 group-hover:from-secondary-100/20 group-hover:to-primary-100/20 dark:group-hover:from-secondary-900/10 dark:group-hover:to-primary-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg -z-10"></span>
 
                                 <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-dark-border group-hover:bg-secondary-400 dark:group-hover:bg-secondary-500 transition-all duration-300 mr-3 flex-shrink-0
-                                navlink-active:bg-secondary-400 dark:navlink-active:bg-secondary-400 group-hover:scale-125"
+                            navlink-active:bg-secondary-400 dark:navlink-active:bg-secondary-400 group-hover:scale-125"
                                 ></div>
                                 <span className="text-xs text-slate-600 dark:text-neutral-300 group-hover:text-secondary-600 dark:group-hover:text-secondary-200 transition-colors duration-300
-                                navlink-active:text-secondary-700 dark:navlink-active:text-secondary-100"
+                            navlink-active:text-secondary-700 dark:navlink-active:text-secondary-100"
                                 >
                                     {subItem.title}
                                 </span>
@@ -184,11 +380,13 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
 
         if (filteredItems.length === 0) return null;
 
-        return (
-            <div className="absolute top-full left-0 mt-2 bg-white/80 dark:bg-dark-elevated/80 backdrop-blur-2xl rounded-2xl shadow-2xl dark:shadow-dark-lg border border-white/30 dark:border-dark-border/50 overflow-hidden z-50 animate-slideDown min-w-[380px] max-w-[480px]">
+        return ReactDOM.createPortal(
+            <div
+                className="mega-menu-container fixed top-[64px] left-0 right-0 mx-auto w-[480px] bg-white/95 dark:bg-dark-elevated/95 backdrop-blur-2xl rounded-2xl shadow-2xl dark:shadow-dark-lg border border-white/30 dark:border-dark-border/50 overflow-hidden z-[999] animate-slideDown"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50/90 to-white/70 dark:from-dark-elevated/90 dark:to-dark-surface/80 -z-10"></div>
 
-                {/* Decorative background patterns */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary-500/5 to-secondary-500/5 dark:from-primary-500/10 dark:to-secondary-500/10 rounded-full blur-2xl -z-5 animate-blob"></div>
                 <div className="absolute bottom-0 left-10 w-24 h-24 bg-gradient-to-br from-secondary-500/5 to-primary-500/5 dark:from-secondary-500/10 dark:to-primary-500/10 rounded-full blur-2xl -z-5 animate-blob animation-delay-2000"></div>
 
@@ -207,39 +405,42 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                                     <NavLink
                                         key={idx}
                                         to={item.path}
+                                        onClick={() => {
+                                            setActiveNestedDropdown(null);
+                                            setActiveDropdown(null);
+                                        }}
                                         className="group flex items-center p-3 rounded-xl 
-                                        hover:bg-gradient-to-r hover:from-secondary-50/80 hover:to-primary-50/80 
-                                        dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60
-                                        transition-all duration-300 transform hover:translate-x-1 relative overflow-hidden"
+                                    hover:bg-gradient-to-r hover:from-secondary-50/80 hover:to-primary-50/80 
+                                    dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60
+                                    transition-all duration-300 transform hover:translate-x-1 relative overflow-hidden"
                                     >
-                                        {/* Hover fill effect */}
                                         <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-secondary-100/0 via-primary-100/0 to-secondary-100/0 dark:from-secondary-800/0 dark:via-primary-800/0 dark:to-secondary-800/0 group-hover:from-secondary-100/20 group-hover:via-primary-100/20 group-hover:to-secondary-100/20 dark:group-hover:from-secondary-800/10 dark:group-hover:via-primary-800/10 dark:group-hover:to-secondary-800/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl -z-10"></span>
 
                                         <div className="flex items-center justify-center w-10 h-10 rounded-xl
-                                        bg-gradient-to-br from-slate-100/90 to-slate-50/90 dark:from-dark-elevated/90 dark:to-dark-active/80 
-                                        group-hover:from-secondary-100/90 group-hover:to-primary-100/90 
-                                        dark:group-hover:from-secondary-800/50 dark:group-hover:to-primary-800/50
-                                        group-[.active]:from-secondary-100/90 group-[.active]:to-primary-100/90 
-                                        dark:group-[.active]:from-secondary-800/50 dark:group-[.active]:to-primary-800/50
-                                        transition-all duration-300 mr-3 shadow-md shadow-slate-300/10 dark:shadow-dark-border/20 group-hover:shadow-lg dark:group-hover:shadow-dark-border/30 group-hover:scale-110"
+                                    bg-gradient-to-br from-slate-100/90 to-slate-50/90 dark:from-dark-elevated/90 dark:to-dark-active/80 
+                                    group-hover:from-secondary-100/90 group-hover:to-primary-100/90 
+                                    dark:group-hover:from-secondary-800/50 dark:group-hover:to-primary-800/50
+                                    group-[.active]:from-secondary-100/90 group-[.active]:to-primary-100/90 
+                                    dark:group-[.active]:from-secondary-800/50 dark:group-[.active]:to-primary-800/50
+                                    transition-all duration-300 mr-3 shadow-md shadow-slate-300/10 dark:shadow-dark-border/20 group-hover:shadow-lg dark:group-hover:shadow-dark-border/30 group-hover:scale-110"
                                         >
                                             <item.icon size={18} className="text-slate-600 dark:text-neutral-300 
-                                            group-hover:text-secondary-600 dark:group-hover:text-secondary-300
-                                            group-[.active]:text-secondary-600 dark:group-[.active]:text-secondary-300
-                                            transition-all duration-300 group-hover:rotate-3" />
+                                        group-hover:text-secondary-600 dark:group-hover:text-secondary-300
+                                        group-[.active]:text-secondary-600 dark:group-[.active]:text-secondary-300
+                                        transition-all duration-300 group-hover:rotate-3" />
                                         </div>
                                         <div className="flex-1">
                                             <span className="text-sm font-medium text-slate-700 dark:text-neutral-200 
-                                            group-hover:text-secondary-700 dark:group-hover:text-secondary-200
-                                            group-[.active]:text-secondary-700 dark:group-[.active]:text-secondary-200
-                                            transition-colors duration-300 block">
+                                        group-hover:text-secondary-700 dark:group-hover:text-secondary-200
+                                        group-[.active]:text-secondary-700 dark:group-[.active]:text-secondary-200
+                                        transition-colors duration-300 block">
                                                 {item.title}
                                             </span>
                                             {item.description && (
                                                 <span className="text-xs text-slate-500 dark:text-neutral-400 
-                                                group-hover:text-secondary-500 dark:group-hover:text-secondary-400
-                                                group-[.active]:text-secondary-500 dark:group-[.active]:text-secondary-400
-                                                transition-colors duration-300 mt-0.5 block">
+                                            group-hover:text-secondary-500 dark:group-hover:text-secondary-400
+                                            group-[.active]:text-secondary-500 dark:group-[.active]:text-secondary-400
+                                            transition-colors duration-300 mt-0.5 block">
                                                     {item.description}
                                                 </span>
                                             )}
@@ -254,11 +455,67 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                         })}
                     </div>
                 </div>
+            </div>,
+            document.body
+        );
+    };
+
+    const renderOverflowSection = (section: any) => {
+        const filteredItems = filterItems(section.items);
+        if (filteredItems.length === 0) return null;
+
+        const isActive = overflowActiveDropdown === section.title;
+
+        return (
+            <div className="space-y-1">
+                <button
+                    onClick={(e) => handleOverflowDropdownToggle(section.title, e)}
+                    className={`w-full flex items-center p-3 rounded-xl text-sm font-medium transition-all duration-300 ${isActive
+                        ? 'bg-gradient-to-r from-secondary-50/90 to-primary-50/90 dark:from-secondary-900/30 dark:to-primary-900/30 text-secondary-700 dark:text-secondary-100 shadow-md shadow-secondary-300/10 dark:shadow-secondary-900/20'
+                        : 'text-slate-600 dark:text-neutral-200 hover:text-secondary-700 dark:hover:text-secondary-200 hover:bg-gradient-to-r hover:from-secondary-50/70 hover:to-primary-50/70 dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60'
+                        }`}
+                >
+                    <span className="flex-1 text-left">{section.title}</span>
+                    <ChevronDown
+                        size={14}
+                        className={`transition-all duration-300 ${isActive
+                            ? 'rotate-180 text-secondary-600 dark:text-secondary-300'
+                            : 'text-slate-400 dark:text-neutral-400'
+                            }`}
+                    />
+                </button>
+
+                {isActive && (
+                    <div className="pl-4 space-y-1 animate-slideDown">
+                        {filteredItems.map((item: any, idx: number) => {
+                            if (item.type === 'link') {
+                                return (
+                                    <NavLink
+                                        key={idx}
+                                        to={item.path}
+                                        onClick={() => {
+                                            setOverflowMenuOpen(false);
+                                            setOverflowActiveDropdown(null);
+                                            setOverflowActiveNestedDropdown(null);
+                                        }}
+                                        className="group flex items-center p-2.5 rounded-lg hover:bg-gradient-to-r hover:from-secondary-50/70 hover:to-primary-50/70 dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60 transition-all duration-300"
+                                    >
+                                        <item.icon size={16} className="mr-2.5 text-slate-600 dark:text-neutral-300 group-hover:text-secondary-600 dark:group-hover:text-secondary-300" />
+                                        <span className="text-sm text-slate-700 dark:text-neutral-200 group-hover:text-secondary-700 dark:group-hover:text-secondary-200">{item.title}</span>
+                                    </NavLink>
+                                );
+                            } else if (item.type === 'dropdown') {
+                                return renderNestedDropdown(item, true);
+                            }
+                            return null;
+                        })}
+                    </div>
+                )}
             </div>
         );
     };
 
-    const renderNavItem = (item: any) => {
+    const renderNavItem = (item: any, index: number, isInOverflow = false) => {
         if (item.type === 'link') {
             if (!hasPermissionForRoute(item.path)) {
                 return null;
@@ -267,8 +524,16 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
             return (
                 <NavLink
                     to={item.path}
-                    className={({ isActive }) => `group flex items-center px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 
-                    ${isActive ?
+                    ref={el => { if (!isInOverflow) navItemsRef.current[`nav-item-${index}`] = el; }}
+                    onClick={() => {
+                        if (isInOverflow) {
+                            setOverflowMenuOpen(false);
+                            setOverflowActiveDropdown(null);
+                            setOverflowActiveNestedDropdown(null);
+                        }
+                    }}
+                    className={({ isActive }) => `group flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap
+                ${isActive ?
                             'bg-gradient-to-r from-secondary-50/90 to-primary-50/90 dark:from-secondary-900/30 dark:to-primary-900/30 text-secondary-700 dark:text-secondary-100 shadow-md shadow-secondary-300/10 dark:shadow-secondary-900/20 scale-105' :
                             'text-slate-600 dark:text-neutral-200 hover:text-secondary-700 dark:hover:text-secondary-200 hover:bg-gradient-to-r hover:from-secondary-50/70 hover:to-primary-50/70 dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60 hover:scale-[1.03]'}`
                     }
@@ -284,25 +549,34 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                 </NavLink>
             );
         } else if (item.type === 'section') {
+            // For overflow menu, render inline sections
+            if (isInOverflow) {
+                return renderOverflowSection(item);
+            }
+
+            // For main navigation, use the original mega menu approach
             const filteredItems = filterItems(item.items);
 
             if (filteredItems.length === 0) {
                 return null;
             }
 
+            const isActive = activeDropdown === item.title;
+
             return (
                 <div
                     className="relative"
-                    ref={el => { dropdownRefs.current[item.title] = el; }}
+                    ref={(el) => {
+                        dropdownRefs.current[item.title] = el;
+                        if (!isInOverflow) navItemsRef.current[`nav-item-${index}`] = el;
+                    }}
                 >
                     <button
-                        onClick={() => {
-                            const newActiveDropdown = activeDropdown === item.title ? null : item.title;
-                            setActiveDropdown(newActiveDropdown);
-                            setActiveNestedDropdown(null);
-                        }}
-                        className={`group flex items-center px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 
-                        ${activeDropdown === item.title
+                        type="button"
+                        data-dropdown="true"
+                        onClick={(e) => handleDropdownToggle(item.title, e)}
+                        className={`group flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap
+                    ${isActive
                                 ? 'bg-gradient-to-r from-secondary-50/90 to-primary-50/90 dark:from-secondary-900/30 dark:to-primary-900/30 text-secondary-700 dark:text-secondary-100 shadow-md shadow-secondary-300/10 dark:shadow-secondary-900/20 scale-105'
                                 : 'text-slate-600 dark:text-neutral-200 hover:text-secondary-700 dark:hover:text-secondary-200 hover:bg-gradient-to-r hover:from-secondary-50/70 hover:to-primary-50/70 dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60 hover:scale-[1.03]'
                             } relative overflow-hidden`}
@@ -312,17 +586,70 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                         <span className="relative z-10">{item.title}</span>
                         <ChevronDown
                             size={14}
-                            className={`ml-2 transition-all duration-300 relative z-10 ${activeDropdown === item.title
+                            className={`ml-2 transition-all duration-300 relative z-10 ${isActive
                                 ? 'rotate-180 text-secondary-600 dark:text-secondary-300'
                                 : 'text-slate-400 dark:text-neutral-400 group-hover:text-secondary-500 dark:group-hover:text-secondary-300'
                                 }`}
                         />
                     </button>
-                    {activeDropdown === item.title && renderMegaMenu(item)}
+                    {isActive && renderMegaMenu(item)}
                 </div>
             );
         }
         return null;
+    };
+
+    const renderOverflowMenu = () => {
+        if (overflowItems.length === 0) return null;
+
+        return (
+            <div className="relative" ref={overflowRef}>
+                <button
+                    ref={overflowButtonRef}
+                    type="button"
+                    data-dropdown="true"
+                    onClick={handleOverflowToggle}
+                    className={`group flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 
+                ${overflowMenuOpen
+                            ? 'bg-gradient-to-r from-secondary-50/90 to-primary-50/90 dark:from-secondary-900/30 dark:to-primary-900/30 text-secondary-700 dark:text-secondary-100 shadow-md shadow-secondary-300/10 dark:shadow-secondary-900/20 scale-105'
+                            : 'text-slate-600 dark:text-neutral-200 hover:text-secondary-700 dark:hover:text-secondary-200 hover:bg-gradient-to-r hover:from-secondary-50/70 hover:to-primary-50/70 dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60 hover:scale-[1.03]'
+                        } relative overflow-hidden`}
+                >
+                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-secondary-100/0 via-primary-100/0 to-secondary-100/0 dark:from-secondary-800/0 dark:via-primary-800/0 dark:to-secondary-800/0 group-hover:from-secondary-100/30 group-hover:via-primary-100/30 group-hover:to-secondary-100/30 dark:group-hover:from-secondary-800/10 dark:group-hover:via-primary-800/10 dark:group-hover:to-secondary-800/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-xl"></span>
+
+                    <MoreHorizontal size={16} className="mr-1.5 text-slate-600 dark:text-neutral-300" />
+                    <span className="relative z-10">More</span>
+                    <ChevronDown
+                        size={14}
+                        className={`ml-1 transition-all duration-300 relative z-10 ${overflowMenuOpen
+                            ? 'rotate-180 text-secondary-600 dark:text-secondary-300'
+                            : 'text-slate-400 dark:text-neutral-400 group-hover:text-secondary-500 dark:group-hover:text-secondary-300'
+                            }`}
+                    />
+                </button>
+
+                {overflowMenuOpen && ReactDOM.createPortal(
+                    <div
+                        className="overflow-menu-container fixed z-[999] bg-white/95 dark:bg-dark-elevated/95 backdrop-blur-2xl rounded-2xl shadow-2xl dark:shadow-dark-lg border border-white/30 dark:border-dark-border/50 overflow-hidden animate-slideDown min-w-[280px] max-w-[400px]"
+                        style={{
+                            top: overflowButtonRef.current ? overflowButtonRef.current.getBoundingClientRect().bottom + 10 : 75,
+                            right: 20,
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/90 to-white/70 dark:from-dark-elevated/90 dark:to-dark-surface/80 -z-10"></div>
+                        <div className="p-3 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                            {overflowItems.map((item, idx) => (
+                                <div key={idx} className="py-1">
+                                    {renderNavItem(item, idx + 100, true)}
+                                </div>
+                            ))}
+                        </div>
+                    </div>,
+                    document.body
+                )}
+            </div>
+        );
     };
 
     return (
@@ -334,42 +661,48 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                 ? 'bg-white/90 dark:bg-dark-surface/90 backdrop-blur-xl shadow-lg shadow-secondary-900/10 dark:shadow-dark-lg border-b border-slate-200/50 dark:border-dark-border/40'
                 : 'bg-white/70 dark:bg-dark-surface/70 backdrop-blur-lg'
                 }`}>
-                <div className="px-4 py-2 flex items-center justify-between relative">
+                <div className="px-4 py-2 relative">
                     {/* Decorative elements */}
                     <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-primary-500/5 dark:bg-primary-500/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
                     <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-secondary-500/5 dark:bg-secondary-500/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
 
-                    <div className="flex items-center mr-2 lg:mr-10 relative">
-                        <div className="absolute -top-1 -right-1 w-3 h-3">
-                            <Sparkles size={14} className="text-secondary-500 dark:text-secondary-400 animate-twinkle" />
+                    <div className="flex items-center justify-between">
+                        {/* Logo Section - Fixed width */}
+                        <div className="flex-shrink-0 w-[180px] relative mr-4">
+                            <div className="absolute -top-1 -right-1 w-3 h-3">
+                                <Sparkles size={14} className="text-secondary-500 dark:text-secondary-400 animate-twinkle" />
+                            </div>
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                className="w-full h-auto cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:drop-shadow-lg"
+                                onClick={() => navigate('/')}
+                            />
                         </div>
-                        <img
-                            src={logo}
-                            alt="Logo"
-                            className="w-[180px] h-auto cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:drop-shadow-lg"
-                            onClick={() => navigate('/')}
-                        />
-                    </div>
 
-                    <nav className="hidden xl:flex items-center flex-1 justify-center">
-                        <div className="flex items-center space-x-1 bg-white/80 dark:bg-dark-elevated/80 backdrop-blur-xl rounded-2xl p-1.5 shadow-lg shadow-primary-300/10 dark:shadow-dark-border/20 border border-white/40 dark:border-dark-border/30 hover:shadow-xl hover:shadow-primary-300/15 dark:hover:shadow-dark-border/30 transition-all duration-500">
-                            {filterSections(routes).map((item: any, idx: number) => (
-                                <div key={idx}>
-                                    {renderNavItem(item)}
-                                </div>
-                            ))}
+                        {/* Navigation - Dynamic width with overflow handling */}
+                        <nav className="hidden xl:flex flex-1 items-center overflow-x-auto no-scrollbar" ref={navContainerRef}>
+                            <div className="flex items-center space-x-1 bg-white/80 dark:bg-dark-elevated/80 backdrop-blur-xl rounded-2xl p-1.5 shadow-lg shadow-primary-300/10 dark:shadow-dark-border/20 border border-white/40 dark:border-dark-border/30 hover:shadow-xl hover:shadow-primary-300/15 dark:hover:shadow-dark-border/30 transition-all duration-500">
+                                {visibleItems.map((item: any, idx: number) => (
+                                    <div key={idx} className="flex-shrink-0">
+                                        {renderNavItem(item, idx)}
+                                    </div>
+                                ))}
+                                {overflowItems.length > 0 && renderOverflowMenu()}
+                            </div>
+                        </nav>
+
+                        {/* Right Section - Fixed width */}
+                        <div className="flex items-center space-x-1 md:space-x-2 flex-shrink-0">
+                            <SearchBar userPermissions={userPermissions} />
+                            <UserMenu user={user} onLogout={handleLogout} />
+                            <button
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className="xl:hidden p-2 rounded-xl hover:bg-secondary-50/80 dark:hover:bg-dark-hover/80 transition-all duration-300 text-gray-700 dark:text-neutral-300 hover:text-secondary-700 dark:hover:text-secondary-300 ml-1 border border-transparent hover:border-secondary-200/30 dark:hover:border-dark-border/50 active:scale-95"
+                            >
+                                <Menu size={18} className="hover:rotate-3 transition-transform" />
+                            </button>
                         </div>
-                    </nav>
-
-                    <div className="flex items-center space-x-1 md:space-x-2">
-                        <SearchBar userPermissions={userPermissions} />
-                        <UserMenu user={user} onLogout={handleLogout} />
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="xl:hidden p-2 rounded-xl hover:bg-secondary-50/80 dark:hover:bg-dark-hover/80 transition-all duration-300 text-gray-700 dark:text-neutral-300 hover:text-secondary-700 dark:hover:text-secondary-300 ml-1 border border-transparent hover:border-secondary-200/30 dark:hover:border-dark-border/50 active:scale-95"
-                        >
-                            <Menu size={18} className="hover:rotate-3 transition-transform" />
-                        </button>
                     </div>
                 </div>
             </div>
@@ -417,12 +750,12 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                                                                 key={subIdx}
                                                                 to={subItem.path}
                                                                 className={({ isActive }) => `
-                                                                flex items-center px-3 py-3 rounded-xl transition-all duration-300 group
-                                                                ${isActive
+                                                            flex items-center px-3 py-3 rounded-xl transition-all duration-300 group
+                                                            ${isActive
                                                                         ? 'bg-white/80 dark:bg-dark-elevated/80 border border-secondary-200/50 dark:border-dark-border/50 shadow-md shadow-secondary-300/10 dark:shadow-dark-border/20'
                                                                         : 'hover:bg-white/60 dark:hover:bg-dark-hover/60 hover:translate-x-1'
                                                                     }
-                                                                `}
+                                                            `}
                                                                 onClick={() => setIsMobileMenuOpen(false)}
                                                             >
                                                                 {subItem.icon && (
@@ -431,13 +764,13 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                                                                     </div>
                                                                 )}
                                                                 <span className="text-sm font-medium text-slate-700 dark:text-neutral-200 group-hover:text-secondary-700 dark:group-hover:text-secondary-200">{subItem.title}</span>
-                                                                {isActive && (
+                                                                {/* {isActive && (
                                                                     <CircleDot size={14} className="ml-auto text-secondary-500 dark:text-secondary-400 animate-pulse" />
-                                                                )}
+                                                                )} */}
                                                             </NavLink>
                                                         );
                                                     } else if (subItem.type === 'dropdown') {
-                                                        return renderNestedDropdown(subItem);
+                                                        return renderNestedDropdown(subItem, true);
                                                     }
                                                     return null;
                                                 })}
@@ -542,6 +875,16 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ toggleDarkMode, isDarkMod
                 }
                 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                     background-color: rgba(75, 85, 99, 0.6);
+                }
+                
+                /* Hide scrollbar for Chrome, Safari and Opera */
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                /* Hide scrollbar for IE, Edge and Firefox */
+                .no-scrollbar {
+                    -ms-overflow-style: none;  /* IE and Edge */
+                    scrollbar-width: none;  /* Firefox */
                 }
             `}</style>
         </div>

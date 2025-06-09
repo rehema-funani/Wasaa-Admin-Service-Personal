@@ -15,21 +15,18 @@ interface SearchBarProps {
     userPermissions: string[];
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ userPermissions }) => {
+const SearchBar: React.FC<SearchBarProps> = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [selectedResultIndex, setSelectedResultIndex] = useState(-1);
     const [showSearchResults, setShowSearchResults] = useState(false);
 
-    // Refs
     const searchInputRef = useRef<HTMLDivElement>(null);
     const searchResultsRef = useRef<HTMLDivElement>(null);
 
-    // Hooks
     const navigate = useNavigate();
 
-    // Effects
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -46,7 +43,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ userPermissions }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Helper functions
     const getAllSearchableRoutes = (): SearchResult[] => {
         const searchableRoutes: SearchResult[] = [];
 
