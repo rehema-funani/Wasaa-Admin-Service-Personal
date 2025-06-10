@@ -144,9 +144,6 @@ const LoadingFallback = () => {
   );
 };
 
-/**
- * Route error boundary component
- */
 class RouteErrorBoundary extends React.Component<
   { children: React.ReactNode, fallback: React.ReactNode },
   { hasError: boolean }
@@ -173,20 +170,14 @@ class RouteErrorBoundary extends React.Component<
   }
 }
 
-/**
- * Authentication guard with enhanced redirect handling
- */
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const authToken = Cookies.get("authToken");
   const isAuthenticated = !!authToken;
 
-  // We could add token validation here if needed
   useEffect(() => {
     if (isAuthenticated) {
       try {
-        // Optional: Add token validation logic here
-        // For example, check token expiry from JWT payload
       } catch (error) {
         console.error("Auth token validation failed:", error);
         Cookies.remove("authToken");
