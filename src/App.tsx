@@ -9,13 +9,13 @@ import './styles/globals.css';
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <ThemeProvider>
+      {/* <ThemeProvider> */}
         <NotificationProvider>
           <Router>
             <AppRouter />
           </Router>
         </NotificationProvider>
-      </ThemeProvider>
+      {/* </ThemeProvider> */}
     </AuthProvider>
   );
 };

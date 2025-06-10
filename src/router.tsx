@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import AdminLayout from './components/layout/AdminLayout';
 import { PermissionMap } from './utils/permissions';
 import PermissionRouteGuard from './components/PermissionGuard';
+import ModeratorDashboard from './app/admin/chat/page';
 
 // Core application pages
 const Dashboard = lazy(() => import('./app/dashboard/page'));
@@ -128,7 +129,7 @@ const AuditDetails = lazy(() => import('./app/admin/audits/auditdetails'));
  */
 const LoadingFallback = () => {
   const [isLongLoad, setIsLongLoad] = React.useState(false);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setIsLongLoad(true), 3000);
     return () => clearTimeout(timer);
@@ -152,7 +153,7 @@ class RouteErrorBoundary extends React.Component<
     super(props);
     this.state = { hasError: false };
   }
-  
+
   static getDerivedStateFromError() {
     return { hasError: true };
   }
@@ -500,6 +501,13 @@ const AppRouter: React.FC = () => {
             <Route path="admin/languages/:id/translations" element={
               <PermissionRouteGuard permissions={PermissionMap.Languages.view}>
                 <Translations />
+              </PermissionRouteGuard>
+            } />
+
+            {/* ======= chat moderation ======== */}
+            <Route path="admin/chats/moderation" element={
+              <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                <ModeratorDashboard />
               </PermissionRouteGuard>
             } />
 
