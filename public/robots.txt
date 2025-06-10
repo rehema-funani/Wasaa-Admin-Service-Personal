@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /do-not-index/
+
+Sitemap: https://wasaachat.com/sitemap.xml

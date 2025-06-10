@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronDown, Menu, X, ArrowRight, Sparkles, MoreHorizontal, ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronDown, Menu, X, ArrowRight, MoreHorizontal, ChevronRight } from 'lucide-react';
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 import logo from '../../assets/images/logo-wasaa.png';
@@ -113,7 +113,7 @@ const TopNavigation = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [activeDropdown, isUserMenuOpen]);
 
-    const handleDropdownHover = (title, e?) => {
+    const handleDropdownHover = (title: any, e: any) => {
         if (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -133,12 +133,11 @@ const TopNavigation = () => {
         }
     };
 
-    const handleDropdownLeave = (e?) => {
+    const handleDropdownLeave = (e: any) => {
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
-
         hoverTimeouts.current.close = setTimeout(() => {
             setActiveDropdown(null);
             setActiveNestedDropdown(null);
@@ -150,9 +149,7 @@ const TopNavigation = () => {
             e.preventDefault();
             e.stopPropagation();
         }
-
         clearTimeout(hoverTimeouts.current.close);
-
         if (activeNestedDropdown !== key) {
             clearTimeout(hoverTimeouts.current[key]);
 
@@ -167,7 +164,6 @@ const TopNavigation = () => {
             e.preventDefault();
             e.stopPropagation();
         }
-
         setActiveDropdown(activeDropdown === 'overflow' ? null : 'overflow');
     };
 
@@ -183,7 +179,7 @@ const TopNavigation = () => {
         navigate('/auth/login');
     };
 
-    const filterItems = (items) => {
+    const filterItems = (items: any) => {
         return items.filter(item => {
             if (item.type === 'link') {
                 return hasPermissionForRoute(item.path);
@@ -206,7 +202,7 @@ const TopNavigation = () => {
         });
     };
 
-    const calculateMenuPosition = (parentRef) => {
+    const calculateMenuPosition = (parentRef: any) => {
         if (!parentRef) return { position: 'right', style: {} };
 
         const parentRect = parentRef.getBoundingClientRect();
@@ -268,7 +264,7 @@ const TopNavigation = () => {
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="p-3 space-y-1">
-                    {filteredItems.map((subItem, subIdx) => (
+                    {filteredItems.map((subItem: any, subIdx: any) => (
                         <NavLink
                             key={subIdx}
                             to={subItem.path}
@@ -277,12 +273,12 @@ const TopNavigation = () => {
                                 if (onItemClick) onItemClick();
                             }}
                             className={({ isActive }) => `
-                    group flex items-center p-2.5 rounded-lg transition-all duration-200
-                    ${isActive
+                                group flex items-center p-2.5 rounded-lg transition-all duration-200
+                                ${isActive
                                     ? 'bg-white/70 dark:bg-dark-elevated/70'
                                     : 'hover:bg-gradient-to-r hover:from-secondary-50/70 hover:to-primary-50/70 dark:hover:from-dark-hover/80 dark:hover:to-dark-active/60'
                                 }
-                  `}
+                            `}
                         >
                             <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-dark-border mr-3 flex-shrink-0 transition-all duration-200"></div>
                             <span className="text-xs text-slate-600 dark:text-neutral-300 transition-colors duration-200">
@@ -299,7 +295,7 @@ const TopNavigation = () => {
         );
     };      
 
-    const renderNestedDropdown = (dropdown, isInMegaMenu = false) => {
+    const renderNestedDropdown = (dropdown: any, isInMegaMenu = false) => {
         const isActive = activeNestedDropdown === dropdown.key;
         const filteredItems = dropdown.items.filter(item =>
             hasPermissionForRoute(item.path)
@@ -473,7 +469,7 @@ const TopNavigation = () => {
                     </div>
 
                     <div className="grid grid-cols-1 gap-1.5">
-                        {filteredItems.map((item, idx) => {
+                        {filteredItems.map((item: any, idx: any) => {
                             if (item.type === 'link') {
                                 return (
                                     <NavLink
@@ -520,7 +516,7 @@ const TopNavigation = () => {
         );
     };
 
-    const renderNavItem = (item, index, isInOverflow = false) => {
+    const renderNavItem = (item: any, index: any, isInOverflow = false) => {
         if (item.type === 'link') {
             if (!hasPermissionForRoute(item.path)) {
                 return null;
@@ -878,7 +874,6 @@ const TopNavigation = () => {
                             />
                         </div>
 
-                        {/* Navigation */}
                         <nav className="hidden xl:flex flex-1 items-center" ref={navContainerRef}>
                             <div className="flex items-center space-x-1 bg-white/80 dark:bg-dark-elevated/80 backdrop-blur-xl rounded-2xl p-1.5 shadow-lg shadow-primary-300/10 dark:shadow-dark-border/20 border border-white/40 dark:border-dark-border/30 transition-all duration-300">
                                 {visibleItems.map((item, idx) => (
