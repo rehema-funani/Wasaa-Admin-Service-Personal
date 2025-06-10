@@ -1,0 +1,21 @@
+{
+  "version": "0.2",
+  "words": [
+    "vite",
+    "tailwindcss",
+    "zustand",
+    "framer-motion",
+    "react-colorful",
+    "recharts",
+    "js-cookie",
+    "moment",
+    "lodash",
+    "context"
+  ],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**"
+  ],
+  "language": "en-US"
+}
