@@ -23,12 +23,12 @@ export interface Tariff {
     feeType?: string;
 }
 
-export type ModalType = 
-    | 'add' 
-    | 'edit' 
-    | 'delete' 
-    | 'addFixedRange' 
-    | 'editFixedRange' 
+export type ModalType =
+    | 'add'
+    | 'edit'
+    | 'delete'
+    | 'addFixedRange'
+    | 'editFixedRange'
     | 'deleteFixedRange'
     | 'addPercentageRange'
     | 'editPercentageRange'
@@ -271,4 +271,108 @@ export interface WalletTransaction {
     status: 'completed' | 'pending' | 'failed';
     timestamp: string;
     relatedEntity?: string;
+}
+
+
+export interface Currency {
+  id: string;
+  code: string;
+  name: string;
+  symbol: string;
+  isActive: boolean;
+  exchangeRate?: number;
+}
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  icon?: string;
+}
+
+export interface Wallet {
+  id: string;
+  userId: string;
+  balance: number;
+  currency: Currency;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WithdrawalRequest {
+  id: string;
+  walletId: string;
+  userId: string;
+  amount: number;
+  status: 'pending' | 'approved' | 'rejected';
+  paymentMethodId: string;
+  paymentDetails: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TopUp {
+  id: string;
+  walletId: string;
+  userId: string;
+  amount: number;
+  status: 'pending' | 'approved' | 'rejected';
+  paymentMethodId: string;
+  paymentDetails: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FeeRange {
+  id: string;
+  walletBillingId: string;
+  min: number;
+  max: number | null;
+  fee: number;
+}
+
+export interface Bank {
+  id: string;
+  name: string;
+  code: string;
+  country: string;
+  isActive: boolean;
+}
+
+export interface Refund {
+  id: string;
+  transactionId: string;
+  walletId: string;
+  amount: number;
+  status: 'pending' | 'approved' | 'rejected';
+  reason: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AmlAlert {
+  id: string;
+  userId: string;
+  transactionId: string;
+  type: string;
+  description: string;
+  status: 'pending' | 'reviewed' | 'cleared' | 'flagged';
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Define filter type for consistent API querying
+export interface FilterOptions {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  status?: string;
+  userId?: string;
+  search?: string;
+  startDate?: string;
+  endDate?: string;
+  [key: string]: any;
 }

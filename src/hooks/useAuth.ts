@@ -1,4 +1,3 @@
-// src/hooks/useAuth.ts
 import { useAuthStore } from '../stores/useAuthStore';
 
 const useAuth = () => {

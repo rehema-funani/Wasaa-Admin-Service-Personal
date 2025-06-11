@@ -11,4 +11,6 @@ export interface Transaction {
     updatedAt: string;
     UserWallet: any;
     user?: any;
+    walletId?: string;
+    type?: string
 }
