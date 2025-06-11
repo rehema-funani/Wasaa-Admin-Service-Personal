@@ -491,7 +491,6 @@ export const useFinanceStore = create<FinanceState>()(
         }
       },
 
-      // Transaction actions
       fetchTransactions: async (filters = {}) => {
         set(state => { state.loading.transactions = true; state.errors.transactions = undefined; });
 
@@ -500,7 +499,6 @@ export const useFinanceStore = create<FinanceState>()(
           const transactions = response.data;
 
           set(state => {
-            // Merge with existing transactions
             state.transactions = {
               ...state.transactions,
               ...arrayToRecord(transactions)

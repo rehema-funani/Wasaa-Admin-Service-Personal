@@ -15,12 +15,6 @@ import type {
 } from '../../types/finance';
 import type { Transaction } from '../../types/transaction';
 
-/**
- * Modern Finance Service
- *
- * This service provides a backward-compatible API for existing components
- * while leveraging the Zustand store for state management.
- */
 class FinanceService {
   // ======== CURRENCY ENDPOINTS ========
   async getAllCurrencies(): Promise<Currency[]> {

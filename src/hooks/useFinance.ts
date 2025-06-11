@@ -209,7 +209,7 @@ export const useTransactions = (filters: FilterOptions = {}, autoFetch = true) =
     }
 
     setFilteredTransactions(result);
-  }, [transactions, filters]);
+  }, [filters]);
 
   return {
     transactions: filteredTransactions,
