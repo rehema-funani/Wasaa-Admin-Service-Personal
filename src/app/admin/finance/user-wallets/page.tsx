@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
   Download,
-  Upload,
   Eye,
   Clock,
   Filter,
@@ -23,15 +22,13 @@ import {
 } from 'lucide-react';
 import financeService from '../../../../api/services/finance';
 import toast from 'react-hot-toast';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-// Storage key for persisting pagination state
 const STORAGE_KEY = 'wallet_page_state';
 
 const WalletsPage = () => {
   const navigate = useNavigate();
 
-  // Initialize state from localStorage if available
   const [wallets, setWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -91,7 +88,6 @@ const WalletsPage = () => {
     return 10;
   });
 
-  // Clear localStorage after initializing state
   useEffect(() => {
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) {
@@ -99,7 +95,6 @@ const WalletsPage = () => {
     }
   }, []);
 
-  // Save state to localStorage before navigating away
   useEffect(() => {
     return () => {
       const stateToSave = {
@@ -120,7 +115,7 @@ const WalletsPage = () => {
     try {
       const response = await financeService.getAllWallets();
 
-      const formattedWallets = response.data.map((wallet) => ({
+      const formattedWallets = response.data.map((wallet: any) => ({
         id: wallet.id || '',
         user: {
           id: wallet.user_uuid || wallet.group_uuid || '',
@@ -165,28 +160,23 @@ const WalletsPage = () => {
     fetchWallets();
   }, []);
 
-  // Filter wallets based on search term and filter type
   const filteredWallets = useMemo(() => {
     return wallets.filter(wallet => {
-      // Search filter
       const searchMatch = searchTerm === '' ||
         wallet.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         wallet.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         wallet.type.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Type filter
       const typeMatch = filterType === 'all' || wallet.type === filterType;
 
       return searchMatch && typeMatch;
     });
   }, [wallets, searchTerm, filterType]);
 
-  // Sort wallets
   const sortedWallets = useMemo(() => {
     return [...filteredWallets].sort((a, b) => {
       let comparison = 0;
 
-      // Handle different field types
       if (sortField === 'balance') {
         comparison = a.balance - b.balance;
       } else if (sortField === 'user') {
@@ -231,8 +221,7 @@ const WalletsPage = () => {
     };
   }, [wallets]);
 
-  // Handlers
-  const handleSort = (field) => {
+  const handleSort = (field: any) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
@@ -241,21 +230,21 @@ const WalletsPage = () => {
     }
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
 
-  const handleFilterTypeChange = (type) => {
+  const handleFilterTypeChange = (type: any) => {
     setFilterType(type);
     setCurrentPage(1);
   };
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: any) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
 
-  const handleItemsPerPageChange = (e) => {
+  const handleItemsPerPageChange = (e: any) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
@@ -726,7 +715,6 @@ const WalletsPage = () => {
                           </div>
                         </td>
 
-                        {/* Last Updated Column */}
                         <td className="px-6 py-4">
                           <div className="flex items-center">
                             <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
@@ -734,7 +722,7 @@ const WalletsPage = () => {
                           </div>
                         </td>
 
-                        {/* Actions Column */}
+
                         <td className="px-6 py-4">
                           <div className="flex items-center space-x-1">
                             <button
