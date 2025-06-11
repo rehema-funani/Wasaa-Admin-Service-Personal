@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
   Download,
-  Upload,
   Eye,
   Clock,
   Filter,
@@ -19,24 +18,96 @@ import {
   ChevronRight,
   DollarSign,
   AlertTriangle,
+  Hash,
 } from 'lucide-react';
 import financeService from '../../../../api/services/finance';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
+const STORAGE_KEY = 'wallet_page_state';
+
 const WalletsPage = () => {
+  const navigate = useNavigate();
+
   const [wallets, setWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
+
+  const [searchTerm, setSearchTerm] = useState(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      const parsed = JSON.parse(savedState);
+      return parsed.searchTerm || '';
+    }
+    return '';
+  });
+
+  const [filterType, setFilterType] = useState(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      const parsed = JSON.parse(savedState);
+      return parsed.filterType || 'all';
+    }
+    return 'all';
+  });
+
   const [showFilters, setShowFilters] = useState(false);
-  const [sortField, setSortField] = useState('balance');
-  const [sortDirection, setSortDirection] = useState('desc');
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [sortField, setSortField] = useState(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      const parsed = JSON.parse(savedState);
+      return parsed.sortField || 'balance';
+    }
+    return 'balance';
+  });
 
-  const navigate = useNavigate();
+  const [sortDirection, setSortDirection] = useState(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      const parsed = JSON.parse(savedState);
+      return parsed.sortDirection || 'desc';
+    }
+    return 'desc';
+  });
+
+  const [currentPage, setCurrentPage] = useState(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      const parsed = JSON.parse(savedState);
+      return parsed.currentPage || 1;
+    }
+    return 1;
+  });
+
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      const parsed = JSON.parse(savedState);
+      return parsed.itemsPerPage || 10;
+    }
+    return 10;
+  });
+
+  useEffect(() => {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      const stateToSave = {
+        currentPage,
+        itemsPerPage,
+        searchTerm,
+        filterType,
+        sortField,
+        sortDirection
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+    };
+  }, [currentPage, itemsPerPage, searchTerm, filterType, sortField, sortDirection]);
 
   const fetchWallets = async () => {
     setIsLoading(true);
@@ -44,7 +115,7 @@ const WalletsPage = () => {
     try {
       const response = await financeService.getAllWallets();
 
-      const formattedWallets = response.data.map((wallet) => ({
+      const formattedWallets = response.data.map((wallet: any) => ({
         id: wallet.id || '',
         user: {
           id: wallet.user_uuid || wallet.group_uuid || '',
@@ -89,28 +160,23 @@ const WalletsPage = () => {
     fetchWallets();
   }, []);
 
-  // Filter wallets based on search term and filter type
   const filteredWallets = useMemo(() => {
     return wallets.filter(wallet => {
-      // Search filter
       const searchMatch = searchTerm === '' ||
         wallet.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         wallet.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         wallet.type.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Type filter
       const typeMatch = filterType === 'all' || wallet.type === filterType;
 
       return searchMatch && typeMatch;
     });
   }, [wallets, searchTerm, filterType]);
 
-  // Sort wallets
   const sortedWallets = useMemo(() => {
     return [...filteredWallets].sort((a, b) => {
       let comparison = 0;
 
-      // Handle different field types
       if (sortField === 'balance') {
         comparison = a.balance - b.balance;
       } else if (sortField === 'user') {
@@ -120,7 +186,7 @@ const WalletsPage = () => {
       } else if (sortField === 'type') {
         comparison = a.type.localeCompare(b.type);
       } else if (sortField === 'created') {
-        comparison = new Date(a.created) - new Date(b.created);
+        comparison = new Date(a.created).getTime() - new Date(b.created).getTime();
       } else {
         comparison = String(a[sortField]).localeCompare(String(b[sortField]));
       }
@@ -129,16 +195,13 @@ const WalletsPage = () => {
     });
   }, [filteredWallets, sortField, sortDirection]);
 
-  // Pagination
   const paginatedWallets = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return sortedWallets.slice(startIndex, startIndex + itemsPerPage);
   }, [sortedWallets, currentPage, itemsPerPage]);
 
-  // Calculate total pages
   const totalPages = Math.ceil(sortedWallets.length / itemsPerPage);
 
-  // Calculate summary statistics
   const summaryStats = useMemo(() => {
     const totalBalance = wallets.reduce((sum, wallet) => sum + wallet.balance, 0);
     const totalTransactions = wallets.reduce((sum, wallet) => sum + (wallet.debit + wallet.credit), 0);
@@ -158,8 +221,7 @@ const WalletsPage = () => {
     };
   }, [wallets]);
 
-  // Handlers
-  const handleSort = (field) => {
+  const handleSort = (field: any) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
@@ -168,26 +230,39 @@ const WalletsPage = () => {
     }
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
 
-  const handleFilterTypeChange = (type) => {
+  const handleFilterTypeChange = (type: any) => {
     setFilterType(type);
     setCurrentPage(1);
   };
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: any) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
 
-  const handleItemsPerPageChange = (e) => {
+  const handleItemsPerPageChange = (e: any) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
 
-  // Render loading skeleton
+  const handleViewWallet = (walletId: string) => {
+    const stateToSave = {
+      currentPage,
+      itemsPerPage,
+      searchTerm,
+      filterType,
+      sortField,
+      sortDirection
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+
+    navigate(`/admin/finance/user-wallets/${walletId}`);
+  };
+
   const renderSkeleton = () => (
     <div className="animate-pulse">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
@@ -331,8 +406,8 @@ const WalletsPage = () => {
         <div className="flex gap-2">
           <button
             className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${filterType === 'all'
-                ? 'bg-indigo-100 text-indigo-700'
-                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+              ? 'bg-indigo-100 text-indigo-700'
+              : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
             onClick={() => handleFilterTypeChange('all')}
           >
@@ -340,8 +415,8 @@ const WalletsPage = () => {
           </button>
           <button
             className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${filterType === 'user'
-                ? 'bg-indigo-100 text-indigo-700'
-                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+              ? 'bg-indigo-100 text-indigo-700'
+              : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
             onClick={() => handleFilterTypeChange('user')}
           >
@@ -349,8 +424,8 @@ const WalletsPage = () => {
           </button>
           <button
             className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${filterType === 'group'
-                ? 'bg-indigo-100 text-indigo-700'
-                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+              ? 'bg-indigo-100 text-indigo-700'
+              : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
             onClick={() => handleFilterTypeChange('group')}
           >
@@ -358,8 +433,8 @@ const WalletsPage = () => {
           </button>
           <button
             className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${filterType === 'system'
-                ? 'bg-indigo-100 text-indigo-700'
-                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+              ? 'bg-indigo-100 text-indigo-700'
+              : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
             onClick={() => handleFilterTypeChange('system')}
           >
@@ -447,6 +522,13 @@ const WalletsPage = () => {
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50">
+                  {/* New column for row numbers */}
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <div className="flex items-center">
+                      <Hash size={14} className="mr-1" />
+                      <span>No.</span>
+                    </div>
+                  </th>
                   <th
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort('user')}
@@ -519,151 +601,159 @@ const WalletsPage = () => {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {paginatedWallets.length > 0 ? (
-                  paginatedWallets.map((wallet, index) => (
-                    <tr
-                      key={wallet.id}
-                      className="hover:bg-gray-50 transition-colors"
-                    >
-                      {/* Owner Column */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-medium text-sm mr-3 shadow-sm ${wallet.type === 'user'
+                  paginatedWallets.map((wallet, index) => {
+                    // Calculate row number based on current page and position
+                    const rowNumber = (currentPage - 1) * itemsPerPage + index + 1;
+
+                    return (
+                      <tr
+                        key={wallet.id}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        {/* Row Number Column */}
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <span className="text-sm font-medium text-gray-500">{rowNumber}</span>
+                        </td>
+                        {/* Owner Column */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-medium text-sm mr-3 shadow-sm ${wallet.type === 'user'
                               ? 'bg-gradient-to-br from-indigo-500 to-blue-600 text-white'
                               : wallet.type === 'group'
                                 ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
                                 : 'bg-gradient-to-br from-amber-500 to-orange-600 text-white'
-                            }`}>
-                            {wallet.type === 'user' && <Users size={16} className="text-white" />}
-                            {wallet.type === 'group' && <Building2 size={16} className="text-white" />}
-                            {wallet.type === 'system' && <Wallet size={16} className="text-white" />}
+                              }`}>
+                              {wallet.type === 'user' && <Users size={16} className="text-white" />}
+                              {wallet.type === 'group' && <Building2 size={16} className="text-white" />}
+                              {wallet.type === 'system' && <Wallet size={16} className="text-white" />}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-800 flex items-center">
+                                {wallet.user.name}
+                                {wallet.purpose && (
+                                  <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs">
+                                    {wallet.purpose.replace(/_/g, ' ')}
+                                  </span>
+                                )}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-0.5">
+                                {wallet.type === 'user' && 'User Wallet'}
+                                {wallet.type === 'group' && 'Group Wallet'}
+                                {wallet.type === 'system' && 'System Wallet'}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium text-gray-800 flex items-center">
-                              {wallet.user.name}
-                              {wallet.purpose && (
-                                <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs">
-                                  {wallet.purpose.replace(/_/g, ' ')}
-                                </span>
-                              )}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                              {wallet.type === 'user' && 'User Wallet'}
-                              {wallet.type === 'group' && 'Group Wallet'}
-                              {wallet.type === 'system' && 'System Wallet'}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Balance Column */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className={`w-1 h-8 rounded-full mr-2 ${wallet.balance > 0
+                        {/* Balance Column */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            <div className={`w-1 h-8 rounded-full mr-2 ${wallet.balance > 0
                               ? 'bg-emerald-500'
                               : wallet.balance < 0
                                 ? 'bg-red-500'
                                 : 'bg-gray-300'
-                            }`}></div>
-                          <div>
-                            <div className="font-semibold text-gray-900 flex items-center">
-                              {new Intl.NumberFormat('en-US', {
-                                style: 'decimal',
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                              }).format(wallet.balance)}
-                              <span className="text-xs text-gray-500 ml-1">{wallet.currency}</span>
-                            </div>
-                            <div className={`text-xs flex items-center mt-0.5 ${wallet.trend === 'up'
+                              }`}></div>
+                            <div>
+                              <div className="font-semibold text-gray-900 flex items-center">
+                                {new Intl.NumberFormat('en-US', {
+                                  style: 'decimal',
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2
+                                }).format(wallet.balance)}
+                                <span className="text-xs text-gray-500 ml-1">{wallet.currency}</span>
+                              </div>
+                              <div className={`text-xs flex items-center mt-0.5 ${wallet.trend === 'up'
                                 ? 'text-emerald-600'
                                 : 'text-red-600'
-                              }`}>
-                              {wallet.trend === 'up'
-                                ? <ArrowUpRight size={12} className="mr-0.5" />
-                                : <ArrowDownRight size={12} className="mr-0.5" />}
-                              {wallet.trendPercentage}%
+                                }`}>
+                                {wallet.trend === 'up'
+                                  ? <ArrowUpRight size={12} className="mr-0.5" />
+                                  : <ArrowDownRight size={12} className="mr-0.5" />}
+                                {wallet.trendPercentage}%
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Status Column */}
-                      <td className="px-6 py-4">
-                        {(() => {
-                          const statusConfig = {
-                            'Active': { color: 'emerald', icon: true, pulse: true },
-                            'Inactive': { color: 'gray', icon: false, pulse: false },
-                            'Pending': { color: 'amber', icon: true, pulse: true },
-                            'Frozen': { color: 'blue', icon: true, pulse: false },
-                            'Suspended': { color: 'red', icon: true, pulse: false },
-                          };
+                        {/* Status Column */}
+                        <td className="px-6 py-4">
+                          {(() => {
+                            const statusConfig = {
+                              'Active': { color: 'emerald', icon: true, pulse: true },
+                              'Inactive': { color: 'gray', icon: false, pulse: false },
+                              'Pending': { color: 'amber', icon: true, pulse: true },
+                              'Frozen': { color: 'blue', icon: true, pulse: false },
+                              'Suspended': { color: 'red', icon: true, pulse: false },
+                            };
 
-                          const config = statusConfig[wallet.status] || statusConfig['Active'];
+                            const config = statusConfig[wallet.status] || statusConfig['Active'];
 
-                          return (
-                            <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-${config.color}-100 text-${config.color}-700`}>
-                              {config.pulse && (
-                                <span className={`w-1.5 h-1.5 rounded-full bg-${config.color}-500 mr-1.5 ${config.pulse ? 'animate-pulse' : ''}`}></span>
-                              )}
-                              {wallet.status}
-                            </div>
-                          );
-                        })()}
-                      </td>
+                            return (
+                              <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-${config.color}-100 text-${config.color}-700`}>
+                                {config.pulse && (
+                                  <span className={`w-1.5 h-1.5 rounded-full bg-${config.color}-500 mr-1.5 ${config.pulse ? 'animate-pulse' : ''}`}></span>
+                                )}
+                                {wallet.status}
+                              </div>
+                            );
+                          })()}
+                        </td>
 
-                      {/* Activity Column */}
-                      <td className="px-6 py-4">
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full ${wallet.activity > 75
+                        {/* Activity Column */}
+                        <td className="px-6 py-4">
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full ${wallet.activity > 75
                                 ? 'bg-gradient-to-r from-green-500 to-emerald-500'
                                 : wallet.activity > 40
                                   ? 'bg-gradient-to-r from-blue-500 to-indigo-500'
                                   : 'bg-gradient-to-r from-gray-400 to-gray-500'
-                              }`}
-                            style={{ width: `${wallet.activity}%` }}
-                          ></div>
-                        </div>
-                      </td>
+                                }`}
+                              style={{ width: `${wallet.activity}%` }}
+                            ></div>
+                          </div>
+                        </td>
 
-                      {/* Last Updated Column */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-                          <span className="text-sm text-gray-600">{wallet.lastUpdated}</span>
-                        </div>
-                      </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
+                            <span className="text-sm text-gray-600">{wallet.lastUpdated}</span>
+                          </div>
+                        </td>
 
-                      {/* Actions Column */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center space-x-1">
-                          <button
-                            className="p-1.5 rounded-lg text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
-                            onClick={() => navigate(`/admin/finance/user-wallets/${wallet.id}`)}
-                            title="View Details"
-                          >
-                            <Eye size={18} strokeWidth={1.8} />
-                          </button>
-                          <button
-                            className="p-1.5 rounded-lg text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
-                            onClick={() => alert(`Refresh wallet ${wallet.id}`)}
-                            title="Refresh Balance"
-                          >
-                            <RefreshCw size={18} strokeWidth={1.8} />
-                          </button>
-                          <button
-                            className="p-1.5 rounded-lg text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
-                            onClick={() => alert(`Edit wallet ${wallet.id}`)}
-                            title="Edit Settings"
-                          >
-                            <Sliders size={18} strokeWidth={1.8} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+
+                        <td className="px-6 py-4">
+                          <div className="flex items-center space-x-1">
+                            <button
+                              className="p-1.5 rounded-lg text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+                              onClick={() => handleViewWallet(wallet.id)}
+                              title="View Details"
+                            >
+                              <Eye size={18} strokeWidth={1.8} />
+                            </button>
+                            <button
+                              className="p-1.5 rounded-lg text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+                              onClick={() => alert(`Refresh wallet ${wallet.id}`)}
+                              title="Refresh Balance"
+                            >
+                              <RefreshCw size={18} strokeWidth={1.8} />
+                            </button>
+                            <button
+                              className="p-1.5 rounded-lg text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+                              onClick={() => alert(`Edit wallet ${wallet.id}`)}
+                              title="Edit Settings"
+                            >
+                              <Sliders size={18} strokeWidth={1.8} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center">
+                    <td colSpan={7} className="px-6 py-10 text-center">
                       <div className="flex flex-col items-center">
                         <div className="bg-gray-50 p-4 rounded-full">
                           <AlertTriangle size={24} className="text-gray-400" />
@@ -689,8 +779,8 @@ const WalletsPage = () => {
                   onClick={() => handlePageChange(1)}
                   disabled={currentPage === 1}
                   className={`p-2 rounded-lg ${currentPage === 1
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : 'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
+                    ? 'text-gray-300 cursor-not-allowed'
+                    : 'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
                     } transition-colors`}
                 >
                   <ChevronLeft size={16} />
@@ -708,8 +798,8 @@ const WalletsPage = () => {
                         key={page}
                         onClick={() => handlePageChange(page)}
                         className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${currentPage === page
-                            ? 'bg-indigo-600 text-white'
-                            : 'text-gray-600 hover:bg-indigo-50 hover:text-indigo-600'
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-gray-600 hover:bg-indigo-50 hover:text-indigo-600'
                           } transition-colors`}
                       >
                         {page}
@@ -727,8 +817,8 @@ const WalletsPage = () => {
                   onClick={() => handlePageChange(totalPages)}
                   disabled={currentPage === totalPages}
                   className={`p-2 rounded-lg ${currentPage === totalPages
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : 'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
+                    ? 'text-gray-300 cursor-not-allowed'
+                    : 'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
                     } transition-colors`}
                 >
                   <ChevronRight size={16} />
