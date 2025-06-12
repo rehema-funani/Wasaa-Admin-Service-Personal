@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// src/app/admin/finance/transactions/page.tsx
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -27,8 +28,9 @@ import {
   XCircle,
   Clock
 } from 'lucide-react';
-import financeService from '../../../../api/services/finance';
+import { FilterOptions } from '../../../../types/finance';
 import { Transaction } from '../../../../types/transaction';
+import { useTransactions } from '../../../../hooks/useFinance';
 
 interface PaginationData {
   total: number;
@@ -41,113 +43,131 @@ interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
+// Define the localStorage key for persisting state
 const STORAGE_KEY = 'transaction_page_state';
 
-const page: React.FC = () => {
+const TransactionsPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [searchQuery, setSearchQuery] = useState(() => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    if (savedState) {
-      const parsed = JSON.parse(savedState);
-      return parsed.searchQuery || '';
+  // Load persisted state from localStorage
+  const loadInitialState = () => {
+    try {
+      const savedState = localStorage.getItem(STORAGE_KEY);
+      if (savedState) {
+        return JSON.parse(savedState);
+      }
+    } catch (error) {
+      console.error('Error loading saved state:', error);
     }
-    return '';
-  });
+    return null;
+  };
 
-  const [currentPage, setCurrentPage] = useState(() => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    if (savedState) {
-      const parsed = JSON.parse(savedState);
-      return parsed.currentPage || 1;
-    }
-    return 1;
-  });
+  const savedState = loadInitialState();
 
-  const [itemsPerPage, setItemsPerPage] = useState(() => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    if (savedState) {
-      const parsed = JSON.parse(savedState);
-      return parsed.itemsPerPage || 10;
-    }
-    return 10;
+  // State for filters and pagination
+  const [searchQuery, setSearchQuery] = useState(savedState?.searchQuery || '');
+  const [currentPage, setCurrentPage] = useState(savedState?.currentPage || 1);
+  const [itemsPerPage, setItemsPerPage] = useState(savedState?.itemsPerPage || 10);
+  const [filterStatus, setFilterStatus] = useState(savedState?.filterStatus || 'all');
+  const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: savedState?.sortKey || 'createdAt',
+    direction: savedState?.sortDirection || 'desc'
   });
-
-  const [filterStatus, setFilterStatus] = useState(() => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    if (savedState) {
-      const parsed = JSON.parse(savedState);
-      return parsed.filterStatus || 'all';
-    }
-    return 'all';
-  });
-
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [paginationData, setPaginationData] = useState<PaginationData>({
     total: 0,
-    page: 1,
+    page: currentPage,
     pages: 1
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'createdAt', direction: 'desc' });
 
-  useEffect(() => {
-    const savedState = localStorage.getItem(STORAGE_KEY);
-    if (savedState) {
-      localStorage.removeItem(STORAGE_KEY);
-    }
-  }, []);
+  // Create filter options for the hook
+  const filterOptions = useMemo<FilterOptions>(() => ({
+    page: currentPage,
+    limit: itemsPerPage,
+    search: searchQuery || undefined,
+    status: filterStatus !== 'all' ? filterStatus : undefined,
+    sortBy: sortConfig.key,
+    sortOrder: sortConfig.direction
+  }), [currentPage, itemsPerPage, searchQuery, filterStatus, sortConfig]);
 
-  // Save state to localStorage before navigating away
+  const {
+    transactions: fetchedTransactions,
+    isLoading,
+    error,
+    fetchTransactions
+  } = useTransactions(filterOptions, false);
+
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
   useEffect(() => {
     return () => {
       const stateToSave = {
         currentPage,
         itemsPerPage,
         searchQuery,
-        filterStatus
+        filterStatus,
+        sortKey: sortConfig.key,
+        sortDirection: sortConfig.direction
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
     };
-  }, [currentPage, itemsPerPage, searchQuery, filterStatus]);
+  }, [currentPage, itemsPerPage, searchQuery, filterStatus, sortConfig]);
 
+  // Fetch transactions when filters change
   useEffect(() => {
-    fetchTransactions(currentPage, itemsPerPage, searchQuery);
+    const loadTransactions = async () => {
+      console.log('Fetching transactions with filters:', filterOptions);
+      try {
+        const result = await fetchTransactions();
+        console.log(result);
+        // if (result) {
+        //   setTransactions(result || []);
+        //   // Update pagination info (assuming the API returns this data)
+        //   // If API doesn't return this, we'll need to calculate it
+        //   setPaginationData({
+        //     total: result.length, // This should ideally come from API response
+        //     page: currentPage,
+        //     pages: Math.ceil(result.length / itemsPerPage)
+        //   });
+        // }
+      } catch (err) {
+        console.error('Error fetching transactions:', err);
+      }
+    };
+
+    loadTransactions();
   }, [currentPage, itemsPerPage, searchQuery, filterStatus]);
 
-  const fetchTransactions = async (page: number, limit: number, query: string = '') => {
-    try {
-      setIsLoading(true);
-      const filters = {
-        page: page,
-        limit: limit,
-        search: query || undefined,
-        status: filterStatus !== 'all' ? filterStatus : undefined
-      };
-
-      const response = await financeService.getAllTransactions(filters);
-
-      if (response?.data?.transactions) {
-        setTransactions(response.data.transactions);
-        setPaginationData({
-          total: response.data.total || 0,
-          page: response.data.page || 1,
-          pages: response.data.pages || 1
-        });
-      } else {
-        throw new Error('Invalid response format');
+  const sortTransactions = useCallback((transactionsToSort: Transaction[], key: string, direction: 'asc' | 'desc') => {
+    return [...transactionsToSort].sort((a, b) => {
+      if (key === 'amount') {
+        const aAmount = getTransactionAmount(a);
+        const bAmount = getTransactionAmount(b);
+        return direction === 'asc' ? aAmount - bAmount : bAmount - aAmount;
+      } else if (key === 'createdAt') {
+        return direction === 'asc'
+          ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      } else if (key === 'balance') {
+        return direction === 'asc' ? a.balance - b.balance : b.balance - a.balance;
+      } else if (key === 'type') {
+        const aType = getTransactionType(a);
+        const bType = getTransactionType(b);
+        return direction === 'asc'
+          ? aType.localeCompare(bType)
+          : bType.localeCompare(aType);
       }
+      return 0;
+    });
+  }, []);
 
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching transactions:', err);
-      setError('Failed to load transactions. Please try again later.');
-    } finally {
-      setIsLoading(false);
+  // Apply sorting when transaction data or sort config changes
+  useEffect(() => {
+    if (fetchedTransactions.length > 0) {
+      const sorted = sortTransactions(fetchedTransactions, sortConfig.key, sortConfig.direction);
+      setTransactions(sorted);
     }
-  };
+  }, [fetchedTransactions, sortConfig, sortTransactions]);
 
   const formatDateTime = (dateString: string): { date: string; time: string } => {
     try {
@@ -170,19 +190,20 @@ const page: React.FC = () => {
   };
 
   const getTransactionType = (transaction: Transaction): string => {
-    if (transaction.debit > 0 && transaction.credit === 0) {
+    // Adapt this based on your actual Transaction type
+    if (transaction.type === 'deposit') {
       return 'Deposit';
-    } else if (transaction.debit === 0 && transaction.credit > 0) {
+    } else if (transaction.type === 'withdrawal') {
       return 'Withdrawal';
-    } else if (transaction.debit > 0 && transaction.credit > 0) {
+    } else if (transaction.type === 'transfer') {
       return 'Transfer';
     } else {
-      return 'Other';
+      return transaction.type || 'Other';
     }
   };
 
   const getTransactionAmount = (transaction: Transaction): number => {
-    return transaction.debit > 0 ? transaction.debit : transaction.credit;
+    return transaction.amount || 0;
   };
 
   const handleViewTransaction = (transaction: Transaction) => {
@@ -190,7 +211,9 @@ const page: React.FC = () => {
       currentPage,
       itemsPerPage,
       searchQuery,
-      filterStatus
+      filterStatus,
+      sortKey: sortConfig.key,
+      sortDirection: sortConfig.direction
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
 
@@ -235,29 +258,6 @@ const page: React.FC = () => {
     }
 
     setSortConfig({ key, direction });
-
-    const sortedTransactions = [...transactions].sort((a, b) => {
-      if (key === 'amount') {
-        const aAmount = getTransactionAmount(a);
-        const bAmount = getTransactionAmount(b);
-        return direction === 'asc' ? aAmount - bAmount : bAmount - aAmount;
-      } else if (key === 'createdAt') {
-        return direction === 'asc'
-          ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      } else if (key === 'balance') {
-        return direction === 'asc' ? a.balance - b.balance : b.balance - a.balance;
-      } else if (key === 'type') {
-        const aType = getTransactionType(a);
-        const bType = getTransactionType(b);
-        return direction === 'asc'
-          ? aType.localeCompare(bType)
-          : bType.localeCompare(aType);
-      }
-      return 0;
-    });
-
-    setTransactions(sortedTransactions);
   };
 
   const renderTransactionIcon = (transaction: Transaction) => {
@@ -306,7 +306,6 @@ const page: React.FC = () => {
 
   const renderAmount = (transaction: Transaction) => {
     const amount = getTransactionAmount(transaction);
-    const isDebit = transaction.debit > 0;
     const type = getTransactionType(transaction);
 
     let textColor = 'text-neutral-900';
@@ -336,18 +335,21 @@ const page: React.FC = () => {
     let icon = null;
 
     switch (status) {
+      case 'completed':
       case 'Complete':
         bgColor = 'bg-success-50';
         textColor = 'text-success-700';
         borderColor = 'border-success-200';
         icon = <CheckCircle size={12} className="mr-1 text-success-500" />;
         break;
+      case 'pending':
       case 'Pending':
         bgColor = 'bg-warning-50';
         textColor = 'text-warning-700';
         borderColor = 'border-warning-200';
         icon = <Clock size={12} className="mr-1 text-warning-500" />;
         break;
+      case 'failed':
       case 'Failed':
         bgColor = 'bg-danger-50';
         textColor = 'text-danger-700';
@@ -359,7 +361,7 @@ const page: React.FC = () => {
     return (
       <div className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md border ${bgColor} ${textColor} ${borderColor}`}>
         {icon}
-        {status}
+        {status.charAt(0).toUpperCase() + status.slice(1)}
       </div>
     );
   };
@@ -449,7 +451,7 @@ const page: React.FC = () => {
           <h3 className="text-lg font-semibold text-neutral-900 mb-2">Transaction Data Unavailable</h3>
           <p className="text-neutral-600 mb-6">{error}</p>
           <button
-            onClick={() => fetchTransactions(currentPage, itemsPerPage, searchQuery)}
+            onClick={() => fetchTransactions()}
             className="px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors shadow-button"
           >
             Refresh Data
@@ -510,9 +512,9 @@ const page: React.FC = () => {
                 className="px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:ring-2 focus:ring-primary-500/30 transition-all shadow-sm"
               >
                 <option value="all">All Statuses</option>
-                <option value="Complete">Completed</option>
-                <option value="Pending">Pending</option>
-                <option value="Failed">Failed</option>
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+                <option value="failed">Failed</option>
               </select>
 
               <button className="p-3 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors shadow-sm">
@@ -642,10 +644,8 @@ const page: React.FC = () => {
                                 <div className="ml-3">
                                   <p className="text-sm font-medium text-neutral-900">{type}</p>
                                   <p className="text-xs text-neutral-500">
-                                    {transaction.user ? (
-                                      <>
-                                        {transaction.user.first_name} {transaction.user.last_name}
-                                      </>
+                                    {transaction.userId ? (
+                                      <>User: {transaction.userId}</>
                                     ) : (
                                       "System"
                                     )}
@@ -706,4 +706,4 @@ const page: React.FC = () => {
   );
 };
 
-export default page;
+export default TransactionsPage;

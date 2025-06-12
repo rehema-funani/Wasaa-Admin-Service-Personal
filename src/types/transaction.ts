@@ -12,5 +12,7 @@ export interface Transaction {
     UserWallet: any;
     user?: any;
     walletId?: string;
-    type?: string
+    type?: string;
+    amount?: any;
+    userId?: any;
 }
