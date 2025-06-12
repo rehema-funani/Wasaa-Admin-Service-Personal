@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../../hooks/useAuth'; // Updated import to use the new hook
+import useAuth from '../../../hooks/useAuth';
 import { setStorageItem } from '../../../utils/storage';
 import { formatErrorMessage } from '../../../utils/formatting';
 
@@ -13,8 +13,7 @@ const page = () => {
   const [errors, setErrors] = useState({ email: '', password: '', general: '' });
 
   const navigate = useNavigate();
-  // Using the new useAuth hook that connects to the Redux store
-  const { login, isLoading, isAuthenticated } = useAuth();
+  const { login, isLoading } = useAuth();
 
   // useEffect(() => {
   //   if (isAuthenticated) {
