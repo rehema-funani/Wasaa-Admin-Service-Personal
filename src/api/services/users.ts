@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { api } from '../axios';
+const API_KEY = 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==';
 
 
 type User = {
@@ -36,9 +37,19 @@ type LoginResponse = {
 };
 
 export const userService = {
+
   async login(email: string, password: string): Promise<LoginResponse> {
     try {
-      const response = await api.post<LoginResponse>('/auth/admin-signin', { email, password });
+      const response = await axios.post<LoginResponse>(
+        'http://138.68.190.213:3010/auth/admin-signin',
+        { email, password },
+        {
+          headers: {
+            'x-api-key': `${API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -50,7 +61,16 @@ export const userService = {
 
   async verifyOtp(payload: { otp: string; user_id: string; source?: string }): Promise<LoginResponse> {
   try {
-    const response = await api.post<any>('/auth/verify-otp', payload);
+    const response = await axios.post<LoginResponse>(
+      'http://138.68.190.213:3010/auth/verify-otp',
+      payload,
+      {
+        headers: {
+          'x-api-key': `${API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -148,7 +168,7 @@ export const userService = {
       throw new Error('Failed to change password. Please check your network connection.');
     }
   },
-  
+
   async testConnection(): Promise<boolean> {
     try {
       const response = await api.get('/');
@@ -387,7 +407,7 @@ export const userService = {
     }
   },
 
-  async reopenReport (userId: string): Promise<any> { 
+  async reopenReport (userId: string): Promise<any> {
     try {
       const response = await api.put(`/users/${userId}/reopen-report`);
       return response.data;
@@ -399,7 +419,7 @@ export const userService = {
     }
   },
 
-  async dismissReport (userId: string): Promise<any> {  
+  async dismissReport (userId: string): Promise<any> {
     try {
       const response = await api.put(`/users/${userId}/dismiss-report`);
       return response.data;

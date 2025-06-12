@@ -194,17 +194,11 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
-/**
- * Main router component
- * Structured with route grouping for better organization while maintaining
- * a single-file approach
- */
 const AppRouter: React.FC = () => {
   return (
     <RouteErrorBoundary fallback={<ErrorPage />}>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          {/* ===== Authentication Routes ===== */}
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/login/verify-otp" element={<VerifyOtp />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
@@ -213,7 +207,6 @@ const AppRouter: React.FC = () => {
 
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-          {/* ===== Protected Admin Routes ===== */}
           <Route
             path="/"
             element={

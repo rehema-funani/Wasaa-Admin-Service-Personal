@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
-import { setStorageItem } from '../../../utils/storage';
 import { formatErrorMessage } from '../../../utils/formatting';
+import userService from '../../../api/services/users';
 
-const page = () => {
+const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
 
   const navigate = useNavigate();
-  const { login, isLoading, isAuthenticated } = useAuth();
 
   // useEffect(() => {
   //   if (isAuthenticated) {
@@ -23,33 +22,21 @@ const page = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const response = await login(email, password);
-      console.log('Login response:', response);
+      const response = await userService.login(email, password);
 
-      if (rememberMe) {
-        setStorageItem('rememberedEmail', email);
-      }
+      navigate('/auth/login/verify-otp', {
+        state: { user_id: response.user_id }
+      })
 
-      if (response && response.user_id) {
-        navigate('/auth/login/verify-otp', {
-          state: { user_id: response.user_id }
-        });
-      } else if (response && response.user && response.user.id) {
-        navigate('/auth/login/verify-otp', {
-          state: { user_id: response.user.id }
-        });
-      } else {
-        console.error('User ID not found in response:', response);
-        setErrors({
-          general: 'Authentication error: Unable to proceed to verification'
-        });
-      }
     } catch (err) {
       setErrors({
         general: formatErrorMessage(err) || 'Login failed. Please try again.'
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -273,4 +260,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
