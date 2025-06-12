@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../../hooks/useAuth';
-import { setStorageItem } from '../../../utils/storage';
 import { formatErrorMessage } from '../../../utils/formatting';
+import userService from '../../../api/services/users';
 
-const page = () => {
+const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [errors, setErrors] = useState({ email: '', password: '', general: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
 
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
 
   // useEffect(() => {
   //   if (isAuthenticated) {
@@ -21,36 +20,23 @@ const page = () => {
   //   }
   // }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const response = await login(email, password);
+      const response = await userService.login(email, password);
 
-      if (rememberMe) {
-        setStorageItem('rememberedEmail', email);
-      }
+      navigate('/auth/login/verify-otp', {
+        state: { user_id: response.user_id }
+      })
 
-      if (response && response.user_id) {
-        navigate('/auth/login/verify-otp', {
-          state: { user_id: response.user_id }
-        });
-      } else if (response && response.user && response.user.id) {
-        navigate('/auth/login/verify-otp', {
-          state: { user_id: response.user.id }
-        });
-      } else {
-        console.error('User ID not found in response:', response);
-        setErrors({
-          ...errors,
-          general: 'Authentication error: Unable to proceed to verification'
-        });
-      }
     } catch (err) {
       setErrors({
-        ...errors,
         general: formatErrorMessage(err) || 'Login failed. Please try again.'
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -251,12 +237,6 @@ const page = () => {
             </motion.button>
           </form>
 
-          {errors.general && (
-            <div className="mt-4 p-2 text-xs text-red-500 bg-red-50 rounded-lg">
-              {errors.general}
-            </div>
-          )}
-
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">
               No account? <a href="#" className="font-medium text-teal-500 hover:text-teal-600">Request access</a>
@@ -280,4 +260,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

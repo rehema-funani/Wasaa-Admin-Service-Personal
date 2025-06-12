@@ -1,19 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import useAuth from '../../../hooks/useAuth'; // Updated import to use the new hook
+import useAuth from '../../../hooks/useAuth';
 import { formatErrorMessage } from '../../../utils/formatting';
+import userService from '../../../api/services/users';
 
 const page = () => {
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(60);
+  const [isLoading, setIsLoading] = useState(false);
   const [canResend, setCanResend] = useState(false);
-  const [errors, setErrors] = useState({});
+  type Errors = {
+    general?: string;
+    otp?: string;
+  };
+
+  const [errors, setErrors] = useState<Errors>({});
   const location = useLocation();
   const userId = location.state?.user_id;
   const navigate = useNavigate();
-  const { verifyOtp, isLoading, isAuthenticated } = useAuth();
-
   const inputRefs = useRef([]);
 
   useEffect(() => {
@@ -26,11 +31,11 @@ const page = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     navigate('/');
+  //   }
+  // }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     let interval;
@@ -67,7 +72,7 @@ const page = () => {
     }
 
     try {
-      await verifyOtp(payload);
+      await userService.verifyOtp(payload);
       navigate('/');
     } catch (err) {
       setErrors({
@@ -112,7 +117,7 @@ const page = () => {
             source: 'web'
           };
 
-          verifyOtp(payload)
+          userService.verifyOtp(payload)
             .then(() => navigate('/'))
             .catch((err) => {
               setErrors({
@@ -168,7 +173,7 @@ const page = () => {
           source: 'web'
         };
 
-        verifyOtp(payload)
+        userService.verifyOtp(payload)
           .then(() => navigate('/'))
           .catch((err) => {
             setErrors({
@@ -301,7 +306,7 @@ const page = () => {
                     className="flex-1"
                   >
                     <input
-                      ref={(el) => (inputRefs.current[index] = el)}
+                      ref={(el) => { inputRefs.current[index] = el; }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}
