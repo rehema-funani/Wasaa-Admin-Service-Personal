@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import useAuth from '../../../hooks/useAuth'; // Updated import to use the new hook
 import { setStorageItem } from '../../../utils/storage';
 import { formatErrorMessage } from '../../../utils/formatting';
 
@@ -10,9 +10,10 @@ const page = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+  const [errors, setErrors] = useState({ email: '', password: '', general: '' });
 
   const navigate = useNavigate();
+  // Using the new useAuth hook that connects to the Redux store
   const { login, isLoading, isAuthenticated } = useAuth();
 
   // useEffect(() => {
@@ -21,12 +22,11 @@ const page = () => {
   //   }
   // }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const response = await login(email, password);
-      console.log('Login response:', response);
 
       if (rememberMe) {
         setStorageItem('rememberedEmail', email);
@@ -43,11 +43,13 @@ const page = () => {
       } else {
         console.error('User ID not found in response:', response);
         setErrors({
+          ...errors,
           general: 'Authentication error: Unable to proceed to verification'
         });
       }
     } catch (err) {
       setErrors({
+        ...errors,
         general: formatErrorMessage(err) || 'Login failed. Please try again.'
       });
     }
@@ -249,6 +251,12 @@ const page = () => {
               ) : "Sign in"}
             </motion.button>
           </form>
+
+          {errors.general && (
+            <div className="mt-4 p-2 text-xs text-red-500 bg-red-50 rounded-lg">
+              {errors.general}
+            </div>
+          )}
 
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">
