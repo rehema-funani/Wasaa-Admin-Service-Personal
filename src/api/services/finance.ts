@@ -1,5 +1,3 @@
-// src/services/financeService.ts
-import { useFinanceStore } from '../../stores/financeStore';
 import type {
   Currency,
   PaymentMethod,
@@ -14,12 +12,14 @@ import type {
   FilterOptions
 } from '../../types/finance';
 import type { Transaction } from '../../types/transaction';
+import { finance } from '../finance-axios';
 
 class FinanceService {
   // ======== CURRENCY ENDPOINTS ========
   async getAllCurrencies(): Promise<Currency[]> {
     try {
-      return await useFinanceStore.getState().fetchCurrencies();
+      const response = await finance.get('/currencies');
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get currencies');
     }
@@ -27,7 +27,8 @@ class FinanceService {
 
   async getCurrency(currencyId: string): Promise<Currency> {
     try {
-      return await useFinanceStore.getState().fetchCurrency(currencyId);
+      const response = await finance.get(`/currencies/${currencyId}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get currency ${currencyId}`);
     }
@@ -35,7 +36,8 @@ class FinanceService {
 
   async createCurrency(currencyData: Omit<Currency, 'id'>): Promise<Currency> {
     try {
-      return await useFinanceStore.getState().createCurrency(currencyData);
+      const response = await finance.post('/currencies', currencyData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create currency');
     }
@@ -43,7 +45,8 @@ class FinanceService {
 
   async updateCurrency(currencyId: string, currencyData: Partial<Currency>): Promise<Currency> {
     try {
-      return await useFinanceStore.getState().updateCurrency(currencyId, currencyData);
+      const response = await finance.put(`/currencies/${currencyId}`, currencyData);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to update currency ${currencyId}`);
     }
@@ -51,7 +54,7 @@ class FinanceService {
 
   async deleteCurrency(currencyId: string): Promise<void> {
     try {
-      await useFinanceStore.getState().deleteCurrency(currencyId);
+      await finance.delete(`/currencies/${currencyId}`);
     } catch (error) {
       this.handleError(error, `Failed to delete currency ${currencyId}`);
     }
@@ -60,7 +63,8 @@ class FinanceService {
   // ======== PAYMENT METHOD ENDPOINTS ========
   async getAllPaymentMethods(): Promise<PaymentMethod[]> {
     try {
-      return await useFinanceStore.getState().fetchPaymentMethods();
+      const response = await finance.get('/paymentMethods');
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get payment methods');
     }
@@ -68,7 +72,8 @@ class FinanceService {
 
   async getPaymentMethod(id: string): Promise<PaymentMethod> {
     try {
-      return await useFinanceStore.getState().fetchPaymentMethod(id);
+      const response = await finance.get(`/paymentMethods/${id}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get payment method ${id}`);
     }
@@ -76,7 +81,8 @@ class FinanceService {
 
   async createPaymentMethod(methodData: Omit<PaymentMethod, 'id'>): Promise<PaymentMethod> {
     try {
-      return await useFinanceStore.getState().createPaymentMethod(methodData);
+      const response = await finance.post('/payment-methods', methodData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create payment method');
     }
@@ -84,7 +90,8 @@ class FinanceService {
 
   async updatePaymentMethod(methodId: string, methodData: Partial<PaymentMethod>): Promise<PaymentMethod> {
     try {
-      return await useFinanceStore.getState().updatePaymentMethod(methodId, methodData);
+      const response = await finance.put(`/payment-methods/${methodId}`, methodData);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to update payment method ${methodId}`);
     }
@@ -92,7 +99,7 @@ class FinanceService {
 
   async deletePaymentMethod(methodId: string): Promise<void> {
     try {
-      await useFinanceStore.getState().deletePaymentMethod(methodId);
+      await finance.delete(`/payment-methods/${methodId}`);
     } catch (error) {
       this.handleError(error, `Failed to delete payment method ${methodId}`);
     }
@@ -100,7 +107,8 @@ class FinanceService {
 
   async togglePaymentMethodStatus(methodId: string): Promise<PaymentMethod> {
     try {
-      return await useFinanceStore.getState().togglePaymentMethodStatus(methodId);
+      const response = await finance.patch(`/payment-methods/${methodId}/toggle-status`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to toggle payment method status ${methodId}`);
     }
@@ -109,7 +117,8 @@ class FinanceService {
   // ======== USER WALLET ENDPOINTS ========
   async getAllWallets(filters: FilterOptions = {}): Promise<Wallet[]> {
     try {
-      return await useFinanceStore.getState().fetchWallets(filters);
+      const response = await finance.get('/userWallets', { params: filters });
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get wallets');
     }
@@ -117,7 +126,8 @@ class FinanceService {
 
   async getWallet(walletId: string): Promise<Wallet> {
     try {
-      return await useFinanceStore.getState().fetchWallet(walletId);
+      const response = await finance.get(`/userWallets/${walletId}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get wallet ${walletId}`);
     }
@@ -129,7 +139,8 @@ class FinanceService {
 
   async getWalletTransactions(walletId: string, filters: FilterOptions = {}): Promise<Transaction[]> {
     try {
-      return await useFinanceStore.getState().fetchWalletTransactions(walletId, filters);
+      const response = await finance.get(`/userWalletTransactions/${walletId}`, { params: filters });
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get wallet transactions for ${walletId}`);
     }
@@ -137,7 +148,8 @@ class FinanceService {
 
   async createWallet(walletData: any): Promise<Wallet> {
     try {
-      return await useFinanceStore.getState().createWallet(walletData);
+      const response = await finance.post('/wallets', walletData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create wallet');
     }
@@ -145,7 +157,7 @@ class FinanceService {
 
   async deleteWallet(walletId: string): Promise<void> {
     try {
-      await useFinanceStore.getState().deleteWallet(walletId);
+      await finance.delete(`/wallets/${walletId}`);
     } catch (error) {
       this.handleError(error, `Failed to delete wallet ${walletId}`);
     }
@@ -156,9 +168,10 @@ class FinanceService {
   }
 
   // ======== TRANSACTION ENDPOINTS ========
-  async getAllTransactions(filters: FilterOptions = {}): Promise<Transaction[]> {
+  async getAllTransactions(filters: any = {}): Promise<any[]> {
     try {
-      return await useFinanceStore.getState().fetchTransactions(filters);
+      const response = await finance.get('/transactions/filter', { params: filters });
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get transactions');
     }
@@ -166,7 +179,8 @@ class FinanceService {
 
   async getTransaction(transactionId: string): Promise<Transaction> {
     try {
-      return await useFinanceStore.getState().fetchTransaction(transactionId);
+      const response = await finance.get(`/userWalletTransactions/${transactionId}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get transaction ${transactionId}`);
     }
@@ -175,7 +189,8 @@ class FinanceService {
   // ======== WITHDRAWAL REQUEST ENDPOINTS ========
   async getAllWithdrawalRequests(filters: FilterOptions = {}): Promise<WithdrawalRequest[]> {
     try {
-      return await useFinanceStore.getState().fetchWithdrawalRequests(filters);
+      const response = await finance.get('/withdrawals', { params: filters });
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get withdrawal requests');
     }
@@ -183,7 +198,8 @@ class FinanceService {
 
   async getWithdrawalRequest(requestId: string): Promise<WithdrawalRequest> {
     try {
-      return await useFinanceStore.getState().fetchWithdrawalRequest(requestId);
+      const response = await finance.get(`/withdrawal-requests/${requestId}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get withdrawal request ${requestId}`);
     }
@@ -191,7 +207,8 @@ class FinanceService {
 
   async createWithdrawalRequest(requestData: any): Promise<WithdrawalRequest> {
     try {
-      return await useFinanceStore.getState().createWithdrawalRequest(requestData);
+      const response = await finance.post('/withdrawal-requests', requestData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create withdrawal request');
     }
@@ -204,7 +221,8 @@ class FinanceService {
   // ======== TOP-UP ENDPOINTS ========
   async getAllTopUps(filters: FilterOptions = {}): Promise<TopUp[]> {
     try {
-      return await useFinanceStore.getState().fetchTopUps(filters);
+      const response = await finance.get('/deposits/filter', { params: filters });
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get top-ups');
     }
@@ -212,7 +230,8 @@ class FinanceService {
 
   async getTopUp(topUpId: string): Promise<TopUp> {
     try {
-      return await useFinanceStore.getState().fetchTopUp(topUpId);
+      const response = await finance.get(`/top-ups/${topUpId}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get top-up ${topUpId}`);
     }
@@ -220,7 +239,8 @@ class FinanceService {
 
   async createTopUp(topUpData: any): Promise<TopUp> {
     try {
-      return await useFinanceStore.getState().createTopUp(topUpData);
+      const response = await finance.post('/top-ups', topUpData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create top-up');
     }
@@ -228,7 +248,8 @@ class FinanceService {
 
   async approveTopUp(topUpId: string): Promise<TopUp> {
     try {
-      return await useFinanceStore.getState().approveTopUp(topUpId);
+      const response = await finance.patch(`/top-ups/${topUpId}/approve`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to approve top-up ${topUpId}`);
     }
@@ -236,7 +257,8 @@ class FinanceService {
 
   async rejectTopUp(topUpId: string, reason: string): Promise<TopUp> {
     try {
-      return await useFinanceStore.getState().rejectTopUp(topUpId, reason);
+      const response = await finance.patch(`/top-ups/${topUpId}/reject`, { reason });
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to reject top-up ${topUpId}`);
     }
@@ -245,7 +267,8 @@ class FinanceService {
   // ======== TARIFF ENDPOINTS ========
   async getAllTariffs(): Promise<Tariff[]> {
     try {
-      return await useFinanceStore.getState().fetchTariffs();
+      const response = await finance.get('/walletBillings');
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get tariffs');
     }
@@ -253,7 +276,8 @@ class FinanceService {
 
   async getTariff(tariffId: string): Promise<Tariff> {
     try {
-      return await useFinanceStore.getState().fetchTariff(tariffId);
+      const response = await finance.get(`/tariffs/${tariffId}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get tariff ${tariffId}`);
     }
@@ -261,7 +285,8 @@ class FinanceService {
 
   async createTariff(tariffData: Omit<Tariff, 'id'>): Promise<Tariff> {
     try {
-      return await useFinanceStore.getState().createTariff(tariffData);
+      const response = await finance.post('/walletBillings', tariffData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create tariff');
     }
@@ -269,7 +294,8 @@ class FinanceService {
 
   async updateTariff(tariffId: string, tariffData: Partial<Tariff>): Promise<Tariff> {
     try {
-      return await useFinanceStore.getState().updateTariff(tariffId, tariffData);
+      const response = await finance.put(`/walletBillings/${tariffId}`, tariffData);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to update tariff ${tariffId}`);
     }
@@ -277,7 +303,7 @@ class FinanceService {
 
   async deleteTariff(tariffId: string): Promise<void> {
     try {
-      await useFinanceStore.getState().deleteTariff(tariffId);
+      await finance.delete(`/tariffs/${tariffId}`);
     } catch (error) {
       this.handleError(error, `Failed to delete tariff ${tariffId}`);
     }
@@ -286,7 +312,8 @@ class FinanceService {
   // ======== FEE RANGE ENDPOINTS ========
   async getFeeRangesByTariffId(tariffId: string): Promise<FeeRange[]> {
     try {
-      return await useFinanceStore.getState().fetchFeeRanges(tariffId);
+      const response = await finance.get(`/fee-ranges?walletBillingId=${tariffId}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get fee ranges for tariff ${tariffId}`);
     }
@@ -294,7 +321,8 @@ class FinanceService {
 
   async createFixedRange(feeRangeData: Omit<FeeRange, 'id'>): Promise<FeeRange> {
     try {
-      return await useFinanceStore.getState().createFixedRange(feeRangeData);
+      const response = await finance.post('/walletBillingFixedRanges', feeRangeData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create fixed range');
     }
@@ -302,7 +330,8 @@ class FinanceService {
 
   async createPercentageFeeRange(feeRangeData: Omit<FeeRange, 'id'>): Promise<FeeRange> {
     try {
-      return await useFinanceStore.getState().createPercentageFeeRange(feeRangeData);
+      const response = await finance.post('/walletBillingPercentageRanges', feeRangeData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create percentage fee range');
     }
@@ -310,7 +339,8 @@ class FinanceService {
 
   async updateFixedRange(feeRangeId: string, feeRangeData: Partial<Omit<FeeRange, 'id' | 'walletBillingId'>>): Promise<FeeRange> {
     try {
-      return await useFinanceStore.getState().updateFixedRange(feeRangeId, feeRangeData);
+      const response = await finance.put(`/walletBillingFixedRanges/${feeRangeId}`, feeRangeData);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to update fixed range ${feeRangeId}`);
     }
@@ -318,7 +348,8 @@ class FinanceService {
 
   async updatePercentageFeeRange(feeRangeId: string, feeRangeData: Partial<Omit<FeeRange, 'id' | 'walletBillingId'>>): Promise<FeeRange> {
     try {
-      return await useFinanceStore.getState().updatePercentageFeeRange(feeRangeId, feeRangeData);
+      const response = await finance.put(`/walletBillingPercentageRanges/${feeRangeId}`, feeRangeData);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to update percentage fee range ${feeRangeId}`);
     }
@@ -326,7 +357,7 @@ class FinanceService {
 
   async deleteFixedRange(feeRangeId: string): Promise<void> {
     try {
-      await useFinanceStore.getState().deleteFixedRange(feeRangeId);
+      await finance.delete(`/walletBillingFixedRanges/${feeRangeId}`);
     } catch (error) {
       this.handleError(error, `Failed to delete fixed range ${feeRangeId}`);
     }
@@ -334,7 +365,7 @@ class FinanceService {
 
   async deletePercentageFeeRange(feeRangeId: string): Promise<void> {
     try {
-      await useFinanceStore.getState().deletePercentageFeeRange(feeRangeId);
+      await finance.delete(`/walletBillingPercentageRanges/${feeRangeId}`);
     } catch (error) {
       this.handleError(error, `Failed to delete percentage fee range ${feeRangeId}`);
     }
@@ -343,7 +374,8 @@ class FinanceService {
   // ======== WALLET REFUND ENDPOINTS ========
   async getRefunds(filters: FilterOptions = {}): Promise<Refund[]> {
     try {
-      return await useFinanceStore.getState().fetchRefunds(filters);
+      const response = await finance.get('/walletRefunds', { params: filters });
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get refunds');
     }
@@ -351,7 +383,8 @@ class FinanceService {
 
   async getRefund(refundId: string): Promise<Refund> {
     try {
-      return await useFinanceStore.getState().fetchRefund(refundId);
+      const response = await finance.get(`/walletRefunds/${refundId}`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get refund ${refundId}`);
     }
@@ -359,7 +392,8 @@ class FinanceService {
 
   async approveRefund(refundId: string): Promise<Refund> {
     try {
-      return await useFinanceStore.getState().approveRefund(refundId);
+      const response = await finance.put(`/walletRefunds/${refundId}/approve`);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to approve refund ${refundId}`);
     }
@@ -367,7 +401,8 @@ class FinanceService {
 
   async rejectRefund(refundId: string, reason: string): Promise<Refund> {
     try {
-      return await useFinanceStore.getState().rejectRefund(refundId, reason);
+      const response = await finance.put(`/walletRefunds/${refundId}/reject`, { reason });
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to reject refund ${refundId}`);
     }
@@ -376,7 +411,8 @@ class FinanceService {
   // ======== ANTI-MONEY LAUNDERING ENDPOINTS ========
   async getAMLChecks(filters: FilterOptions = {}): Promise<AmlAlert[]> {
     try {
-      return await useFinanceStore.getState().fetchAmlAlerts(filters);
+      const response = await finance.get('/amlAlerts', { params: filters });
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get AML checks');
     }
@@ -384,7 +420,8 @@ class FinanceService {
 
   async getAllBlacklistEntries(filters: FilterOptions = {}): Promise<any[]> {
     try {
-      return await useFinanceStore.getState().fetchBlacklistEntries(filters);
+      const response = await finance.get('/blackList', { params: filters });
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get blacklist entries');
     }
@@ -393,7 +430,8 @@ class FinanceService {
   // ======== BANK ENDPOINTS ========
   async getAllBanks(): Promise<Bank[]> {
     try {
-      return await useFinanceStore.getState().fetchBanks();
+      const response = await finance.get('/banks');
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get banks');
     }
@@ -401,7 +439,8 @@ class FinanceService {
 
   async addBank(bankData: Omit<Bank, 'id'>): Promise<Bank> {
     try {
-      return await useFinanceStore.getState().createBank(bankData);
+      const response = await finance.post('/banks', bankData);
+      return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to add bank');
     }
@@ -409,7 +448,8 @@ class FinanceService {
 
   async updateBank(bankId: string, bankData: Partial<Bank>): Promise<Bank> {
     try {
-      return await useFinanceStore.getState().updateBank(bankId, bankData);
+      const response = await finance.put(`/banks/${bankId}`, bankData);
+      return response.data;
     } catch (error) {
       this.handleError(error, `Failed to update bank ${bankId}`);
     }
@@ -417,7 +457,7 @@ class FinanceService {
 
   async deleteBank(bankId: string): Promise<void> {
     try {
-      await useFinanceStore.getState().deleteBank(bankId);
+      await finance.delete(`/banks/${bankId}`);
     } catch (error) {
       this.handleError(error, `Failed to delete bank ${bankId}`);
     }

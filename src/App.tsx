@@ -8,11 +8,13 @@ import './styles/globals.css';
 
 const App: React.FC = () => {
   return (
-    <NotificationProvider>
-      <Router>
-        <AppRouter />
-      </Router>
-    </NotificationProvider>
+    <AuthProvider>
+      <NotificationProvider>
+        <Router>
+          <AppRouter />
+        </Router>
+      </NotificationProvider>
+    </AuthProvider>
   );
 };
 

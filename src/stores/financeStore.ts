@@ -495,7 +495,7 @@ export const useFinanceStore = create<FinanceState>()(
         set(state => { state.loading.transactions = true; state.errors.transactions = undefined; });
 
         try {
-          const response = await finance.get('/userWalletTransactions/filter', { params: filters });
+          const response = await finance.get('/transactions/filter', { params: filters });
           const transactions = response.data;
 
           set(state => {

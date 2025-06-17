@@ -1,4 +1,3 @@
-// src/app/admin/finance/transactions/page.tsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +30,7 @@ import {
 import { FilterOptions } from '../../../../types/finance';
 import { Transaction } from '../../../../types/transaction';
 import { useTransactions } from '../../../../hooks/useFinance';
+import financeService from '../../../../api/services/finance';
 
 interface PaginationData {
   total: number;
@@ -43,13 +43,11 @@ interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
-// Define the localStorage key for persisting state
 const STORAGE_KEY = 'transaction_page_state';
 
 const TransactionsPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Load persisted state from localStorage
   const loadInitialState = () => {
     try {
       const savedState = localStorage.getItem(STORAGE_KEY);
@@ -64,7 +62,6 @@ const TransactionsPage: React.FC = () => {
 
   const savedState = loadInitialState();
 
-  // State for filters and pagination
   const [searchQuery, setSearchQuery] = useState(savedState?.searchQuery || '');
   const [currentPage, setCurrentPage] = useState(savedState?.currentPage || 1);
   const [itemsPerPage, setItemsPerPage] = useState(savedState?.itemsPerPage || 10);
@@ -80,7 +77,6 @@ const TransactionsPage: React.FC = () => {
     pages: 1
   });
 
-  // Create filter options for the hook
   const filterOptions = useMemo<FilterOptions>(() => ({
     page: currentPage,
     limit: itemsPerPage,
@@ -97,7 +93,7 @@ const TransactionsPage: React.FC = () => {
     fetchTransactions
   } = useTransactions(filterOptions, false);
 
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<any>([]);
 
   useEffect(() => {
     return () => {
@@ -113,23 +109,18 @@ const TransactionsPage: React.FC = () => {
     };
   }, [currentPage, itemsPerPage, searchQuery, filterStatus, sortConfig]);
 
-  // Fetch transactions when filters change
   useEffect(() => {
     const loadTransactions = async () => {
-      console.log('Fetching transactions with filters:', filterOptions);
       try {
-        const result = await fetchTransactions();
-        console.log(result);
-        // if (result) {
-        //   setTransactions(result || []);
-        //   // Update pagination info (assuming the API returns this data)
-        //   // If API doesn't return this, we'll need to calculate it
-        //   setPaginationData({
-        //     total: result.length, // This should ideally come from API response
-        //     page: currentPage,
-        //     pages: Math.ceil(result.length / itemsPerPage)
-        //   });
-        // }
+        const result = await financeService.getAllTransactions();
+        if (result) {
+          setTransactions(result.transactions || []);
+          setPaginationData({
+            total: result.length,
+            page: currentPage,
+            pages: Math.ceil(result.length / itemsPerPage)
+          });
+        }
       } catch (err) {
         console.error('Error fetching transactions:', err);
       }
@@ -161,7 +152,6 @@ const TransactionsPage: React.FC = () => {
     });
   }, []);
 
-  // Apply sorting when transaction data or sort config changes
   useEffect(() => {
     if (fetchedTransactions.length > 0) {
       const sorted = sortTransactions(fetchedTransactions, sortConfig.key, sortConfig.direction);
@@ -190,7 +180,6 @@ const TransactionsPage: React.FC = () => {
   };
 
   const getTransactionType = (transaction: Transaction): string => {
-    // Adapt this based on your actual Transaction type
     if (transaction.type === 'deposit') {
       return 'Deposit';
     } else if (transaction.type === 'withdrawal') {
@@ -391,7 +380,7 @@ const TransactionsPage: React.FC = () => {
             value={itemsPerPage}
             onChange={(e) => {
               setItemsPerPage(Number(e.target.value));
-              setCurrentPage(1); // Reset to page 1 when changing items per page
+              setCurrentPage(1);
             }}
             className="px-3 py-1.5 text-sm border border-neutral-200 bg-white rounded-lg focus:ring-2 focus:ring-primary-500/30 transition-all"
           >

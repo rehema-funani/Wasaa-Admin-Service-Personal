@@ -21,14 +21,14 @@ const onRefreshed = (token: string) => {
 const refreshAuthToken = async () => {
   try {
     const refreshToken = Cookies.get('refreshToken');
-    
+
     if (!refreshToken) {
       throw new Error('No refresh token available');
     }
-    
+
     const userType = 'admin';
     const source = 'web';
-    
+
     const response = await axios.post(`${baseURL}auth/refresh-token`, {
       refresh_token: refreshToken,
       source: source,
@@ -40,14 +40,14 @@ const refreshAuthToken = async () => {
         'x-api-key': apiKey
       }
     });
-    
+
     if (response.data && response.data.new_access_token) {
       Cookies.set('authToken', response.data.new_access_token);
-      
+
       if (response.data.new_refresh_token) {
         Cookies.set('refreshToken', response.data.new_refresh_token);
       }
-      
+
       return response.data.token;
     } else {
       throw new Error('Failed to refresh token');
@@ -73,15 +73,15 @@ api.interceptors.request.use(
   (config) => {
     try {
       const token = Cookies.get('authToken');
-      
+
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
-        
+
         if (DEBUG_TOKEN_REFRESH) {
           config.headers.Authorization = 'Bearer invalid_token_for_testing';
         }
       }
-      
+
       return config;
     } catch (error) {
       return config;
@@ -98,16 +98,16 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    
+
     if (
-      error.response && 
-      (error.response.status === 401 || 
-       (error.response.data && 
+      error.response &&
+      (error.response.status === 401 ||
+       (error.response.data &&
         error.response.data.message === "Authorization token invalid or expired!"))
     ) {
       if (!originalRequest._retry) {
         originalRequest._retry = true;
-        
+
         if (isRefreshing) {
           try {
             const newToken = await new Promise<string>((resolve, reject) => {
@@ -115,25 +115,25 @@ api.interceptors.response.use(
                 resolve(token);
               });
             });
-            
+
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
             return api(originalRequest);
           } catch (refreshError) {
             return Promise.reject(refreshError);
           }
         }
-        
+
         isRefreshing = true;
-        
+
         try {
           const newToken = await refreshAuthToken();
-          
+
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          
+
           onRefreshed(newToken);
-          
+
           isRefreshing = false;
-          
+
           return api(originalRequest);
         } catch (refreshError) {
           isRefreshing = false;
@@ -141,7 +141,7 @@ api.interceptors.response.use(
         }
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
