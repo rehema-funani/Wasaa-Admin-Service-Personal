@@ -4,12 +4,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
 import { formatErrorMessage } from '../../../utils/formatting';
 import userService from '../../../api/services/users';
+import Cookies from 'js-cookie';
 
-const page = () => {
+const OtpVerificationPage = () => {
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(60);
   const [isLoading, setIsLoading] = useState(false);
   const [canResend, setCanResend] = useState(false);
+
   type Errors = {
     general?: string;
     otp?: string;
@@ -19,7 +21,7 @@ const page = () => {
   const location = useLocation();
   const userId = location.state?.user_id;
   const navigate = useNavigate();
-  const inputRefs = useRef([]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, 6);
@@ -31,14 +33,9 @@ const page = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     navigate('/');
-  //   }
-  // }, [isAuthenticated, navigate]);
-
+  // Timer for OTP resend
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout;
 
     if (timer > 0 && !canResend) {
       interval = setInterval(() => {
@@ -53,7 +50,27 @@ const page = () => {
     };
   }, [timer, canResend]);
 
-  const handleSubmit = async (e) => {
+  const saveAuthDataToCookies = (response: any) => {
+    if (!response) return;
+
+    const accessToken = response.tokens?.access_token;
+    const refreshToken = response.tokens?.refresh_token;
+
+    const userData = response.user;
+
+    if (!userData) {
+      console.error('User data is missing in the response');
+      return;
+    }
+
+    const cookieOptions = { expires: 200, secure: true };
+
+    Cookies.set('authToken', accessToken, cookieOptions);
+    Cookies.set('refreshToken', refreshToken, cookieOptions);
+    Cookies.set('userData', JSON.stringify(userData), cookieOptions);
+  };
+
+  const handleSubmit = async (e?: React.FormEvent) => {
     if (e && e.preventDefault) {
       e.preventDefault();
     }
@@ -65,33 +82,64 @@ const page = () => {
       return;
     }
 
+    if (!userId) {
+      setErrors({ general: 'User ID is missing. Please go back to login page.' });
+      return;
+    }
+
+    setIsLoading(true);
+
     const payload = {
       otp: otpValue,
       user_id: userId,
       source: 'web'
-    }
+    };
 
     try {
-      await userService.verifyOtp(payload);
+      const response = await userService.verifyOtp(payload);
+
+      saveAuthDataToCookies(response);
+
+      setErrors({});
+
       navigate('/');
     } catch (err) {
       setErrors({
         general: formatErrorMessage(err) || 'Verification failed. Please try again.'
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleResendOtp = () => {
-    setCanResend(false);
-    setTimer(60);
-    setErrors({});
-    setOtpValues(['', '', '', '', '', '']);
-    if (inputRefs.current[0]) {
-      inputRefs.current[0].focus();
+  const handleResendOtp = async () => {
+    if (!userId) {
+      setErrors({ general: 'User ID is missing. Cannot resend OTP.' });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Add your resend OTP API call here
+      // await userService.resendOtp({ user_id: userId, source: 'web' });
+
+      setCanResend(false);
+      setTimer(60);
+      setErrors({});
+      setOtpValues(['', '', '', '', '', '']);
+      if (inputRefs.current[0]) {
+        inputRefs.current[0].focus();
+      }
+    } catch (err) {
+      setErrors({
+        general: formatErrorMessage(err) || 'Failed to resend OTP. Please try again.'
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleOtpChange = (index, value) => {
+  const handleOtpChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
 
     const newOtpValues = [...otpValues];
@@ -111,25 +159,13 @@ const page = () => {
 
       if (allBoxesFilled) {
         setTimeout(() => {
-          const payload = {
-            otp: newOtpValues.join(''),
-            user_id: userId,
-            source: 'web'
-          };
-
-          userService.verifyOtp(payload)
-            .then(() => navigate('/'))
-            .catch((err) => {
-              setErrors({
-                general: formatErrorMessage(err) || 'Verification failed. Please try again.'
-              });
-            });
+          handleSubmit();
         }, 300);
       }
     }
   };
 
-  const handleKeyDown = (index, e) => {
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -145,7 +181,7 @@ const page = () => {
     }
   };
 
-  const handlePaste = (e) => {
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text');
 
@@ -162,24 +198,12 @@ const page = () => {
 
     const focusIndex = Math.min(digits.length, 5);
     if (inputRefs.current[focusIndex]) {
-      inputRefs.current[focusIndex].focus();
+      inputRefs.current[focusIndex]?.focus();
     }
 
     if (digits.length >= 6) {
       setTimeout(() => {
-        const payload = {
-          otp: newOtpValues.join(''),
-          user_id: userId,
-          source: 'web'
-        };
-
-        userService.verifyOtp(payload)
-          .then(() => navigate('/'))
-          .catch((err) => {
-            setErrors({
-              general: formatErrorMessage(err) || 'Verification failed. Please try again.'
-            });
-          });
+        handleSubmit();
       }, 300);
     }
   };
@@ -327,7 +351,7 @@ const page = () => {
             </div>
 
             <motion.button
-              onClick={handleSubmit}
+              onClick={() => handleSubmit()}
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               className="w-full flex justify-center items-center py-2.5 px-4 mt-2 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-primary-500 hover:shadow-md focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-teal-500 transition-all duration-150"
@@ -376,4 +400,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default OtpVerificationPage;
