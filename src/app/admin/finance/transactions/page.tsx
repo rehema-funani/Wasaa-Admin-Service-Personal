@@ -28,9 +28,47 @@ import {
   Clock
 } from 'lucide-react';
 import { FilterOptions } from '../../../../types/finance';
-import { Transaction } from '../../../../types/transaction';
 import { useTransactions } from '../../../../hooks/useFinance';
 import financeService from '../../../../api/services/finance';
+
+// Define transaction interface based on the actual API response
+interface Wallet {
+  id: string;
+  user_uuid: string;
+  group_uuid: string | null;
+  type: string;
+  status: string;
+  availableBalance: string;
+  lockedBalance: string;
+  debit: string;
+  credit: string;
+  currencyId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Transaction {
+  id: string;
+  user_uuid: string;
+  amount: string;
+  description: string;
+  source: string | null;
+  type: string;
+  debit: string;
+  credit: string;
+  status: string;
+  counterpartyId: string | null;
+  reference: string;
+  createdAt: string;
+  wallet: Wallet;
+}
+
+interface TransactionResponse {
+  transactions: Transaction[];
+  total: number;
+  page: number;
+  pages: number;
+}
 
 interface PaginationData {
   total: number;
@@ -89,11 +127,12 @@ const TransactionsPage: React.FC = () => {
   const {
     transactions: fetchedTransactions,
     isLoading,
-    error,
-    fetchTransactions
+    error
   } = useTransactions(filterOptions, false);
 
-  const [transactions, setTransactions] = useState<any>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLocalLoading, setIsLocalLoading] = useState(true);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -111,36 +150,51 @@ const TransactionsPage: React.FC = () => {
 
   useEffect(() => {
     const loadTransactions = async () => {
+      setIsLocalLoading(true);
       try {
         const result = await financeService.getAllTransactions();
         if (result) {
           setTransactions(result.transactions || []);
           setPaginationData({
-            total: result.length,
-            page: currentPage,
-            pages: Math.ceil(result.length / itemsPerPage)
+            total: Array.isArray(result.transactions)
+              ? result.transactions.length
+              : (result.total || 0),
+            page: result.page || currentPage,
+            pages: result.pages || Math.ceil(
+              Array.isArray(result.transactions)
+                ? result.transactions.length / itemsPerPage
+                : 1
+            )
           });
+          setLocalError(null);
         }
       } catch (err) {
         console.error('Error fetching transactions:', err);
+        setLocalError('Failed to fetch transaction data. Please try again.');
+      } finally {
+        setIsLocalLoading(false);
       }
     };
 
     loadTransactions();
   }, [currentPage, itemsPerPage, searchQuery, filterStatus]);
 
+  // Sort transactions based on the current sort configuration
   const sortTransactions = useCallback((transactionsToSort: Transaction[], key: string, direction: 'asc' | 'desc') => {
     return [...transactionsToSort].sort((a, b) => {
       if (key === 'amount') {
-        const aAmount = getTransactionAmount(a);
-        const bAmount = getTransactionAmount(b);
+        const aAmount = parseFloat(a.amount);
+        const bAmount = parseFloat(b.amount);
         return direction === 'asc' ? aAmount - bAmount : bAmount - aAmount;
       } else if (key === 'createdAt') {
         return direction === 'asc'
           ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      } else if (key === 'balance') {
-        return direction === 'asc' ? a.balance - b.balance : b.balance - a.balance;
+      } else if (key === 'walletBalance') {
+        // For balance, we'll use the wallet's availableBalance
+        const aBalance = a.wallet ? parseFloat(a.wallet.availableBalance || '0') : 0;
+        const bBalance = b.wallet ? parseFloat(b.wallet.availableBalance || '0') : 0;
+        return direction === 'asc' ? aBalance - bBalance : bBalance - aBalance;
       } else if (key === 'type') {
         const aType = getTransactionType(a);
         const bType = getTransactionType(b);
@@ -153,11 +207,11 @@ const TransactionsPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (fetchedTransactions.length > 0) {
-      const sorted = sortTransactions(fetchedTransactions, sortConfig.key, sortConfig.direction);
+    if (transactions.length > 0) {
+      const sorted = sortTransactions(transactions, sortConfig.key, sortConfig.direction);
       setTransactions(sorted);
     }
-  }, [fetchedTransactions, sortConfig, sortTransactions]);
+  }, [sortConfig, sortTransactions]);
 
   const formatDateTime = (dateString: string): { date: string; time: string } => {
     try {
@@ -179,20 +233,25 @@ const TransactionsPage: React.FC = () => {
     }
   };
 
+  // Map the API transaction types to user-friendly display types
   const getTransactionType = (transaction: Transaction): string => {
-    if (transaction.type === 'deposit') {
-      return 'Deposit';
-    } else if (transaction.type === 'withdrawal') {
-      return 'Withdrawal';
-    } else if (transaction.type === 'transfer') {
-      return 'Transfer';
-    } else {
-      return transaction.type || 'Other';
+    if (!transaction.type) return 'Other';
+
+    switch (transaction.type.toUpperCase()) {
+      case 'TOPUP':
+        return 'Deposit';
+      case 'WITHDRAW':
+        return 'Withdrawal';
+      case 'TRANSFER':
+        return 'Transfer';
+      default:
+        return transaction.type;
     }
   };
 
+  // Get transaction amount as a number
   const getTransactionAmount = (transaction: Transaction): number => {
-    return transaction.amount || 0;
+    return parseFloat(transaction.amount) || 0;
   };
 
   const handleViewTransaction = (transaction: Transaction) => {
@@ -317,29 +376,43 @@ const TransactionsPage: React.FC = () => {
     );
   };
 
+  // Map API status to UI status
+  const mapTransactionStatus = (status: string): string => {
+    if (!status) return 'pending';
+
+    switch (status.toUpperCase()) {
+      case 'COMPLETED':
+        return 'completed';
+      case 'PENDING':
+        return 'pending';
+      case 'FAILED':
+        return 'failed';
+      default:
+        return status.toLowerCase();
+    }
+  };
+
   const renderStatusBadge = (status: string) => {
+    const mappedStatus = mapTransactionStatus(status);
     let bgColor = 'bg-neutral-100';
     let textColor = 'text-neutral-700';
     let borderColor = 'border-neutral-200';
     let icon = null;
 
-    switch (status) {
+    switch (mappedStatus) {
       case 'completed':
-      case 'Complete':
         bgColor = 'bg-success-50';
         textColor = 'text-success-700';
         borderColor = 'border-success-200';
         icon = <CheckCircle size={12} className="mr-1 text-success-500" />;
         break;
       case 'pending':
-      case 'Pending':
         bgColor = 'bg-warning-50';
         textColor = 'text-warning-700';
         borderColor = 'border-warning-200';
         icon = <Clock size={12} className="mr-1 text-warning-500" />;
         break;
       case 'failed':
-      case 'Failed':
         bgColor = 'bg-danger-50';
         textColor = 'text-danger-700';
         borderColor = 'border-danger-200';
@@ -350,7 +423,7 @@ const TransactionsPage: React.FC = () => {
     return (
       <div className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md border ${bgColor} ${textColor} ${borderColor}`}>
         {icon}
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+        {mappedStatus.charAt(0).toUpperCase() + mappedStatus.slice(1)}
       </div>
     );
   };
@@ -430,7 +503,39 @@ const TransactionsPage: React.FC = () => {
     );
   };
 
-  if (error) {
+  // Determine wallet balance - handle NaN cases
+  const getWalletBalance = (wallet: Wallet): string => {
+    if (!wallet) return "0.00";
+
+    const availableBalance = wallet.availableBalance;
+    if (availableBalance === "NaN") {
+      // If availableBalance is NaN, calculate from credit-debit
+      const credit = parseFloat(wallet.credit || "0");
+      const debit = parseFloat(wallet.debit || "0");
+
+      if (isNaN(debit)) {
+        return credit.toFixed(2);
+      }
+
+      return (credit - debit).toFixed(2);
+    }
+
+    return parseFloat(availableBalance).toFixed(2);
+  };
+
+  // Get reference number in a user-friendly format
+  const formatReference = (reference: string): string => {
+    if (!reference) return "N/A";
+
+    // If it starts with CREDIT- or DEBIT-, remove that prefix
+    if (reference.startsWith("CREDIT-") || reference.startsWith("DEBIT-")) {
+      return reference.split("-")[1];
+    }
+
+    return reference;
+  };
+
+  if (localError || error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center p-6">
         <div className="bg-white/90 backdrop-blur-xl p-8 rounded-xl border border-primary-100 shadow-card text-center max-w-md">
@@ -438,9 +543,9 @@ const TransactionsPage: React.FC = () => {
             <AlertTriangle size={24} className="text-danger-600" />
           </div>
           <h3 className="text-lg font-semibold text-neutral-900 mb-2">Transaction Data Unavailable</h3>
-          <p className="text-neutral-600 mb-6">{error}</p>
+          <p className="text-neutral-600 mb-6">{localError || error}</p>
           <button
-            onClick={() => fetchTransactions()}
+            onClick={() => window.location.reload()}
             className="px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors shadow-button"
           >
             Refresh Data
@@ -487,7 +592,7 @@ const TransactionsPage: React.FC = () => {
               <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
               <input
                 type="text"
-                placeholder="Search by ID, amount, or description..."
+                placeholder="Search by ID, reference, or description..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="w-full pl-12 pr-12 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 placeholder-neutral-500 focus:ring-2 focus:ring-primary-500/30 transition-all shadow-sm"
@@ -521,7 +626,7 @@ const TransactionsPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          {isLoading ? (
+          {isLoading || isLocalLoading ? (
             <div className="flex flex-col items-center justify-center h-64">
               <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
               <p className="text-neutral-500">Loading transaction data...</p>
@@ -572,6 +677,9 @@ const TransactionsPage: React.FC = () => {
                         </button>
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                        Reference
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                         Status
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -586,10 +694,10 @@ const TransactionsPage: React.FC = () => {
                       <th className="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">
                         <button
                           className="flex items-center ml-auto focus:outline-none"
-                          onClick={() => handleSort('balance')}
+                          onClick={() => handleSort('walletBalance')}
                         >
-                          Balance
-                          {renderSortIcon('balance')}
+                          Wallet Balance
+                          {renderSortIcon('walletBalance')}
                         </button>
                       </th>
                       <th className="px-6 py-3 text-center text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -633,11 +741,7 @@ const TransactionsPage: React.FC = () => {
                                 <div className="ml-3">
                                   <p className="text-sm font-medium text-neutral-900">{type}</p>
                                   <p className="text-xs text-neutral-500">
-                                    {transaction.userId ? (
-                                      <>User: {transaction.userId}</>
-                                    ) : (
-                                      "System"
-                                    )}
+                                    {transaction.description || "-"}
                                   </p>
                                 </div>
                               </div>
@@ -647,6 +751,9 @@ const TransactionsPage: React.FC = () => {
                               <p className="text-xs text-neutral-500">{time}</p>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
+                              <p className="text-sm text-neutral-700">{formatReference(transaction.reference)}</p>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
                               {renderStatusBadge(transaction.status)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -654,7 +761,7 @@ const TransactionsPage: React.FC = () => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
                               <span className="text-sm font-medium text-neutral-900">
-                                {formatCurrency(transaction.balance)}
+                                {formatCurrency(parseFloat(getWalletBalance(transaction.wallet)))}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-center">

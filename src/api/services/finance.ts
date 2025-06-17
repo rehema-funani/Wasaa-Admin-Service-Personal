@@ -179,7 +179,7 @@ class FinanceService {
 
   async getTransaction(transactionId: string): Promise<Transaction> {
     try {
-      const response = await finance.get(`/userWalletTransactions/${transactionId}`);
+      const response = await finance.get(`/transactions/${transactionId}`);
       return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get transaction ${transactionId}`);
@@ -221,7 +221,7 @@ class FinanceService {
   // ======== TOP-UP ENDPOINTS ========
   async getAllTopUps(filters: FilterOptions = {}): Promise<TopUp[]> {
     try {
-      const response = await finance.get('/deposits/filter', { params: filters });
+      const response = await finance.get('/deposits', { params: filters });
       return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get top-ups');
@@ -374,7 +374,7 @@ class FinanceService {
   // ======== WALLET REFUND ENDPOINTS ========
   async getRefunds(filters: FilterOptions = {}): Promise<Refund[]> {
     try {
-      const response = await finance.get('/walletRefunds', { params: filters });
+      const response = await finance.get('/disputes', { params: filters });
       return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get refunds');
@@ -383,7 +383,7 @@ class FinanceService {
 
   async getRefund(refundId: string): Promise<Refund> {
     try {
-      const response = await finance.get(`/walletRefunds/${refundId}`);
+      const response = await finance.get(`/disputes/${refundId}`);
       return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get refund ${refundId}`);

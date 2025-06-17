@@ -33,17 +33,17 @@ import toast from 'react-hot-toast';
 import financeService from '../../../../api/services/finance';
 
 const TransactionReceiptPage: React.FC = () => {
-    const { transactionId } = useParams<{ transactionId: string }>();
+    const { id } = useParams<any>();
     const location = useLocation();
     const navigate = useNavigate();
 
     const transaction: Transaction | null = location.state?.transaction || null;
 
     useEffect(() => {
-        if (!transaction && transactionId) {
-            financeService.getTransaction(transactionId);
+        if (id) {
+            financeService.getTransaction(id);
         }
-    }, [transaction, transactionId]);
+    }, [transaction, id]);
 
     if (!transaction) {
         return (
