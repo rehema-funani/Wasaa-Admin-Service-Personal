@@ -35,6 +35,7 @@ const ReportedGroups = lazy(() => import('./app/admin/Group/all-reported-group-l
 const RolesPage = lazy(() => import('./app/admin/roles/roles'));
 const RoleDetail = lazy(() => import('./app/admin/roles/roledetail'));
 const CreateRole = lazy(() => import('./app/admin/roles/createrole'));
+const EditRole = lazy(() => import('./app/admin/roles/editrole'));
 const SystemUsers = lazy(() => import('./app/admin/roles/user-settings'));
 const AdminUserDetails = lazy(() => import('./app/admin/roles/userdetail'));
 
@@ -276,6 +277,11 @@ const AppRouter: React.FC = () => {
             <Route path="admin/system/roles/create" element={
               <PermissionRouteGuard permissions={PermissionMap.Roles.create}>
                 <CreateRole />
+              </PermissionRouteGuard>
+            } />
+            <Route path="admin/system/roles/:id/edit" element={
+              <PermissionRouteGuard permissions={PermissionMap.Roles.update}>
+                <EditRole />
               </PermissionRouteGuard>
             } />
             <Route path='admin/system/users' element={

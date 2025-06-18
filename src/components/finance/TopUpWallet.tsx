@@ -26,7 +26,6 @@ const TopUpWallet = ({
     setIsSubmitting(true)
     setError('')
 
-    // Prepare payload based on requirements
     const payload = {
       userWalletId: selectedWallet.id,
       amount: parseFloat(amount),
@@ -39,7 +38,6 @@ const TopUpWallet = ({
       console.log('Submitting top-up request:', payload)
       // await api.topUpWallet(payload)
 
-      // Simulate success
       setTimeout(() => {
         setIsSubmitting(false)
         setIsModalOpen(false)
@@ -52,7 +50,6 @@ const TopUpWallet = ({
 
   return (
     <div className="space-y-5 p-1">
-      {/* Balance Card */}
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-500/10 to-primary-600/20 backdrop-blur-sm p-5 border border-white/20 shadow-xl">
         <div className="absolute inset-0 bg-primary-400/10 backdrop-blur-[2px]"></div>
         <div className="absolute -top-24 -right-24 w-40 h-40 bg-primary-500/20 rounded-full blur-3xl"></div>
@@ -78,7 +75,6 @@ const TopUpWallet = ({
         </div>
       </div>
 
-      {/* Form Fields */}
       <div className="space-y-5">
         <div className="group">
           <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">

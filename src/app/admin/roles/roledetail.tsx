@@ -268,7 +268,7 @@ const roledetail: React.FC = () => {
                         </div>
                         <div className="flex space-x-3">
                             <button
-                                onClick={() => setIsEditModalOpen(true)}
+                                onClick={() => navigate(`/admin/system/roles/${id}/edit`)}
                                 className="px-4 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl shadow-sm flex items-center"
                             >
                                 <Edit size={16} className="mr-2" />

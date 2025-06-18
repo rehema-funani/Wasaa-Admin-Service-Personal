@@ -127,7 +127,7 @@ class FinanceService {
   // ======== USER WALLET ENDPOINTS ========
   async getAllWallets(filters: FilterOptions = {}): Promise<Wallet[]> {
     try {
-      const response = await finance.get('/userWallets', { params: filters });
+      const response = await finance.get('/wallets/filter?type=user', { params: filters });
       return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get wallets');
