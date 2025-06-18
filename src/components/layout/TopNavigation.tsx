@@ -10,10 +10,10 @@ import {
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 import logo from '../../assets/images/logo-wasaa.png';
-import { routePermissionsMap } from '../../utils/permissions';
+// Import the getUserPermissions function directly from your permissions utility
+import { getUserPermissions, routePermissionsMap } from '../../utils/permissions';
 
 const getRequiredPermissionsForRoute = (path: string) => {
-
   if (!routePermissionsMap[path]) {
     const pathParts = path.split('/');
     const possibleRoutes = Object.keys(routePermissionsMap);
@@ -43,7 +43,7 @@ const getRequiredPermissionsForRoute = (path: string) => {
   return routePermissionsMap[path] || [];
 };
 
-const hasPermissionForRoute = (path: string, userPermissions: any) => {
+const hasPermissionForRoute = (path: string, userPermissions: string[]) => {
   const requiredPermissions = getRequiredPermissionsForRoute(path);
   if (requiredPermissions.length === 0) {
     return true;
@@ -74,8 +74,12 @@ const TopNavigation = () => {
   const userMenuRef = useRef(null);
   const navigate = useNavigate();
 
+  // Get user data from localStorage
   const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : null;
-  const userPermissions = user?.role?.role_permissions;
+
+  // Use the getUserPermissions function to get permissions
+  const userPermissions = getUserPermissions();
+
   const notifications = [];
 
   useEffect(() => {
@@ -274,6 +278,7 @@ const TopNavigation = () => {
     setActiveNestedDropdown(activeNestedDropdown === key ? null : key);
   };
 
+  // Filter items based on permissions
   const filterItems = (items: any) => {
     return items.filter(item => {
       if (item.type === 'link') {
@@ -288,6 +293,7 @@ const TopNavigation = () => {
     });
   };
 
+  // Filter sections based on permissions
   const filterSections = (sections: any) => {
     return sections.filter(section => {
       if (section.type !== 'section') return true;
@@ -511,10 +517,7 @@ const TopNavigation = () => {
 
   return (
     <div className="fixed top-0 right-0 z-40 left-[60px] w-[calc(100%-60px)]">
-      {/* Advanced gradient bar with liquid animation */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 bg-[length:200%_100%] animate-gradient-flow"></div>
-
-      {/* Liquid light effects */}
       <div className="absolute -top-10 right-1/4 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl animate-blob"></div>
       <div className="absolute -bottom-20 left-1/3 w-60 h-60 bg-sky-400/10 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
 
@@ -523,7 +526,6 @@ const TopNavigation = () => {
         : 'bg-white/50 backdrop-blur-xl'
         }`}>
 
-        {/* Highlight reflections */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-10 left-1/4 w-40 h-1 bg-white/80 blur-sm rotate-45 transform-gpu animate-shine"></div>
           <div className="absolute top-20 right-1/4 w-60 h-0.5 bg-white/60 blur-sm -rotate-45 transform-gpu animate-shine animation-delay-2000"></div>
@@ -898,7 +900,7 @@ const TopNavigation = () => {
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-semibold text-gray-800">{user?.name}</div>
-                  <div className="text-xs text-indigo-600">{user?.role}</div>
+                  <div className="text-xs text-indigo-600">{user?.role?.title}</div>
                 </div>
                 <button
                   onClick={handleLogout}

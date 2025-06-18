@@ -290,9 +290,6 @@ export const PermissionMap = {
   ]
 };
 
-/**
- * Updated route permissions map with all routes and their required permissions
- */
 export const routePermissionsMap = {
   // Dashboard and main routes
   '/': [],
