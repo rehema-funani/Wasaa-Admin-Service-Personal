@@ -146,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
+  const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData') as string) : null;
   const userPermissions = user?.permissions || [];
 
   useEffect(() => {
@@ -242,7 +242,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
           >
             <div
               className={`
-                flex items-center py-2.5 px-3 rounded-xl transition-all duration-300 relative 
+                flex items-center py-2.5 px-3 rounded-xl transition-all duration-300 relative
                 hover:translate-x-0.5 group/item
                 ${isActivePage
                   ? 'text-primary-700 font-medium border-0 bg-gradient-to-r from-primary-50/80 to-teal-50/60'
@@ -253,7 +253,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
             >
               {isActivePage && (
                 <div
-                  className="absolute inset-0 bg-gradient-to-r from-primary-50/70 via-teal-50/50 to-primary-50/40 rounded-xl backdrop-blur-sm 
+                  className="absolute inset-0 bg-gradient-to-r from-primary-50/70 via-teal-50/50 to-primary-50/40 rounded-xl backdrop-blur-sm
                   ring-1 ring-primary-100/30 shadow-sm"
                   style={{ zIndex: -1 }}
                 />
@@ -269,7 +269,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
                 </div>
               )}
               <span
-                className={`text-sm transition-all font-medium 
+                className={`text-sm transition-all font-medium
                   ${isActivePage ? 'text-primary-700' : 'text-gray-600 group-hover/item:text-primary-600'}
                 `}
               >
@@ -278,7 +278,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
               {(isHovered || isActivePage) && (
                 <span
-                  className={`ml-auto text-primary-500 opacity-0 group-hover/item:opacity-100 transition-all duration-300 
+                  className={`ml-auto text-primary-500 opacity-0 group-hover/item:opacity-100 transition-all duration-300
                     ${isActivePage ? 'opacity-70' : ''}`}
                 >
                   <ArrowRight size={14} />
@@ -287,7 +287,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
 
               {isActivePage && (
                 <div
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-gradient-to-b from-primary-600 via-teal-500 to-primary-500 
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-gradient-to-b from-primary-600 via-teal-500 to-primary-500
                   rounded-r-full shadow-md shadow-primary-200"
                 />
               )}
@@ -313,7 +313,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
             onClick={() => toggleDropdown(item.key)}
             className={`
               flex items-center justify-between w-full py-2.5 px-3 rounded-xl transition-all duration-300
-              hover:translate-x-0.5 
+              hover:translate-x-0.5
               ${hasActive || isOpen
                 ? 'text-primary-700 font-medium'
                 : 'text-gray-700 hover:text-primary-600'
@@ -348,19 +348,19 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
             </div>
             <div
               className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300
-                ${isOpen ? 'bg-primary-50 rotate-180' : 'bg-transparent group-hover/dropdown:bg-primary-50/50'} 
+                ${isOpen ? 'bg-primary-50 rotate-180' : 'bg-transparent group-hover/dropdown:bg-primary-50/50'}
               `}
             >
               <ChevronDown
                 size={14}
-                className={`transition-transform duration-300 
+                className={`transition-transform duration-300
                   ${isOpen ? "text-primary-500 transform rotate-180" : "text-gray-400 group-hover/dropdown:text-primary-400"}`}
               />
             </div>
           </button>
 
           <div
-            className={`overflow-hidden transition-all duration-300 ease-in-out 
+            className={`overflow-hidden transition-all duration-300 ease-in-out
               ${isOpen ? 'max-h-96 opacity-100 my-1' : 'max-h-0 opacity-0'}`}
           >
             <div
@@ -407,12 +407,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
                 </div>
                 <div
                   className={`flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300
-                    ${isOpen ? 'bg-primary-50' : 'bg-transparent group-hover/section:bg-primary-50/50'} 
+                    ${isOpen ? 'bg-primary-50' : 'bg-transparent group-hover/section:bg-primary-50/50'}
                   `}
                 >
                   <ChevronDown
                     size={12}
-                    className={`transition-transform duration-300 
+                    className={`transition-transform duration-300
                       ${isOpen ? "text-primary-500 transform rotate-180" : "text-gray-400 group-hover/section:text-primary-400"}`}
                   />
                 </div>
@@ -421,7 +421,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
             </div>
           )}
           <div
-            className={`overflow-hidden transition-all duration-300 ease-in-out 
+            className={`overflow-hidden transition-all duration-300 ease-in-out
               ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
           >
             <div className="space-y-0.5">
@@ -544,7 +544,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-        
+
         /* Financial glass morphism */
         .finance-glass-morphism {
           background: rgba(255, 255, 255, 0.95);
@@ -553,26 +553,26 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
           border-right: 1px solid rgba(235, 245, 240, 0.3);
           box-shadow: 0 8px 32px rgba(15, 42, 23, 0.03);
         }
-        
+
         /* Animation keyframes */
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(5px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        
+
         @keyframes slideIn {
           from { opacity: 0; transform: translateX(-5px); }
           to { opacity: 1; transform: translateX(0); }
         }
-        
+
         .animate-fadeIn {
           animation: fadeIn 0.3s ease-out forwards;
         }
-        
+
         .animate-slideIn {
           animation: slideIn 0.25s ease-out forwards;
         }
-        
+
         /* For dropdown animation - smoother transitions */
         .max-h-96 {
           max-height: 24rem;

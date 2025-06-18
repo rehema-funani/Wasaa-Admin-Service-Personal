@@ -59,9 +59,9 @@ export const userService = {
     }
   },
 
-  async verifyOtp(payload: { otp: string; user_id: string; source?: string }): Promise<LoginResponse> {
+  async verifyOtp(payload: { otp: string; user_id: string; source?: string }): Promise<any> {
   try {
-    const response = await axios.post<LoginResponse>(
+    const response = await axios.post<any>(
       'http://138.68.190.213:3010/auth/verify-otp',
       payload,
       {

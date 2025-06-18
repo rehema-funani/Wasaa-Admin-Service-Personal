@@ -2,11 +2,18 @@ import Cookies from 'js-cookie';
 
 export const getUserPermissions = (): string[] => {
   try {
-    const userData = Cookies.get('userData');
+    const userData = localStorage.getItem('userData');
     if (!userData) return [];
-    
+
     const user = JSON.parse(userData);
-    return user.permissions || [];
+
+    if (user?.role?.role_permissions?.length > 0) {
+      return user.role.role_permissions.map(
+        (item: { permissions: { title: string } }) => item.permissions.title
+      );
+    }
+
+    return [];
   } catch (error) {
     console.error('Error fetching user permissions:', error);
     return [];
@@ -20,14 +27,14 @@ export const hasPermission = (permission: string): boolean => {
 
 export const hasAnyPermission = (requiredPermissions: string[]): boolean => {
   if (requiredPermissions.length === 0) return true;
-  
+
   const permissions = getUserPermissions();
   return requiredPermissions.some(permission => permissions.includes(permission));
 };
 
 export const hasAllPermissions = (requiredPermissions: string[]): boolean => {
   if (requiredPermissions.length === 0) return true;
-  
+
   const permissions = getUserPermissions();
   return requiredPermissions.every(permission => permissions.includes(permission));
 };
@@ -54,6 +61,9 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
   return hasAccess ? (children as ReactNode) : (fallback as ReactNode);
 };
 
+/**
+ * Permission groups organized by feature
+ */
 export const PermissionMap = {
   ApiKeys: {
     create: ['can_create_apiKeys'],
@@ -180,12 +190,12 @@ export const PermissionMap = {
   },
 
   ViewReported: [
-    'can_view_reported_users', 
-    'can_view_reported_groups', 
-    'can_list_reports', 
+    'can_view_reported_users',
+    'can_view_reported_groups',
+    'can_list_reports',
     'can_view_reports'
   ],
-  
+
   Admin: [
     'can_view_settings',
     'can_update_settings',
@@ -212,20 +222,23 @@ export const PermissionMap = {
   ]
 };
 
+/**
+ * Get permissions required for a specific route
+ */
 export const getRequiredPermissionsForRoute = (path: string): string[] => {
   const routePermissionsMap: Record<string, string[]> = {
     '/': [],
-    
+
     '/admin/users/user-details': PermissionMap.Users.view,
     '/admin/users/countrywise-Analysis': PermissionMap.Users.view,
     '/admin/users/reported-user-list': [...PermissionMap.Users.view, ...PermissionMap.ViewReported],
-    
+
     '/admin/Group/all-group-list': PermissionMap.Groups.view,
     '/admin/Group/all-reported-group-list': [...PermissionMap.Groups.viewReported, ...PermissionMap.Reports.view],
-    
+
     '/admin/system/users': [...PermissionMap.Users.viewStaff, ...PermissionMap.Users.view],
     '/admin/system/roles': PermissionMap.Roles.view,
-    
+
     '/admin/livestreams/all-livestreams': [],
     '/admin/livestreams/scheduled': [],
     '/admin/livestreams/settings': PermissionMap.Settings.view,
@@ -234,7 +247,7 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/livestreams/analytics': [],
     '/admin/livestreams/moderation': [],
     '/admin/livestreams/reported': PermissionMap.Reports.view,
-    
+
     '/admin/finance/transactions': PermissionMap.Transactions.view,
     '/admin/finance/user-wallets': PermissionMap.Wallets.view,
     '/admin/finance/withdrawals': PermissionMap.Transactions.view,
@@ -247,21 +260,21 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/finance/tariffs': PermissionMap.Settings.view,
     '/admin/finance/limits': PermissionMap.Settings.view,
     '/admin/finance/compliance': PermissionMap.Settings.view,
-    
+
     '/admin/gifts/add-gift': PermissionMap.Media.create,
     '/admin/gifts/gift-list': PermissionMap.Media.view,
     '/admin/gifts/gift-categories': PermissionMap.Media.view,
-    
+
     '/admin/settings': PermissionMap.Settings.view,
     '/admin/languages': PermissionMap.Languages.view,
-    '/admin/logs': PermissionMap.Admin, 
+    '/admin/logs': PermissionMap.Admin,
     '/admin/support': [],
-    
+
     '/admin/Wallpaper/list-all-wallpaper': PermissionMap.Media.view,
     '/admin/Wallpaper/add-a-new-wallpaper': PermissionMap.Media.create,
     '/admin/Avatar/list-all-avatar': PermissionMap.Media.view,
     '/admin/Avatar/add-a-new-avatar': PermissionMap.Media.create,
-    
+
     '/admin/users/user-details/:id': PermissionMap.Users.view,
     '/admin/users/countrywise-Analysis/:id': PermissionMap.Users.view,
     '/admin/Group/all-group-list/:id': PermissionMap.Groups.view,
@@ -269,7 +282,7 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
     '/admin/system/roles/create': PermissionMap.Roles.create,
     '/admin/finance/user-wallets/:id': PermissionMap.Wallets.view,
     '/admin/languages/:id/translations': PermissionMap.Languages.view,
-    
+
     '/admin/support/teams': [],
     '/admin/support/teams/:id': [],
     '/admin/support/tickets': [],
@@ -293,13 +306,13 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
   if (!routePermissionsMap[path]) {
     const pathParts = path.split('/');
     const possibleRoutes = Object.keys(routePermissionsMap);
-    
+
     for (const route of possibleRoutes) {
       const routeParts = route.split('/');
-      
+
       if (routeParts.length === pathParts.length) {
         let isMatch = true;
-        
+
         for (let i = 0; i < routeParts.length; i++) {
           if (routeParts[i].startsWith(':') || routeParts[i] === pathParts[i]) {
             continue;
@@ -308,22 +321,28 @@ export const getRequiredPermissionsForRoute = (path: string): string[] => {
             break;
           }
         }
-        
+
         if (isMatch) {
           return routePermissionsMap[route];
         }
       }
     }
   }
-  
+
   return routePermissionsMap[path] || [];
 };
 
+/**
+ * Check if user has permission to access a specific route
+ */
 export const hasPermissionForRoute = (path: string): boolean => {
   const requiredPermissions = getRequiredPermissionsForRoute(path);
   return hasAnyPermission(requiredPermissions);
 };
 
+/**
+ * Helper functions for common permission checks
+ */
 export const canManageUsers = (): boolean => {
   return hasAnyPermission([
     ...PermissionMap.Users.create,

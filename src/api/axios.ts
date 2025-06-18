@@ -20,7 +20,7 @@ const onRefreshed = (token: string) => {
 
 const refreshAuthToken = async () => {
   try {
-    const refreshToken = Cookies.get('refreshToken');
+    const refreshToken = localStorage.getItem('refreshToken');
 
     if (!refreshToken) {
       throw new Error('No refresh token available');
@@ -72,7 +72,7 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     try {
-      const token = Cookies.get('authToken');
+      const token = localStorage.getItem('authToken');
 
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;

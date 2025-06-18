@@ -173,7 +173,7 @@ class RouteErrorBoundary extends React.Component<
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  const authToken = Cookies.get("authToken");
+  const authToken = localStorage.getItem("authToken");
   const isAuthenticated = !!authToken;
 
   useEffect(() => {

@@ -1,9 +1,9 @@
 export const setStorageItem = (key: string, value: any): void => {
   try {
-    const serializedValue = typeof value === 'object' 
-      ? JSON.stringify(value) 
+    const serializedValue = typeof value === 'object'
+      ? JSON.stringify(value)
       : String(value);
-      
+
     localStorage.setItem(key, serializedValue);
   } catch (error) {
     console.error('Error setting localStorage item:', error);
@@ -13,11 +13,11 @@ export const setStorageItem = (key: string, value: any): void => {
 export const getStorageItem = (key: string): any => {
   try {
     const item = localStorage.getItem(key);
-    
+
     if (item === null) {
       return null;
     }
-    
+
     try {
       return JSON.parse(item);
     } catch (e) {

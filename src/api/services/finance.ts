@@ -114,6 +114,16 @@ class FinanceService {
     }
   }
 
+  // ======= SYSTEM WALLET ENDPOINTS ========
+  async getSystemWallets(filters: FilterOptions = {}): Promise<Wallet[]> {
+    try {
+      const response = await finance.get('/wallets/system', { params: filters });
+      return response.data;
+    } catch (error) {
+      this.handleError(error, 'Failed to get system wallets');
+    }
+  }
+
   // ======== USER WALLET ENDPOINTS ========
   async getAllWallets(filters: FilterOptions = {}): Promise<Wallet[]> {
     try {

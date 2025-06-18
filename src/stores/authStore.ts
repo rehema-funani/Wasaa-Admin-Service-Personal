@@ -35,12 +35,12 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      accessToken: Cookies.get('authToken') || null,
-      refreshToken: Cookies.get('refreshToken') || null,
-      user: Cookies.get('user') ? JSON.parse(Cookies.get('user') || '{}') : null,
-      userType: (Cookies.get('userType') as UserType) || 'admin',
-      source: (Cookies.get('source') as Source) || 'web',
-      isAuthenticated: !!Cookies.get('authToken'),
+      accessToken: localStorage.getItem('authToken') || null,
+      refreshToken: localStorage.getItem('refreshToken') || null,
+      user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null,
+      userType: (localStorage.getItem('userType') as UserType) || 'admin',
+      source: (localStorage.getItem('source') as Source) || 'web',
+      isAuthenticated: !!localStorage.getItem('authToken'),
       isLoading: false,
       error: null,
 
@@ -119,7 +119,7 @@ export const useAuthStore = create<AuthState>()(
 
       // Refresh authentication
       refreshAuth: async () => {
-        const refreshToken = get().refreshToken || Cookies.get('refreshToken');
+        const refreshToken = get().refreshToken || localStorage.getItem('refreshToken');
         const userType = get().userType || 'admin';
         const source = get().source || 'web';
 

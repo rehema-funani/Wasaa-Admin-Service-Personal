@@ -33,7 +33,7 @@ const SlimSidebar = () => {
 
     // Get location and user data
     const location = useLocation();
-    const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null;
+    const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : null;
 
     // Update clock every minute
     useEffect(() => {
@@ -223,8 +223,8 @@ const SlimSidebar = () => {
                     <Link
                         to="/"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/')
-                                ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
-                                : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
+                            ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
+                            : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
                             }`}
                     >
                         <div className={`${isActive('/') ? 'text-indigo-300 dark:text-indigo-400' : ''}`}>
@@ -244,8 +244,8 @@ const SlimSidebar = () => {
                     <Link
                         to="/admin/logs"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/admin/logs')
-                                ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
-                                : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
+                            ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
+                            : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
                             }`}
                     >
                         <div className={`relative ${isActive('/admin/logs') ? 'text-indigo-300 dark:text-indigo-400' : ''}`}>
@@ -275,8 +275,8 @@ const SlimSidebar = () => {
                     <Link
                         to="/admin/finance/reports"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/admin/finance/reports')
-                                ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
-                                : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
+                            ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
+                            : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
                             }`}
                     >
                         <div className={`${isActive('/admin/finance/reports') ? 'text-indigo-300 dark:text-indigo-400' : ''}`}>
@@ -312,8 +312,8 @@ const SlimSidebar = () => {
                     <Link
                         to="/accounts/profile"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/accounts/profile')
-                                ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
-                                : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
+                            ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
+                            : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
                             }`}
                     >
                         <div className={`${isActive('/accounts/profile') ? 'text-indigo-300 dark:text-indigo-400' : ''}`}>
@@ -333,8 +333,8 @@ const SlimSidebar = () => {
                     <Link
                         to="/admin/settings"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/admin/settings')
-                                ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
-                                : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
+                            ? 'bg-indigo-600/20 text-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-300'
+                            : 'text-primary-200 dark:text-primary-300 hover:text-white hover:bg-primary-700/50 dark:hover:bg-dark-hover'
                             }`}
                     >
                         <div className={`${isActive('/admin/settings') ? 'text-indigo-300 dark:text-indigo-400' : ''}`}>
@@ -398,7 +398,7 @@ const SlimSidebar = () => {
                 .animate-fadeIn {
                     animation: fadeIn 0.2s ease-out forwards;
                 }
-                
+
                 @keyframes pulse {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0.5; }

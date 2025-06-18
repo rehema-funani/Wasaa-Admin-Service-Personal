@@ -16,12 +16,12 @@ export const supportaxios = axios.create({
 supportaxios.interceptors.request.use(
   (config) => {
     try {
-      const token = Cookies.get('authToken');
-      
+      const token = localStorage.getItem('authToken');
+
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-      
+
       return config;
     } catch (error) {
       return config;
@@ -41,13 +41,13 @@ supportaxios.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       handleLogout();
     }
-    
-    if (error.response && 
-        error.response.data && 
+
+    if (error.response &&
+        error.response.data &&
         error.response.data.message === "Authorization token invalid or expired!") {
       handleLogout();
     }
-    
+
     return Promise.reject(error);
   }
 );

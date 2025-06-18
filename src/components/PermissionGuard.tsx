@@ -1,33 +1,42 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { hasAnyPermission } from '../utils/permissions';
+import { hasAnyPermission, getUserPermissions } from '../utils/permissions';
 
-interface PermissionRouteGuardProps {
-    permissions: string[];
-    children: React.ReactNode;
-    redirectTo?: string;
-}
-
-const PermissionRouteGuard: React.FC<PermissionRouteGuardProps> = ({
-    permissions,
-    children,
-    redirectTo = '/unauthorized'
+const PermissionRouteGuard = ({
+  permissions,
+  children,
+  redirectTo = '/unauthorized'
 }) => {
-    const location = useLocation();
-    const hasAccess = hasAnyPermission(permissions);
+  const location = useLocation();
 
+  const userData = localStorage.getItem('userData');
+  const parsedUserData = userData ? JSON.parse(userData) : null;
+
+  const userPermissions = getUserPermissions();
+
+  const hasAccess = hasAnyPermission(permissions);
+
+  useEffect(() => {
     if (!hasAccess) {
-        return (
-            <Navigate
-                to={redirectTo}
-                state={{ from: location.pathname }}
-                replace
-            />
-        );
-    }
 
-    return <>{children}</>;
+    }
+  }, [hasAccess, permissions, userPermissions, userData, parsedUserData]);
+
+  if (!hasAccess) {
+    setTimeout(() => {
+      console.log('Redirecting to unauthorized page');
+    }, 100);
+
+    return (
+      <Navigate
+        to={redirectTo}
+        state={{ from: location.pathname }}
+        replace
+      />
+    );
+  }
+
+  return <>{children}</>;
 };
 
 export default PermissionRouteGuard;

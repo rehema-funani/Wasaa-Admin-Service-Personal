@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import useAuth from '../../../hooks/useAuth';
 import { formatErrorMessage } from '../../../utils/formatting';
 import userService from '../../../api/services/users';
 import Cookies from 'js-cookie';
@@ -33,7 +32,6 @@ const OtpVerificationPage = () => {
     }
   }, []);
 
-  // Timer for OTP resend
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -53,21 +51,7 @@ const OtpVerificationPage = () => {
   const saveAuthDataToCookies = (response: any) => {
     if (!response) return;
 
-    const accessToken = response.tokens?.access_token;
-    const refreshToken = response.tokens?.refresh_token;
 
-    const userData = response.user;
-
-    if (!userData) {
-      console.error('User data is missing in the response');
-      return;
-    }
-
-    const cookieOptions = { expires: 200, secure: true };
-
-    Cookies.set('authToken', accessToken, cookieOptions);
-    Cookies.set('refreshToken', refreshToken, cookieOptions);
-    Cookies.set('userData', JSON.stringify(userData), cookieOptions);
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -97,11 +81,18 @@ const OtpVerificationPage = () => {
 
     try {
       const response = await userService.verifyOtp(payload);
+      console.log(response);
+      const accessToken = response.tokens?.access_token;
+      const refreshToken = response.tokens?.refresh_token;
+      const userData = response.user;
 
-      saveAuthDataToCookies(response);
 
-      setErrors({});
+      localStorage.setItem('authToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('userData', JSON.stringify(userData));
+      console.log('User data saved to localStorage:', userData);
 
+      // setErrors({});
       navigate('/');
     } catch (err) {
       setErrors({
@@ -120,7 +111,6 @@ const OtpVerificationPage = () => {
 
     setIsLoading(true);
     try {
-      // Add your resend OTP API call here
       // await userService.resendOtp({ user_id: userId, source: 'web' });
 
       setCanResend(false);

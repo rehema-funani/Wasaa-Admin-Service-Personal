@@ -132,7 +132,7 @@ const TopNavigation = () => {
 
   const navigate = useNavigate();
 
-  const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData')) : null;
+  const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : null;
   const userPermissions = user?.permissions || [];
 
   const notifications = [
@@ -320,14 +320,14 @@ const TopNavigation = () => {
         );
       case 'system':
         return (
-          <div className="p-2 rounded-full bg-primary-50/80 border border-primary-100/80 backdrop-blur-sm">
-            <Shield size={16} className="text-primary-500" />
+          <div className="p-2 rounded-full bg-violet-50/80 border border-violet-100/80 backdrop-blur-sm">
+            <Shield size={16} className="text-violet-500" />
           </div>
         );
       default:
         return (
-          <div className="p-2 rounded-full bg-secondary-50/80 border border-secondary-100/80 backdrop-blur-sm">
-            <Bell size={16} className="text-secondary-500" />
+          <div className="p-2 rounded-full bg-indigo-50/80 border border-indigo-100/80 backdrop-blur-sm">
+            <Bell size={16} className="text-indigo-500" />
           </div>
         );
     }
@@ -372,50 +372,50 @@ const TopNavigation = () => {
       <div key={dropdown.key} className="relative">
         <button
           onClick={() => handleNestedDropdownToggle(dropdown.key)}
-          className={`w-full flex items-center p-4 rounded-2xl transition-all duration-300 ${isActive
-            ? 'bg-gradient-to-r from-secondary-100/80 to-primary-100/80 text-secondary-700 shadow-sm shadow-secondary-500/10'
-            : 'hover:bg-gradient-to-r hover:from-secondary-50/60 hover:to-primary-50/60'
+          className={`w-full flex items-center p-4 rounded-2xl transition-all duration-500 ${isActive
+            ? 'bg-gradient-to-r from-indigo-100/90 to-sky-100/90 text-indigo-700 shadow-xl shadow-indigo-500/10'
+            : 'hover:bg-gradient-to-r hover:from-indigo-50/60 hover:to-sky-50/60'
             }`}
         >
-          <div className={`flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300 mr-4 shadow-sm ${isActive
-            ? 'bg-gradient-to-br from-secondary-200/90 to-primary-200/90 scale-105'
-            : 'bg-gradient-to-br from-slate-100/90 to-slate-50/90 group-hover:from-secondary-100/90 group-hover:to-primary-100/90'
+          <div className={`flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-500 mr-4 shadow-lg ${isActive
+            ? 'bg-gradient-to-br from-indigo-200/90 to-sky-200/90 scale-105'
+            : 'bg-gradient-to-br from-white/90 to-slate-50/90 group-hover:from-indigo-100/90 group-hover:to-sky-100/90'
             }`}>
-            <dropdown.icon size={20} className={`transition-colors duration-300 ${isActive ? 'text-secondary-700' : 'text-slate-600 group-hover:text-secondary-600'
+            <dropdown.icon size={20} className={`transition-colors duration-500 ${isActive ? 'text-indigo-700' : 'text-slate-600 group-hover:text-indigo-600'
               }`} />
           </div>
           <div className="flex-1 text-left">
-            <span className={`text-sm font-semibold transition-colors duration-300 ${isActive ? 'text-secondary-700' : 'text-slate-700 group-hover:text-secondary-700'
+            <span className={`text-sm font-semibold transition-colors duration-500 ${isActive ? 'text-indigo-700' : 'text-slate-700 group-hover:text-indigo-700'
               }`}>
               {dropdown.title}
             </span>
           </div>
           <ChevronDown
             size={16}
-            className={`transition-all duration-300 ${isActive
-              ? 'rotate-180 text-secondary-600'
-              : 'text-slate-400 group-hover:text-secondary-500'
+            className={`transition-all duration-500 ${isActive
+              ? 'rotate-180 text-indigo-600'
+              : 'text-slate-400 group-hover:text-indigo-500'
               }`}
           />
         </button>
 
         {isActive && (
-          <div className="mt-2 p-2 rounded-2xl bg-white/90 backdrop-blur-xl shadow-lg shadow-secondary-500/10 border border-white/50 animate-dropDown">
+          <div className="mt-2 p-2 rounded-2xl bg-white/90 backdrop-blur-xl shadow-2xl shadow-indigo-500/10 border border-white/80 animate-dropDown overflow-hidden">
             {filteredItems.map((subItem, subIdx) => (
               <NavLink
                 key={subIdx}
                 to={subItem.path}
                 onClick={() => closeAllMenus()}
                 className={({ isActive }) => `
-                  group flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-secondary-50/60 hover:to-primary-50/60 transition-all duration-300 transform hover:translate-x-1
-                  ${isActive ? 'bg-white/80 shadow-sm shadow-secondary-500/5' : ''}
+                  group flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50/60 hover:to-sky-50/60 transition-all duration-500 transform hover:translate-x-1
+                  ${isActive ? 'bg-white/80 shadow-sm shadow-indigo-500/5' : ''}
                 `}
               >
-                <div className="w-3 h-3 rounded-full bg-slate-300 group-hover:bg-secondary-400 transition-colors duration-300 mr-4 flex-shrink-0"></div>
-                <span className="text-sm text-slate-600 group-hover:text-secondary-600 transition-colors duration-300">
+                <div className="w-3 h-3 rounded-full bg-slate-300 group-hover:bg-indigo-400 transition-colors duration-500 mr-4 flex-shrink-0"></div>
+                <span className="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors duration-500">
                   {subItem.title}
                 </span>
-                <ArrowRight size={14} className="text-slate-300 group-hover:text-secondary-400 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1 ml-auto" />
+                <ArrowRight size={14} className="text-slate-300 group-hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-1 ml-auto" />
               </NavLink>
             ))}
           </div>
@@ -430,12 +430,15 @@ const TopNavigation = () => {
     if (filteredItems.length === 0) return null;
 
     return (
-      <div className="absolute top-full left-0 mt-3 bg-white/85 backdrop-blur-2xl rounded-3xl shadow-xl shadow-secondary-900/10 border border-white/40 overflow-hidden z-50 animate-fadeInDown min-w-[400px] max-w-[500px]">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/40 to-white/20 -z-10"></div>
-        <div className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
+      <div className="absolute top-full left-0 mt-3 bg-white/90 rounded-3xl shadow-2xl shadow-indigo-900/10 border border-white/40 overflow-hidden z-50 animate-fadeInDown min-w-[400px] max-w-[500px]">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/20 to-white/10 -z-10"></div>
+        <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/30 rounded-full blur-3xl animate-blob"></div>
+        <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/20 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+
+        <div className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar relative">
           <div className="mb-6">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.15em] mb-1">{section.title}</h3>
-            <div className="w-12 h-0.5 bg-gradient-to-r from-secondary-500 to-primary-500 rounded-full"></div>
+            <h3 className="text-xs font-bold text-indigo-500 uppercase tracking-[0.15em] mb-1">{section.title}</h3>
+            <div className="w-12 h-0.5 bg-gradient-to-r from-indigo-500 to-sky-500 rounded-full"></div>
           </div>
           <div className="space-y-2">
             {filteredItems.map((item, idx) => {
@@ -446,27 +449,27 @@ const TopNavigation = () => {
                     to={item.path}
                     onClick={() => closeAllMenus()}
                     className={({ isActive }) => `
-                      group flex items-center p-4 rounded-2xl transition-all duration-300 transform hover:translate-x-1
+                      group flex items-center p-4 rounded-2xl transition-all duration-500 transform hover:translate-x-1
                       ${isActive
-                        ? 'bg-white/70 shadow-sm shadow-secondary-500/10'
-                        : 'hover:bg-gradient-to-r hover:from-secondary-50/60 hover:to-primary-50/60'
+                        ? 'bg-white/70 shadow-sm shadow-indigo-500/10'
+                        : 'hover:bg-gradient-to-r hover:from-indigo-50/60 hover:to-sky-50/60'
                       }
                     `}
                   >
-                    <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100/90 to-slate-50/90 group-hover:from-secondary-100/90 group-hover:to-primary-100/90 transition-all duration-300 mr-4 shadow-sm group-hover:shadow-md group-hover:scale-105">
-                      <item.icon size={20} className="text-slate-600 group-hover:text-secondary-600 transition-colors duration-300" />
+                    <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-white/90 to-slate-50/90 group-hover:from-indigo-100/90 group-hover:to-sky-100/90 transition-all duration-500 mr-4 shadow-lg group-hover:shadow-xl group-hover:scale-105">
+                      <item.icon size={20} className="text-slate-600 group-hover:text-indigo-600 transition-colors duration-500" />
                     </div>
                     <div className="flex-1">
-                      <span className="text-sm font-semibold text-slate-700 group-hover:text-secondary-700 transition-colors duration-300 block">
+                      <span className="text-sm font-semibold text-slate-700 group-hover:text-indigo-700 transition-colors duration-500 block">
                         {item.title}
                       </span>
                       {item.description && (
-                        <span className="text-xs text-slate-500 group-hover:text-secondary-500 transition-colors duration-300 mt-1 block">
+                        <span className="text-xs text-slate-500 group-hover:text-indigo-500 transition-colors duration-500 mt-1 block">
                           {item.description}
                         </span>
                       )}
                     </div>
-                    <ArrowRight size={16} className="text-slate-400 group-hover:text-secondary-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
+                    <ArrowRight size={16} className="text-slate-400 group-hover:text-indigo-500 opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-1" />
                   </NavLink>
                 );
               } else if (item.type === 'dropdown') {
@@ -491,14 +494,14 @@ const TopNavigation = () => {
           to={item.path}
           onClick={() => closeAllMenus()}
           className={({ isActive }) => `
-            group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105
+            group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-500 transform hover:scale-105
             ${isActive
-              ? 'text-secondary-700 bg-gradient-to-r from-secondary-50/80 to-primary-50/80 shadow-sm shadow-secondary-500/10'
-              : 'text-slate-600 hover:text-secondary-700 hover:bg-gradient-to-r hover:from-secondary-50/50 hover:to-primary-50/50'
+              ? 'text-indigo-700 bg-gradient-to-r from-indigo-50/80 to-sky-50/80 shadow-lg shadow-indigo-500/10'
+              : 'text-slate-600 hover:text-indigo-700 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-sky-50/50'
             }
           `}
         >
-          <item.icon size={18} className="mr-3 group-hover:scale-110 transition-transform duration-300" />
+          <item.icon size={18} className="mr-3 group-hover:scale-110 transition-transform duration-500" />
           <span>{item.title}</span>
         </NavLink>
       );
@@ -520,17 +523,17 @@ const TopNavigation = () => {
               setActiveDropdown(newActiveDropdown);
               setActiveNestedDropdown(null);
             }}
-            className={`group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${activeDropdown === item.title
-              ? 'text-secondary-700 bg-gradient-to-r from-secondary-50/80 to-primary-50/80 shadow-sm shadow-secondary-500/10'
-              : 'text-slate-600 hover:text-secondary-700 hover:bg-gradient-to-r hover:from-secondary-50/50 hover:to-primary-50/50'
+            className={`group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-500 transform hover:scale-105 ${activeDropdown === item.title
+              ? 'text-indigo-700 bg-gradient-to-r from-indigo-50/80 to-sky-50/80 shadow-lg shadow-indigo-500/10'
+              : 'text-slate-600 hover:text-indigo-700 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-sky-50/50'
               }`}
           >
             <span>{item.title}</span>
             <ChevronDown
               size={16}
-              className={`ml-2 transition-all duration-300 ${activeDropdown === item.title
-                ? 'rotate-180 text-secondary-600'
-                : 'text-slate-400 group-hover:text-secondary-500'
+              className={`ml-2 transition-all duration-500 ${activeDropdown === item.title
+                ? 'rotate-180 text-indigo-600'
+                : 'text-slate-400 group-hover:text-indigo-500'
                 }`}
             />
           </button>
@@ -571,25 +574,36 @@ const TopNavigation = () => {
 
   return (
     <div className="fixed top-0 right-0 z-40 left-[60px] w-[calc(100%-60px)]">
-      {/* Animated gradient bar at the top */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500 via-secondary-400 to-primary-500 bg-[length:200%_100%] animate-gradient-flow"></div>
+      {/* Advanced gradient bar with liquid animation */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 bg-[length:200%_100%] animate-gradient-flow"></div>
 
-      <div className={`transition-all duration-500 ${scrolled
-        ? 'bg-white/85 backdrop-blur-xl shadow-lg shadow-secondary-900/10 border-b border-white/40'
-        : 'bg-white/75 backdrop-blur-2xl'
+      {/* Liquid light effects */}
+      <div className="absolute -top-10 right-1/4 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl animate-blob"></div>
+      <div className="absolute -bottom-20 left-1/3 w-60 h-60 bg-sky-400/10 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+
+      <div className={`relative transition-all duration-500 ${scrolled
+        ? 'bg-white/60 backdrop-blur-2xl shadow-xl shadow-indigo-900/5 border-b border-white/40'
+        : 'bg-white/50 backdrop-blur-xl'
         }`}>
-        <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between">
+
+        {/* Highlight reflections */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-10 left-1/4 w-40 h-1 bg-white/80 blur-sm rotate-45 transform-gpu animate-shine"></div>
+          <div className="absolute top-20 right-1/4 w-60 h-0.5 bg-white/60 blur-sm -rotate-45 transform-gpu animate-shine animation-delay-2000"></div>
+        </div>
+
+        <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between relative">
           <div className="flex items-center mr-4 lg:mr-12">
             <img
               src={logo}
               alt="Logo"
-              className="w-[150px] h-auto cursor-pointer transition-transform duration-300 hover:scale-105"
+              className="w-[150px] h-auto cursor-pointer transition-transform duration-500 hover:scale-105"
               onClick={() => navigate('/')}
             />
           </div>
 
           <nav className="hidden xl:flex items-center flex-1 justify-center">
-            <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-xl rounded-3xl p-2 shadow-lg shadow-secondary-500/5 border border-white/50 transition-all duration-300">
+            <div className="flex items-center space-x-2 bg-white/30 backdrop-blur-2xl rounded-3xl p-2 shadow-2xl shadow-indigo-500/5 border border-white/80 transition-all duration-500 hover:shadow-indigo-500/10">
               {filterSections(routes).map((item: any, idx: any) => (
                 <div key={idx}>
                   {renderNavItem(item)}
@@ -609,16 +623,17 @@ const TopNavigation = () => {
                       onChange={handleSearchChange}
                       onKeyDown={handleSearchKeyDown}
                       placeholder="Search anything..."
-                      className="w-56 md:w-80 pl-5 pr-12 py-3 rounded-2xl border border-white/40 focus:border-secondary-400/60 focus:outline-none focus:ring-4 focus:ring-secondary-300/20 transition-all duration-300 text-sm font-medium bg-white/20 backdrop-blur-xl shadow-lg text-gray-800 placeholder-secondary-400/70"
+                      className="w-56 md:w-80 pl-5 pr-12 py-3 rounded-2xl border border-white/70 focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-300/20 transition-all duration-500 text-sm font-medium bg-white/30 backdrop-blur-2xl shadow-xl text-gray-800 placeholder-indigo-400/70"
                       autoFocus
                     />
+                    <div className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-200/50 to-white/70 animate-pulse-slow"></div>
                     <button
                       onClick={() => {
                         setIsSearchOpen(false);
                         setSearchValue('');
                         setShowSearchResults(false);
                       }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-secondary-700/20 transition-all duration-200 text-secondary-400"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-indigo-700/20 transition-all duration-300 text-indigo-400"
                     >
                       <X size={16} />
                     </button>
@@ -627,9 +642,9 @@ const TopNavigation = () => {
               ) : (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="p-2.5 rounded-xl hover:bg-white/60 transition-all duration-300 transform hover:scale-110 group text-gray-600/70 hover:text-secondary-600"
+                  className="p-2.5 rounded-xl hover:bg-white/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 hover:text-indigo-600"
                 >
-                  <Search size={18} className="transition-colors duration-300" />
+                  <Search size={18} className="transition-colors duration-500" />
                 </button>
               )}
 
@@ -637,9 +652,13 @@ const TopNavigation = () => {
               {showSearchResults && searchResults.length > 0 && (
                 <div
                   ref={searchResultsRef}
-                  className="absolute right-0 mt-3 w-80 bg-white/85 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-xl shadow-secondary-900/10 z-50 overflow-hidden animate-fadeInDown"
+                  className="absolute right-0 mt-3 w-80 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown"
                 >
-                  <div className="p-4">
+                  {/* Light effects */}
+                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
+
+                  <div className="p-4 relative">
                     <div className="text-xs text-gray-500 mb-3">
                       {searchResults.length} results found for "{searchValue}"
                     </div>
@@ -664,9 +683,9 @@ const TopNavigation = () => {
                                   onClick={() => handleResultClick(result)}
                                   onMouseEnter={() => setSelectedResultIndex(globalIndex)}
                                   className={`
-                                    cursor-pointer p-2 rounded-xl transition-all duration-200 flex items-center
+                                    cursor-pointer p-2 rounded-xl transition-all duration-500 flex items-center
                                     ${isSelected
-                                      ? 'bg-gradient-to-r from-secondary-50/80 to-primary-50/80 text-secondary-700 shadow-sm shadow-secondary-500/5'
+                                      ? 'bg-gradient-to-r from-indigo-50/80 to-sky-50/80 text-indigo-700 shadow-lg shadow-indigo-500/5'
                                       : 'hover:bg-white/60'
                                     }
                                   `}
@@ -675,8 +694,8 @@ const TopNavigation = () => {
                                     p-1.5 rounded-xl mr-2
                                     ${isSelected ? 'bg-white/70' : 'bg-white/50'}
                                   `}>
-                                    {result.icon ? <result.icon size={16} className="text-secondary-500" /> :
-                                      React.createElement(getCategoryIcon(result.category), { size: 16, className: "text-secondary-500" })}
+                                    {result.icon ? <result.icon size={16} className="text-indigo-500" /> :
+                                      React.createElement(getCategoryIcon(result.category), { size: 16, className: "text-indigo-500" })}
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <div className="font-medium text-sm truncate">
@@ -688,7 +707,7 @@ const TopNavigation = () => {
                                   </div>
                                   <div className={`
                                     ml-2 p-1 rounded-full
-                                    ${isSelected ? 'bg-white/70 text-secondary-600' : 'text-gray-400'}
+                                    ${isSelected ? 'bg-white/70 text-indigo-600' : 'text-gray-400'}
                                   `}>
                                     <ArrowRight size={14} />
                                   </div>
@@ -700,7 +719,7 @@ const TopNavigation = () => {
                       ))}
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-white/30 text-xs text-gray-500 flex items-center justify-between">
+                    <div className="mt-3 pt-3 border-t border-white/50 text-xs text-gray-500 flex items-center justify-between">
                       <span>
                         <kbd className="px-1.5 py-0.5 rounded-lg bg-white/70 text-gray-700 mx-1 shadow-sm border border-white/50">↑</kbd>
                         <kbd className="px-1.5 py-0.5 rounded-lg bg-white/70 text-gray-700 mx-1 shadow-sm border border-white/50">↓</kbd>
@@ -719,23 +738,27 @@ const TopNavigation = () => {
             {/* Notifications */}
             <div className="relative" ref={notificationsRef}>
               <button
-                className="p-2.5 rounded-xl hover:bg-white/60 transition-all duration-300 transform hover:scale-110 group text-gray-600/70 hover:text-secondary-600 relative"
+                className="p-2.5 rounded-xl hover:bg-white/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 hover:text-indigo-600 relative"
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
               >
-                <Bell size={18} className="transition-colors duration-300" />
+                <Bell size={18} className="transition-colors duration-500" />
                 {unreadNotifications > 0 && (
                   <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50 animate-pulse"></span>
                 )}
               </button>
 
               {notificationsOpen && (
-                <div className="absolute right-0 mt-3 w-80 bg-white/85 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-xl shadow-secondary-900/10 z-50 overflow-hidden animate-fadeInDown">
-                  <div className="px-4 py-3 border-b border-white/30 flex justify-between items-center">
+                <div className="absolute right-0 mt-3 w-80 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown">
+                  {/* Light effects */}
+                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
+
+                  <div className="px-4 py-3 border-b border-white/50 flex justify-between items-center relative">
                     <h3 className="font-medium text-gray-800">Notifications</h3>
                     {unreadNotifications > 0 && (
                       <button
                         onClick={markAllAsRead}
-                        className="text-xs text-secondary-600 hover:text-secondary-700 font-medium transition-colors duration-200"
+                        className="text-xs text-indigo-600 hover:text-indigo-700 font-medium transition-colors duration-200"
                       >
                         Mark all as read
                       </button>
@@ -747,29 +770,32 @@ const TopNavigation = () => {
                       <div
                         key={notification.id}
                         className={`
-                          px-4 py-3 hover:bg-secondary-50/50 cursor-pointer relative transition-all duration-200
-                          ${!notification.read ? 'bg-secondary-50/30' : ''}
+                          relative px-4 py-3 hover:bg-indigo-50/50 cursor-pointer transition-all duration-500
+                          ${!notification.read ? 'bg-indigo-50/30' : ''}
                         `}
                       >
                         <div className="flex items-start">
                           <div className="mt-0.5 mr-3">
                             {getNotificationIcon(notification.type)}
                           </div>
-                          <div>
+                          <div className="flex-1">
                             <p className="text-sm font-medium text-gray-800">{notification.title}</p>
                             <p className="text-xs text-gray-500 mt-0.5">{notification.description}</p>
                             <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
                           </div>
                           {!notification.read && (
-                            <div className="absolute top-3 right-3 w-2 h-2 bg-secondary-500 rounded-full"></div>
+                            <div className="absolute top-3 right-3 w-2 h-2 bg-indigo-500 rounded-full"></div>
                           )}
                         </div>
+
+                        {/* Hover effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
                       </div>
                     ))}
                   </div>
 
-                  <div className="px-4 py-2 border-t border-white/30">
-                    <button className="w-full text-xs text-center text-secondary-600 hover:text-secondary-700 font-medium py-1 transition-colors duration-200">
+                  <div className="px-4 py-2 border-t border-white/50 relative">
+                    <button className="w-full text-xs text-center text-indigo-600 hover:text-indigo-700 font-medium py-1 transition-colors duration-200">
                       View all notifications
                     </button>
                   </div>
@@ -780,56 +806,65 @@ const TopNavigation = () => {
             {/* User Menu */}
             <div className="relative ml-2" ref={userMenuRef}>
               <button
-                className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all duration-300 hover:bg-white/60 text-gray-600/90 hover:text-secondary-600 group"
+                className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all duration-500 hover:bg-white/60 text-gray-600/90 hover:text-indigo-600 group"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
               >
-                <div className="w-8 h-8 rounded-xl bg-secondary-600/60 backdrop-blur-xl flex items-center justify-center border border-white/40 group-hover:bg-secondary-500/80 transition-colors duration-300 shadow-sm">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600/90 to-sky-600/80 backdrop-blur-xl flex items-center justify-center border border-white/40 group-hover:from-indigo-500/90 group-hover:to-sky-500/80 transition-all duration-500 shadow-lg">
                   <User size={16} className="text-white" />
                 </div>
                 <span className="hidden md:block text-sm font-medium">{user?.name?.split(' ')[0]}</span>
                 <ChevronDown
                   size={14}
-                  className={`hidden md:block transition-all duration-300 ${userMenuOpen ? 'rotate-180 text-secondary-500' : 'text-secondary-300 group-hover:text-secondary-500'}`}
+                  className={`hidden md:block transition-all duration-500 ${userMenuOpen ? 'rotate-180 text-indigo-500' : 'text-indigo-300 group-hover:text-indigo-500'}`}
                 />
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-3 w-64 bg-white/85 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-xl shadow-secondary-900/10 z-50 overflow-hidden animate-fadeInDown">
-                  <div className="px-4 py-3 border-b border-white/30">
-                    <p className="font-medium text-gray-800">{user?.name}</p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
-                    <div className="mt-1.5 flex items-center">
-                      <span className="text-[10px] font-medium px-2 py-0.5 bg-secondary-100/80 text-secondary-700 rounded-full">
-                        {user?.role}
-                      </span>
+                <div className="absolute right-0 mt-3 w-64 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown">
+                  {/* Light effects */}
+                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
+
+                  <div className="relative">
+                    {/* Glass profile card */}
+                    <div className="px-4 py-3 border-b border-white/50">
+                      <p className="font-medium text-gray-800">{user?.name}</p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <div className="mt-1.5 flex items-center">
+                        <span className="text-[10px] font-medium px-2 py-0.5 bg-indigo-100/80 text-indigo-700 rounded-full">
+                          {user?.role}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="px-1 py-1">
-                    <NavLink
-                      to="/profile"
-                      onClick={() => closeAllMenus()}
-                      className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 text-sm flex items-center transition-all duration-200">
-                      <User size={16} className="mr-3 text-gray-500" />
-                      <span>My Profile</span>
-                    </NavLink>
-                    <NavLink
-                      to="/settings"
-                      onClick={() => closeAllMenus()}
-                      className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 text-sm flex items-center transition-all duration-200">
-                      <Settings size={16} className="mr-3 text-gray-500" />
-                      <span>Settings</span>
-                    </NavLink>
-                  </div>
+                    <div className="px-1 py-1">
+                      <NavLink
+                        to="/profile"
+                        onClick={() => closeAllMenus()}
+                        className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center transition-all duration-500"
+                      >
+                        <User size={16} className="mr-3 text-gray-500" />
+                        <span>My Profile</span>
+                      </NavLink>
+                      <NavLink
+                        to="/settings"
+                        onClick={() => closeAllMenus()}
+                        className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center transition-all duration-500"
+                      >
+                        <Settings size={16} className="mr-3 text-gray-500" />
+                        <span>Settings</span>
+                      </NavLink>
+                    </div>
 
-                  <div className="border-t border-white/30 mt-1 px-1 py-1">
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50/70 text-sm flex items-center text-red-600 transition-all duration-200"
-                    >
-                      <LogOut size={16} className="mr-3" />
-                      <span>Logout</span>
-                    </button>
+                    <div className="border-t border-white/50 mt-1 px-1 py-1">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50/70 text-sm flex items-center text-red-600 transition-all duration-500"
+                      >
+                        <LogOut size={16} className="mr-3" />
+                        <span>Logout</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -837,7 +872,7 @@ const TopNavigation = () => {
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="xl:hidden p-2.5 rounded-xl hover:bg-white/60 transition-all duration-300 text-gray-600/70 hover:text-secondary-600 ml-1"
+              className="xl:hidden p-2.5 rounded-xl hover:bg-white/60 transition-all duration-500 text-gray-600/70 hover:text-indigo-600 ml-1"
             >
               <Menu size={20} />
             </button>
@@ -847,13 +882,17 @@ const TopNavigation = () => {
 
       {isMobileMenuOpen && (
         <div className="xl:hidden fixed inset-0 z-50 left-[60px] w-[calc(100%-60px)] bg-white/95 backdrop-blur-2xl animate-fadeIn">
-          <div className="p-6">
+          {/* Mobile light effects */}
+          <div className="absolute top-40 left-20 w-60 h-60 bg-indigo-400/10 rounded-full blur-3xl animate-blob"></div>
+          <div className="absolute bottom-40 right-10 w-80 h-80 bg-sky-400/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+
+          <div className="p-6 relative">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center">
                 <img
                   src={logo}
                   alt="Logo"
-                  className="w-[150px] h-auto cursor-pointer transition-transform duration-300 hover:scale-105"
+                  className="w-[150px] h-auto cursor-pointer transition-transform duration-500 hover:scale-105"
                   onClick={() => {
                     navigate('/');
                     closeAllMenus();
@@ -862,9 +901,9 @@ const TopNavigation = () => {
               </div>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2.5 rounded-xl bg-white/60 hover:bg-secondary-50/80 transition-all duration-300 text-gray-600 shadow-sm border border-white/40"
+                className="p-2.5 rounded-xl bg-white/60 hover:bg-indigo-50/80 transition-all duration-500 text-gray-600 shadow-lg border border-white/40"
               >
-                <X size={22} className="transition-transform duration-300 hover:rotate-90" />
+                <X size={22} className="transition-transform duration-500 hover:rotate-90" />
               </button>
             </div>
 
@@ -874,10 +913,10 @@ const TopNavigation = () => {
                   {item.type === 'section' && (
                     <>
                       <div className="flex items-center mb-4">
-                        <h3 className="text-xs font-bold text-secondary-600 uppercase tracking-[0.15em]">
+                        <h3 className="text-xs font-bold text-indigo-600 uppercase tracking-[0.15em]">
                           {item.title}
                         </h3>
-                        <div className="flex-1 h-px bg-gradient-to-r from-secondary-500/30 to-transparent ml-4"></div>
+                        <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/30 to-transparent ml-4"></div>
                       </div>
                       <div className="space-y-2">
                         {filterItems(item.items).map((subItem, subIdx) => {
@@ -887,17 +926,17 @@ const TopNavigation = () => {
                                 key={subIdx}
                                 to={subItem.path}
                                 className={({ isActive }) => `
-                                  flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 group
+                                  flex items-center px-4 py-3.5 rounded-2xl transition-all duration-500 group
                                   ${isActive
-                                    ? 'bg-gradient-to-r from-secondary-50/90 to-primary-50/90 border border-white/50 shadow-sm shadow-secondary-500/10'
+                                    ? 'bg-gradient-to-r from-indigo-50/90 to-sky-50/90 border border-white/50 shadow-lg shadow-indigo-500/10'
                                     : 'hover:bg-white/60'
                                   }
                                 `}
                                 onClick={() => closeAllMenus()}
                               >
                                 {subItem.icon && (
-                                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/70 group-hover:bg-white/90 transition-all duration-300 mr-4 shadow-sm border border-white/40 group-hover:scale-105">
-                                    <subItem.icon width={18} height={18} className="text-secondary-600" />
+                                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-white/90 to-slate-50/90 group-hover:from-indigo-100/90 group-hover:to-sky-100/90 transition-all duration-500 mr-4 shadow-lg border border-white/40 group-hover:scale-105">
+                                    <subItem.icon width={18} height={18} className="text-indigo-600" />
                                   </div>
                                 )}
                                 <span className="text-sm font-semibold text-gray-800">{subItem.title}</span>
@@ -915,76 +954,26 @@ const TopNavigation = () => {
               ))}
             </nav>
 
-            <div className="mt-8 pt-6 border-t border-secondary-200/50">
-              <div className="flex items-center p-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/40 shadow-sm shadow-secondary-500/5">
-                <div className="w-12 h-12 rounded-xl bg-secondary-600/60 flex items-center justify-center mr-4 border border-white/40 shadow-sm">
+            <div className="mt-8 pt-6 border-t border-indigo-200/50">
+              <div className="flex items-center p-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/40 shadow-xl shadow-indigo-500/5">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600/90 to-sky-600/80 flex items-center justify-center mr-4 border border-white/40 shadow-lg">
                   <User size={20} className="text-white" />
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-semibold text-gray-800">{user?.name}</div>
-                  <div className="text-xs text-secondary-600">{user?.role}</div>
+                  <div className="text-xs text-indigo-600">{user?.role}</div>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-2 rounded-xl bg-white/60 hover:bg-red-50/80 transition-all duration-300 text-red-500 border border-white/40 shadow-sm active:scale-95"
+                  className="p-2 rounded-xl bg-white/60 hover:bg-red-50/80 transition-all duration-500 text-red-500 border border-white/40 shadow-lg active:scale-95"
                 >
-                  <LogOut size={16} className="transition-transform duration-300 hover:rotate-12" />
+                  <LogOut size={16} className="transition-transform duration-500 hover:rotate-12" />
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes fadeInDown {
-          from { opacity: 0; transform: translateY(-15px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeInDown {
-          animation: fadeInDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes dropDown {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-dropDown {
-          animation: dropDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes gradient-flow {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-gradient-flow {
-          animation: gradient-flow 8s ease infinite;
-        }
-
-        .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(156, 163, 175, 0.3);
-          border-radius: 20px;
-        }
-      `}</style>
     </div>
   );
 };

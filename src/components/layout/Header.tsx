@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({
   const notificationsRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchResultsRef = useRef<HTMLDivElement>(null);
-  const user = Cookies.get('userData') ? JSON.parse(Cookies.get('userData') as string) : null;
+  const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData') as string) : null;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -366,7 +366,7 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className="h-[60px] bg-white/80 backdrop-blur-xl border-b border-gray-50  
+      className="h-[60px] bg-white/80 backdrop-blur-xl border-b border-gray-50
       flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20 transition-all"
     >
       <div className="flex items-center">
@@ -387,7 +387,7 @@ const Header: React.FC<HeaderProps> = ({
       <div className={`relative flex-1 max-w-xl mx-4 ${showSearchOnMobile ? 'block' : 'hidden md:block'}`}>
         <div
           className={`
-            flex items-center bg-gray-50/80 rounded-xl border ${showSearchResults ? 'border-primary-200 shadow-sm' : 'border-gray-100'} 
+            flex items-center bg-gray-50/80 rounded-xl border ${showSearchResults ? 'border-primary-200 shadow-sm' : 'border-gray-100'}
             overflow-hidden transition-all
           `}
         >
@@ -710,7 +710,7 @@ const Header: React.FC<HeaderProps> = ({
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-        
+
         @media (max-width: 768px) {
           .ml-2 {
             margin-left: 0.25rem;
