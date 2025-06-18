@@ -1,4 +1,4 @@
-import { 
+import {
   Globe,
   UserCircle,
   MonitorPlay,
@@ -24,7 +24,7 @@ import {
   CreditCardIcon,
   FilePieChart,
   FileCheck,
-  DollarSign, 
+  DollarSign,
   Headphones,
   MusicIcon,
   Library,
@@ -1686,20 +1686,21 @@ const routes: Route[] = [
               path: '/admin/system/users',
               title: 'Staff Accounts',
             },
-            {
-              type: 'link',
-              path: '/admin/system/roles',
-              title: 'Access Control',
-            },
-            {
-              type: 'link',
-              path: '/admin/system/permissions',
-              title: 'Permission Groups',
-            },
+
+            // {
+            //   type: 'link',
+            //   path: '/admin/system/permissions',
+            //   title: 'Permission Groups',
+            // },
             {
               type: 'link',
               path: '/admin/system/activity',
               title: 'User Activity',
+            },
+            {
+              type: 'link',
+              path: '/admin/system/roles',
+              title: 'Access Control',
             },
           ],
         },

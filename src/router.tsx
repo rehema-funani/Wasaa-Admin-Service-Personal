@@ -161,7 +161,6 @@ class RouteErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Route loading error:", error, errorInfo);
-    // Could also send to error monitoring service here
   }
 
   render() {

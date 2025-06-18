@@ -1,5 +1,3 @@
-import Cookies from 'js-cookie';
-
 export const getUserPermissions = (): string[] => {
   try {
     const userData = localStorage.getItem('userData');
@@ -61,9 +59,6 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
   return hasAccess ? (children as ReactNode) : (fallback as ReactNode);
 };
 
-/**
- * Permission groups organized by feature
- */
 export const PermissionMap = {
   ApiKeys: {
     create: ['can_create_apiKeys'],
@@ -153,6 +148,7 @@ export const PermissionMap = {
     completeSignup: ['can_complete_signup'],
     delete: ['can_delete_account']
   },
+
   Preferences: {
     view: ['can_fetch_preferences'],
     update: ['can_update_preferences']
@@ -182,11 +178,50 @@ export const PermissionMap = {
     view: ['can_list_reports', 'can_view_reports']
   },
 
-  Notifications: {
-    create: ['can_create_notifications'],
-    view: ['can_view_notifications', 'can_list_notifications'],
-    update: ['can_update_notifications'],
-    delete: ['can_delete_notifications']
+  Team: {
+    create: ['can_create_team'],
+    view: ['can_view_team', 'can_list_team'],
+    update: ['can_update_team'],
+    delete: ['can_delete_team']
+  },
+
+  TeamMember: {
+    create: ['can_create_team_member'],
+    view: ['can_view_team_member', 'can_list_team_member'],
+    update: ['can_update_team_member'],
+    delete: ['can_delete_team_member']
+  },
+
+  Ticket: {
+    create: ['can_create_ticket'],
+    view: ['can_view_ticket', 'can_list_ticket'],
+    update: ['can_update_ticket'],
+    delete: ['can_delete_ticket']
+  },
+
+  TicketComment: {
+    create: ['can_create_ticket_comment'],
+    view: ['can_view_ticket_comment', 'can_list_ticket_comment'],
+    update: ['can_update_ticket_comment'],
+    delete: ['can_delete_ticket_comment']
+  },
+
+  TicketAssignment: {
+    create: ['can_create_ticket_assignment'],
+    view: ['can_view_ticket_assignment', 'can_list_ticket_assignment'],
+    update: ['can_update_ticket_assignment'],
+    delete: ['can_delete_ticket_assignment']
+  },
+
+  TicketEscalation: {
+    create: ['can_create_ticket_escalation'],
+    view: ['can_view_ticket_escalation', 'can_list_ticket_escalation'],
+    update: ['can_update_ticket_escalation'],
+    delete: ['can_delete_ticket_escalation']
+  },
+
+  Dashboard: {
+    view: ['can_view_dashboard', 'can_view_dashboard_stats']
   },
 
   ViewReported: [
@@ -219,117 +254,175 @@ export const PermissionMap = {
     'can_view_wallets',
     'can_update_wallets',
     'can_delete_wallets'
+  ],
+
+  Support: [
+    'can_create_team',
+    'can_list_team',
+    'can_view_team',
+    'can_update_team',
+    'can_delete_team',
+    'can_create_team_member',
+    'can_list_team_member',
+    'can_view_team_member',
+    'can_update_team_member',
+    'can_delete_team_member',
+    'can_create_ticket',
+    'can_list_ticket',
+    'can_view_ticket',
+    'can_update_ticket',
+    'can_delete_ticket',
+    'can_create_ticket_comment',
+    'can_list_ticket_comment',
+    'can_view_ticket_comment',
+    'can_update_ticket_comment',
+    'can_delete_ticket_comment',
+    'can_create_ticket_assignment',
+    'can_list_ticket_assignment',
+    'can_view_ticket_assignment',
+    'can_update_ticket_assignment',
+    'can_delete_ticket_assignment',
+    'can_create_ticket_escalation',
+    'can_list_ticket_escalation',
+    'can_view_ticket_escalation',
+    'can_update_ticket_escalation',
+    'can_delete_ticket_escalation'
   ]
+};
+
+/**
+ * Updated route permissions map with all routes and their required permissions
+ */
+export const routePermissionsMap = {
+  // Dashboard and main routes
+  '/': [],
+  '/admin/dashboard': PermissionMap.Dashboard.view,
+
+  // User management routes
+  '/admin/users/user-details': PermissionMap.Users.view,
+  '/admin/users/countrywise-Analysis': PermissionMap.Users.view,
+  '/admin/users/reported-user-list': [...PermissionMap.Users.view, ...PermissionMap.ViewReported],
+
+  // Group management routes
+  '/admin/Group/all-group-list': PermissionMap.Groups.view,
+  '/admin/Group/all-reported-group-list': [...PermissionMap.Groups.viewReported, ...PermissionMap.Reports.view],
+
+  // System management routes
+  '/admin/system/users': [...PermissionMap.Users.viewStaff, ...PermissionMap.Users.view],
+  '/admin/system/roles': PermissionMap.Roles.view,
+  '/admin/system/roles/create': PermissionMap.Roles.create,
+  '/admin/system/roles/edit/:id': PermissionMap.Roles.update,
+
+  // Livestream management routes
+  '/admin/livestreams/all-livestreams': [],
+  '/admin/livestreams/scheduled': [],
+  '/admin/livestreams/settings': PermissionMap.Settings.view,
+  '/admin/livestreams/categories': [],
+  '/admin/livestreams/featured': [],
+  '/admin/livestreams/analytics': [],
+  '/admin/livestreams/moderation': [],
+  '/admin/livestreams/reported': PermissionMap.Reports.view,
+
+  // Finance management routes
+  '/admin/finance/transactions': PermissionMap.Transactions.view,
+  '/admin/finance/user-wallets': PermissionMap.Wallets.view,
+  '/admin/finance/withdrawals': PermissionMap.Transactions.view,
+  '/admin/finance/top-ups': PermissionMap.Transactions.view,
+  '/admin/finance/payment-methods': PermissionMap.Settings.view,
+  '/admin/finance/reports': [...PermissionMap.Reports.view, ...PermissionMap.Finance],
+  '/admin/finance/gift-history': PermissionMap.Transactions.view,
+  '/admin/finance/wallets': PermissionMap.Wallets.view,
+  '/admin/finance/banks': PermissionMap.Settings.view,
+  '/admin/finance/tariffs': PermissionMap.Settings.view,
+  '/admin/finance/limits': PermissionMap.Settings.view,
+  '/admin/finance/compliance': PermissionMap.Settings.view,
+
+  // Gift management routes
+  '/admin/gifts/add-gift': PermissionMap.Media.create,
+  '/admin/gifts/gift-list': PermissionMap.Media.view,
+  '/admin/gifts/gift-categories': PermissionMap.Media.view,
+
+  // System settings routes
+  '/admin/settings': PermissionMap.Settings.view,
+  '/admin/languages': PermissionMap.Languages.view,
+  '/admin/logs': PermissionMap.Admin,
+
+  // Support routes
+  '/admin/support': PermissionMap.Support,
+  '/admin/support/teams': PermissionMap.Team.view,
+  '/admin/support/teams/create': PermissionMap.Team.create,
+  '/admin/support/teams/:id': PermissionMap.Team.view,
+  '/admin/support/tickets': PermissionMap.Ticket.view,
+  '/admin/support/tickets/create': PermissionMap.Ticket.create,
+  '/admin/support/tickets/:id': PermissionMap.Ticket.view,
+  '/admin/support/assignments': PermissionMap.TicketAssignment.view,
+
+  // Media management routes
+  '/admin/Wallpaper/list-all-wallpaper': PermissionMap.Media.view,
+  '/admin/Wallpaper/add-a-new-wallpaper': PermissionMap.Media.create,
+  '/admin/Avatar/list-all-avatar': PermissionMap.Media.view,
+  '/admin/Avatar/add-a-new-avatar': PermissionMap.Media.create,
+
+  // Details routes
+  '/admin/users/user-details/:id': PermissionMap.Users.view,
+  '/admin/users/countrywise-Analysis/:id': PermissionMap.Users.view,
+  '/admin/Group/all-group-list/:id': PermissionMap.Groups.view,
+  '/admin/system/roles/:id': PermissionMap.Roles.view,
+  '/admin/finance/user-wallets/:id': PermissionMap.Wallets.view,
+  '/admin/languages/:id/translations': PermissionMap.Languages.view,
+
+  // Device management routes
+  '/admin/devices': PermissionMap.Devices.view,
+  '/admin/devices/:id': PermissionMap.Devices.view,
+
+  // Session management routes
+  '/admin/sessions': PermissionMap.Sessions.view,
+  '/admin/sessions/:id': PermissionMap.Sessions.view,
+
+  // API key management routes
+  '/admin/api-keys': PermissionMap.ApiKeys.view,
+  '/admin/api-keys/create': PermissionMap.ApiKeys.create,
+  '/admin/api-keys/:id': PermissionMap.ApiKeys.view,
+
+  // Security management routes
+  '/admin/security/passwords': PermissionMap.Security.setPassword,
+  '/admin/security/pins': PermissionMap.Security.updatePin,
 };
 
 /**
  * Get permissions required for a specific route
  */
 export const getRequiredPermissionsForRoute = (path: string): string[] => {
-  const routePermissionsMap: Record<string, string[]> = {
-    '/': [],
+  if (routePermissionsMap[path]) {
+    return routePermissionsMap[path];
+  }
 
-    '/admin/users/user-details': PermissionMap.Users.view,
-    '/admin/users/countrywise-Analysis': PermissionMap.Users.view,
-    '/admin/users/reported-user-list': [...PermissionMap.Users.view, ...PermissionMap.ViewReported],
+  // Try to match dynamic routes
+  const pathParts = path.split('/');
+  const possibleRoutes = Object.keys(routePermissionsMap);
 
-    '/admin/Group/all-group-list': PermissionMap.Groups.view,
-    '/admin/Group/all-reported-group-list': [...PermissionMap.Groups.viewReported, ...PermissionMap.Reports.view],
+  for (const route of possibleRoutes) {
+    const routeParts = route.split('/');
 
-    '/admin/system/users': [...PermissionMap.Users.viewStaff, ...PermissionMap.Users.view],
-    '/admin/system/roles': PermissionMap.Roles.view,
+    if (routeParts.length === pathParts.length) {
+      let isMatch = true;
 
-    '/admin/livestreams/all-livestreams': [],
-    '/admin/livestreams/scheduled': [],
-    '/admin/livestreams/settings': PermissionMap.Settings.view,
-    '/admin/livestreams/categories': [],
-    '/admin/livestreams/featured': [],
-    '/admin/livestreams/analytics': [],
-    '/admin/livestreams/moderation': [],
-    '/admin/livestreams/reported': PermissionMap.Reports.view,
-
-    '/admin/finance/transactions': PermissionMap.Transactions.view,
-    '/admin/finance/user-wallets': PermissionMap.Wallets.view,
-    '/admin/finance/withdrawals': PermissionMap.Transactions.view,
-    '/admin/finance/top-ups': PermissionMap.Transactions.view,
-    '/admin/finance/payment-methods': PermissionMap.Settings.view,
-    '/admin/finance/reports': [...PermissionMap.Reports.view, ...PermissionMap.Finance],
-    '/admin/finance/gift-history': PermissionMap.Transactions.view,
-    '/admin/finance/wallets': PermissionMap.Wallets.view,
-    '/admin/finance/banks': PermissionMap.Settings.view,
-    '/admin/finance/tariffs': PermissionMap.Settings.view,
-    '/admin/finance/limits': PermissionMap.Settings.view,
-    '/admin/finance/compliance': PermissionMap.Settings.view,
-
-    '/admin/gifts/add-gift': PermissionMap.Media.create,
-    '/admin/gifts/gift-list': PermissionMap.Media.view,
-    '/admin/gifts/gift-categories': PermissionMap.Media.view,
-
-    '/admin/settings': PermissionMap.Settings.view,
-    '/admin/languages': PermissionMap.Languages.view,
-    '/admin/logs': PermissionMap.Admin,
-    '/admin/support': [],
-
-    '/admin/Wallpaper/list-all-wallpaper': PermissionMap.Media.view,
-    '/admin/Wallpaper/add-a-new-wallpaper': PermissionMap.Media.create,
-    '/admin/Avatar/list-all-avatar': PermissionMap.Media.view,
-    '/admin/Avatar/add-a-new-avatar': PermissionMap.Media.create,
-
-    '/admin/users/user-details/:id': PermissionMap.Users.view,
-    '/admin/users/countrywise-Analysis/:id': PermissionMap.Users.view,
-    '/admin/Group/all-group-list/:id': PermissionMap.Groups.view,
-    '/admin/system/roles/:id': PermissionMap.Roles.view,
-    '/admin/system/roles/create': PermissionMap.Roles.create,
-    '/admin/finance/user-wallets/:id': PermissionMap.Wallets.view,
-    '/admin/languages/:id/translations': PermissionMap.Languages.view,
-
-    '/admin/support/teams': [],
-    '/admin/support/teams/:id': [],
-    '/admin/support/tickets': [],
-    '/admin/support/tickets/:id': [],
-    '/admin/support/assignments': [],
-
-    '/admin/devices': PermissionMap.Devices.view,
-    '/admin/devices/:id': PermissionMap.Devices.view,
-
-    '/admin/sessions': PermissionMap.Sessions.view,
-    '/admin/sessions/:id': PermissionMap.Sessions.view,
-
-    '/admin/api-keys': PermissionMap.ApiKeys.view,
-    '/admin/api-keys/create': PermissionMap.ApiKeys.create,
-    '/admin/api-keys/:id': PermissionMap.ApiKeys.view,
-
-    '/admin/security/passwords': PermissionMap.Security.setPassword,
-    '/admin/security/pins': PermissionMap.Security.updatePin,
-  };
-
-  if (!routePermissionsMap[path]) {
-    const pathParts = path.split('/');
-    const possibleRoutes = Object.keys(routePermissionsMap);
-
-    for (const route of possibleRoutes) {
-      const routeParts = route.split('/');
-
-      if (routeParts.length === pathParts.length) {
-        let isMatch = true;
-
-        for (let i = 0; i < routeParts.length; i++) {
-          if (routeParts[i].startsWith(':') || routeParts[i] === pathParts[i]) {
-            continue;
-          } else {
-            isMatch = false;
-            break;
-          }
+      for (let i = 0; i < routeParts.length; i++) {
+        if (routeParts[i].startsWith(':') || routeParts[i] === pathParts[i]) {
+          continue;
+        } else {
+          isMatch = false;
+          break;
         }
+      }
 
-        if (isMatch) {
-          return routePermissionsMap[route];
-        }
+      if (isMatch) {
+        return routePermissionsMap[route];
       }
     }
   }
 
-  return routePermissionsMap[path] || [];
+  return [];
 };
 
 /**
@@ -375,6 +468,22 @@ export const canViewReports = (): boolean => {
   return hasAnyPermission(PermissionMap.ViewReported);
 };
 
+export const canManageTickets = (): boolean => {
+  return hasAnyPermission([
+    ...PermissionMap.Ticket.create,
+    ...PermissionMap.Ticket.update,
+    ...PermissionMap.Ticket.delete
+  ]);
+};
+
+export const canManageTeams = (): boolean => {
+  return hasAnyPermission([
+    ...PermissionMap.Team.create,
+    ...PermissionMap.Team.update,
+    ...PermissionMap.Team.delete
+  ]);
+};
+
 export const isAdmin = (): boolean => {
   return hasAnyPermission(PermissionMap.Admin);
 };
@@ -401,4 +510,8 @@ export const canManageDevices = (): boolean => {
     ...PermissionMap.Devices.update,
     ...PermissionMap.Devices.delete
   ]);
+};
+
+export const canViewDashboard = (): boolean => {
+  return hasAnyPermission(PermissionMap.Dashboard.view);
 };

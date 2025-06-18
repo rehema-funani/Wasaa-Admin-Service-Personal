@@ -147,7 +147,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData') as string) : null;
-  const userPermissions = user?.permissions || [];
+  const userPermissions = user?.role?.role_permissions || [];
 
   useEffect(() => {
     const handleResize = () => {

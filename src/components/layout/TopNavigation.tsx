@@ -10,66 +10,9 @@ import {
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 import logo from '../../assets/images/logo-wasaa.png';
+import { routePermissionsMap } from '../../utils/permissions';
 
 const getRequiredPermissionsForRoute = (path: string) => {
-  const routePermissionsMap = {
-    '/': [],
-
-    '/admin/users/user-details': ['can_list_users', 'can_view_users'],
-    '/admin/users/countrywise-Analysis': ['can_list_users', 'can_view_users'],
-    '/admin/users/reported-user-list': ['can_view_reported_users', 'can_list_reports', 'can_view_reports'],
-
-    '/admin/Group/all-group-list': ['can_list_groups', 'can_view_groups'],
-    '/admin/Group/all-reported-group-list': ['can_view_reported_groups', 'can_list_reports', 'can_view_reports'],
-
-    '/admin/system/users': ['can_list_staff', 'can_view_users'],
-    '/admin/system/roles': ['can_list_roles', 'can_view_roles'],
-
-    '/admin/livestreams/all-livestreams': [],
-    '/admin/livestreams/scheduled': [],
-    '/admin/livestreams/settings': [],
-    '/admin/livestreams/categories': [],
-    '/admin/livestreams/featured': [],
-    '/admin/livestreams/analytics': [],
-    '/admin/livestreams/moderation': [],
-    '/admin/livestreams/reported': ['can_list_reports', 'can_view_reports'],
-
-    '/admin/finance/transactions': [],
-    '/admin/finance/user-wallets': [],
-    '/admin/finance/withdrawals': [],
-    '/admin/finance/top-ups': [],
-    '/admin/finance/payment-methods': [],
-    '/admin/finance/reports': [],
-    '/admin/finance/gift-history': [],
-
-    '/admin/gifts/add-gift': ['can_create_media'],
-    '/admin/gifts/gift-list': ['can_list_media', 'can_view_media'],
-    '/admin/gifts/gift-categories': ['can_list_media', 'can_view_media'],
-
-    '/admin/settings': ['can_view_settings', 'can_update_settings'],
-    '/admin/languages': ['can_list_languages', 'can_view_languages'],
-    '/admin/logs': [],
-    '/admin/support': [],
-
-    '/admin/Wallpaper/list-all-wallpaper': ['can_list_media', 'can_view_media'],
-    '/admin/Wallpaper/add-a-new-wallpaper': ['can_create_media'],
-    '/admin/Avatar/list-all-avatar': ['can_list_media', 'can_view_media'],
-    '/admin/Avatar/add-a-new-avatar': ['can_create_media'],
-
-    '/admin/users/user-details/:id': ['can_view_users'],
-    '/admin/users/countrywise-Analysis/:id': ['can_view_users'],
-    '/admin/Group/all-group-list/:id': ['can_view_groups'],
-    '/admin/system/roles/:id': ['can_view_roles'],
-    '/admin/system/roles/create': ['can_create_roles'],
-    '/admin/finance/user-wallets/:id': [],
-    '/admin/languages/:id/translations': ['can_view_languages'],
-
-    '/admin/support/teams': [],
-    '/admin/support/teams/:id': [],
-    '/admin/support/tickets': [],
-    '/admin/support/tickets/:id': [],
-    '/admin/support/assignments': [],
-  };
 
   if (!routePermissionsMap[path]) {
     const pathParts = path.split('/');
@@ -129,17 +72,11 @@ const TopNavigation = () => {
   const searchResultsRef = useRef(null);
   const notificationsRef = useRef(null);
   const userMenuRef = useRef(null);
-
   const navigate = useNavigate();
 
   const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : null;
-  const userPermissions = user?.permissions || [];
-
-  const notifications = [
-    { id: 1, title: 'New transaction', description: 'Payment of $5,000 received', time: '2m ago', read: false, type: 'transaction' },
-    { id: 2, title: 'Risk alert', description: 'Unusual activity detected on wallet #4829', time: '1h ago', read: false, type: 'alert' },
-    { id: 3, title: 'System update', description: 'System maintenance completed successfully', time: '3h ago', read: false, type: 'system' },
-  ];
+  const userPermissions = user?.role?.role_permissions;
+  const notifications = [];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -828,11 +765,11 @@ const TopNavigation = () => {
                   <div className="relative">
                     {/* Glass profile card */}
                     <div className="px-4 py-3 border-b border-white/50">
-                      <p className="font-medium text-gray-800">{user?.name}</p>
+                      <p className="font-medium text-gray-800">{user?.first_name} {user?.last_name}</p>
                       <p className="text-xs text-gray-500">{user?.email}</p>
                       <div className="mt-1.5 flex items-center">
                         <span className="text-[10px] font-medium px-2 py-0.5 bg-indigo-100/80 text-indigo-700 rounded-full">
-                          {user?.role}
+                          {user?.role?.title}
                         </span>
                       </div>
                     </div>
