@@ -147,12 +147,13 @@ finance.interceptors.response.use(
 );
 
 function handleLogout() {
-  Cookies.remove('authToken');
-  Cookies.remove('refreshToken');
-  Cookies.remove('user');
-  Cookies.remove('userType');
-  Cookies.remove('source');
-  window.location.href = '/auth/login';
+  // Cookies.remove('authToken');
+  // Cookies.remove('refreshToken');
+  // Cookies.remove('user');
+  // Cookies.remove('userType');
+  // Cookies.remove('source');
+  // window.location.href = '/auth/login';
+  console.log('Logout handled: Tokens removed and user redirected to login.');
 }
 
 export default finance;

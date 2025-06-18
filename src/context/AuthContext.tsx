@@ -93,42 +93,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    const checkAuthStatus = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const token = getStorageItem('authToken');
-
-            if (!token) {
-                setUser(null);
-                setIsLoading(false);
-                return;
-            }
-
-            await userService.testConnection();
-
-            const userData = await userService.getCurrentUser();
-            setUser(userData);
-        } catch (err) {
-            removeStorageItem('authToken');
-            setUser(null);
-
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError('Authentication failed');
-            }
-            console.error('Auth check failed:', err);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        checkAuthStatus();
-    }, [checkAuthStatus]);
-
     const login = async (email: string, password: string): Promise<LoginResponse> => {
         setIsLoading(true);
         setError(null);

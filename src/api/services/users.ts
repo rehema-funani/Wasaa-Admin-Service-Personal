@@ -88,18 +88,6 @@ export const userService = {
     }
   },
 
-  async getCurrentUser(): Promise<User> {
-    try {
-      const response = await api.get<User>('/auth/me');
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        throw new Error(error.response.data.message || 'Failed to get user data');
-      }
-      throw new Error('Failed to get user data. Please check your network connection.');
-    }
-  },
-
   async getUserById (userId: string): Promise<User> {
     try {
       const response = await api.get<User>(`/auth/${userId}`);

@@ -26,170 +26,87 @@ import {
   ShieldAlert,
   Receipt,
   PiggyBank,
-  TimerReset,
-  CircleEllipsis,
   Users,
   PencilRuler
 } from 'lucide-react';
 import { Modal } from '../../../../components/common/Modal';
 import { SystemWallet, WalletTransaction } from '../../../../types/finance';
-import { mockSystemWallets, mockTransactions } from '../../../../data/finance';
+import { mockTransactions } from '../../../../data/finance';
 import TopUpWallet from '../../../../components/finance/TopUpWallet';
 import TransferWallet from '../../../../components/finance/TransferWallet';
 import WalletHistory from '../../../../components/finance/WalletHistory';
 import WalletSettings from '../../../../components/finance/WalletSettings';
 import financeService from '../../../../api/services/finance';
 
-// Extended mock data for the new wallet types
-const extendedMockSystemWallets = [
-  {
-    id: "wallet-1",
-    name: "Platform Float Wallet",
-    description: "Main liquidity pool for the platform operations",
-    type: "FLOAT",
-    accountNumber: "WASAA-FLOAT-001",
-    balance: 1250000,
-    monthlyVolume: 4500000,
-    lastUpdated: "2025-06-17T10:30:45Z",
-    status: "active"
-  },
-  {
-    id: "wallet-2",
-    name: "Commissions Wallet",
-    description: "Collects platform fees and commissions from transactions",
-    type: "COMMISSIONS",
-    accountNumber: "WASAA-COMM-002",
-    balance: 387500,
-    monthlyVolume: 950000,
-    lastUpdated: "2025-06-17T11:15:22Z",
-    status: "active"
-  },
-  {
-    id: "wallet-3",
-    name: "Operations Wallet",
-    description: "Funds for day-to-day platform operations and maintenance",
-    type: "OPERATIONS",
-    accountNumber: "WASAA-OPS-003",
-    balance: 175000,
-    monthlyVolume: 320000,
-    lastUpdated: "2025-06-17T09:45:30Z",
-    status: "active"
-  },
-  {
-    id: "wallet-4",
-    name: "Escrow Wallet",
-    description: "Holds funds in escrow during transaction processing",
-    type: "ESCROW",
-    accountNumber: "WASAA-ESCROW-004",
-    balance: 680000,
-    monthlyVolume: 1750000,
-    lastUpdated: "2025-06-17T14:20:15Z",
-    status: "active"
-  },
-  {
-    id: "wallet-5",
-    name: "Reserve Wallet",
-    description: "Emergency funds and financial reserves",
-    type: "RESERVE",
-    accountNumber: "WASAA-RESRV-005",
-    balance: 500000,
-    monthlyVolume: 100000,
-    lastUpdated: "2025-06-16T16:55:10Z",
-    status: "active"
-  },
-  {
-    id: "wallet-6",
-    name: "Tax Wallet",
-    description: "Collects and manages tax obligations",
-    type: "TAX",
-    accountNumber: "WASAA-TAX-006",
-    balance: 145000,
-    monthlyVolume: 280000,
-    lastUpdated: "2025-06-17T08:30:45Z",
-    status: "active"
-  },
-  {
-    id: "wallet-7",
-    name: "Promotional Wallet",
-    description: "Funds for marketing, cashbacks, and user rewards",
-    type: "PROMOTIONAL",
-    accountNumber: "WASAA-PROMO-007",
-    balance: 85000,
-    monthlyVolume: 250000,
-    lastUpdated: "2025-06-17T13:10:25Z",
-    status: "active"
-  },
-  {
-    id: "wallet-8",
-    name: "Settlement Wallet",
-    description: "For merchant and partner settlements",
-    type: "SETTLEMENT",
-    accountNumber: "WASAA-SETL-008",
-    balance: 325000,
-    monthlyVolume: 875000,
-    lastUpdated: "2025-06-17T11:40:35Z",
-    status: "inactive"
-  },
-  {
-    id: "wallet-9",
-    name: "Liquidity Pool",
-    description: "Additional liquidity for high-volume periods",
-    type: "LIQUIDITY",
-    accountNumber: "WASAA-LIQ-009",
-    balance: 750000,
-    monthlyVolume: 1200000,
-    lastUpdated: "2025-06-16T15:25:50Z",
-    status: "inactive"
-  },
-  {
-    id: "wallet-10",
-    name: "User Holding Wallet",
-    description: "Temporary storage for user deposits awaiting processing",
-    type: "USER_HOLDING",
-    accountNumber: "WASAA-HOLD-010",
-    balance: 230000,
-    monthlyVolume: 950000,
-    lastUpdated: "2025-06-17T12:05:15Z",
-    status: "inactive"
-  },
-  {
-    id: "wallet-11",
-    name: "Special Projects Fund",
-    description: "Custom wallet for special initiatives and projects",
-    type: "CUSTOM",
-    accountNumber: "WASAA-CUST-011",
-    balance: 120000,
-    monthlyVolume: 180000,
-    lastUpdated: "2025-06-17T10:15:40Z",
-    status: "inactive"
-  }
-];
+// Helper to get a readable name from the wallet type
+const getWalletName = (type) => {
+  if (!type) return 'System Wallet';
 
-const SystemWalletsPage: React.FC = () => {
-  const [systemWallets, setSystemWallets] = useState<SystemWallet[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [selectedWallet, setSelectedWallet] = useState<SystemWallet | null>(null);
+  // Replace underscores with spaces and capitalize each word
+  return type.split('_')
+    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
+// Helper to get a meaningful description for each wallet type
+const getWalletDescription = (type) => {
+  const descriptions = {
+    'FLOAT': 'Main liquidity pool for platform operations',
+    'COMMISSIONS': 'Collects platform fees from transactions',
+    'OPERATIONS': 'Funds for day-to-day platform operations',
+    'ESCROW': 'Holds funds during transaction processing',
+    'RESERVE': 'Emergency funds and financial reserves',
+    'TAX': 'Collects and manages tax obligations',
+    'PROMOTIONAL': 'Funds for marketing and user rewards',
+    'SETTLEMENT': 'For merchant and partner settlements',
+    'LIQUIDITY': 'Additional liquidity for high-volume periods',
+    'USER_HOLDING': 'Temporary storage for user deposits',
+    'CUSTOM': 'Configurable wallet for special initiatives'
+  };
+
+  return descriptions[type] || 'System wallet for financial operations';
+};
+
+const SystemWalletsPage = () => {
+  const [systemWallets, setSystemWallets] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [selectedWallet, setSelectedWallet] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<'topup' | 'transfer' | 'history' | 'settings' | null>(null);
-  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'24h' | '7d' | '30d' | '90d'>('7d');
+  const [modalType, setModalType] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [selectedTimeframe, setSelectedTimeframe] = useState('7d');
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [totalVolume, setTotalVolume] = useState(0);
 
   useEffect(() => {
-    // Simulating API call
     const fetchSystemWallets = async () => {
       setIsLoading(true);
       try {
-        // In a real implementation, this would be:
-        const wallets = await financeService.getSystemWallets();
+        const response = await financeService.getSystemWallets();
 
-        // For now, using mock data with a timeout for loading simulation
-        setTimeout(() => {
-          setSystemWallets(extendedMockSystemWallets);
-          setIsLoading(false);
-        }, 800);
+        const processedWallets = response.wallets.map(wallet => ({
+          ...wallet,
+          balance: parseFloat(wallet.availableBalance) || 0,
+          type: wallet.systemWalletType || wallet.type,
+          name: getWalletName(wallet.systemWalletType),
+          description: getWalletDescription(wallet.systemWalletType),
+          accountNumber: `WASAA-${wallet.systemWalletType || 'SYS'}-${wallet.id.substring(0, 8)}`,
+          lastUpdated: wallet.updatedAt,
+          monthlyVolume: wallet.monthlyVolume || 0,
+          status: wallet.status === 'Active' ? 'active' : 'inactive'
+        }));
+
+        setSystemWallets(processedWallets);
+
+        const balance = processedWallets.reduce((total, wallet) => total + wallet.balance, 0);
+        const volume = processedWallets.reduce((total, wallet) => total + wallet.monthlyVolume, 0);
+
+        setTotalBalance(balance);
+        setTotalVolume(volume);
+        setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch system wallets', error);
         showSuccess('Failed to load system wallets');
@@ -201,16 +118,18 @@ const SystemWalletsPage: React.FC = () => {
   }, []);
 
   const filteredWallets = systemWallets.filter(wallet => {
-    const matchesSearch = wallet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      wallet.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      wallet.accountNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      wallet.type.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      (wallet.name && wallet.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (wallet.systemWalletType && wallet.systemWalletType.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (wallet.description && wallet.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (wallet.id && wallet.id.toLowerCase().includes(searchQuery.toLowerCase()));
+
     const matchesStatus = statusFilter === 'all' || wallet.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
-  // Get transactions for a specific wallet
-  const fetchWalletTransactions = (walletId: string) => {
+  const fetchWalletTransactions = (walletId) => {
     // In a real implementation, this would be:
     // const transactions = await walletService.getWalletTransactions(walletId);
 
@@ -218,39 +137,39 @@ const SystemWalletsPage: React.FC = () => {
     return mockTransactions.filter(tx => tx.walletId === walletId);
   };
 
-  const showSuccess = (message: string) => {
+  const showSuccess = (message) => {
     setSuccessMessage(message);
     setTimeout(() => {
       setSuccessMessage(null);
     }, 3000);
   };
 
-  const openTopUpModal = (wallet: SystemWallet) => {
+  const openTopUpModal = (wallet) => {
     setSelectedWallet(wallet);
     setModalType('topup');
     setIsModalOpen(true);
   };
 
-  const openTransferModal = (wallet: SystemWallet) => {
+  const openTransferModal = (wallet) => {
     setSelectedWallet(wallet);
     setModalType('transfer');
     setIsModalOpen(true);
   };
 
-  const openHistoryModal = (wallet: SystemWallet) => {
+  const openHistoryModal = (wallet) => {
     setSelectedWallet(wallet);
     setTransactions(fetchWalletTransactions(wallet.id));
     setModalType('history');
     setIsModalOpen(true);
   };
 
-  const openSettingsModal = (wallet: SystemWallet) => {
+  const openSettingsModal = (wallet) => {
     setSelectedWallet(wallet);
     setModalType('settings');
     setIsModalOpen(true);
   };
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-KE', {
       style: 'currency',
       currency: 'KES',
@@ -258,7 +177,9 @@ const SystemWalletsPage: React.FC = () => {
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+
     const date = new Date(dateString);
     return date.toLocaleString('en-KE', {
       year: 'numeric',
@@ -269,8 +190,8 @@ const SystemWalletsPage: React.FC = () => {
     });
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
       case 'active':
         return 'bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-400 border border-success-200 dark:border-success-800/30';
       case 'inactive':
@@ -286,7 +207,7 @@ const SystemWalletsPage: React.FC = () => {
     }
   };
 
-  const getTransactionIcon = (type: 'credit' | 'debit') => {
+  const getTransactionIcon = (type) => {
     if (type === 'credit') {
       return <ArrowDownLeft className="w-4 h-4 text-success-600 dark:text-success-400" />;
     } else {
@@ -294,7 +215,7 @@ const SystemWalletsPage: React.FC = () => {
     }
   };
 
-  const getWalletIcon = (type: string) => {
+  const getWalletIcon = (type) => {
     switch (type) {
       case 'FLOAT':
         return <BanknoteIcon className="w-5 h-5 text-primary-600 dark:text-primary-400" />;
@@ -323,7 +244,7 @@ const SystemWalletsPage: React.FC = () => {
     }
   };
 
-  const getWalletAccentColor = (type: string) => {
+  const getWalletAccentColor = (type) => {
     switch (type) {
       case 'FLOAT':
         return 'border-l-primary-500 dark:border-l-primary-600';
@@ -387,8 +308,8 @@ const SystemWalletsPage: React.FC = () => {
                 className="flex items-center gap-1.5 px-3.5 py-2 bg-white dark:bg-dark-elevated border border-neutral-200 dark:border-dark-border text-neutral-700 dark:text-neutral-300 rounded-lg shadow-sm dark:shadow-dark-sm hover:bg-neutral-50 dark:hover:bg-dark-hover transition-all text-sm"
                 disabled={isLoading}
               >
-                <RefreshCw size={16} />
-                <span>Sync Balances</span>
+                <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
+                <span>{isLoading ? "Syncing..." : "Sync Balances"}</span>
               </button>
 
               <button
@@ -407,7 +328,7 @@ const SystemWalletsPage: React.FC = () => {
               </div>
               <input
                 type="text"
-                placeholder="Search wallets by name, description, type..."
+                placeholder="Search wallets by type, ID, or description..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 pr-3 py-2 w-full bg-white dark:bg-dark-input border border-neutral-200 dark:border-dark-border rounded-lg focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-700/30 focus:border-primary-500 dark:focus:border-primary-700 text-neutral-700 dark:text-neutral-200 text-sm shadow-sm dark:shadow-dark-sm placeholder-neutral-400 dark:placeholder-neutral-500"
@@ -484,7 +405,8 @@ const SystemWalletsPage: React.FC = () => {
               <p className="text-neutral-500 dark:text-neutral-400 text-sm">Try adjusting your search or filters to find what you're looking for.</p>
             </div>
           ) : (
-                extendedMockSystemWallets.map((wallet) => (
+            // Wallet Cards
+            filteredWallets.map((wallet) => (
               <div
                 key={wallet.id}
                 className={`bg-white dark:bg-dark-elevated rounded-lg shadow-card dark:shadow-dark-md border border-neutral-200 dark:border-dark-border border-l-[5px] ${getWalletAccentColor(wallet.type)} hover:shadow-md dark:hover:shadow-dark-lg transition-shadow`}
@@ -499,7 +421,7 @@ const SystemWalletsPage: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <h3 className="font-medium text-neutral-900 dark:text-neutral-100">{wallet.name}</h3>
                           <span className={`text-xs px-2 py-0.5 rounded-md ${getStatusColor(wallet.status)} font-medium`}>
-                            {wallet.status.charAt(0).toUpperCase() + wallet.status.slice(1)}
+                            {wallet.status === 'active' ? 'Active' : 'Inactive'}
                           </span>
                         </div>
                         <p className="text-xs text-neutral-500 dark:text-neutral-500 font-mono">{wallet.accountNumber}</p>
@@ -514,7 +436,9 @@ const SystemWalletsPage: React.FC = () => {
 
                   <div className="mt-4">
                     <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Current Balance</p>
-                    <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 font-finance">{formatCurrency(wallet.balance)}</h2>
+                    <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 font-finance">
+                      {formatCurrency(wallet.balance)}
+                    </h2>
                   </div>
 
                   <div className="flex items-start justify-between mt-4 pt-4 border-t border-neutral-100 dark:border-dark-border">
@@ -533,8 +457,8 @@ const SystemWalletsPage: React.FC = () => {
                       onClick={() => openTopUpModal(wallet)}
                       disabled={wallet.status === "inactive"}
                       className={`flex-1 text-xs py-2 px-3 rounded-lg ${wallet.status === "inactive"
-                          ? "bg-neutral-100 dark:bg-dark-active text-neutral-400 dark:text-neutral-500 cursor-not-allowed"
-                          : "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 font-medium transition-colors"
+                        ? "bg-neutral-100 dark:bg-dark-active text-neutral-400 dark:text-neutral-500 cursor-not-allowed"
+                        : "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 font-medium transition-colors"
                         }`}
                     >
                       Top Up
@@ -543,8 +467,8 @@ const SystemWalletsPage: React.FC = () => {
                       onClick={() => openTransferModal(wallet)}
                       disabled={wallet.status === "inactive"}
                       className={`flex-1 text-xs py-2 px-3 rounded-lg ${wallet.status === "inactive"
-                          ? "bg-neutral-100 dark:bg-dark-active text-neutral-400 dark:text-neutral-500 cursor-not-allowed"
-                          : "bg-neutral-100 dark:bg-dark-active text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-dark-hover font-medium transition-colors"
+                        ? "bg-neutral-100 dark:bg-dark-active text-neutral-400 dark:text-neutral-500 cursor-not-allowed"
+                        : "bg-neutral-100 dark:bg-dark-active text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-dark-hover font-medium transition-colors"
                         }`}
                     >
                       Transfer
@@ -624,7 +548,7 @@ const SystemWalletsPage: React.FC = () => {
                 <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Total Balance</h3>
               </div>
               <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 font-finance">
-                {formatCurrency(systemWallets.reduce((total, wallet) => total + wallet.balance, 0))}
+                {formatCurrency(totalBalance)}
               </p>
               <p className="text-xs text-success-600 dark:text-success-400 mt-1 flex items-center">
                 <ArrowUpRight size={12} className="mr-1" />
@@ -640,7 +564,7 @@ const SystemWalletsPage: React.FC = () => {
                 <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Transaction Volume</h3>
               </div>
               <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 font-finance">
-                {formatCurrency(systemWallets.reduce((total, wallet) => total + wallet.monthlyVolume, 0))}
+                {formatCurrency(totalVolume)}
               </p>
               <p className="text-xs text-success-600 dark:text-success-400 mt-1 flex items-center">
                 <ArrowUpRight size={12} className="mr-1" />
@@ -700,50 +624,59 @@ const SystemWalletsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-200 dark:divide-dark-border bg-white dark:bg-dark-elevated">
-                {mockTransactions.slice(0, 5).map((transaction) => {
-                  const wallet = systemWallets.find(w => w.id === transaction.walletId);
-                  return (
-                    <tr key={transaction.id} className="hover:bg-primary-50/30 dark:hover:bg-primary-900/10">
-                      <td className="px-3 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-neutral-100 dark:bg-dark-active flex items-center justify-center mr-3">
-                            {getTransactionIcon(transaction.type)}
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium text-neutral-900 dark:text-neutral-200 mb-0.5">
-                              {transaction.type === 'credit' ? 'Incoming' : 'Outgoing'}
+                {/* If no transaction data is available, display a placeholder message */}
+                {mockTransactions.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-3 py-4 text-center text-neutral-500 dark:text-neutral-400">
+                      No recent transactions found
+                    </td>
+                  </tr>
+                ) : (
+                  mockTransactions.slice(0, 5).map((transaction) => {
+                    const wallet = systemWallets.find(w => w.id === transaction.walletId);
+                    return (
+                      <tr key={transaction.id} className="hover:bg-primary-50/30 dark:hover:bg-primary-900/10">
+                        <td className="px-3 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-neutral-100 dark:bg-dark-active flex items-center justify-center mr-3">
+                              {getTransactionIcon(transaction.type)}
                             </div>
-                            <div className="text-xs text-neutral-500 dark:text-neutral-500 font-mono">{transaction.reference}</div>
+                            <div>
+                              <div className="text-sm font-medium text-neutral-900 dark:text-neutral-200 mb-0.5">
+                                {transaction.type === 'credit' ? 'Incoming' : 'Outgoing'}
+                              </div>
+                              <div className="text-xs text-neutral-500 dark:text-neutral-500 font-mono">{transaction.reference}</div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap">
-                        <div className="text-sm text-neutral-900 dark:text-neutral-300">{wallet?.name || 'Unknown Wallet'}</div>
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap">
-                        <div className={`text-sm font-medium ${transaction.type === 'credit'
-                          ? 'text-success-600 dark:text-success-400'
-                          : 'text-primary-600 dark:text-primary-400'
-                          }`}>
-                          {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                        </div>
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${getStatusColor(transaction.status)}`}>
-                          {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-500">
-                        {formatDate(transaction.timestamp)}
-                      </td>
-                      <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 p-1 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
-                          <Eye size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap">
+                          <div className="text-sm text-neutral-900 dark:text-neutral-300">{wallet?.name || 'Unknown Wallet'}</div>
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap">
+                          <div className={`text-sm font-medium ${transaction.type === 'credit'
+                            ? 'text-success-600 dark:text-success-400'
+                            : 'text-primary-600 dark:text-primary-400'
+                            }`}>
+                            {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                          </div>
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${getStatusColor(transaction.status)}`}>
+                            {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                          </span>
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-500">
+                          {formatDate(transaction.timestamp)}
+                        </td>
+                        <td className="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 p-1 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
+                            <Eye size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
