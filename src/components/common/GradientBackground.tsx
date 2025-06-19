@@ -1,95 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 const GradientBackground: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Canvas animation for moving particles
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas dimensions to match window
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Create particles
-    const particles: {
-      x: number;
-      y: number;
-      size: number;
-      speed: number;
-      color: string;
-      opacity: number;
-      direction: number;
-    }[] = [];
-
-    for (let i = 0; i < 30; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 3 + 1,
-        speed: Math.random() * 0.5 + 0.1,
-        color: [
-          'rgba(13, 153, 242, ',
-          'rgba(22, 197, 94, ',
-          'rgba(139, 92, 246, ',
-          'rgba(250, 142, 2, '
-        ][Math.floor(Math.random() * 4)],
-        opacity: Math.random() * 0.4 + 0.1,
-        direction: Math.random() * Math.PI * 2
-      });
-    }
-
-    // Animation loop
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach(particle => {
-        // Move particle
-        particle.x += Math.cos(particle.direction) * particle.speed;
-        particle.y += Math.sin(particle.direction) * particle.speed;
-
-        // Bounce off edges
-        if (particle.x < 0 || particle.x > canvas.width) {
-          particle.direction = Math.PI - particle.direction;
-        }
-        if (particle.y < 0 || particle.y > canvas.height) {
-          particle.direction = -particle.direction;
-        }
-
-        // Draw particle
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = `${particle.color}${particle.opacity})`;
-        ctx.fill();
-      });
-
-      requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-    };
-  }, []);
-
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {/* Canvas for animated particles */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-0"
-      />
-
       {/* Main large gradients with increased vibrancy */}
       <div className="absolute top-[-30%] right-[-10%] w-[800px] h-[800px] rounded-full bg-gradient-to-b from-primary-100/90 to-accent-blue/25 animate-float opacity-80 blur-xl"></div>
       <div className="absolute bottom-[-20%] left-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-secondary-200/80 to-accent-purple/25 animate-float animation-delay-2000 opacity-70 blur-xl"></div>
@@ -102,11 +15,6 @@ const GradientBackground: React.FC = () => {
       {/* Dynamic pulse glows */}
       <div className="absolute top-[40%] right-[40%] w-[120px] h-[120px] rounded-full bg-gradient-radial from-primary-300/30 to-transparent animate-pulse-slow opacity-70 blur-xl"></div>
       <div className="absolute bottom-[30%] left-[35%] w-[150px] h-[150px] rounded-full bg-gradient-radial from-secondary-300/30 to-transparent animate-pulse-slow animation-delay-1500 opacity-70 blur-xl"></div>
-
-      {/* Modern glass spheres with enhanced shadows */}
-      <div className="absolute top-[10%] right-[20%] w-[100px] h-[100px] rounded-full bg-gradient-to-r from-white/70 to-white/30 backdrop-blur-md border border-white/40 shadow-glass animate-float animation-delay-2000"></div>
-      <div className="absolute bottom-[15%] right-[10%] w-[80px] h-[80px] rounded-full bg-gradient-to-r from-white/60 to-white/20 backdrop-blur-md border border-white/30 shadow-glass animate-float animation-delay-1000"></div>
-      <div className="absolute top-[40%] left-[10%] w-[60px] h-[60px] rounded-full bg-gradient-to-r from-white/50 to-white/10 backdrop-blur-md border border-white/30 shadow-glass animate-float animation-delay-3000"></div>
 
       {/* Financial indicators with enhanced animation */}
       <div className="absolute top-[30%] left-[60%] h-[120px] w-[2px] bg-gradient-to-b from-success-100/0 via-success-400/60 to-success-100/0 animate-data-flow"></div>
@@ -154,16 +62,13 @@ const GradientBackground: React.FC = () => {
       <div className="absolute top-[15%] left-[30%] w-[2px] h-[150px] bg-gradient-to-b from-white/0 via-white/30 to-white/0 rotate-[45deg] animate-pulse-slow opacity-50"></div>
       <div className="absolute bottom-[25%] right-[35%] w-[2px] h-[120px] bg-gradient-to-b from-white/0 via-white/30 to-white/0 rotate-[-60deg] animate-pulse-slow animation-delay-2000 opacity-50"></div>
 
-      {/* Data visualization dots pattern */}
-      <div className="absolute inset-0 flex flex-wrap gap-[40px] p-[40px] opacity-10 overflow-hidden">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={i}
-            className="w-1 h-1 rounded-full bg-primary-400/80 animate-pulse-slow"
-            style={{ animationDelay: `${i * 0.1}s` }}
-          ></div>
-        ))}
-      </div>
+      {/* Additional soft glows with shimmer effect */}
+      <div className="absolute top-[50%] right-[15%] w-[200px] h-[200px] rounded-full bg-gradient-radial from-primary-200/5 to-transparent blur-2xl animate-pulse-slow animation-delay-2800"></div>
+      <div className="absolute bottom-[40%] left-[45%] w-[180px] h-[180px] rounded-full bg-gradient-radial from-money-200/5 to-transparent blur-2xl animate-pulse-slow animation-delay-1300"></div>
+
+      {/* Premium shimmer lines */}
+      <div className="absolute top-[37%] left-[20%] w-[120px] h-[1px] bg-gradient-to-r from-white/0 via-white/30 to-white/0 animate-shimmer"></div>
+      <div className="absolute bottom-[45%] right-[25%] w-[150px] h-[1px] bg-gradient-to-r from-white/0 via-white/30 to-white/0 animate-shimmer animation-delay-1500"></div>
     </div>
   );
 };
