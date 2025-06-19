@@ -1,20 +1,181 @@
-/* Animation keyframes */
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 @keyframes pulse {
-  0% { opacity: 0.5; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0.5; }
+  0% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+
+  /* Increased opacity during pulse */
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* iOS 18-inspired subtle slide */
+@keyframes subtle-slide {
+  0% {
+    transform: translateX(0);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: translateX(10px);
+    opacity: 0.8;
+  }
+
+  /* Increased movement and opacity */
+  100% {
+    transform: translateX(0);
+    opacity: 0.3;
+  }
+}
+
+/* Enhanced fintech data animation */
+@keyframes data-flow {
+  0% {
+    height: 10px;
+    opacity: 0.2;
+    transform: translateY(5px);
+  }
+
+  50% {
+    height: 30px;
+    opacity: 0.8;
+    transform: translateY(-5px);
+  }
+
+  /* More dramatic height change */
+  100% {
+    height: 10px;
+    opacity: 0.2;
+    transform: translateY(5px);
+  }
+}
+
+/* Subtle breathing animation for cards with more movement */
+@keyframes breathe {
+  0% {
+    transform: scale(1);
+    filter: brightness(0.9);
+  }
+
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+
+  /* Added brightness filter */
+  100% {
+    transform: scale(1);
+    filter: brightness(0.9);
+  }
+}
+
+/* Enhanced subtle rotation for 3D effect */
+@keyframes subtle-rotate {
+  0% {
+    transform: rotate3d(1, 1, 1, 0deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate3d(1, 1, 1, 2deg) translateY(-5px);
+  }
+
+  /* Added translation for more movement */
+  100% {
+    transform: rotate3d(1, 1, 1, 0deg) translateY(0);
+  }
+}
+
+/* Shimmer effect for premium feel */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Glow pulse for emphasis */
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Particle movement for data visualization */
+@keyframes particle-move {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: translate(var(--x, 10px), var(--y, 5px));
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.3;
+  }
 }
 
 /* Animation classes */
@@ -31,19 +192,107 @@
   background-size: 200% 200%;
 }
 
+.animate-pulsate {
+  animation: pulsate 2s ease-in-out infinite;
+}
+
+.animate-subtle-slide {
+  animation: subtle-slide 3s ease-in-out infinite;
+}
+
+.animate-data-flow {
+  animation: data-flow 2s ease-in-out infinite;
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.animate-subtle-rotate {
+  animation: subtle-rotate 6s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s linear infinite;
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  background-size: 200% 100%;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.animate-particle {
+  animation: particle-move 4s ease-in-out infinite;
+}
+
 /* Animation delays */
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+
 .animation-delay-1000 {
   animation-delay: 1s;
+}
+
+.animation-delay-1200 {
+  animation-delay: 1.2s;
+}
+
+.animation-delay-1500 {
+  animation-delay: 1.5s;
+}
+
+.animation-delay-1800 {
+  animation-delay: 1.8s;
 }
 
 .animation-delay-2000 {
   animation-delay: 2s;
 }
 
+.animation-delay-2500 {
+  animation-delay: 2.5s;
+}
+
+.animation-delay-2800 {
+  animation-delay: 2.8s;
+}
+
 .animation-delay-3000 {
   animation-delay: 3s;
 }
 
+.animation-delay-3500 {
+  animation-delay: 3.5s;
+}
+
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* Custom background gradients */
+.radial-gradient {
+  background: radial-gradient(circle, var(--tw-gradient-from) 0%, var(--tw-gradient-to) 70%);
+}
+
+/* Grid backgrounds for data visualization feel */
+.grid-bg-light {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Hide scrollbars but allow scrolling */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

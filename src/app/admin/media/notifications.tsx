@@ -9,6 +9,7 @@ import {
   Smartphone, Mail, BellRing
 } from 'lucide-react';
 import { notificationService } from '../../../api/services/notification';
+import GradientBackground from '../../../components/common/GradientBackground';
 
 // Define interfaces for template data
 interface Template {
@@ -171,7 +172,6 @@ const NotificationsPage: React.FC = () => {
   useEffect(() => {
     let filtered = [...templates];
 
-    // Filter by search
     if (search) {
       filtered = filtered.filter(template =>
         template.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -180,7 +180,6 @@ const NotificationsPage: React.FC = () => {
       );
     }
 
-    // Sort templates
     filtered.sort((a, b) => {
       let comparison = 0;
 
@@ -198,7 +197,6 @@ const NotificationsPage: React.FC = () => {
     setFilteredTemplates(filtered);
   }, [search, templates, sortBy, sortDirection]);
 
-  // Channel icon mapping
   const getChannelIcon = (channel: string) => {
     switch (channel) {
       case 'sms':
@@ -214,18 +212,6 @@ const NotificationsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-30%] right-[-10%] w-[800px] h-[800px] rounded-full bg-gradient-to-b from-blue-50 to-sky-100 animate-float opacity-60"></div>
-        <div className="absolute bottom-[-20%] left-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-indigo-50 to-violet-100 animate-float animation-delay-2000 opacity-50"></div>
-        <div className="absolute top-[20%] left-[30%] w-[300px] h-[300px] rounded-full bg-gradient-to-br from-rose-50 to-orange-100 animate-float animation-delay-1000 opacity-40"></div>
-
-        {/* Glass spheres */}
-        <div className="absolute top-[10%] right-[20%] w-[100px] h-[100px] rounded-full bg-gradient-to-r from-white/80 to-white/40 backdrop-blur-sm border border-white/30 animate-float animation-delay-2000"></div>
-        <div className="absolute bottom-[15%] right-[10%] w-[80px] h-[80px] rounded-full bg-gradient-to-r from-white/70 to-white/30 backdrop-blur-sm border border-white/20 animate-float animation-delay-1000"></div>
-        <div className="absolute top-[40%] left-[10%] w-[60px] h-[60px] rounded-full bg-gradient-to-r from-white/60 to-white/20 backdrop-blur-sm border border-white/20 animate-float animation-delay-3000"></div>
-      </div>
-
       <div className="relative z-10 p-8 mx-auto max-w-7xl">
         <div className="flex justify-between items-center mb-8">
           <div>
