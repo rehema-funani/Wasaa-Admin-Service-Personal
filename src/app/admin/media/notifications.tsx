@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Bell, Filter, Search, Plus, Copy,
   Trash, Edit, Send, Clock, X,
   Sparkles, Zap, MessageSquare, FileText,
-  MoreHorizontal, CheckCircle2, ArrowUp, ArrowDown,
-  PanelRight, ChevronRight, Command, Languages,
-  Smartphone, Mail, BellRing
+  MoreHorizontal, ArrowUp, ArrowDown,
+  Command, Languages,
+  Smartphone, Mail, BellRing,
+  Eye
 } from 'lucide-react';
 import { notificationService } from '../../../api/services/notification';
-import GradientBackground from '../../../components/common/GradientBackground';
 
-// Define interfaces for template data
 interface Template {
   id: string;
   code: string;
@@ -29,7 +28,6 @@ interface NewTemplateData {
   tokens: string[];
 }
 
-// For animation
 const style = document.createElement('style');
 style.textContent = `
   @keyframes float {
@@ -97,8 +95,8 @@ const NotificationsPage: React.FC = () => {
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [sortBy, setSortBy] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
+  const navigate = useNavigate();
 
-  // Set active tab based on URL
   useEffect(() => {
     if (location.pathname.includes('/templates')) {
       setActiveTab('templates');
@@ -120,7 +118,6 @@ const NotificationsPage: React.FC = () => {
   const createTemplate = async () => {
     try {
       await notificationService.createTemplate(newTemplate);
-      // Reset form and close modal
       setNewTemplate({
         templateCode: '',
         name: '',
@@ -131,7 +128,6 @@ const NotificationsPage: React.FC = () => {
         tokens: []
       });
       setShowCreateModal(false);
-      // Refresh templates
       getTemplates();
     } catch (error) {
       console.error('Failed to create template:', error);
@@ -211,7 +207,7 @@ const NotificationsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 relative overflow-hidden">
+    <div className="h-auto bg-transparent w-full text-gray-900 relative">
       <div className="relative z-10 p-8 mx-auto max-w-7xl">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -357,8 +353,8 @@ const NotificationsPage: React.FC = () => {
                         <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all opacity-0 group-hover:opacity-100">
                           <Edit size={18} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all opacity-0 group-hover:opacity-100">
-                          <Copy size={18} />
+                        <button onClick={() => navigate(`/admin/media/shorts/notifications/templates/${template.id}`)} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all opacity-0 group-hover:opacity-100">
+                          <Eye size={18} />
                         </button>
                         <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-all opacity-0 group-hover:opacity-100">
                           <Send size={18} />
@@ -407,11 +403,10 @@ const NotificationsPage: React.FC = () => {
         )}
       </div>
 
-      {/* Create Template Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50">
           <div
-            className="bg-white rounded-3xl w-full max-w-2xl border border-gray-100 shadow-2xl"
+            className="bg-white rounded-3xl max-h-[80vh] overflow-y-auto mt-12 w-full max-w-2xl border border-gray-100 shadow-2xl"
             style={{
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)'
             }}

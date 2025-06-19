@@ -18,7 +18,7 @@ export const notificationService = {
     return response.data;
   },
 
-  getTemplate: async (id: string) => {
+  getTemplateById: async (id: string) => {
     const response = await notification.get(`/templates/${id}`);
     return response.data;
   },

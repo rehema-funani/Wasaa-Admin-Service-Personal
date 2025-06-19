@@ -109,6 +109,7 @@ const CreatorDetail = lazy(() => import('./app/admin/media/creatordetail'));
 const PromotionPage = lazy(() => import('./app/admin/media/promotion'));
 const AnalyticsPage = lazy(() => import('./app/admin/media/analytics'));
 const NotificationsPage = lazy(() => import('./app/admin/media/notifications'));
+const NotificationsDetail = lazy(() => import('./app/admin/media/viewtemplate'));
 const ShortsSettings = lazy(() => import('./app/admin/media/settings'));
 
 // Support center
@@ -627,6 +628,13 @@ const AppRouter: React.FC = () => {
                 <NotificationsPage />
               </PermissionRouteGuard>
             } />
+            <Route path="admin/media/shorts/notifications/templates/:id" element={
+              <PermissionRouteGuard permissions={PermissionMap.Media.view}>
+                <NotificationsDetail />
+              </PermissionRouteGuard>
+            } />
+
+            {/* admin/media/shorts/notifications/templates */}
             <Route path="admin/media/shorts/settings" element={
               <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
                 <ShortsSettings />
