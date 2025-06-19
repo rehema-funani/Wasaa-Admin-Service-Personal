@@ -22,6 +22,7 @@ import {
   Zap,
   ChevronRight
 } from 'lucide-react'
+import GradientBackground from '../common/GradientBackground'
 
 const AdminLayout = () => {
   const [sessionTimeRemaining, setSessionTimeRemaining] = useState(1800)
@@ -170,246 +171,246 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-gray-50 transition-colors duration-300">
-      <PageTitle />
-      <SlimSidebar />
+      <GradientBackground />
+        <PageTitle />
+        <SlimSidebar />
 
-      <div className="flex-1 flex flex-col">
-        <TopNavigation />
+        <div className="flex-1 flex flex-col">
+          <TopNavigation />
 
-        {showGlobalMetrics && (
-          <div className="bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm px-4 py-2 transition-all duration-300 mt-[70px]">
+          {showGlobalMetrics && (
+            <div className="bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm px-4 py-2 transition-all duration-300 mt-[70px]">
 
-          </div>
-        )}
-
-        {!showGlobalMetrics && (
-          <button
-            onClick={() => setShowGlobalMetrics(true)}
-            className="absolute z-20 left-[75px] mt-[75px] p-1.5 rounded-r-md bg-white border border-l-0 border-gray-200 shadow-md"
-          >
-            <BarChart3 size={14} className="text-primary-500" />
-          </button>
-        )}
-
-        <div className="relative flex flex-1 overflow-hidden">
-          <div className={`absolute top-0 left-4 h-full z-20 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-r border-gray-200/50 ${showQuickTools ? 'w-64' : 'w-0'}`}>
-            <div className="h-full overflow-y-auto">
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
-                  <Zap size={16} className="mr-2 text-primary-500" />
-                  Quick Tools
-                </h3>
-
-                <div className="space-y-2">
-                  {quickTools.map(tool => (
-                    <button
-                      key={tool.id}
-                      className="w-full flex items-center p-3 rounded-lg bg-white border border-gray-100 hover:bg-gray-50 shadow-sm transition-all duration-200 hover:shadow-md"
-                    >
-                      <div className={`p-2 rounded-md bg-${tool.color}-50 mr-3`}>
-                        <tool.icon size={16} className={`text-${tool.color}-500`} />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">{tool.name}</span>
-                    </button>
-                  ))}
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-gray-100">
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">System Health</h4>
-
-                  <div className="space-y-3">
-                    {systemHealthMetrics.map((metric, index) => (
-                      <div key={index} className="p-3 rounded-lg bg-white border border-gray-100">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-xs font-medium text-gray-700">{metric.name}</span>
-                          <div className={`flex items-center text-xs ${getStatusColor(metric.status)}`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${metric.status === 'operational' ? 'bg-emerald-500' : metric.status === 'degraded' ? 'bg-amber-500' : 'bg-red-500'} ${metric.status !== 'operational' ? 'animate-pulse' : ''} mr-1`}></div>
-                            {metric.status}
-                          </div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>Uptime: {metric.uptime}</span>
-                          <span>Incidents: {metric.incidents}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
+          )}
 
-            {/* Toggle button */}
+          {!showGlobalMetrics && (
             <button
-              className="absolute -right-4 top-6 bg-white border border-gray-200 shadow-md rounded-r-md p-1.5"
-              onClick={() => setShowQuickTools(!showQuickTools)}
+              onClick={() => setShowGlobalMetrics(true)}
+              className="absolute z-20 left-[75px] mt-[75px] p-1.5 rounded-r-md bg-white border border-l-0 border-gray-200 shadow-md"
             >
-              <ChevronRight size={14} className={`text-primary-500 transition-transform duration-300 ${showQuickTools ? 'rotate-180' : ''}`} />
+              <BarChart3 size={14} className="text-primary-500" />
             </button>
-          </div>
-          <main className={`flex-1 mt-0 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 transition-all duration-300 ${showQuickTools ? 'ml-64' : ''}`}>
-            <button
-              className="fixed z-30 right-6 bottom-6 p-3 rounded-full bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              onClick={() => setShowActivityFeed(!showActivityFeed)}
-            >
-              <Bell size={18} className="text-secondary-600" />
-              {(systemAlerts.length > 0 || recentTransactions.some(t => t.status === 'flagged')) && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center text-[10px] font-medium">!</span>
-              )}
-            </button>
+          )}
 
-            {/* Activity Feed Slide-in Panel */}
-            <div
-              ref={activityFeedRef}
-              className={`fixed right-0 top-0 bottom-0 w-96 bg-white/95 backdrop-blur-md shadow-xl border-l border-gray-200 z-40 transition-transform duration-300 transform ${showActivityFeed ? 'translate-x-0' : 'translate-x-full'}`}
-            >
-              <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 className="font-semibold text-gray-800">Real-time Activity</h3>
-                <button
-                  onClick={() => setShowActivityFeed(false)}
-                  className="p-1.5 rounded-lg hover:bg-gray-100"
-                >
-                  <XCircle size={16} className="text-gray-500" />
-                </button>
-              </div>
+          <div className="relative flex flex-1 overflow-hidden">
+            <div className={`absolute top-0 left-4 h-full z-20 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-r border-gray-200/50 ${showQuickTools ? 'w-64' : 'w-0'}`}>
+              <div className="h-full overflow-y-auto">
+                <div className="p-4">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                    <Zap size={16} className="mr-2 text-primary-500" />
+                    Quick Tools
+                  </h3>
 
-              <div className="overflow-y-auto h-full pb-24">
-                {/* System Alerts Section */}
-                <div className="p-4 border-b border-gray-100">
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">System Alerts</h4>
-
-                  <div className="space-y-3">
-                    {systemAlerts.map((alert, index) => (
-                      <div
-                        key={alert.id}
-                        className={`p-3 rounded-lg border ${alert.severity === 'high' ? 'bg-red-50/50 border-red-200' : alert.severity === 'medium' ? 'bg-amber-50/50 border-amber-200' : 'bg-blue-50/50 border-blue-200'}`}
+                  <div className="space-y-2">
+                    {quickTools.map(tool => (
+                      <button
+                        key={tool.id}
+                        className="w-full flex items-center p-3 rounded-lg bg-white border border-gray-100 hover:bg-gray-50 shadow-sm transition-all duration-200 hover:shadow-md"
                       >
-                        <div className="flex items-start">
-                          <div className={`p-1.5 rounded-md ${alert.severity === 'high' ? 'bg-red-100' : alert.severity === 'medium' ? 'bg-amber-100' : 'bg-blue-100'} mt-0.5 mr-3`}>
-                            {alert.type === 'security' ? (
-                              <Shield size={14} className={alert.severity === 'high' ? 'text-red-600' : alert.severity === 'medium' ? 'text-amber-600' : 'text-blue-600'} />
-                            ) : alert.type === 'compliance' ? (
-                              <FileText size={14} className={alert.severity === 'high' ? 'text-red-600' : alert.severity === 'medium' ? 'text-amber-600' : 'text-blue-600'} />
-                            ) : (
-                              <Activity size={14} className={alert.severity === 'high' ? 'text-red-600' : alert.severity === 'medium' ? 'text-amber-600' : 'text-blue-600'} />
-                            )}
-                          </div>
-
-                          <div className="flex-1">
-                            <div className="flex justify-between">
-                              <span className="text-sm font-medium text-gray-800">{alert.type.charAt(0).toUpperCase() + alert.type.slice(1)} Alert</span>
-                              <span className="text-xs text-gray-500">{alert.timestamp}</span>
-                            </div>
-                            <p className="text-xs text-gray-700 mt-1">{alert.message}</p>
-                            <div className="flex justify-between items-center mt-2">
-                              <span className="text-xs">Severity: {getAlertSeverityIndicator(alert.severity)}</span>
-                              <button className="text-xs text-primary-600 hover:underline">View Details</button>
-                            </div>
-                          </div>
+                        <div className={`p-2 rounded-md bg-${tool.color}-50 mr-3`}>
+                          <tool.icon size={16} className={`text-${tool.color}-500`} />
                         </div>
-                      </div>
+                        <span className="text-sm font-medium text-gray-700">{tool.name}</span>
+                      </button>
                     ))}
                   </div>
+
+                  <div className="mt-6 pt-4 border-t border-gray-100">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">System Health</h4>
+
+                    <div className="space-y-3">
+                      {systemHealthMetrics.map((metric, index) => (
+                        <div key={index} className="p-3 rounded-lg bg-white border border-gray-100">
+                          <div className="flex justify-between mb-1">
+                            <span className="text-xs font-medium text-gray-700">{metric.name}</span>
+                            <div className={`flex items-center text-xs ${getStatusColor(metric.status)}`}>
+                              <div className={`w-1.5 h-1.5 rounded-full ${metric.status === 'operational' ? 'bg-emerald-500' : metric.status === 'degraded' ? 'bg-amber-500' : 'bg-red-500'} ${metric.status !== 'operational' ? 'animate-pulse' : ''} mr-1`}></div>
+                              {metric.status}
+                            </div>
+                          </div>
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>Uptime: {metric.uptime}</span>
+                            <span>Incidents: {metric.incidents}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Toggle button */}
+              <button
+                className="absolute -right-4 top-6 bg-white border border-gray-200 shadow-md rounded-r-md p-1.5"
+                onClick={() => setShowQuickTools(!showQuickTools)}
+              >
+                <ChevronRight size={14} className={`text-primary-500 transition-transform duration-300 ${showQuickTools ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+            <main className={`flex-1 mt-0 overflow-x-hidden overflow-y-auto bg-gray-50 p-6 transition-all duration-300 ${showQuickTools ? 'ml-64' : ''}`}>
+              <button
+                className="fixed z-30 right-6 bottom-6 p-3 rounded-full bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                onClick={() => setShowActivityFeed(!showActivityFeed)}
+              >
+                <Bell size={18} className="text-secondary-600" />
+                {(systemAlerts.length > 0 || recentTransactions.some(t => t.status === 'flagged')) && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center text-[10px] font-medium">!</span>
+                )}
+              </button>
+
+              {/* Activity Feed Slide-in Panel */}
+              <div
+                ref={activityFeedRef}
+                className={`fixed right-0 top-0 bottom-0 w-96 bg-white/95 backdrop-blur-md shadow-xl border-l border-gray-200 z-40 transition-transform duration-300 transform ${showActivityFeed ? 'translate-x-0' : 'translate-x-full'}`}
+              >
+                <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+                  <h3 className="font-semibold text-gray-800">Real-time Activity</h3>
+                  <button
+                    onClick={() => setShowActivityFeed(false)}
+                    className="p-1.5 rounded-lg hover:bg-gray-100"
+                  >
+                    <XCircle size={16} className="text-gray-500" />
+                  </button>
                 </div>
 
-                {/* Recent Transactions */}
-                <div className="p-4">
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Recent Transactions</h4>
+                <div className="overflow-y-auto h-full pb-24">
+                  {/* System Alerts Section */}
+                  <div className="p-4 border-b border-gray-100">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">System Alerts</h4>
 
-                  <div className="space-y-3">
-                    {recentTransactions.map((transaction, index) => (
-                      <div
-                        key={transaction.id}
-                        className={`p-3 rounded-lg border ${transaction.status === 'flagged' ? 'bg-red-50/30 border-red-100' : transaction.status === 'pending_approval' ? 'bg-blue-50/30 border-blue-100' : 'bg-white border-gray-100'}`}
-                      >
-                        <div className="flex justify-between items-start">
+                    <div className="space-y-3">
+                      {systemAlerts.map((alert, index) => (
+                        <div
+                          key={alert.id}
+                          className={`p-3 rounded-lg border ${alert.severity === 'high' ? 'bg-red-50/50 border-red-200' : alert.severity === 'medium' ? 'bg-amber-50/50 border-amber-200' : 'bg-blue-50/50 border-blue-200'}`}
+                        >
                           <div className="flex items-start">
-                            <div className="p-2 rounded-md bg-white shadow-sm border border-gray-100 mr-3">
-                              {transaction.type === 'deposit' ? (
-                                <ArrowDown size={14} className="text-emerald-500" />
-                              ) : transaction.type === 'withdrawal' ? (
-                                <ArrowUp size={14} className="text-amber-500" />
-                              ) : transaction.type === 'transfer' ? (
-                                <RefreshCw size={14} className="text-primary-500" />
+                            <div className={`p-1.5 rounded-md ${alert.severity === 'high' ? 'bg-red-100' : alert.severity === 'medium' ? 'bg-amber-100' : 'bg-blue-100'} mt-0.5 mr-3`}>
+                              {alert.type === 'security' ? (
+                                <Shield size={14} className={alert.severity === 'high' ? 'text-red-600' : alert.severity === 'medium' ? 'text-amber-600' : 'text-blue-600'} />
+                              ) : alert.type === 'compliance' ? (
+                                <FileText size={14} className={alert.severity === 'high' ? 'text-red-600' : alert.severity === 'medium' ? 'text-amber-600' : 'text-blue-600'} />
                               ) : (
-                                <DollarSign size={14} className="text-indigo-500" />
+                                <Activity size={14} className={alert.severity === 'high' ? 'text-red-600' : alert.severity === 'medium' ? 'text-amber-600' : 'text-blue-600'} />
                               )}
                             </div>
 
-                            <div>
-                              <div className="flex items-center">
-                                <span className="text-sm font-medium text-gray-800">
-                                  {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
-                                </span>
-                                <span className="mx-1.5 text-gray-400">•</span>
-                                <span className="text-xs text-gray-500">{transaction.id}</span>
+                            <div className="flex-1">
+                              <div className="flex justify-between">
+                                <span className="text-sm font-medium text-gray-800">{alert.type.charAt(0).toUpperCase() + alert.type.slice(1)} Alert</span>
+                                <span className="text-xs text-gray-500">{alert.timestamp}</span>
                               </div>
-
-                              <div className="mt-1 text-xs text-gray-700">
-                                {showSensitiveData ? (
-                                  <span>{transaction.user}</span>
-                                ) : (
-                                  <span>●●●● ●●●●</span>
-                                )}
-                              </div>
-
-                              <div className="mt-1 flex items-center">
-                                <span className="font-medium text-sm">
-                                  {showSensitiveData ? transaction.amount : transaction.amount.replace(/[0-9]/g, '●')}
-                                </span>
-                                <span className="ml-2 flex items-center">
-                                  {getRiskIndicator(transaction.risk)}
-                                  <span className="ml-1 text-[10px] text-gray-500">
-                                    {transaction.risk.toUpperCase()} risk
-                                  </span>
-                                </span>
+                              <p className="text-xs text-gray-700 mt-1">{alert.message}</p>
+                              <div className="flex justify-between items-center mt-2">
+                                <span className="text-xs">Severity: {getAlertSeverityIndicator(alert.severity)}</span>
+                                <button className="text-xs text-primary-600 hover:underline">View Details</button>
                               </div>
                             </div>
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                          <div className="text-right">
-                            <div className="text-xs text-gray-500 mb-1">{transaction.timestamp}</div>
-                            {getTransactionStatusBadge(transaction.status)}
+                  {/* Recent Transactions */}
+                  <div className="p-4">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Recent Transactions</h4>
+
+                    <div className="space-y-3">
+                      {recentTransactions.map((transaction, index) => (
+                        <div
+                          key={transaction.id}
+                          className={`p-3 rounded-lg border ${transaction.status === 'flagged' ? 'bg-red-50/30 border-red-100' : transaction.status === 'pending_approval' ? 'bg-blue-50/30 border-blue-100' : 'bg-white border-gray-100'}`}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex items-start">
+                              <div className="p-2 rounded-md bg-white shadow-sm border border-gray-100 mr-3">
+                                {transaction.type === 'deposit' ? (
+                                  <ArrowDown size={14} className="text-emerald-500" />
+                                ) : transaction.type === 'withdrawal' ? (
+                                  <ArrowUp size={14} className="text-amber-500" />
+                                ) : transaction.type === 'transfer' ? (
+                                  <RefreshCw size={14} className="text-primary-500" />
+                                ) : (
+                                  <DollarSign size={14} className="text-indigo-500" />
+                                )}
+                              </div>
+
+                              <div>
+                                <div className="flex items-center">
+                                  <span className="text-sm font-medium text-gray-800">
+                                    {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
+                                  </span>
+                                  <span className="mx-1.5 text-gray-400">•</span>
+                                  <span className="text-xs text-gray-500">{transaction.id}</span>
+                                </div>
+
+                                <div className="mt-1 text-xs text-gray-700">
+                                  {showSensitiveData ? (
+                                    <span>{transaction.user}</span>
+                                  ) : (
+                                    <span>●●●● ●●●●</span>
+                                  )}
+                                </div>
+
+                                <div className="mt-1 flex items-center">
+                                  <span className="font-medium text-sm">
+                                    {showSensitiveData ? transaction.amount : transaction.amount.replace(/[0-9]/g, '●')}
+                                  </span>
+                                  <span className="ml-2 flex items-center">
+                                    {getRiskIndicator(transaction.risk)}
+                                    <span className="ml-1 text-[10px] text-gray-500">
+                                      {transaction.risk.toUpperCase()} risk
+                                    </span>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="text-right">
+                              <div className="text-xs text-gray-500 mb-1">{transaction.timestamp}</div>
+                              {getTransactionStatusBadge(transaction.status)}
+                            </div>
                           </div>
                         </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* User Activity Logs */}
+                  <div className="p-4 border-t border-gray-100">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">User Activity</h4>
+
+                    <div className="space-y-2">
+                      <div className="p-2 text-xs text-gray-500 border-l-2 border-emerald-500 pl-3">
+                        <span className="font-medium text-emerald-600">Sarah Chen</span> completed client verification <span className="text-gray-400">• 12 minutes ago</span>
                       </div>
-                    ))}
+                      <div className="p-2 text-xs text-gray-500 border-l-2 border-primary-500 pl-3">
+                        <span className="font-medium text-primary-600">Admin</span> updated global risk parameters <span className="text-gray-400">• 34 minutes ago</span>
+                      </div>
+                      <div className="p-2 text-xs text-gray-500 border-l-2 border-amber-500 pl-3">
+                        <span className="font-medium text-amber-600">System</span> ran compliance checks on 145 accounts <span className="text-gray-400">• 1 hour ago</span>
+                      </div>
+                      <div className="p-2 text-xs text-gray-500 border-l-2 border-blue-500 pl-3">
+                        <span className="font-medium text-blue-600">Michael Zhang</span> exported transaction report <span className="text-gray-400">• 2 hours ago</span>
+                      </div>
+                    </div>
+
+                    <button className="w-full mt-3 py-2 text-xs text-center text-primary-600 hover:underline">
+                      View All Activity Logs
+                    </button>
                   </div>
-                </div>
-
-                {/* User Activity Logs */}
-                <div className="p-4 border-t border-gray-100">
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">User Activity</h4>
-
-                  <div className="space-y-2">
-                    <div className="p-2 text-xs text-gray-500 border-l-2 border-emerald-500 pl-3">
-                      <span className="font-medium text-emerald-600">Sarah Chen</span> completed client verification <span className="text-gray-400">• 12 minutes ago</span>
-                    </div>
-                    <div className="p-2 text-xs text-gray-500 border-l-2 border-primary-500 pl-3">
-                      <span className="font-medium text-primary-600">Admin</span> updated global risk parameters <span className="text-gray-400">• 34 minutes ago</span>
-                    </div>
-                    <div className="p-2 text-xs text-gray-500 border-l-2 border-amber-500 pl-3">
-                      <span className="font-medium text-amber-600">System</span> ran compliance checks on 145 accounts <span className="text-gray-400">• 1 hour ago</span>
-                    </div>
-                    <div className="p-2 text-xs text-gray-500 border-l-2 border-blue-500 pl-3">
-                      <span className="font-medium text-blue-600">Michael Zhang</span> exported transaction report <span className="text-gray-400">• 2 hours ago</span>
-                    </div>
-                  </div>
-
-                  <button className="w-full mt-3 py-2 text-xs text-center text-primary-600 hover:underline">
-                    View All Activity Logs
-                  </button>
                 </div>
               </div>
-            </div>
 
-            {/* Main content from router outlet */}
-            <Outlet />
-          </main>
+              {/* Main content from router outlet */}
+              <Outlet />
+            </main>
+          </div>
         </div>
-      </div>
 
-      {/* Add custom styling for some features */}
-      <style>{`
+        <style>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
         }

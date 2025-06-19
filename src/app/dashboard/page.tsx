@@ -244,7 +244,7 @@ const Dashboard = () => {
 
   return (
     <motion.div
-      className="w-full"
+      className="w-full bg-transparent"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -258,7 +258,6 @@ const Dashboard = () => {
           <p className="text-gray-500 dark:text-neutral-400 mt-1 text-[14px]">Welcome back, see the latest updates</p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center gap-4">
-          {/* Notification Icon with Badge */}
           <div className="relative">
             <motion.button
               className="w-10 h-10 rounded-full bg-white dark:bg-dark-elevated shadow-sm dark:shadow-dark-sm border border-gray-100 dark:border-dark-border flex items-center justify-center"
@@ -274,7 +273,6 @@ const Dashboard = () => {
             </motion.button>
           </div>
 
-          {/* Time Period Selector - iOS 18 Style */}
           <motion.div
             className="flex items-center py-1 px-1.5 bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-full shadow-sm border border-gray-100/60 dark:border-dark-border/60"
             whileHover={{ scale: 1.02 }}
@@ -317,7 +315,6 @@ const Dashboard = () => {
             </button>
           </motion.div>
 
-          {/* Advanced Filters Button */}
           <motion.button
             onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm rounded-full transition-all border ${showAdvancedFilters
@@ -333,7 +330,6 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* Advanced Filters Panel - Slides down when active */}
       <AnimatePresence>
         {showAdvancedFilters && (
           <motion.div
@@ -345,7 +341,6 @@ const Dashboard = () => {
           >
             <div className="p-5">
               <div className="flex flex-wrap gap-6">
-                {/* Date Range Filter */}
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">Date Range</label>
                   <div className="flex gap-2">
