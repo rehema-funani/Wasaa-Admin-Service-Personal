@@ -74,10 +74,7 @@ const TopNavigation = () => {
   const userMenuRef = useRef(null);
   const navigate = useNavigate();
 
-  // Get user data from localStorage
   const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : null;
-
-  // Use the getUserPermissions function to get permissions
   const userPermissions = getUserPermissions();
 
   const notifications = [];
@@ -293,7 +290,6 @@ const TopNavigation = () => {
     });
   };
 
-  // Filter sections based on permissions
   const filterSections = (sections: any) => {
     return sections.filter(section => {
       if (section.type !== 'section') return true;

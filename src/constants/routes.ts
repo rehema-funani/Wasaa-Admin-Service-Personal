@@ -1692,11 +1692,11 @@ const routes: Route[] = [
             //   path: '/admin/system/permissions',
             //   title: 'Permission Groups',
             // },
-            {
-              type: 'link',
-              path: '/admin/system/activity',
-              title: 'User Activity',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/system/activity',
+            //   title: 'User Activity',
+            // },
             {
               type: 'link',
               path: '/admin/system/roles',

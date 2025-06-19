@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import logo from '../../assets/images/logo-wasaa.png';
 import routes, { LinkRoute, DropdownRoute, SectionRoute } from '../../constants/routes';
-import Cookies from 'js-cookie';
 
 type RouteItem = LinkRoute | DropdownRoute | SectionRoute;
 
