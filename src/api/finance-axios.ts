@@ -29,7 +29,7 @@ const refreshAuthToken = async () => {
     const userType = 'admin';
     const source = 'web';
 
-    const response = await axios.post(`${baseURL}auth/refresh-token`, {
+    const response = await axios.post(`http://138.68.190.213:3010/auth/refresh-token`, {
       refresh_token: refreshToken,
       source: source,
       user_type: userType
