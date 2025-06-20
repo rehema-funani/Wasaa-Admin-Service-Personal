@@ -136,7 +136,7 @@ class FinanceService {
 
   async getWallet(walletId: string): Promise<Wallet> {
     try {
-      const response = await finance.get(`/userWallets/${walletId}`);
+      const response = await finance.get(`/wallets/${walletId}`);
       return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get wallet ${walletId}`);
@@ -149,7 +149,7 @@ class FinanceService {
 
   async getWalletTransactions(walletId: string, filters: FilterOptions = {}): Promise<Transaction[]> {
     try {
-      const response = await finance.get(`/userWalletTransactions/${walletId}`, { params: filters });
+      const response = await finance.get(`/transactions/${walletId}`, { params: filters });
       return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get wallet transactions for ${walletId}`);

@@ -25,7 +25,6 @@ export const Modal: React.FC<ModalProps> = ({
         xl: 'max-w-4xl',
     };
 
-    // State to handle animation
     const [isAnimating, setIsAnimating] = useState(false);
 
     useEffect(() => {
@@ -34,7 +33,6 @@ export const Modal: React.FC<ModalProps> = ({
             document.body.style.overflow = 'hidden';
         } else {
             setIsAnimating(false);
-            // Small delay to allow exit animation to complete
             const timer = setTimeout(() => {
                 document.body.style.overflow = '';
             }, 200);
@@ -64,8 +62,8 @@ export const Modal: React.FC<ModalProps> = ({
             />
             <div
                 className={`
-                relative w-full ${sizeClasses[size]} mx-auto max-h-[96vh] overflow-y-auto
-                rounded-3xl overflow-hidden 
+                relative w-full ${sizeClasses[size]} mx-auto max-h-[85vh] mt-12 overflow-y-auto
+                rounded-3xl overflow-hidden
                 bg-gradient-to-br from-white/20 to-white/10 dark:from-dark-elevated/80 dark:to-dark-surface/90 backdrop-blur-xl
                 border border-white/20 dark:border-dark-border/40
                 shadow-[0_15px_50px_-12px_rgba(0,0,0,0.25)] dark:shadow-dark-lg
