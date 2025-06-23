@@ -7,6 +7,9 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Manrope', 'sans-serif'],
+      },
       colors: {
         primary: {
           50: '#f0f7ff',
@@ -118,7 +121,6 @@ module.exports = {
           muted: '#9095a0',
           subtle: '#5a5f6d',
         },
-        // Money green for fintech
         money: {
           50: '#f0fdf4',
           100: '#dcfce7',
@@ -132,7 +134,6 @@ module.exports = {
           900: '#14532d',
           950: '#0a2a1c',
         },
-        // Accent colors for gradients
         accent: {
           blue: '#0ea5e9',
           purple: '#8b5cf6',

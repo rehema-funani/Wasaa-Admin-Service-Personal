@@ -168,24 +168,19 @@ const routes: Route[] = [
             },
             {
               type: 'link',
-              path: '/admin/finance/limits',
-              title: 'Transaction Limits',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/tariffs',
+              path: '/admin/finance/fee-rules',
               title: 'Fee Structures',
             },
-            {
-              type: 'link',
-              path: '/admin/finance/payment-gateways',
-              title: 'Payment Gateways',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/settlement',
-              title: 'Settlement Processing',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/payment-gateways',
+            //   title: 'Payment Gateways',
+            // },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/settlement',
+            //   title: 'Settlement Processing',
+            // },
           ],
         },
         {
