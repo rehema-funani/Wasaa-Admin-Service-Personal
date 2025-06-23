@@ -110,6 +110,7 @@ const PromotionPage = lazy(() => import('./app/admin/media/promotion'));
 const AnalyticsPage = lazy(() => import('./app/admin/media/analytics'));
 const NotificationsPage = lazy(() => import('./app/admin/notification/notifications'));
 const Broadcasts = lazy(() => import('./app/admin/notification/broadcast'));
+const AddBroadcast = lazy(() => import('./app/admin/notification/addedit'));
 const NotificationsDetail = lazy(() => import('./app/admin/media/viewtemplate'));
 const ShortsSettings = lazy(() => import('./app/admin/media/settings'));
 
@@ -637,11 +638,16 @@ const AppRouter: React.FC = () => {
                 <Broadcasts />
               </PermissionRouteGuard>
             } />
-            {/* <Route path="admin/system/notifications/broadcasts" element={
+            <Route path="admin/communication/broadcasts/add" element={
               <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
-                <Broadcasts />
+                <AddBroadcast />
               </PermissionRouteGuard>
-            } /> */}
+            } />
+            <Route path="admin/communication/broadcasts/edit/:id" element={
+              <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                <AddBroadcast />
+              </PermissionRouteGuard>
+            } />
 
             <Route path="admin/media/shorts/settings" element={
               <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
