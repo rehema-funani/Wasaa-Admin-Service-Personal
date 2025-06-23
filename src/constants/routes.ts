@@ -171,16 +171,16 @@ const routes: Route[] = [
               path: '/admin/finance/fee-rules',
               title: 'Fee Structures',
             },
-            // {
-            //   type: 'link',
-            //   path: '/admin/finance/payment-gateways',
-            //   title: 'Payment Gateways',
-            // },
-            // {
-            //   type: 'link',
-            //   path: '/admin/finance/settlement',
-            //   title: 'Settlement Processing',
-            // },
+            {
+              type: 'link',
+              path: '/admin/finance/payment-gateways',
+              title: 'Payment Gateways',
+            },
+            {
+              type: 'link',
+              path: '/admin/finance/settlement',
+              title: 'Settlement Processing',
+            },
           ],
         },
         {
@@ -868,6 +868,11 @@ const routes: Route[] = [
               path: '/admin/notifications/preferences',
               title: 'User Preferences',
             },
+            {
+              type: 'link',
+              path: '/admin/system/notifications/broadcasts',
+              title: 'System Broadcasts',
+            }
           ],
         },
         {
