@@ -9,7 +9,6 @@ import {
   Trash2,
   Settings,
   AlertTriangle,
-  X,
   Info,
   DollarSign,
   Percent,
@@ -448,7 +447,7 @@ const FeeRulesPage: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
-              className="bg-white/95 backdrop-blur-xl max-h-[90vh] overflow-y-auto rounded-3xl border border-gray-200/50 p-8 max-w-md w-full mx-4 shadow-2xl"
+              className="bg-white/95 backdrop-blur-xl max-h-[85vh] mt-6 overflow-y-auto rounded-3xl border border-gray-200/50 p-8 max-w-md w-full mx-4 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Warning Icon */}
@@ -515,7 +514,7 @@ const FeeRulesPage: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <motion.button
                   onClick={handleCancelDelete}
-                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl font-medium transition-all"
+                  className="flex-1 px-6 py-3 bg-gray-100 border hover:bg-gray-200 text-gray-900 rounded-xl font-medium transition-all"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   disabled={isDeleting}
@@ -538,15 +537,14 @@ const FeeRulesPage: React.FC = () => {
                   ) : (
                     <>
                       <Trash2 size={16} className="mr-2" />
-                      Delete Fee Rule
+                      Delete
                     </>
                   )}
                 </motion.button>
               </div>
 
-              {/* Additional Warning */}
               <p className="text-xs text-gray-500 text-center mt-4">
-                This action is irreversible and may impact your billing system
+                This action is irreversible and may impact the billing of the system
               </p>
             </motion.div>
           </motion.div>
