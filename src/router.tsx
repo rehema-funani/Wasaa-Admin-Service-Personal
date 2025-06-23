@@ -108,8 +108,8 @@ const CreatorsPage = lazy(() => import('./app/admin/media/creators'));
 const CreatorDetail = lazy(() => import('./app/admin/media/creatordetail'));
 const PromotionPage = lazy(() => import('./app/admin/media/promotion'));
 const AnalyticsPage = lazy(() => import('./app/admin/media/analytics'));
-const NotificationsPage = lazy(() => import('./app/admin/media/notifications'));
-const Broadcasts = lazy(() => import('./app/admin/broadcasts/page'));
+const NotificationsPage = lazy(() => import('./app/admin/notification/notifications'));
+const Broadcasts = lazy(() => import('./app/admin/notification/broadcast'));
 const NotificationsDetail = lazy(() => import('./app/admin/media/viewtemplate'));
 const ShortsSettings = lazy(() => import('./app/admin/media/settings'));
 
@@ -127,9 +127,6 @@ const Analytics = lazy(() => import('./app/admin/support/analytics'));
 const Logs = lazy(() => import('./app/admin/audits/page'));
 const AuditDetails = lazy(() => import('./app/admin/audits/auditdetails'));
 
-/**
- * Enhanced loading component with timeout feedback
- */
 const LoadingFallback = () => {
   const [isLongLoad, setIsLongLoad] = React.useState(false);
 
@@ -640,6 +637,11 @@ const AppRouter: React.FC = () => {
                 <Broadcasts />
               </PermissionRouteGuard>
             } />
+            {/* <Route path="admin/system/notifications/broadcasts" element={
+              <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
+                <Broadcasts />
+              </PermissionRouteGuard>
+            } /> */}
 
             <Route path="admin/media/shorts/settings" element={
               <PermissionRouteGuard permissions={PermissionMap.Settings.view}>

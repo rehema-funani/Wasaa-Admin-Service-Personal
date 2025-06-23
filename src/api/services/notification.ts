@@ -55,6 +55,11 @@ export const notificationService = {
     return response.data;
   },
 
+  createAdminBroadcast: async (broadcastData: any) => {
+    const response = await notification.post('/admin/broadcasts', broadcastData);
+    return response.data;
+  },
+
   getBroadcast: async (id: string) => {
     const response = await notification.get(`/broadcasts/${id}`);
     return response.data;
