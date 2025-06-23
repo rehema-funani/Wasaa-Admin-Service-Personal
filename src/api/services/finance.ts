@@ -275,43 +275,43 @@ class FinanceService {
   }
 
   // ======== TARIFF ENDPOINTS ========
-  async getAllTariffs(): Promise<Tariff[]> {
+  async getAllFeeRules(): Promise<any[]> {
     try {
-      const response = await finance.get('/walletBillings');
+      const response = await finance.get('/fee-rules');
       return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to get tariffs');
     }
   }
 
-  async getTariff(tariffId: string): Promise<Tariff> {
+  async getFeeRuleById(tariffId: string): Promise<any> {
     try {
-      const response = await finance.get(`/tariffs/${tariffId}`);
+      const response = await finance.get(`/fee-rules/${tariffId}`);
       return response.data;
     } catch (error) {
       this.handleError(error, `Failed to get tariff ${tariffId}`);
     }
   }
 
-  async createTariff(tariffData: Omit<Tariff, 'id'>): Promise<Tariff> {
+  async createFeeRule(feeRuleData): Promise<any> {
     try {
-      const response = await finance.post('/walletBillings', tariffData);
+      const response = await finance.post('/fee-rules', feeRuleData);
       return response.data;
     } catch (error) {
       this.handleError(error, 'Failed to create tariff');
     }
   }
 
-  async updateTariff(tariffId: string, tariffData: Partial<Tariff>): Promise<Tariff> {
+  async updateFeeRule(tariffId: string, tariffData): Promise<any> {
     try {
-      const response = await finance.put(`/walletBillings/${tariffId}`, tariffData);
+      const response = await finance.put(`/fee-rules/${tariffId}`, tariffData);
       return response.data;
     } catch (error) {
       this.handleError(error, `Failed to update tariff ${tariffId}`);
     }
   }
 
-  async deleteTariff(tariffId: string): Promise<void> {
+  async deleteFeeRule(tariffId: string): Promise<void> {
     try {
       await finance.delete(`/tariffs/${tariffId}`);
     } catch (error) {
