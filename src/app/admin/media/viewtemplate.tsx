@@ -5,15 +5,12 @@ import {
   Copy,
   Trash,
   Edit,
-  Send,
   CheckCircle,
   AlertTriangle,
   Eye,
-  Play,
   CheckCircle2,
   X,
   Save,
-  ChevronDown,
   MessageSquare,
   Mail,
   Smartphone,
@@ -96,7 +93,7 @@ const page: React.FC = () => {
 
     try {
       await notificationService.deleteTemplate(id);
-      navigate('/notifications');
+      navigate('/admin/media/shorts/notifications/templates');
     } catch (err) {
       setError('Failed to delete template. Please try again.');
       console.error('Error deleting template:', err);
@@ -218,7 +215,7 @@ const page: React.FC = () => {
           <p className="text-lg font-medium mb-1">Error Loading Template</p>
           <p className="text-sm text-gray-500">{error || 'Template not found'}</p>
           <button
-            onClick={() => navigate('/notifications')}
+            onClick={() => navigate(-1)}
             className="mt-4 px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-all text-sm"
           >
             Back to Templates
@@ -234,7 +231,7 @@ const page: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
           <button
-            onClick={() => navigate('/notifications')}
+            onClick={() => navigate(-1)}
             className="mr-4 p-2 rounded-full bg-white border border-gray-200 shadow-soft-sm hover:shadow-soft transition-all"
           >
             <ArrowLeft size={18} className="text-gray-700" />
