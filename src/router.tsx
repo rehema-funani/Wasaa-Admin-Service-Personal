@@ -362,7 +362,7 @@ const AppRouter: React.FC = () => {
                 <Tarrifs />
               </PermissionRouteGuard>
             } />
-            <Route path="admin/finance/tariffs/edit/:id" element={
+            <Route path="admin/finance/fee-rules/edit/:id" element={
               <PermissionRouteGuard permissions={PermissionMap.Settings.view}>
                 <EditTariff />
               </PermissionRouteGuard>
