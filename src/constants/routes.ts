@@ -401,415 +401,415 @@ const routes: Route[] = [
         },
       ],
     },
-    {
-      type: 'section',
-      title: 'Media',
-      items: [
-        {
-          type: 'dropdown',
-          title: 'Short Videos',
-          icon: Film,
-          key: 'shorts',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/media/shorts',
-              title: 'Shorts Dashboard',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/shorts/moderation',
-              title: 'Video Moderation',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/shorts/reports',
-              title: 'Reported Content',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/shorts/comments',
-              title: 'Comments Management',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/shorts/creators',
-              title: 'Content Creators',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/shorts/monetization',
-              title: 'Monetization',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Livestreams',
-          icon: MonitorPlay,
-          key: 'livestreams',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/livestreams/all-livestreams',
-              title: 'All Livestreams',
-            },
-            {
-              type: 'link',
-              path: '/admin/livestreams/scheduled',
-              title: 'Scheduled Streams',
-            },
-            {
-              type: 'link',
-              path: '/admin/livestreams/featured',
-              title: 'Featured Streams',
-            },
-            {
-              type: 'link',
-              path: '/admin/livestreams/moderation',
-              title: 'Stream Moderation',
-            },
-            {
-              type: 'link',
-              path: '/admin/livestreams/reported',
-              title: 'Reported Streams',
-            },
-            {
-              type: 'link',
-              path: '/admin/livestreams/monetization',
-              title: 'Monetization',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Content Management',
-          icon: Hash,
-          key: 'content-mgmt',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/media/shorts/hashtags',
-              title: 'Hashtags',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/shorts/hashtags/trending',
-              title: 'Trending Tags',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/shorts/promotion',
-              title: 'Promotions',
-            },
-            {
-              type: 'link',
-              path: '/admin/livestreams/categories',
-              title: 'Stream Categories',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/content-calendar',
-              title: 'Content Calendar',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Analytics',
-          icon: BarChart3,
-          key: 'media-analytics',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/media/shorts/analytics',
-              title: 'Shorts Analytics',
-            },
-            {
-              type: 'link',
-              path: '/admin/livestreams/analytics',
-              title: 'Stream Analytics',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/shorts/analytics/moderation',
-              title: 'Moderation Reports',
-            },
-            {
-              type: 'link',
-              path: '/admin/media/revenue-analytics',
-              title: 'Revenue Analytics',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      type: 'section',
-      title: 'Channels',
-      items: [
-        {
-          type: 'link',
-          path: '/admin/channels/dashboard',
-          title: 'Channels Dashboard',
-          icon: LayoutGrid,
-          description: 'Channel performance overview'
-        },
-        {
-          type: 'dropdown',
-          title: 'Channel Management',
-          icon: Grid3x3,
-          key: 'channel-management',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/channels/all',
-              title: 'All Channels',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/categories',
-              title: 'Channel Categories',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/featured',
-              title: 'Featured Channels',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/verification',
-              title: 'Channel Verification',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/recommendations',
-              title: 'Channel Recommendations',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Content Distribution',
-          icon: Share2,
-          key: 'content-distribution',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/channels/distribution/publishing',
-              title: 'Publishing Rules',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/distribution/syndication',
-              title: 'Content Syndication',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/distribution/scheduling',
-              title: 'Release Scheduling',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/distribution/partners',
-              title: 'Distribution Partners',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Communication Tools',
-          icon: MessageCircle,
-          key: 'communication-tools',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/channels/communication/messaging',
-              title: 'Channel Messaging',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/communication/broadcasts',
-              title: 'Broadcast Messages',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/communication/announcements',
-              title: 'Channel Announcements',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/communication/comments',
-              title: 'Comment Management',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Audience Management',
-          icon: Users,
-          key: 'audience-management',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/channels/audience/subscribers',
-              title: 'Subscriber Management',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/audience/engagement',
-              title: 'Engagement Metrics',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/audience/segmentation',
-              title: 'Audience Segmentation',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/audience/growth',
-              title: 'Growth Analytics',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Monetization',
-          icon: BadgeDollarSign,
-          key: 'channel-monetization',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/channels/monetization/subscriptions',
-              title: 'Subscription Plans',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/monetization/advertising',
-              title: 'Advertising',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/monetization/memberships',
-              title: 'Membership Tiers',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/monetization/revenue-share',
-              title: 'Revenue Sharing',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/monetization/payouts',
-              title: 'Creator Payouts',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Analytics',
-          icon: PieChart,
-          key: 'channel-analytics',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/channels/analytics/performance',
-              title: 'Channel Performance',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/analytics/content',
-              title: 'Content Analytics',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/analytics/audience',
-              title: 'Audience Insights',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/analytics/revenue',
-              title: 'Revenue Reports',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/analytics/comparison',
-              title: 'Comparative Analysis',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Content Moderation',
-          icon: Shield,
-          key: 'channel-moderation',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/channels/moderation/queue',
-              title: 'Moderation Queue',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/moderation/reported',
-              title: 'Reported Content',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/moderation/policies',
-              title: 'Moderation Policies',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/moderation/appeals',
-              title: 'Appeals Process',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Notifications',
-          icon: BellRing,
-          key: 'channel-notifications',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/channels/notifications/settings',
-              title: 'Notification Settings',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/notifications/templates',
-              title: 'Notification Templates',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/notifications/scheduled',
-              title: 'Scheduled Notifications',
-            },
-            {
-              type: 'link',
-              path: '/admin/channels/notifications/analytics',
-              title: 'Notification Analytics',
-            },
-          ],
-        },
-        {
-          type: 'link',
-          path: '/admin/channels/cross-promotion',
-          title: 'Cross-Promotion',
-          icon: Zap,
-          description: 'Manage cross-channel promotions'
-        },
-        {
-          type: 'link',
-          path: '/admin/channels/settings',
-          title: 'Channel Settings',
-          icon: Settings,
-          description: 'Configure channel settings'
-        },
-      ],
-    },
+    // {
+    //   type: 'section',
+    //   title: 'Media',
+    //   items: [
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Short Videos',
+    //       icon: Film,
+    //       key: 'shorts',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts',
+    //           title: 'Shorts Dashboard',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/moderation',
+    //           title: 'Video Moderation',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/reports',
+    //           title: 'Reported Content',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/comments',
+    //           title: 'Comments Management',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/creators',
+    //           title: 'Content Creators',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/monetization',
+    //           title: 'Monetization',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Livestreams',
+    //       icon: MonitorPlay,
+    //       key: 'livestreams',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/livestreams/all-livestreams',
+    //           title: 'All Livestreams',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/livestreams/scheduled',
+    //           title: 'Scheduled Streams',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/livestreams/featured',
+    //           title: 'Featured Streams',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/livestreams/moderation',
+    //           title: 'Stream Moderation',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/livestreams/reported',
+    //           title: 'Reported Streams',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/livestreams/monetization',
+    //           title: 'Monetization',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Content Management',
+    //       icon: Hash,
+    //       key: 'content-mgmt',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/hashtags',
+    //           title: 'Hashtags',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/hashtags/trending',
+    //           title: 'Trending Tags',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/promotion',
+    //           title: 'Promotions',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/livestreams/categories',
+    //           title: 'Stream Categories',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/content-calendar',
+    //           title: 'Content Calendar',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Analytics',
+    //       icon: BarChart3,
+    //       key: 'media-analytics',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/analytics',
+    //           title: 'Shorts Analytics',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/livestreams/analytics',
+    //           title: 'Stream Analytics',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/shorts/analytics/moderation',
+    //           title: 'Moderation Reports',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/media/revenue-analytics',
+    //           title: 'Revenue Analytics',
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
+    // {
+    //   type: 'section',
+    //   title: 'Channels',
+    //   items: [
+    //     {
+    //       type: 'link',
+    //       path: '/admin/channels/dashboard',
+    //       title: 'Channels Dashboard',
+    //       icon: LayoutGrid,
+    //       description: 'Channel performance overview'
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Channel Management',
+    //       icon: Grid3x3,
+    //       key: 'channel-management',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/all',
+    //           title: 'All Channels',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/categories',
+    //           title: 'Channel Categories',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/featured',
+    //           title: 'Featured Channels',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/verification',
+    //           title: 'Channel Verification',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/recommendations',
+    //           title: 'Channel Recommendations',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Content Distribution',
+    //       icon: Share2,
+    //       key: 'content-distribution',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/distribution/publishing',
+    //           title: 'Publishing Rules',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/distribution/syndication',
+    //           title: 'Content Syndication',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/distribution/scheduling',
+    //           title: 'Release Scheduling',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/distribution/partners',
+    //           title: 'Distribution Partners',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Communication Tools',
+    //       icon: MessageCircle,
+    //       key: 'communication-tools',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/communication/messaging',
+    //           title: 'Channel Messaging',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/communication/broadcasts',
+    //           title: 'Broadcast Messages',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/communication/announcements',
+    //           title: 'Channel Announcements',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/communication/comments',
+    //           title: 'Comment Management',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Audience Management',
+    //       icon: Users,
+    //       key: 'audience-management',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/audience/subscribers',
+    //           title: 'Subscriber Management',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/audience/engagement',
+    //           title: 'Engagement Metrics',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/audience/segmentation',
+    //           title: 'Audience Segmentation',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/audience/growth',
+    //           title: 'Growth Analytics',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Monetization',
+    //       icon: BadgeDollarSign,
+    //       key: 'channel-monetization',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/monetization/subscriptions',
+    //           title: 'Subscription Plans',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/monetization/advertising',
+    //           title: 'Advertising',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/monetization/memberships',
+    //           title: 'Membership Tiers',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/monetization/revenue-share',
+    //           title: 'Revenue Sharing',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/monetization/payouts',
+    //           title: 'Creator Payouts',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Analytics',
+    //       icon: PieChart,
+    //       key: 'channel-analytics',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/analytics/performance',
+    //           title: 'Channel Performance',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/analytics/content',
+    //           title: 'Content Analytics',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/analytics/audience',
+    //           title: 'Audience Insights',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/analytics/revenue',
+    //           title: 'Revenue Reports',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/analytics/comparison',
+    //           title: 'Comparative Analysis',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Content Moderation',
+    //       icon: Shield,
+    //       key: 'channel-moderation',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/moderation/queue',
+    //           title: 'Moderation Queue',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/moderation/reported',
+    //           title: 'Reported Content',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/moderation/policies',
+    //           title: 'Moderation Policies',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/moderation/appeals',
+    //           title: 'Appeals Process',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       title: 'Notifications',
+    //       icon: BellRing,
+    //       key: 'channel-notifications',
+    //       items: [
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/notifications/settings',
+    //           title: 'Notification Settings',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/notifications/templates',
+    //           title: 'Notification Templates',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/notifications/scheduled',
+    //           title: 'Scheduled Notifications',
+    //         },
+    //         {
+    //           type: 'link',
+    //           path: '/admin/channels/notifications/analytics',
+    //           title: 'Notification Analytics',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       type: 'link',
+    //       path: '/admin/channels/cross-promotion',
+    //       title: 'Cross-Promotion',
+    //       icon: Zap,
+    //       description: 'Manage cross-channel promotions'
+    //     },
+    //     {
+    //       type: 'link',
+    //       path: '/admin/channels/settings',
+    //       title: 'Channel Settings',
+    //       icon: Settings,
+    //       description: 'Configure channel settings'
+    //     },
+    //   ],
+    // },
     {
       type: 'section',
       title: 'Customization',

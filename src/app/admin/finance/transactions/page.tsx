@@ -345,6 +345,24 @@ const TransactionsPage: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
+    const million = 1_000_000;
+    const billion = 1_000_000_000;
+    const trillion = 1_000_000_000_000;
+
+    if (Math.abs(amount) >= trillion) {
+      const formatted = (amount / trillion).toFixed(2);
+      const trimmed = formatted.replace(/\.00$/, '');
+      return `KES ${trimmed} trillion`;
+    } else if (Math.abs(amount) >= billion) {
+      const formatted = (amount / billion).toFixed(2);
+      const trimmed = formatted.replace(/\.00$/, '');
+      return `KES ${trimmed} billion`;
+    } else if (Math.abs(amount) >= million) {
+      const formatted = (amount / million).toFixed(2);
+      const trimmed = formatted.replace(/\.00$/, '');
+      return `KES ${trimmed} million`;
+    }
+
     return new Intl.NumberFormat('en-KE', {
       style: 'currency',
       currency: 'KES',
@@ -376,7 +394,6 @@ const TransactionsPage: React.FC = () => {
     );
   };
 
-  // Map API status to UI status
   const mapTransactionStatus = (status: string): string => {
     if (!status) return 'pending';
 
