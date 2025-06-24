@@ -663,16 +663,6 @@ const TransactionsPage: React.FC = () => {
                   <thead>
                     <tr className="bg-neutral-50 border-b border-neutral-200">
                       <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
-                            checked={selectedTransactions.length === transactions.length}
-                            onChange={toggleAllTransactions}
-                          />
-                        </div>
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                         #
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -728,7 +718,6 @@ const TransactionsPage: React.FC = () => {
                         const { date, time } = formatDateTime(transaction.createdAt);
                         const type = getTransactionType(transaction);
                         const isSelected = selectedTransactions.includes(transaction.id);
-                        // Calculate row number based on current page and position
                         const rowNumber = (currentPage - 1) * itemsPerPage + index + 1;
 
                         return (
@@ -741,14 +730,6 @@ const TransactionsPage: React.FC = () => {
                             className={`hover:bg-primary-50/30 transition-colors cursor-pointer ${isSelected ? 'bg-primary-50/50' : ''}`}
                             onClick={() => handleViewTransaction(transaction)}
                           >
-                            <td className="px-4 py-4 whitespace-nowrap" onClick={e => e.stopPropagation()}>
-                              <input
-                                type="checkbox"
-                                className="rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
-                                checked={isSelected}
-                                onChange={(e) => toggleTransactionSelection(e, transaction.id)}
-                              />
-                            </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-neutral-500">
                               {rowNumber}
                             </td>
@@ -758,7 +739,11 @@ const TransactionsPage: React.FC = () => {
                                 <div className="ml-3">
                                   <p className="text-sm font-medium text-neutral-900">{type}</p>
                                   <p className="text-xs text-neutral-500">
-                                    {transaction.description || "-"}
+                                    {transaction.description
+                                      ? (transaction.description.length > 14
+                                        ? `${transaction.description.slice(0, 14)}...`
+                                        : transaction.description)
+                                      : "-"}
                                   </p>
                                 </div>
                               </div>
