@@ -1,62 +1,28 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { User, MoreHorizontal } from 'lucide-react';
+import { User } from 'lucide-react';
+import moment from 'moment';
 
-const RecentUsersTable: React.FC = () => {
-    const recentUsers = [
-        {
-            id: 1,
-            name: 'Emma Johnson',
-            email: 'emma.j@example.com',
-            joinedAt: '2 mins ago',
-            status: 'active'
-        },
-        {
-            id: 2,
-            name: 'Alex Rivera',
-            email: 'alex.r@example.com',
-            joinedAt: '10 mins ago',
-            status: 'active'
-        },
-        {
-            id: 3,
-            name: 'Sarah Chen',
-            email: 'sarah.c@example.com',
-            joinedAt: '25 mins ago',
-            status: 'inactive'
-        },
-        {
-            id: 4,
-            name: 'Michael Patel',
-            email: 'm.patel@example.com',
-            joinedAt: '42 mins ago',
-            status: 'active'
-        },
-        {
-            id: 5,
-            name: 'Olivia Smith',
-            email: 'o.smith@example.com',
-            joinedAt: '1 hour ago',
-            status: 'active'
-        }
-    ];
+interface RecentUser {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    createdAt: string;
+    status: string;
+}
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'active':
-                return 'bg-green-500 dark:bg-green-500';
-            case 'inactive':
-                return 'bg-gray-400 dark:bg-gray-500';
-            default:
-                return 'bg-gray-400 dark:bg-gray-500';
-        }
-    };
+interface RecentUsersTableProps {
+    recentUsers: RecentUser[];
+}
+
+const RecentUsersTable: React.FC<RecentUsersTableProps> = ({ recentUsers }) => {
 
     return (
         <div className="overflow-hidden">
             <div className="overflow-x-auto overflow-y-auto max-h-[280px] hide-scrollbar">
                 <div className="min-w-full">
-                    {recentUsers.map((user, index) => (
+                    {recentUsers?.slice(0, 9)?.map((user, index) => (
                         <motion.div
                             key={user.id}
                             className="border-b border-gray-50 dark:border-dark-border last:border-0 hover:bg-gray-50/50 dark:hover:bg-dark-active/50 transition-colors"
@@ -70,21 +36,13 @@ const RecentUsersTable: React.FC = () => {
                                     <User size={16} className="text-primary-600 dark:text-primary-400" strokeWidth={1.8} />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-800 dark:text-neutral-200 truncate">{user.name}</p>
-                                    <p className="text-xs text-gray-500 dark:text-neutral-400 truncate">{user.email}</p>
+                                    <p className="text-sm font-medium text-gray-800 dark:text-neutral-200 truncate">{user.first_name || 'N/A'} {user.last_name}</p>
+                                    <p className="text-xs text-gray-500 dark:text-neutral-400 truncate">{user.email || 'No email provided'}</p>
                                 </div>
                                 <div className="flex items-center ml-3">
                                     <span className="text-xs text-gray-500 dark:text-neutral-500 mr-2 text-right whitespace-nowrap">
-                                        {user.joinedAt}
+                                        {moment(user.createdAt).fromNow()}
                                     </span>
-                                    <div className={`w-2 h-2 rounded-full ${getStatusColor(user.status)}`}></div>
-                                    <motion.button
-                                        className="p-1.5 ml-2 rounded-lg text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-300 hover:bg-gray-100 dark:hover:bg-dark-hover"
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <MoreHorizontal size={14} />
-                                    </motion.button>
                                 </div>
                             </div>
                         </motion.div>

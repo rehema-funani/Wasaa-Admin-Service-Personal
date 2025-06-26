@@ -47,8 +47,6 @@ const Dashboard = () => {
   const [activeTimeframe, setActiveTimeframe] = useState('week');
   const [selectedTab, setSelectedTab] = useState('users');
   const [forexTab, setForexTab] = useState('rates');
-  const [showAIInsights, setShowAIInsights] = useState(true);
-  const [selectedRegion, setSelectedRegion] = useState('all');
   const [notificationCount, setNotificationCount] = useState(4);
   const [securityScore, setSecurityScore] = useState(86);
   const [stats, setStats] = useState([]);
@@ -56,7 +54,7 @@ const Dashboard = () => {
   const getStats = async () => {
     try {
       const response = await userService.getReports();
-      setStats(response.data);
+      setStats(response);
     } catch (error) {
       console.error('Error fetching stats:', error);
     }
@@ -65,10 +63,6 @@ const Dashboard = () => {
   useEffect(() => {
     getStats();
   }, [])
-
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [dateRange, setDateRange] = useState('last30');
-  const [userSegment, setUserSegment] = useState('all');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -222,11 +216,6 @@ const Dashboard = () => {
   const handleForexTabChange = (tab: any) => {
     setForexTab(tab);
   };
-
-  const handleRegionChange = (region: any) => {
-    setSelectedRegion(region);
-  };
-
   const exchangeRates = [
     { pair: 'USD/KES', rate: '130.45', change: '+0.3%', isUp: true, source: 'Fixer.io' },
     { pair: 'EUR/KES', rate: '142.18', change: '-0.2%', isUp: false, source: 'OpenExchangeRates' },
@@ -314,237 +303,8 @@ const Dashboard = () => {
               Year
             </button>
           </motion.div>
-
-          <motion.button
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            className={`flex items-center gap-1.5 px-4 py-2 text-sm rounded-full transition-all border ${showAdvancedFilters
-              ? 'bg-primary-50 border-primary-200 text-primary-600 dark:bg-primary-900/30 dark:border-primary-700/30 dark:text-primary-400'
-              : 'bg-white border-gray-200 text-gray-600 dark:bg-dark-elevated dark:border-dark-border dark:text-neutral-300'
-              }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Settings size={14} />
-            Filters
-          </motion.button>
         </div>
       </motion.div>
-
-      <AnimatePresence>
-        {showAdvancedFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-            animate={{ opacity: 1, height: 'auto', marginBottom: 24 }}
-            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-            transition={{ duration: 0.2 }}
-            className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm border border-gray-100/60 dark:border-dark-border/60 overflow-hidden"
-          >
-            <div className="p-5">
-              <div className="flex flex-wrap gap-6">
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">Date Range</label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setDateRange('last7')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${dateRange === 'last7'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Last 7 days
-                    </button>
-                    <button
-                      onClick={() => setDateRange('last30')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${dateRange === 'last30'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Last 30 days
-                    </button>
-                    <button
-                      onClick={() => setDateRange('last90')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${dateRange === 'last90'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Last 90 days
-                    </button>
-                    <button
-                      onClick={() => setDateRange('custom')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${dateRange === 'custom'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Custom
-                    </button>
-                  </div>
-                </div>
-
-                {/* User Segment Filter */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">User Segment</label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setUserSegment('all')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${userSegment === 'all'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      All Users
-                    </button>
-                    <button
-                      onClick={() => setUserSegment('new')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${userSegment === 'new'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      New Users
-                    </button>
-                    <button
-                      onClick={() => setUserSegment('active')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${userSegment === 'active'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Active Users
-                    </button>
-                    <button
-                      onClick={() => setUserSegment('inactive')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${userSegment === 'inactive'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Inactive Users
-                    </button>
-                  </div>
-                </div>
-
-                {/* Region Filter */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">Region</label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleRegionChange('all')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedRegion === 'all'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      All Regions
-                    </button>
-                    <button
-                      onClick={() => handleRegionChange('kenya')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedRegion === 'kenya'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Kenya
-                    </button>
-                    <button
-                      onClick={() => handleRegionChange('uganda')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedRegion === 'uganda'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Uganda
-                    </button>
-                    <button
-                      onClick={() => handleRegionChange('tanzania')}
-                      className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedRegion === 'tanzania'
-                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
-                        : 'bg-gray-50 text-gray-600 dark:bg-dark-active/50 dark:text-neutral-400 hover:bg-gray-100'
-                        }`}
-                    >
-                      Tanzania
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* AI Insights Panel - iOS 18 Style */}
-      <AnimatePresence>
-        {showAIInsights && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="mb-8"
-            variants={itemVariants}
-          >
-            <div className="bg-gradient-to-r from-violet-500/90 to-purple-600/90 rounded-2xl shadow-lg overflow-hidden backdrop-blur-sm">
-              <div className="p-5 flex justify-between items-start">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mr-4">
-                    <Sparkles size={20} className="text-white" strokeWidth={1.8} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">AI-Powered Insights</h3>
-                    <p className="text-violet-100 text-sm">Actionable recommendations based on your data</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowAIInsights(false)}
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-
-              <div className="px-5 pb-5 grid grid-cols-1 md:grid-cols-3 gap-4">
-                {aiInsights.map(insight => (
-                  <motion.div
-                    key={insight.id}
-                    className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20"
-                    whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`p-2.5 rounded-lg flex-shrink-0 ${insight.category === 'growth' ? 'bg-emerald-500/20' :
-                        insight.category === 'alert' ? 'bg-amber-500/20' :
-                          'bg-blue-500/20'
-                        }`}>
-                        {insight.category === 'growth' ? <TrendingUp size={16} className="text-emerald-100" /> :
-                          insight.category === 'alert' ? <AlertCircle size={16} className="text-amber-100" /> :
-                            <BarChart3 size={16} className="text-blue-100" />}
-                      </div>
-                      <div>
-                        <h4 className="text-white font-medium text-sm">{insight.title}</h4>
-                        <p className="text-violet-100 text-xs mt-1">{insight.message}</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-violet-100">
-                            {insight.impact} Impact
-                          </span>
-                          <button className="text-xs text-violet-200 hover:text-white transition-colors">
-                            Take Action
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Original Stats Cards - Enhanced Design */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         variants={itemVariants}
@@ -562,7 +322,6 @@ const Dashboard = () => {
         ))}
       </motion.div>
 
-      {/* New Engagement Stats Cards */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         variants={itemVariants}
@@ -580,7 +339,6 @@ const Dashboard = () => {
         ))}
       </motion.div>
 
-      {/* Forex Stats Cards */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         variants={itemVariants}
@@ -598,12 +356,10 @@ const Dashboard = () => {
         ))}
       </motion.div>
 
-      {/* Main Chart Section */}
       <motion.div
         className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6"
         variants={itemVariants}
       >
-        {/* User Activity Chart - Takes up 2/3 of the space */}
         <motion.div
           className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 lg:col-span-2 overflow-hidden"
           whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
@@ -649,7 +405,6 @@ const Dashboard = () => {
           <UserActivityChart timeframe={activeTimeframe} dataType={selectedTab} />
         </motion.div>
 
-        {/* Login Types Pie Chart */}
         <motion.div
           className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 overflow-hidden"
           whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
@@ -691,7 +446,6 @@ const Dashboard = () => {
         </motion.div>
       </motion.div>
 
-      {/* NEW: Security Overview Section */}
       <motion.div
         className="mb-6"
         variants={itemVariants}
@@ -1167,84 +921,10 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* NEW: Regional Performance */}
-      <motion.div
-        className="mb-6"
-        variants={itemVariants}
-      >
-        <motion.div
-          className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 overflow-hidden"
-          whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
-        >
-          <div className="flex justify-between items-center mb-5">
-            <div className="flex items-center">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center mr-3">
-                <Globe size={20} className="text-white" strokeWidth={1.8} />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Regional Performance</h2>
-                <p className="text-gray-500 dark:text-neutral-400 text-sm">User distribution and market performance</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              {['all', 'kenya', 'uganda', 'tanzania', 'other'].map(region => (
-                <motion.button
-                  key={region}
-                  onClick={() => handleRegionChange(region)}
-                  className={`px-3 py-1.5 text-xs rounded-lg transition-all ${selectedRegion === region
-                    ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
-                    : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
-                    }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {region.charAt(0).toUpperCase() + region.slice(1)}
-                </motion.button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {regionalPerformance.map((region, index) => (
-              <motion.div
-                key={index}
-                className={`bg-gray-50/70 dark:bg-dark-active/50 rounded-xl p-4 border border-gray-100 dark:border-dark-border/70 ${selectedRegion !== 'all' && selectedRegion !== region.region.toLowerCase() ? 'opacity-50' : ''
-                  }`}
-                whileHover={{ y: -5, boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)' }}
-              >
-                <div className="flex items-center mb-3">
-                  <div className={`p-2 rounded-lg bg-${region.color}-100 dark:bg-${region.color}-900/30 mr-2`}>
-                    <MapPin size={14} className={`text-${region.color}-500 dark:text-${region.color}-400`} strokeWidth={1.8} />
-                  </div>
-                  <h3 className="text-sm font-medium text-gray-800 dark:text-neutral-200">{region.region}</h3>
-                </div>
-
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs text-gray-500 dark:text-neutral-400">Users</span>
-                  <span className="text-xs font-medium text-gray-700 dark:text-neutral-300">{region.users.toLocaleString()}</span>
-                </div>
-
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs text-gray-500 dark:text-neutral-400">Growth</span>
-                  <span className="text-xs font-medium text-green-600 dark:text-green-400">{region.growth}</span>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-500 dark:text-neutral-400">Revenue</span>
-                  <span className="text-xs font-medium text-gray-700 dark:text-neutral-300">{region.revenue}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Activity and Live Data Section */}
       <motion.div
         className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"
         variants={itemVariants}
       >
-        {/* Recent Activity & Active Users/Groups Split Panel */}
         <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Recent Users */}
           <motion.div
@@ -1262,10 +942,9 @@ const Dashboard = () => {
                 </motion.button>
               </div>
             </div>
-            <RecentUsersTable />
+            <RecentUsersTable recentUsers={stats.recent_users} />
           </motion.div>
 
-          {/* Recent Groups */}
           <motion.div
             className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 overflow-hidden"
             whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}

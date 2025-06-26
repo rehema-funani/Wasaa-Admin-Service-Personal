@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import { notificationService } from '../../../api/services/notification';
 
-// Template interface
 interface Template {
   _id: string;
   template_code: string;
@@ -25,7 +24,6 @@ interface Template {
   __v: number;
 }
 
-// New template data interface
 interface NewTemplateData {
   template_code: string;
   channel: string;
@@ -35,7 +33,6 @@ interface NewTemplateData {
   description?: string;
 }
 
-// Notification interface based on the provided data
 interface Notification {
   _id: string;
   user_id: string;
@@ -130,7 +127,16 @@ const NotificationsPage = () => {
   // Create a new template
   const createTemplate = async () => {
     try {
-      await notificationService.createTemplate(newTemplate);
+      // Format the payload exactly as required by the API
+      const templatePayload = {
+        template_code: newTemplate.template_code,
+        channel: newTemplate.channel,
+        language: newTemplate.language,
+        content: newTemplate.content,
+        placeholders: newTemplate.placeholders
+      };
+
+      await notificationService.createTemplate(templatePayload);
       setNewTemplate({
         template_code: '',
         channel: 'sms',
@@ -194,7 +200,7 @@ const NotificationsPage = () => {
     }).format(date);
   };
 
-  // Get icon based on notification channel
+  // Get icon based on notification
   const getChannelIcon = (channel: string) => {
     switch (channel) {
       case 'sms':
@@ -208,7 +214,6 @@ const NotificationsPage = () => {
     }
   };
 
-  // Get status icon based on notification status
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'delivered':
@@ -222,7 +227,6 @@ const NotificationsPage = () => {
     }
   };
 
-  // Get priority badge color
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
@@ -236,17 +240,14 @@ const NotificationsPage = () => {
     }
   };
 
-  // Navigate to template details
   const viewTemplate = (templateId: string) => {
     window.location.href = `/admin/media/shorts/notifications/templates/${templateId}`;
   };
 
-  // Handle page change for notifications
   const handlePageChange = (page: number) => {
     getNotifications(page);
   };
 
-  // Handle tab change
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     setSearch('');

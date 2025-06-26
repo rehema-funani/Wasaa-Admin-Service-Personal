@@ -348,57 +348,57 @@ const routes: Route[] = [
             },
           ],
         },
-        {
-          type: 'dropdown',
-          title: 'Digital Assets',
-          icon: Gift,
-          key: 'digital-assets',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/gifts/gift-list',
-              title: 'Gift Catalog',
-            },
-            {
-              type: 'link',
-              path: '/admin/gifts/add-gift',
-              title: 'Add New Gift',
-            },
-            {
-              type: 'link',
-              path: '/admin/gifts/gift-categories',
-              title: 'Gift Categories',
-            },
-          ],
-        },
-        {
-          type: 'dropdown',
-          title: 'Creator Management',
-          icon: UserCheck,
-          key: 'creator-management',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/creators/verification',
-              title: 'Creator Verification',
-            },
-            {
-              type: 'link',
-              path: '/admin/creators/contracts',
-              title: 'Creator Contracts',
-            },
-            {
-              type: 'link',
-              path: '/admin/creators/payment-setup',
-              title: 'Payment Setup',
-            },
-            {
-              type: 'link',
-              path: '/admin/creators/performance',
-              title: 'Performance Metrics',
-            },
-          ],
-        },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Digital Assets',
+        //   icon: Gift,
+        //   key: 'digital-assets',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/gifts/gift-list',
+        //       title: 'Gift Catalog',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/gifts/add-gift',
+        //       title: 'Add New Gift',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/gifts/gift-categories',
+        //       title: 'Gift Categories',
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Creator Management',
+        //   icon: UserCheck,
+        //   key: 'creator-management',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/creators/verification',
+        //       title: 'Creator Verification',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/creators/contracts',
+        //       title: 'Creator Contracts',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/creators/payment-setup',
+        //       title: 'Payment Setup',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/creators/performance',
+        //       title: 'Performance Metrics',
+        //     },
+        //   ],
+        // },
       ],
     },
     // {
