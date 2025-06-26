@@ -21,14 +21,9 @@ import {
   Shield,
   AlertCircle,
   Check,
-  Sparkles,
-  MapPin,
-  Globe,
   Zap,
-  BarChart3,
   Lock,
   MessageCircle,
-  Settings,
   User,
   Heart
 } from 'lucide-react';
@@ -197,14 +192,6 @@ const Dashboard = () => {
     }
   ];
 
-  const regionalPerformance = [
-    { region: 'Kenya', users: 12583, growth: '+14.2%', revenue: '$43,291', color: 'emerald' },
-    { region: 'Uganda', users: 5721, growth: '+22.5%', revenue: '$18,490', color: 'violet' },
-    { region: 'Tanzania', users: 4892, growth: '+10.3%', revenue: '$15,720', color: 'blue' },
-    { region: 'Nigeria', users: 1342, growth: '+45.8%', revenue: '$8,890', color: 'amber' },
-    { region: 'Ghana', users: 354, growth: '+28.1%', revenue: '$2,900', color: 'pink' }
-  ];
-
   const handleTimeframeChange = (timeframe: any) => {
     setActiveTimeframe(timeframe);
   };
@@ -223,12 +210,6 @@ const Dashboard = () => {
     { pair: 'JPY/KES', rate: '0.8734', change: '+0.1%', isUp: true, source: 'Central Bank' },
     { pair: 'USD/UGX', rate: '3710.25', change: '-0.4%', isUp: false, source: 'OpenExchangeRates' },
     { pair: 'USD/TZS', rate: '2513.75', change: '+0.2%', isUp: true, source: 'Central Bank' }
-  ];
-
-  const aiInsights = [
-    { id: 1, title: 'User Growth Opportunity', message: 'Kenyan user signups spike on weekends. Consider weekend-targeted promotions.', impact: 'High', category: 'growth' },
-    { id: 2, title: 'Conversion Rate Drop', message: 'Forex conversions from USD to KES dropped 12% this week. Check for rate competitiveness.', impact: 'Medium', category: 'alert' },
-    { id: 3, title: 'Revenue Prediction', message: 'Based on current trends, revenue expected to increase 8.5% next month.', impact: 'Medium', category: 'forecast' }
   ];
 
   return (
@@ -447,174 +428,9 @@ const Dashboard = () => {
       </motion.div>
 
       <motion.div
-        className="mb-6"
-        variants={itemVariants}
-      >
-        <motion.div
-          className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 overflow-hidden"
-          whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
-        >
-          <div className="flex justify-between items-center mb-5">
-            <div className="flex items-center">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mr-3">
-                <Shield size={20} className="text-white" strokeWidth={1.8} />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Security Overview</h2>
-                <p className="text-gray-500 dark:text-neutral-400 text-sm">System health and security status</p>
-              </div>
-            </div>
-            <motion.button
-              className="text-sm text-primary-600 dark:text-primary-400 flex items-center bg-primary-50 dark:bg-primary-900/20 px-3 py-1.5 rounded-lg"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Lock size={14} className="mr-1.5" strokeWidth={1.8} />
-              Security Center
-            </motion.button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Security Score */}
-            <div className="flex flex-col bg-gray-50/70 dark:bg-dark-active/50 rounded-xl p-4 border border-gray-100 dark:border-dark-border/70">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-neutral-300">Security Score</h3>
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${securityScore >= 80 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                  securityScore >= 60 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                    'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                  }`}>
-                  {securityScore >= 80 ? 'Good' : securityScore >= 60 ? 'Fair' : 'Poor'}
-                </span>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="w-full h-3 bg-gray-200 dark:bg-dark-hover rounded-full overflow-hidden mb-2">
-                <motion.div
-                  className={`h-full rounded-full ${securityScore >= 80 ? 'bg-green-500' :
-                    securityScore >= 60 ? 'bg-amber-500' :
-                      'bg-red-500'
-                    }`}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${securityScore}%` }}
-                  transition={{ duration: 1, type: 'spring' }}
-                />
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-gray-800 dark:text-neutral-200">{securityScore}</span>
-                <span className="text-xs text-gray-500 dark:text-neutral-400">Last updated 5 mins ago</span>
-              </div>
-
-              <div className="mt-3">
-                <button className="text-xs text-primary-600 dark:text-primary-400 hover:underline">
-                  2 recommendations available
-                </button>
-              </div>
-            </div>
-
-            {/* Recent Security Events */}
-            <div className="flex flex-col bg-gray-50/70 dark:bg-dark-active/50 rounded-xl p-4 border border-gray-100 dark:border-dark-border/70">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-neutral-300 mb-3">Recent Security Events</h3>
-
-              <div className="space-y-2">
-                <div className="flex items-start gap-2">
-                  <div className="p-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 mt-0.5">
-                    <AlertCircle size={12} strokeWidth={2} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-800 dark:text-neutral-200">Login from new device</p>
-                    <p className="text-xs text-gray-500 dark:text-neutral-400">5 minutes ago · iPhone 15 · Nairobi</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2">
-                  <div className="p-1.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 mt-0.5">
-                    <Check size={12} strokeWidth={2} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-800 dark:text-neutral-200">Password changed</p>
-                    <p className="text-xs text-gray-500 dark:text-neutral-400">2 hours ago · Admin user</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2">
-                  <div className="p-1.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 mt-0.5">
-                    <AlertCircle size={12} strokeWidth={2} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-800 dark:text-neutral-200">Failed login attempts</p>
-                    <p className="text-xs text-gray-500 dark:text-neutral-400">Yesterday · 3 attempts · Blocked IP</p>
-                  </div>
-                </div>
-              </div>
-
-              <button className="text-xs text-primary-600 dark:text-primary-400 hover:underline mt-3">
-                View all events
-              </button>
-            </div>
-
-            {/* System Health */}
-            <div className="flex flex-col bg-gray-50/70 dark:bg-dark-active/50 rounded-xl p-4 border border-gray-100 dark:border-dark-border/70">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-neutral-300 mb-3">System Health</h3>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    <span className="text-xs text-gray-800 dark:text-neutral-200">API Services</span>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-neutral-400">100% uptime</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    <span className="text-xs text-gray-800 dark:text-neutral-200">Database</span>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-neutral-400">100% uptime</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    <span className="text-xs text-gray-800 dark:text-neutral-200">Storage</span>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-neutral-400">100% uptime</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    <span className="text-xs text-gray-800 dark:text-neutral-200">Authentication</span>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-neutral-400">100% uptime</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
-                    <span className="text-xs text-gray-800 dark:text-neutral-200">Payment Gateway</span>
-                  </div>
-                  <span className="text-xs text-gray-500 dark:text-neutral-400">99.2% uptime</span>
-                </div>
-              </div>
-
-              <div className="mt-3 text-center">
-                <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-1 rounded-full">
-                  All systems operational
-                </span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Forex Section - Updated Design */}
-      <motion.div
         className="mb-8"
         variants={itemVariants}
       >
-        {/* Live Exchange Rate Ticker - New iOS 18 Design */}
         <motion.div
           className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 mb-6 overflow-hidden"
           whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
@@ -637,7 +453,6 @@ const Dashboard = () => {
             </motion.button>
           </div>
 
-          {/* Custom Exchange Rate Ticker Component */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {exchangeRates.map((rate, index) => (
               <motion.div

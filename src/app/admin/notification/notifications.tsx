@@ -54,7 +54,6 @@ interface Notification {
   delivered_at?: string;
 }
 
-// Pagination interface
 interface PaginationData {
   totalCount: number;
   totalPages: number;
@@ -87,7 +86,6 @@ const NotificationsPage = () => {
   const [sortDirection, setSortDirection] = useState('asc');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch templates from API
   const getTemplates = async () => {
     try {
       setIsLoading(true);
@@ -101,14 +99,12 @@ const NotificationsPage = () => {
     }
   };
 
-  // Fetch notifications with pagination
   const getNotifications = async (page = 1) => {
     try {
       setIsLoading(true);
       const response = await notificationService.getNotifications({
         limit: 10,
         page,
-        // Add search parameters if needed
         ...(search ? { search } : {})
       });
       setNotifications(response.notifications);
@@ -124,10 +120,8 @@ const NotificationsPage = () => {
     }
   };
 
-  // Create a new template
   const createTemplate = async () => {
     try {
-      // Format the payload exactly as required by the API
       const templatePayload = {
         template_code: newTemplate.template_code,
         channel: newTemplate.channel,
@@ -166,7 +160,6 @@ const NotificationsPage = () => {
     }
   };
 
-  // Remove a placeholder from the new template
   const removePlaceholder = (placeholder: string) => {
     const updatedPlaceholders = { ...newTemplate.placeholders };
     delete updatedPlaceholders[placeholder];
@@ -177,7 +170,6 @@ const NotificationsPage = () => {
     });
   };
 
-  // Handle sorting
   const handleSort = (criteria: string) => {
     if (sortBy === criteria) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -188,7 +180,6 @@ const NotificationsPage = () => {
     setIsSortMenuOpen(false);
   };
 
-  // Format date to a more readable format
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
@@ -200,7 +191,6 @@ const NotificationsPage = () => {
     }).format(date);
   };
 
-  // Get icon based on notification
   const getChannelIcon = (channel: string) => {
     switch (channel) {
       case 'sms':
