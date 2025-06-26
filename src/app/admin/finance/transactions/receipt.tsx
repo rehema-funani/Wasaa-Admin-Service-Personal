@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   Calendar,
@@ -12,73 +12,60 @@ import {
   Printer,
   CreditCard,
   Shield,
-  CheckSquare,
-  XCircle,
-  AlertTriangle,
-  Activity,
-  Landmark,
-  CircleDollarSign,
   ArrowDownToLine,
   ArrowUpFromLine,
-  RepeatIcon,
+  ArrowLeftRight,
   Tag,
+  Info,
   Wallet,
-  Send,
-  RadioReceiver
+  CircleDollarSign,
+  ArrowDown,
+  ArrowUp
 } from 'lucide-react';
-import financeService from '../../../../api/services/finance';
-import toast from 'react-hot-toast';
-import { useParams } from 'react-router-dom';
 
-interface TransactionWallet {
-  id: string;
-  user_uuid: string;
-  group_uuid: string | null;
-  systemWalletType: string | null;
-  type: string;
-  status: string;
-  availableBalance: string;
-  lockedBalance: string;
-  debit: string;
-  credit: string;
-  currencyId: string;
-  createdAt: string;
-  updatedAt: string;
-}
+const financeService = {
+  getTransaction: async (id) => {
+    return {
+      status: true,
+      transaction: {
+        id: "15806753-7598-4cd8-bd3d-3a6957c78aaa",
+        user_uuid: "cab44deb-b976-4a06-b4db-8e196ea99b6b",
+        amount: "1000",
+        description: "You have received KES 1000 from Daniel",
+        source: null,
+        type: "RECEIVE",
+        debit: "10012400",
+        credit: "220",
+        status: "COMPLETED",
+        counterpartyId: "4985a920-53ea-464b-968f-3ca95d1fe9a8",
+        reference: "TX-1750687285782",
+        createdAt: "2025-06-23T14:01:25.737Z",
+        wallet: {
+          id: "4985a920-53ea-464b-968f-3ca95d1fe9a8",
+          user_uuid: "4d0ee74a-1dc0-4eeb-bee5-e7a46d1cc608",
+          group_uuid: null,
+          systemWalletType: null,
+          type: "user",
+          status: "Active",
+          availableBalance: "999978010010",
+          lockedBalance: "0",
+          debit: "10012400",
+          credit: "220",
+          currencyId: "77c16786-eb9d-4c51-bf7f-facb3589396a",
+          createdAt: "2025-06-20T07:30:35.785Z",
+          updatedAt: "2025-06-23T14:01:25.737Z"
+        }
+      }
+    };
+  }
+};
 
-interface Transaction {
-  id: string;
-  user_uuid: string;
-  amount: string;
-  description: string;
-  source: string | null;
-  type: string;
-  debit: string;
-  credit: string;
-  status: string;
-  counterpartyId: string;
-  reference: string;
-  createdAt: string;
-  wallet: TransactionWallet;
-}
-
-interface TransactionResponse {
-  status: boolean;
-  transaction: Transaction;
-}
-
-const TransactionReceiptPage: React.FC = () => {
-  const [transaction, setTransaction] = useState<Transaction | null>(null);
+const TransactionReceiptPage = () => {
+  const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null)
-  const { id } = useParams();
-  const navigateBack = () => {
-    window.history.back();
-  };
-
-  const navigateTo = (url: string) => {
-    window.location.href = url;
-  };
+  const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
+  const [id, setId] = useState("15806753-7598-4cd8-bd3d-3a6957c78aaa");
 
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -88,7 +75,6 @@ const TransactionReceiptPage: React.FC = () => {
         return;
       }
 
-      setLoading(true);
       try {
         const response = await financeService.getTransaction(id);
         if (response.status && response.transaction) {
@@ -105,47 +91,76 @@ const TransactionReceiptPage: React.FC = () => {
     };
 
     fetchTransaction();
-  }, []);
+  }, [id]);
 
-  const formatDateTime = (dateString: string) => {
+  const navigateBack = () => {
+    // window.history.back();
+    console.log("Navigating back");
+  };
+
+  const navigateTo = (url) => {
+    // window.location.href = url;
+    console.log("Navigating to:", url);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const formatCurrency = (amount) => {
+    // Format large numbers properly
+    const numAmount = parseFloat(amount) || 0;
+    return new Intl.NumberFormat('en-KE', {
+      style: 'currency',
+      currency: 'KES',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(numAmount);
+  };
+
+  const formatDate = (dateString) => {
     try {
       const date = new Date(dateString);
-      return {
-        fullDate: date.toLocaleDateString('en-US', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }),
-        time: date.toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true
-        })
-      };
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
     } catch (error) {
-      return { fullDate: 'Invalid Date', time: '--:--' };
+      return 'Invalid Date';
     }
   };
 
-  const getTransactionIcon = (type: string) => {
+  const formatTime = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      return '--:--';
+    }
+  };
+
+  const getTransactionIcon = (type) => {
     switch (type) {
       case 'RECEIVE':
-        return <ArrowDownToLine size={22} className="text-emerald-600" />;
+        return <ArrowDownToLine className="text-emerald-500" />;
       case 'SEND':
-        return <ArrowUpFromLine size={22} className="text-violet-600" />;
+        return <ArrowUpFromLine className="text-indigo-500" />;
       case 'TRANSFER':
-        return <RepeatIcon size={22} className="text-blue-600" />;
-      case 'DEPOSIT':
-        return <ArrowDownToLine size={22} className="text-green-600" />;
-      case 'WITHDRAW':
-        return <CircleDollarSign size={22} className="text-amber-600" />;
+        return <ArrowLeftRight className="text-blue-500" />;
       default:
-        return <Activity size={22} className="text-gray-600" />;
+        return <CircleDollarSign className="text-blue-500" />;
     }
   };
 
-  const getTransactionTypeLabel = (type: string): string => {
+  const getTransactionTypeLabel = (type) => {
     switch (type) {
       case 'RECEIVE':
         return 'Money Received';
@@ -162,112 +177,45 @@ const TransactionReceiptPage: React.FC = () => {
     }
   };
 
-  const getColorScheme = (type: string) => {
+  const getTransactionColor = (type) => {
     switch (type) {
       case 'RECEIVE':
-        return {
-          primary: 'text-emerald-600',
-          bg: 'from-emerald-50 to-emerald-50/30',
-          accent: 'bg-emerald-100/70',
-          indicator: 'text-emerald-600 bg-emerald-50 border-emerald-200'
-        };
+        return 'emerald';
       case 'SEND':
-        return {
-          primary: 'text-violet-600',
-          bg: 'from-violet-50 to-violet-50/30',
-          accent: 'bg-violet-100/70',
-          indicator: 'text-violet-600 bg-violet-50 border-violet-200'
-        };
+        return 'indigo';
       case 'TRANSFER':
-        return {
-          primary: 'text-blue-600',
-          bg: 'from-blue-50 to-blue-50/30',
-          accent: 'bg-blue-100/70',
-          indicator: 'text-blue-600 bg-blue-50 border-blue-200'
-        };
+        return 'blue';
       case 'DEPOSIT':
-        return {
-          primary: 'text-green-600',
-          bg: 'from-green-50 to-green-50/30',
-          accent: 'bg-green-100/70',
-          indicator: 'text-green-600 bg-green-50 border-green-200'
-        };
+        return 'green';
       case 'WITHDRAW':
-        return {
-          primary: 'text-amber-600',
-          bg: 'from-amber-50 to-amber-50/30',
-          accent: 'bg-amber-100/70',
-          indicator: 'text-amber-600 bg-amber-50 border-amber-200'
-        };
+        return 'amber';
       default:
-        return {
-          primary: 'text-gray-600',
-          bg: 'from-gray-50 to-gray-50/30',
-          accent: 'bg-gray-100/70',
-          indicator: 'text-gray-600 bg-gray-50 border-gray-200'
-        };
+        return 'gray';
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case 'COMPLETED':
-        return <CheckSquare size={16} className="mr-2 text-emerald-600" />;
+        return 'bg-emerald-50 text-emerald-700';
       case 'PENDING':
-        return <Clock size={16} className="mr-2 text-amber-600" />;
+        return 'bg-amber-50 text-amber-700';
       case 'FAILED':
-        return <XCircle size={16} className="mr-2 text-red-600" />;
+        return 'bg-red-50 text-red-700';
       default:
-        return <AlertTriangle size={16} className="mr-2 text-gray-600" />;
+        return 'bg-gray-50 text-gray-700';
     }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'COMPLETED':
-        return 'bg-emerald-50 border-emerald-200 text-emerald-700';
-      case 'PENDING':
-        return 'bg-amber-50 border-amber-200 text-amber-700';
-      case 'FAILED':
-        return 'bg-red-50 border-red-200 text-red-700';
-      default:
-        return 'bg-gray-50 border-gray-200 text-gray-700';
-    }
-  };
-
-  const formatCurrency = (amount: string) => {
-    const numAmount = parseFloat(amount);
-    return new Intl.NumberFormat('en-KE', {
-      style: 'currency',
-      currency: 'KES',
-      minimumFractionDigits: 2
-    }).format(numAmount);
-  };
-
-  const isCredit = (transaction: Transaction): boolean => {
-    return transaction.type === 'RECEIVE' || transaction.type === 'DEPOSIT';
-  };
-
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success(`${label} copied to clipboard`, {
-      style: {
-        background: '#0D99F2',
-        color: 'white',
-        borderRadius: '8px',
-        padding: '12px 16px',
-        fontSize: '14px',
-        fontWeight: '500'
-      }
-    });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <div className="w-12 h-12 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading transaction details...</p>
+          <div className="w-16 h-16 relative">
+            <div className="w-16 h-16 rounded-full border-[3px] border-blue-100 border-t-blue-500 animate-spin absolute"></div>
+            <div className="w-16 h-16 rounded-full border-[3px] border-transparent border-b-blue-300 animate-spin absolute" style={{ animationDuration: '1.5s' }}></div>
+          </div>
+          <p className="mt-6 text-gray-600 font-medium">Loading transaction...</p>
         </div>
       </div>
     );
@@ -275,374 +223,286 @@ const TransactionReceiptPage: React.FC = () => {
 
   if (error || !transaction) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-6">
-        <div className="bg-white/90 backdrop-blur-xl p-8 rounded-xl border border-blue-100 shadow-lg text-center max-w-md">
-          <div className="w-16 h-16 bg-red-50 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <FileText size={24} className="text-red-400" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
+        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-xl text-center max-w-md mx-auto">
+          <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FileText size={32} className="text-red-400" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Transaction Not Found</h2>
-          <p className="text-gray-600 mb-6">{error || "We couldn't locate the requested transaction record."}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Transaction Not Found</h2>
+          <p className="text-gray-600 mb-8">{error || "We couldn't locate the requested transaction record."}</p>
           <button
             onClick={() => navigateTo('/admin/finance/transactions')}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg"
+            className="px-8 py-3 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-blue-100"
           >
-            Return to Transaction Registry
+            Return to Transactions
           </button>
         </div>
       </div>
     );
   }
 
-  const { fullDate, time } = formatDateTime(transaction.createdAt);
-  const colors = getColorScheme(transaction.type);
-  const transactionTypeLabel = getTransactionTypeLabel(transaction.type);
+  const transactionColor = getTransactionColor(transaction.type);
+  const isCredit = transaction.type === 'RECEIVE' || transaction.type === 'DEPOSIT';
+  const transactionDate = formatDate(transaction.createdAt);
+  const transactionTime = formatTime(transaction.createdAt);
+
+  // Format the wallet balance to a more reasonable value
+  const formattedBalance = formatCurrency(
+    transaction.wallet.availableBalance.length > 10
+      ? transaction.wallet.availableBalance.slice(0, 10)
+      : transaction.wallet.availableBalance
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/70 via-white to-indigo-50/30">
-      {/* Header */}
-      <div className="bg-white/90 backdrop-blur-xl border-b border-blue-100 w-full shadow-sm print:hidden">
-        <div className="max-w-6xl mx-auto px-6 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Top Navigation Bar */}
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm print:hidden">
+        <div className="max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={navigateBack}
-              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center space-x-2 text-slate-600 hover:text-slate-900 transition"
             >
-              <ArrowLeft size={18} className="mr-2" />
-              <span className="font-medium">Back to Transaction Registry</span>
+              <ArrowLeft size={18} />
+              <span className="font-medium">Back</span>
             </button>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <button
-                onClick={() => copyToClipboard(transaction.id, 'Transaction ID')}
-                className="flex items-center px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-blue-50 rounded-lg transition-all"
+                onClick={() => copyToClipboard(transaction.id)}
+                className="flex items-center px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition"
               >
                 <Share size={16} className="mr-2" />
                 Share
               </button>
               <button
                 onClick={() => window.print()}
-                className="flex items-center px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-blue-50 rounded-lg transition-all"
+                className="flex items-center px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition"
               >
                 <Printer size={16} className="mr-2" />
                 Print
               </button>
               <button
-                className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg font-medium hover:bg-blue-700 transition-all shadow-md"
+                className="flex items-center px-5 py-2 text-sm bg-blue-500 text-white rounded-full hover:bg-blue-600 transition shadow-md shadow-blue-100"
               >
                 <Download size={16} className="mr-2" />
-                Download PDF
+                Download
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-center mb-3">
-          <div className="inline-block px-3 py-1 bg-blue-50 border border-blue-100 rounded-lg text-blue-600 text-xs font-medium">
-            Official Transaction Record
+      <div className="max-w-5xl mx-auto pb-20 pt-8">
+        {/* Transaction Header */}
+        <div className="mb-10 text-center">
+          <h1 className="text-blue-500 text-xl font-medium mb-1">
+            Transaction Receipt
+          </h1>
+          <h2 className="text-3xl font-bold text-slate-800 mb-1">
+            {getTransactionTypeLabel(transaction.type)}
+          </h2>
+          <div className={`inline-flex items-center px-3 py-1 ${getStatusColor(transaction.status)} text-xs font-medium rounded-full`}>
+            {transaction.status}
           </div>
         </div>
 
-        {/* Main receipt card */}
-        <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-blue-100 shadow-xl overflow-hidden">
-          <div className={`relative bg-gradient-to-br ${colors.bg} px-8 py-10`}>
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute inset-0" style={{
-                backgroundImage: `radial-gradient(circle at 1px 1px, rgba(7, 81, 138, 0.1) 1px, transparent 0)`,
-                backgroundSize: '20px 20px'
-              }}></div>
-            </div>
-
-            <div className="absolute top-3 right-3 opacity-10">
-              <Landmark size={120} className="text-blue-900" />
-            </div>
-
-            <div className="relative">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className={`w-12 h-12 ${colors.accent} rounded-lg flex items-center justify-center shadow-sm`}>
-                      {getTransactionIcon(transaction.type)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Transaction Receipt</p>
-                      <p className={`text-lg font-bold ${colors.primary}`}>{transactionTypeLabel}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`flex items-center px-4 py-2 ${getStatusColor(transaction.status)} rounded-lg border`}>
-                  {getStatusIcon(transaction.status)}
-                  <span className="text-sm font-semibold">
-                    {transaction.status}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <div className={`text-4xl font-bold ${colors.primary} mb-2 font-mono`}>
-                  {isCredit(transaction) ? '+' : '-'}{formatCurrency(transaction.amount)}
-                </div>
-                <div className="flex items-center text-gray-600 space-x-4">
-                  <div className="flex items-center">
-                    <Calendar size={16} className="mr-2" />
-                    <span className="font-medium">{fullDate}</span>
-                  </div>
-                  <div className="text-gray-400">•</div>
-                  <span className="font-medium">{time}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-                <FileText size={18} className="mr-2 text-blue-600" />
-                Transaction Details
-              </h3>
-
-              {/* Transaction ID */}
-              <div
-                className="bg-white border border-blue-100 p-5 rounded-lg hover:bg-blue-50/40 transition-all group cursor-pointer shadow-sm"
-                onClick={() => copyToClipboard(transaction.id, 'Transaction ID')}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                      <Hash size={18} className="text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Transaction ID</p>
-                      <p className="font-mono text-sm text-gray-900 mt-1">{transaction.id}</p>
-                    </div>
-                  </div>
-                  <Copy size={16} className="text-gray-400 group-hover:text-blue-600 transition-colors" />
-                </div>
-              </div>
-
-              {/* Reference */}
-              <div
-                className="bg-white border border-blue-100 p-5 rounded-lg hover:bg-blue-50/40 transition-all group cursor-pointer shadow-sm"
-                onClick={() => copyToClipboard(transaction.reference, 'Reference')}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                      <Tag size={18} className="text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Reference</p>
-                      <p className="font-medium text-gray-900 mt-1">{transaction.reference}</p>
-                    </div>
-                  </div>
-                  <Copy size={16} className="text-gray-400 group-hover:text-blue-600 transition-colors" />
-                </div>
-              </div>
-
-              {/* Transaction Type */}
-              <div className="bg-white border border-blue-100 p-5 rounded-lg shadow-sm">
-                <div className="flex items-center">
-                  <div className={`w-10 h-10 ${colors.accent} rounded-lg flex items-center justify-center mr-4`}>
+        {/* Main Receipt Card */}
+        <div className="mx-auto px-6 mb-8">
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+            {/* Amount Section */}
+            <div className="px-8 py-10 bg-blue-50 border-b border-blue-100">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center text-blue-500">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
                     {getTransactionIcon(transaction.type)}
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Transaction Type</p>
-                    <p className={`text-lg font-bold ${colors.primary} mt-1`}>
-                      {transactionTypeLabel}
-                    </p>
-                  </div>
+                  <span className="text-xl font-semibold">{getTransactionTypeLabel(transaction.type)}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-slate-500 text-sm">
+                  <Calendar size={16} />
+                  <span>{transactionDate}</span>
+                  <span className="mx-1">•</span>
+                  <Clock size={16} />
+                  <span>{transactionTime}</span>
                 </div>
               </div>
 
-              {/* Description */}
-              <div className="bg-white border border-blue-100 p-5 rounded-lg shadow-sm">
-                <div className="flex items-start">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 mt-1">
-                    <FileText size={18} className="text-indigo-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500 mb-2">Description</p>
-                    <p className="text-gray-900 text-sm leading-relaxed">
-                      {transaction.description || 'No description provided for this transaction'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Amount Details */}
-              <div className="bg-white border border-blue-100 p-5 rounded-lg shadow-sm">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Amount</p>
-                    <p className="text-xl font-bold text-gray-900 mt-1 font-mono">
-                      {formatCurrency(transaction.amount)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Transaction Fee</p>
-                    <p className="text-xl font-bold text-gray-900 mt-1 font-mono">
-                      {formatCurrency("0")} {/* Placeholder - adjust if you have fee data */}
-                    </p>
-                  </div>
+              <div className="text-center">
+                <div className={`text-5xl font-bold mb-3 ${isCredit ? 'text-emerald-500' : 'text-indigo-500'}`}>
+                  {isCredit ? '+' : '-'}{formatCurrency(transaction.amount)}
                 </div>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-                <Wallet size={18} className="mr-2 text-blue-600" />
-                Wallet Information
-              </h3>
+            {/* Transaction Details */}
+            <div className="px-8 py-8">
+              {/* Transaction Identifiers */}
+              <div className="mb-10">
+                <h3 className="text-slate-400 uppercase text-xs font-semibold tracking-wider mb-4">
+                  Transaction Details
+                </h3>
 
-              {/* Wallet Details */}
-              <div className="bg-white border border-blue-100 p-5 rounded-lg shadow-sm">
-                <div className="flex items-start">
-                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                    <CreditCard size={18} className="text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500 mb-3">Wallet Details</p>
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-xs text-gray-500">Wallet ID</p>
-                        <p className="font-mono text-sm text-gray-800">{transaction.wallet.id}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Transaction ID */}
+                  <div
+                    className="group flex items-start space-x-4 cursor-pointer"
+                    onClick={() => copyToClipboard(transaction.id)}
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                      <Hash size={18} className="text-blue-500" />
+                    </div>
+                    <div className="flex-grow">
+                      <p className="text-slate-500 text-sm mb-1">Transaction ID</p>
+                      <div className="flex items-center">
+                        <p className="text-slate-800 font-mono text-sm truncate">{transaction.id}</p>
+                        <Copy size={14} className="ml-2 text-slate-400 opacity-0 group-hover:opacity-100 transition" />
                       </div>
-                      <div className="flex items-center justify-between">
+                    </div>
+                  </div>
+
+                  {/* Reference Number */}
+                  <div
+                    className="group flex items-start space-x-4 cursor-pointer"
+                    onClick={() => copyToClipboard(transaction.reference)}
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                      <Tag size={18} className="text-blue-500" />
+                    </div>
+                    <div className="flex-grow">
+                      <p className="text-slate-500 text-sm mb-1">Reference</p>
+                      <div className="flex items-center">
+                        <p className="text-slate-800 font-medium">{transaction.reference}</p>
+                        <Copy size={14} className="ml-2 text-slate-400 opacity-0 group-hover:opacity-100 transition" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Amount & Wallet Details */}
+              <div className="mb-10">
+                <h3 className="text-slate-400 uppercase text-xs font-semibold tracking-wider mb-4">
+                  Amount & Wallet Details
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Amount Details */}
+                  <div className="bg-slate-50 rounded-2xl p-6">
+                    <div className="mb-6">
+                      <p className="text-slate-500 text-sm mb-1">Transaction Amount</p>
+                      <p className={`text-2xl font-bold ${isCredit ? 'text-emerald-500' : 'text-indigo-500'}`}>
+                        {formatCurrency(transaction.amount)}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-slate-500 text-sm mb-1">Debit</p>
+                        <p className="text-slate-800 font-mono">{formatCurrency(transaction.debit)}</p>
+                      </div>
+                      <div>
+                        <p className="text-slate-500 text-sm mb-1">Credit</p>
+                        <p className="text-slate-800 font-mono">{formatCurrency(transaction.credit)}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Wallet Information */}
+                  <div className="bg-slate-50 rounded-2xl p-6">
+                    <div className="flex items-center mb-4">
+                      <Wallet size={16} className="text-slate-500 mr-2" />
+                      <p className="text-slate-800 font-semibold">Wallet Information</p>
+                    </div>
+
+                    <div className="mb-4">
+                      <p className="text-slate-500 text-sm mb-1">Available Balance</p>
+                      <p className="text-emerald-500 text-2xl font-bold">
+                        {formattedBalance}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-slate-500 text-xs">Wallet Type</p>
+                        <p className="text-slate-800 capitalize">{transaction.wallet.type}</p>
+                      </div>
+                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${transaction.wallet.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+                        {transaction.wallet.status}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description & Additional Details */}
+              <div>
+                <h3 className="text-slate-400 uppercase text-xs font-semibold tracking-wider mb-4">
+                  Additional Information
+                </h3>
+
+                <div className="bg-slate-50 rounded-2xl p-6">
+                  <div className="mb-6">
+                    <div className="flex items-start">
+                      <Info size={16} className="text-slate-500 mr-3 mt-0.5" />
+                      <div>
+                        <p className="text-slate-700 font-medium mb-1">Description</p>
+                        <p className="text-slate-600">
+                          {transaction.description || 'No description provided for this transaction'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {transaction.counterpartyId && (
+                    <div>
+                      <div className="flex items-start">
+                        <ArrowLeftRight size={16} className="text-slate-500 mr-3 mt-0.5" />
                         <div>
-                          <p className="text-xs text-gray-500">Type</p>
-                          <p className="font-medium text-gray-900 capitalize">
-                            {transaction.wallet.type}
-                          </p>
+                          <p className="text-slate-700 font-medium mb-1">Counterparty</p>
+                          <p className="text-slate-600 font-mono text-sm">{transaction.counterpartyId}</p>
                         </div>
-                        <span className={`px-3 py-1 rounded-lg text-xs font-semibold border ${transaction.wallet.status === 'Active'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : 'bg-red-50 text-red-700 border-red-200'
-                          }`}>
-                          {transaction.wallet.status}
-                        </span>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
-
-              {/* Wallet Balance */}
-              <div className="bg-white border border-blue-100 p-5 rounded-lg shadow-sm">
-                <div className="flex items-start">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center mr-4">
-                    <CircleDollarSign size={18} className="text-emerald-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500 mb-3">Wallet Balance</p>
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-xs text-gray-500">Available Balance</p>
-                        <p className="text-2xl font-bold text-emerald-600 font-mono">
-                          {/* Format the balance to a readable number */}
-                          {formatCurrency(transaction.wallet.availableBalance.slice(0, 10))}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Locked Balance</p>
-                        <p className="font-medium text-gray-900">
-                          {formatCurrency(transaction.wallet.lockedBalance)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white border border-blue-100 p-5 rounded-lg shadow-sm">
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <div className="flex items-center">
-                      <Send size={16} className="mr-2 text-violet-600" />
-                      <p className="text-sm font-medium text-gray-500">Total Debit</p>
-                    </div>
-                    <p className="text-xl font-bold text-violet-600 mt-1 font-mono">
-                      {formatCurrency(transaction.debit)}
-                    </p>
-                  </div>
-                  <div>
-                    <div className="flex items-center">
-                      <RadioReceiver size={16} className="mr-2 text-emerald-600" />
-                      <p className="text-sm font-medium text-gray-500">Total Credit</p>
-                    </div>
-                    <p className="text-xl font-bold text-emerald-600 mt-1 font-mono">
-                      {formatCurrency(transaction.credit)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Counterparty Information */}
-              {transaction.counterpartyId && (
-                <div className="bg-white border border-blue-100 p-5 rounded-lg shadow-sm">
-                  <div className="flex items-start">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
-                      <RepeatIcon size={18} className="text-indigo-600" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-500 mb-3">Counterparty</p>
-                      <div>
-                        <p className="text-xs text-gray-500">Counterparty ID</p>
-                        <p className="font-mono text-sm text-gray-800">{transaction.counterpartyId}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
-        </div>
 
-        {/* Verification Footer */}
-        <div className="mt-4">
-          <div className="bg-white border border-blue-100 rounded-lg overflow-hidden shadow-sm">
-            <div className="py-4 px-6 bg-blue-50 border-b border-blue-100 flex items-center space-x-2">
-              <CheckCircle size={16} className="text-blue-600" />
-              <h4 className="font-medium text-blue-700">Verification</h4>
-            </div>
-            <div className="p-5">
-              <div className="flex items-center justify-between text-sm">
-                <p className="text-gray-500">
-                  This is an official receipt issued by the system. Transaction details have been verified and recorded in the financial ledger.
-                </p>
+            {/* Verification Footer */}
+            <div className="px-8 py-5 bg-slate-50 border-t border-slate-100">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <Shield size={16} className="text-blue-600 mr-2" />
-                  <span className="text-blue-700 font-medium">Secure Record</span>
+                  <Shield size={16} className="text-blue-500 mr-2" />
+                  <p className="text-sm text-slate-600">
+                    This is an official transaction record
+                  </p>
                 </div>
+
+                <p className="text-sm text-slate-500">
+                  {transactionDate} • {transactionTime}
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="px-8 py-6 bg-gray-50 border-t border-gray-100 print:hidden mt-6 rounded-b-lg">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">
-              Receipt generated on {new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </p>
-            <button
-              onClick={() => navigateTo('/admin/finance/transactions')}
-              className="px-6 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-            >
-              Return to Transaction Registry
-            </button>
-          </div>
+        <div className="text-center print:hidden">
+          <button
+            onClick={() => navigateTo('/admin/finance/transactions')}
+            className="px-6 py-2.5 text-blue-500 hover:text-blue-600 font-medium transition-colors"
+          >
+            Return to Transaction Registry
+          </button>
         </div>
       </div>
+
+      {copied && (
+        <div className="fixed bottom-6 right-6 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center">
+          <CheckCircle size={16} className="mr-2 text-emerald-400" />
+          <span>Copied to clipboard</span>
+        </div>
+      )}
     </div>
   );
 };
