@@ -31,7 +31,6 @@ import { FilterOptions } from '../../../../types/finance';
 import { useTransactions } from '../../../../hooks/useFinance';
 import financeService from '../../../../api/services/finance';
 
-// Define transaction interface based on the actual API response
 interface Wallet {
   id: string;
   user_uuid: string;

@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Download,
   Eye,
   Clock,
-  CalendarDays,
   FileText,
   DollarSign,
   CreditCard,
@@ -16,7 +15,6 @@ import {
   ChevronUp,
   ChevronLeft,
   ChevronRight,
-  Check,
   ChevronsLeft,
   ChevronsRight,
   Search,
@@ -56,7 +54,6 @@ interface WalletTopUp {
     profile_picture: string | null;
     preferences: any;
   };
-  // Additional properties we might add during processing
   formattedDate?: string;
   formattedTime?: string;
   fee?: number;
@@ -303,22 +300,6 @@ const TopUpsPage = () => {
     setCurrentPage(1);
   };
 
-  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      setSelectedRows(displayedTopUps.map(topUp => topUp.id));
-    } else {
-      setSelectedRows([]);
-    }
-  };
-
-  const handleSelectRow = (id: string) => {
-    setSelectedRows(prev =>
-      prev.includes(id)
-        ? prev.filter(rowId => rowId !== id)
-        : [...prev, id]
-    );
-  };
-
   const handleExport = () => {
     if (filteredTopUps.length === 0) {
       alert('No deposit data to export');
@@ -406,7 +387,6 @@ const TopUpsPage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        {/* Search Box */}
         <div className="relative flex-1 min-w-[240px]">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
@@ -489,20 +469,12 @@ const TopUpsPage = () => {
               </div>
             ) : (
               <>
-                {/* Table */}
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
-                        <th className="px-4 py-3 text-left">
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.length === displayedTopUps.length && displayedTopUps.length > 0}
-                              onChange={handleSelectAll}
-                              className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                            />
-                          </div>
+                        <th className="px-4 py-3 text-left font-light">
+                          #
                         </th>
                         <th className="px-4 py-3 text-left">
                           <button
@@ -573,13 +545,8 @@ const TopUpsPage = () => {
                             className={`hover:bg-gray-50 transition-colors ${selectedRows.includes(topUp.id) ? 'bg-primary-50' : ''
                               }`}
                           >
-                            <td className="px-4 py-4">
-                              <input
-                                type="checkbox"
-                                checked={selectedRows.includes(topUp.id)}
-                                onChange={() => handleSelectRow(topUp.id)}
-                                className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                              />
+                            <td className="px-4 py-4 font-light">
+                              {index + 1}
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex items-center">
@@ -694,8 +661,8 @@ const TopUpsPage = () => {
                             key={i}
                             onClick={() => handlePageChange(pageToShow)}
                             className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${currentPage === pageToShow
-                                ? 'bg-primary-50 text-primary-600 font-medium border border-primary-200'
-                                : 'text-gray-500 hover:bg-gray-50 border border-gray-200'
+                              ? 'bg-primary-50 text-primary-600 font-medium border border-primary-200'
+                              : 'text-gray-500 hover:bg-gray-50 border border-gray-200'
                               }`}
                           >
                             {pageToShow}

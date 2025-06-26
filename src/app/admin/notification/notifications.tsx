@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Bell, Filter, Search, Plus, Copy,
+  Bell, Filter, Search, Plus,
   Trash, Edit, Send, Clock, X,
   Sparkles, Zap, MessageSquare, FileText,
   MoreHorizontal, ArrowUp, ArrowDown,
@@ -12,98 +11,46 @@ import {
 import { notificationService } from '../../../api/services/notification';
 
 interface Template {
-  id: string;
-  code: string;
-  name: string;
-  language: string;
-}
-
-interface NewTemplateData {
-  templateCode: string;
-  name: string;
-  description: string;
+  _id: string;
+  template_code: string;
   channel: string;
   language: string;
   content: string;
-  tokens: string[];
+  placeholders: Record<string, string>;
+  version: number;
+  created_by: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-  }
+interface NewTemplateData {
+  template_code: string;
+  channel: string;
+  language: string;
+  content: string;
+  placeholders: Record<string, string>;
+  description?: string;
+}
 
-  @keyframes pulse {
-    0% { opacity: 0.5; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0.5; }
-  }
-
-  @keyframes gradientFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .animate-pulse-slow {
-    animation: pulse 4s ease-in-out infinite;
-  }
-
-  .animate-gradient {
-    animation: gradientFlow 15s ease infinite;
-    background-size: 200% 200%;
-  }
-
-  .animation-delay-1000 {
-    animation-delay: 1s;
-  }
-
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-
-  .animation-delay-3000 {
-    animation-delay: 3s;
-  }
-`;
-document.head.appendChild(style);
-
-const NotificationsPage: React.FC = () => {
-  const location = useLocation();
-  const [activeTab, setActiveTab] = useState<'templates' | 'history'>('templates');
+const NotificationsPage = () => {
+  const [activeTab, setActiveTab] = useState('templates');
   const [search, setSearch] = useState('');
   const [templates, setTemplates] = useState<Template[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newTemplate, setNewTemplate] = useState<NewTemplateData>({
-    templateCode: '',
-    name: '',
-    description: '',
+    template_code: '',
     channel: 'sms',
     language: 'en',
     content: '',
-    tokens: []
+    placeholders: {}
   });
-  const [currentToken, setCurrentToken] = useState('');
+  const [currentPlaceholder, setCurrentPlaceholder] = useState('');
+  const [currentDescription, setCurrentDescription] = useState('');
   const [filteredTemplates, setFilteredTemplates] = useState<Template[]>([]);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
-  const [sortBy, setSortBy] = useState('name');
+  const [sortBy, setSortBy] = useState('template_code');
   const [sortDirection, setSortDirection] = useState('asc');
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (location.pathname.includes('/templates')) {
-      setActiveTab('templates');
-    } else {
-      setActiveTab('history');
-    }
-  }, [location]);
 
   const getTemplates = async () => {
     try {
@@ -119,13 +66,11 @@ const NotificationsPage: React.FC = () => {
     try {
       await notificationService.createTemplate(newTemplate);
       setNewTemplate({
-        templateCode: '',
-        name: '',
-        description: '',
+        template_code: '',
         channel: 'sms',
         language: 'en',
         content: '',
-        tokens: []
+        placeholders: {}
       });
       setShowCreateModal(false);
       getTemplates();
@@ -134,20 +79,27 @@ const NotificationsPage: React.FC = () => {
     }
   };
 
-  const addToken = () => {
-    if (currentToken && !newTemplate.tokens.includes(currentToken)) {
+  const addPlaceholder = () => {
+    if (currentPlaceholder && !newTemplate.placeholders[currentPlaceholder]) {
       setNewTemplate({
         ...newTemplate,
-        tokens: [...newTemplate.tokens, currentToken]
+        placeholders: {
+          ...newTemplate.placeholders,
+          [currentPlaceholder]: currentDescription || 'Placeholder description'
+        }
       });
-      setCurrentToken('');
+      setCurrentPlaceholder('');
+      setCurrentDescription('');
     }
   };
 
-  const removeToken = (token: string) => {
+  const removePlaceholder = (placeholder: string) => {
+    const updatedPlaceholders = { ...newTemplate.placeholders };
+    delete updatedPlaceholders[placeholder];
+
     setNewTemplate({
       ...newTemplate,
-      tokens: newTemplate.tokens.filter(t => t !== token)
+      placeholders: updatedPlaceholders
     });
   };
 
@@ -170,8 +122,8 @@ const NotificationsPage: React.FC = () => {
 
     if (search) {
       filtered = filtered.filter(template =>
-        template.name.toLowerCase().includes(search.toLowerCase()) ||
-        template.code.toLowerCase().includes(search.toLowerCase()) ||
+        template.template_code.toLowerCase().includes(search.toLowerCase()) ||
+        template.channel.toLowerCase().includes(search.toLowerCase()) ||
         template.language.toLowerCase().includes(search.toLowerCase())
       );
     }
@@ -179,12 +131,14 @@ const NotificationsPage: React.FC = () => {
     filtered.sort((a, b) => {
       let comparison = 0;
 
-      if (sortBy === 'name') {
-        comparison = a.name.localeCompare(b.name);
-      } else if (sortBy === 'code') {
-        comparison = a.code.localeCompare(b.code);
+      if (sortBy === 'template_code') {
+        comparison = a.template_code.localeCompare(b.template_code);
+      } else if (sortBy === 'channel') {
+        comparison = a.channel.localeCompare(b.channel);
       } else if (sortBy === 'language') {
         comparison = a.language.localeCompare(b.language);
+      } else if (sortBy === 'createdAt') {
+        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       }
 
       return sortDirection === 'asc' ? comparison : -comparison;
@@ -206,12 +160,16 @@ const NotificationsPage: React.FC = () => {
     }
   };
 
+  const viewTemplate = (templateId: string) => {
+    alert(`Viewing template: ${templateId}`);
+  };
+
   return (
     <div className="h-auto bg-transparent w-full text-gray-900 relative">
       <div className="relative z-10 p-8 mx-auto max-w-7xl">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 animate-gradient">
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
               Notification Management
             </h1>
             <p className="text-gray-500 mt-1">Create and manage notification templates for users</p>
@@ -220,15 +178,13 @@ const NotificationsPage: React.FC = () => {
           <button
             onClick={() => setShowCreateModal(true)}
             className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full hover:shadow-lg hover:shadow-blue-200 text-sm font-medium flex items-center transition-all duration-300 hover:translate-y-[-2px]"
-            style={{ boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.2)' }}
           >
             <Plus size={16} className="mr-2" />
             New Template
           </button>
         </div>
 
-        <div className="backdrop-blur-xl bg-white/70 rounded-3xl shadow-xl border border-gray-100 mb-8 overflow-hidden transition-all hover:shadow-2xl hover:shadow-blue-100/40"
-          style={{ boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.05), 0 20px 60px -30px rgba(0, 0, 0, 0.1)' }}>
+        <div className="backdrop-blur-xl bg-white/70 rounded-3xl shadow-xl border border-gray-100 mb-8 overflow-hidden transition-all hover:shadow-2xl hover:shadow-blue-100/40">
           <div className="backdrop-blur-sm border-b border-gray-100">
             <nav className="flex">
               <button
@@ -284,20 +240,20 @@ const NotificationsPage: React.FC = () => {
                   </div>
                   <div className="py-1">
                     <button
-                      onClick={() => handleSort('name')}
-                      className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'name' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                      onClick={() => handleSort('template_code')}
+                      className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'template_code' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
                     >
-                      <span>Name</span>
-                      {sortBy === 'name' && (
+                      <span>Template Code</span>
+                      {sortBy === 'template_code' && (
                         sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
                       )}
                     </button>
                     <button
-                      onClick={() => handleSort('code')}
-                      className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'code' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                      onClick={() => handleSort('channel')}
+                      className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'channel' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
                     >
-                      <span>Code</span>
-                      {sortBy === 'code' && (
+                      <span>Channel</span>
+                      {sortBy === 'channel' && (
                         sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
                       )}
                     </button>
@@ -310,6 +266,15 @@ const NotificationsPage: React.FC = () => {
                         sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
                       )}
                     </button>
+                    <button
+                      onClick={() => handleSort('createdAt')}
+                      className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'createdAt' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                    >
+                      <span>Date Created</span>
+                      {sortBy === 'createdAt' && (
+                        sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                      )}
+                    </button>
                   </div>
                 </div>
               )}
@@ -318,32 +283,34 @@ const NotificationsPage: React.FC = () => {
         </div>
 
         {activeTab === 'templates' && (
-          <div className="backdrop-blur-xl bg-white/80 rounded-3xl shadow-xl border border-gray-100 overflow-hidden transition-all hover:shadow-xl"
-            style={{ boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.05), 0 20px 60px -30px rgba(0, 0, 0, 0.05)' }}>
+          <div className="backdrop-blur-xl bg-white/80 rounded-3xl shadow-xl border border-gray-100 overflow-hidden transition-all hover:shadow-xl">
             <div className="grid grid-cols-1 divide-y divide-gray-100">
               {filteredTemplates.length > 0 ? (
                 filteredTemplates.map((template) => (
-                  <div key={template.id} className="p-5 hover:bg-blue-50/30 transition-colors group">
+                  <div key={template._id} className="p-5 hover:bg-blue-50/30 transition-colors group">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border border-blue-200/50">
-                          {newTemplate.channel === 'sms' ? (
+                          {template.channel === 'sms' ? (
                             <Smartphone className="w-5 h-5 text-blue-600" />
-                          ) : newTemplate.channel === 'email' ? (
+                          ) : template.channel === 'email' ? (
                             <Mail className="w-5 h-5 text-blue-600" />
                           ) : (
                             <BellRing className="w-5 h-5 text-blue-600" />
                           )}
                         </div>
                         <div>
-                          <h3 className="text-base font-medium text-gray-900">{template.name}</h3>
+                          <h3 className="text-base font-medium text-gray-900">{template.template_code}</h3>
                           <div className="flex items-center space-x-2 mt-1">
                             <span className="text-xs font-medium text-gray-500 bg-gray-100 py-0.5 px-2 rounded-full">
-                              {template.code}
+                              {template.channel}
                             </span>
                             <div className="flex items-center text-xs text-gray-500">
                               <Languages className="w-3 h-3 mr-1" />
-                              {template.language.toUpperCase()}
+                              {template?.language?.toUpperCase()}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              v{template.version}
                             </div>
                           </div>
                         </div>
@@ -353,7 +320,10 @@ const NotificationsPage: React.FC = () => {
                         <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all opacity-0 group-hover:opacity-100">
                           <Edit size={18} />
                         </button>
-                        <button onClick={() => navigate(`/admin/media/shorts/notifications/templates/${template.id}`)} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all opacity-0 group-hover:opacity-100">
+                        <button
+                          onClick={() => viewTemplate(template._id)}
+                          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                        >
                           <Eye size={18} />
                         </button>
                         <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-all opacity-0 group-hover:opacity-100">
@@ -407,9 +377,6 @@ const NotificationsPage: React.FC = () => {
         <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50">
           <div
             className="bg-white rounded-3xl max-h-[80vh] overflow-y-auto mt-12 w-full max-w-2xl border border-gray-100 shadow-2xl"
-            style={{
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)'
-            }}
           >
             <div className="p-6 border-b border-gray-100 flex justify-between items-center">
               <h3 className="text-xl font-bold text-gray-900 flex items-center">
@@ -424,35 +391,13 @@ const NotificationsPage: React.FC = () => {
               </button>
             </div>
             <div className="p-6 space-y-5">
-              <div className="grid grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Template Code</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., OTP_VERIFICATION"
-                    value={newTemplate.templateCode}
-                    onChange={(e) => setNewTemplate({ ...newTemplate, templateCode: e.target.value })}
-                    className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., OTP Verification SMS"
-                    value={newTemplate.name}
-                    onChange={(e) => setNewTemplate({ ...newTemplate, name: e.target.value })}
-                    className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
-                  />
-                </div>
-              </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Template Code</label>
                 <input
                   type="text"
-                  placeholder="e.g., SMS template for OTP verification"
-                  value={newTemplate.description}
-                  onChange={(e) => setNewTemplate({ ...newTemplate, description: e.target.value })}
+                  placeholder="e.g., OTP_VERIFICATION"
+                  value={newTemplate.template_code}
+                  onChange={(e) => setNewTemplate({ ...newTemplate, template_code: e.target.value })}
                   className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
                 />
               </div>
@@ -497,51 +442,63 @@ const NotificationsPage: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
                 <textarea
-                  placeholder="e.g., Your verification code is {{otp}}. Valid for 10 minutes. Do not share this code with anyone."
+                  placeholder="e.g., Your verification code is {{otp}}. Valid for {{expires_at}} minutes. Do not share this code with anyone."
                   value={newTemplate.content}
                   onChange={(e) => setNewTemplate({ ...newTemplate, content: e.target.value })}
                   className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none h-28"
                 />
                 <div className="flex items-center justify-end mt-1 text-xs text-gray-500">
                   <Command className="w-3 h-3 mr-1" />
-                  Use {'{{ token_name }}'} for variables
+                  Use {'{{ placeholder_name }}'} for variables
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tokens</label>
-                <div className="flex space-x-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Placeholders</label>
+                <div className="grid grid-cols-2 gap-3 mb-3">
                   <input
                     type="text"
-                    placeholder="e.g., otp"
-                    value={currentToken}
-                    onChange={(e) => setCurrentToken(e.target.value)}
-                    className="flex-grow p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addToken();
-                      }
-                    }}
+                    placeholder="Placeholder name (e.g., otp)"
+                    value={currentPlaceholder}
+                    onChange={(e) => setCurrentPlaceholder(e.target.value)}
+                    className="p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
                   />
-                  <button
-                    onClick={addToken}
-                    className="px-5 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg hover:shadow-blue-200"
-                  >
-                    Add
-                  </button>
+                  <input
+                    type="text"
+                    placeholder="Description (e.g., OTP code)"
+                    value={currentDescription}
+                    onChange={(e) => setCurrentDescription(e.target.value)}
+                    className="p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
+                  />
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {newTemplate.tokens.map(token => (
-                    <div key={token} className="bg-blue-50 border border-blue-100 rounded-full px-3 py-1.5 text-sm flex items-center text-blue-700">
-                      {token}
-                      <button
-                        onClick={() => removeToken(token)}
-                        className="ml-2 text-blue-400 hover:text-blue-700 transition-colors"
-                      >
-                        ×
-                      </button>
+                <button
+                  onClick={addPlaceholder}
+                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg hover:shadow-blue-200 w-full"
+                >
+                  Add Placeholder
+                </button>
+
+                <div className="mt-3">
+                  {Object.keys(newTemplate.placeholders).length > 0 && (
+                    <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 mb-2">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Added Placeholders:</h4>
+                      <div className="space-y-2">
+                        {Object.entries(newTemplate.placeholders).map(([key, description]) => (
+                          <div key={key} className="flex items-center justify-between bg-white rounded-lg p-2 border border-gray-100">
+                            <div>
+                              <span className="text-blue-600 font-medium text-sm">{`{{${key}}}`}</span>
+                              <span className="text-xs text-gray-500">{description}</span>
+                            </div>
+                            <button
+                              onClick={() => removePlaceholder(key)}
+                              className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-full"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
@@ -555,7 +512,6 @@ const NotificationsPage: React.FC = () => {
               <button
                 onClick={createTemplate}
                 className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:shadow-lg hover:shadow-blue-200 transition-all"
-                style={{ boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.2)' }}
               >
                 <div className="flex items-center">
                   <Zap size={16} className="mr-2" />

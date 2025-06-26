@@ -2,6 +2,12 @@ import notification from "../notification-axios";
 
 export const notificationService = {
 
+  // ======== NOTIFICATIONS ==========
+  getNotifications: async (params: any) => {
+    const response = await notification.get('/notifications', { params });
+    return response.data;
+  },
+
   // ======== TEMPLATES ==========
   getTemplates: async () => {
     const response = await notification.get('/templates');

@@ -100,11 +100,11 @@ const routes: Route[] = [
               path: '/admin/finance/user-wallets',
               title: 'Client Accounts',
             },
-            {
-              type: 'link',
-              path: '/admin/finance/withdrawals',
-              title: 'Withdrawal Requests',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/withdrawals',
+            //   title: 'Withdrawal Requests',
+            // },
             {
               type: 'link',
               path: '/admin/finance/top-ups',
