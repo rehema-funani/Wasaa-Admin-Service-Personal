@@ -13,9 +13,7 @@ import {
   PauseCircle,
   PlayCircle,
   AlertTriangle,
-  X,
   ChevronDown,
-  Tag,
   Settings,
   Info,
   Edit,
@@ -26,23 +24,10 @@ import {
   Languages,
   Sliders,
   Zap,
-  Eye,
   User
 } from 'lucide-react';
 import { notificationService } from '../../../api/services/notification';
 import { useNavigate } from 'react-router-dom';
-
-interface Audience {
-  segment: string;
-  country: string;
-  language: string;
-  customFilters?: Record<string, any>;
-}
-
-interface Metadata {
-  priority?: string;
-  tags?: string[];
-}
 
 const toast = {
   success: (message: string, options?: any) => console.log('Success:', message),
@@ -57,7 +42,6 @@ const BroadcastsPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [channelFilter, setChannelFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('scheduledAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -391,29 +375,10 @@ const BroadcastsPage = () => {
               <p className="text-gray-600 dark:text-gray-400 mt-1">Create and manage communication broadcasts</p>
             </div>
             <div className="flex items-center gap-3">
-              <motion.button
-                onClick={() => setViewMode(viewMode === 'grid' ? 'table' : 'grid')}
-                className="p-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl text-gray-600 dark:text-gray-300"
-              >
-                {viewMode === 'grid' ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                  </svg>
-                )}
-              </motion.button>
 
               <motion.button
                 onClick={() => navigate('/admin/communication/broadcasts/add')}
-                className="flex items-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-all  shadow-blue-600/20"
+                className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-all  shadow-blue-600/20"
                 disabled={isLoading}
               >
                 <Plus size={18} className="mr-2" />
