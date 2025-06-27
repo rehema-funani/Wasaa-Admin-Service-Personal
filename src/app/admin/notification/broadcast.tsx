@@ -79,7 +79,7 @@ const BroadcastsPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await notificationService.getBroadcasts();
+      const response = await notificationService.getBroadcasts({ page: 1, limit: 10 });
       setBroadcasts(response.broadcasts);
     } catch (err) {
       setError('Failed to fetch broadcasts. Please try again.');
@@ -88,7 +88,7 @@ const BroadcastsPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-  
+
   const handleDeleteClick = (broadcast: Broadcast) => {
     setBroadcastToDelete(broadcast);
     setShowDeleteModal(true);
