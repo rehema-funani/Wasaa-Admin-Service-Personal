@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   Save,
@@ -20,45 +18,50 @@ import {
   Filter,
   LayoutTemplate,
   BadgeCheck,
-  Sparkles
+  Sparkles,
+  Key
 } from 'lucide-react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { AnimatePresence } from 'framer-motion';
 import { notificationService } from '../../../api/services/notification';
 
+// Updated interfaces to match the required payload structure
 interface Audience {
-  segment: string;
-  country: string;
-  language: string;
-  customFilters?: Record<string, any>;
+  [key: string]: string; // Dynamic key-value pairs for audience targeting
 }
 
-interface Metadata {
-  priority?: string;
-  tags?: string[];
+interface Payload {
+  [key: string]: string; // Dynamic key-value pairs for payload data
 }
 
 interface BroadcastFormData {
   title: string;
-  description: string;
-  templateCode: string;
+  template_code: string; // Changed to snake_case to match API
   channel: 'email' | 'sms' | 'push';
+  scheduled_at: string; // Changed to snake_case to match API
   audience: Audience;
-  scheduledAt: string;
-  metadata?: Metadata;
-  priority?: 'low' | 'normal' | 'high';
-  adminOverride?: boolean;
+  payload: Payload;
+  priority: 'low' | 'medium' | 'high';
+  description?: string; // Optional field
 }
 
 const CHANNELS = ['email', 'sms', 'push'];
-const SEGMENTS = ['all_users', 'newsletter_subscribers', 'new_users', 'inactive_users', 'premium_users'];
 const COUNTRIES = ['KE', 'UG', 'TZ', 'RW', 'NG', 'GH', 'ZA', 'US', 'GB', 'CA', 'AU'];
 const LANGUAGES = ['en', 'sw', 'fr', 'ar', 'es'];
-const PRIORITIES = ['low', 'normal', 'high'];
+const PRIORITIES = ['low', 'medium', 'high'];
 const TEMPLATES = {
   email: ['WELCOME_EMAIL', 'NEWSLETTER_EMAIL', 'PASSWORD_RESET', 'ACCOUNT_UPDATE', 'TRANSACTION_RECEIPT'],
   sms: ['WELCOME_SMS', 'OTP_VERIFICATION', 'PAYMENT_CONFIRMATION', 'APPOINTMENT_REMINDER'],
   push: ['NEW_MESSAGE', 'TRANSACTION_ALERT', 'PROMO_NOTIFICATION', 'APP_UPDATE']
+};
+
+// Audience attribute options
+const AUDIENCE_ATTRIBUTES = {
+  gender: ['male', 'female', 'other'],
+  country: COUNTRIES,
+  kyc_level: ['none', 'basic', 'full'],
+  age_group: ['18-24', '25-34', '35-44', '45-54', '55+'],
+  subscription: ['free', 'basic', 'premium']
 };
 
 const AddEditBroadcastPage: React.FC = () => {
@@ -70,51 +73,35 @@ const AddEditBroadcastPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isAdminBroadcast, setIsAdminBroadcast] = useState(false);
-  const [showTagInput, setShowTagInput] = useState(false);
-  const [newTag, setNewTag] = useState('');
-  const [showCustomFilterModal, setShowCustomFilterModal] = useState(false);
-  const [filterKey, setFilterKey] = useState('');
-  const [filterValue, setFilterValue] = useState('');
+  const [showAudienceModal, setShowAudienceModal] = useState(false);
+  const [showPayloadModal, setShowPayloadModal] = useState(false);
+  const [audienceKey, setAudienceKey] = useState('');
+  const [audienceValue, setAudienceValue] = useState('');
+  const [payloadKey, setPayloadKey] = useState('');
+  const [payloadValue, setPayloadValue] = useState('');
 
   const [formData, setFormData] = useState<BroadcastFormData>({
     title: '',
-    description: '',
-    templateCode: '',
+    template_code: '',
     channel: 'email',
+    scheduled_at: new Date(Date.now() + 3600000).toISOString(),
     audience: {
-      segment: 'all_users',
-      country: 'KE',
-      language: 'en',
-      customFilters: {}
+      country: 'US'
     },
-    scheduledAt: new Date(Date.now() + 3600000).toISOString().slice(0, 16),
-    metadata: {
-      priority: 'normal',
-      tags: []
-    },
-    priority: 'normal',
-    adminOverride: false
+    payload: {},
+    priority: 'medium',
+    description: ''
   });
 
   useEffect(() => {
     if (isEditMode) {
       if (location.state?.broadcast) {
         const broadcast = location.state.broadcast;
-
-        let formattedDate = "";
-        if (broadcast.scheduledAt && !isNaN(new Date(broadcast.scheduledAt).getTime())) {
-          formattedDate = new Date(broadcast.scheduledAt).toISOString().slice(0, 16);
-        }
-
         setFormData({
           ...broadcast,
-          scheduledAt: formattedDate,
+          // Ensure date is properly formatted
+          scheduled_at: broadcast.scheduled_at ? new Date(broadcast.scheduled_at).toISOString() : new Date(Date.now() + 3600000).toISOString()
         });
-
-        setIsAdminBroadcast(
-          !!broadcast.metadata || !!broadcast.priority || !!broadcast.adminOverride
-        );
       } else {
         fetchBroadcast();
       }
@@ -126,7 +113,7 @@ const AddEditBroadcastPage: React.FC = () => {
       const templateList = TEMPLATES?.[prev.channel];
       return {
         ...prev,
-        templateCode: Array.isArray(templateList) ? templateList[0] || '' : ''
+        template_code: Array.isArray(templateList) ? templateList[0] || '' : ''
       };
     });
   }, [formData.channel]);
@@ -143,9 +130,8 @@ const AddEditBroadcastPage: React.FC = () => {
         const broadcast = response.broadcast;
         setFormData({
           ...broadcast,
-          scheduledAt: new Date(broadcast.scheduledAt).toISOString().slice(0, 16)
+          scheduled_at: new Date(broadcast.scheduled_at).toISOString()
         });
-        setIsAdminBroadcast(!!broadcast.metadata || !!broadcast.priority || !!broadcast.adminOverride);
       } else {
         setError('Could not find the requested broadcast');
         toast.error('Failed to load broadcast');
@@ -160,98 +146,62 @@ const AddEditBroadcastPage: React.FC = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-
-    if (type === 'checkbox') {
-      const target = e.target as HTMLInputElement;
-      if (name === 'isAdminBroadcast') {
-        setIsAdminBroadcast(target.checked);
-        return;
-      }
-      setFormData(prev => ({
-        ...prev,
-        [name]: target.checked
-      }));
-    } else if (name.startsWith('audience.')) {
-      const audienceField = name.split('.')[1];
-      setFormData(prev => ({
-        ...prev,
-        audience: {
-          ...prev.audience,
-          [audienceField]: value
-        }
-      }));
-    } else if (name === 'priority') {
-      setFormData(prev => ({
-        ...prev,
-        priority: value as 'low' | 'normal' | 'high',
-        metadata: {
-          ...prev.metadata,
-          priority: value
-        }
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
-
-  const handleAddTag = () => {
-    if (!newTag.trim()) return;
-
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      metadata: {
-        ...prev.metadata,
-        tags: [...(prev.metadata?.tags || []), newTag.trim()]
-      }
-    }));
-
-    setNewTag('');
-    setShowTagInput(false);
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    setFormData(prev => ({
-      ...prev,
-      metadata: {
-        ...prev.metadata,
-        tags: prev.metadata?.tags?.filter(t => t !== tag) || []
-      }
+      [name]: value
     }));
   };
 
-  const handleAddCustomFilter = () => {
-    if (!filterKey.trim() || !filterValue.trim()) return;
+  const handleAddAudienceFilter = () => {
+    if (!audienceKey.trim() || !audienceValue.trim()) return;
 
     setFormData(prev => ({
       ...prev,
       audience: {
         ...prev.audience,
-        customFilters: {
-          ...(prev.audience.customFilters || {}),
-          [filterKey.trim()]: filterValue.trim()
-        }
+        [audienceKey.trim()]: audienceValue.trim()
       }
     }));
 
-    setFilterKey('');
-    setFilterValue('');
-    setShowCustomFilterModal(false);
+    setAudienceKey('');
+    setAudienceValue('');
+    setShowAudienceModal(false);
   };
 
-  const handleRemoveCustomFilter = (key: string) => {
-    const newCustomFilters = { ...formData.audience.customFilters };
-    delete newCustomFilters[key];
+  const handleRemoveAudienceFilter = (key: string) => {
+    const newAudience = { ...formData.audience };
+    delete newAudience[key];
 
     setFormData(prev => ({
       ...prev,
-      audience: {
-        ...prev.audience,
-        customFilters: newCustomFilters
+      audience: newAudience
+    }));
+  };
+
+  const handleAddPayloadItem = () => {
+    if (!payloadKey.trim() || !payloadValue.trim()) return;
+
+    setFormData(prev => ({
+      ...prev,
+      payload: {
+        ...prev.payload,
+        [payloadKey.trim()]: payloadValue.trim()
       }
+    }));
+
+    setPayloadKey('');
+    setPayloadValue('');
+    setShowPayloadModal(false);
+  };
+
+  const handleRemovePayloadItem = (key: string) => {
+    const newPayload = { ...formData.payload };
+    delete newPayload[key];
+
+    setFormData(prev => ({
+      ...prev,
+      payload: newPayload
     }));
   };
 
@@ -261,19 +211,24 @@ const AddEditBroadcastPage: React.FC = () => {
       return false;
     }
 
-    if (!formData.templateCode) {
+    if (!formData.template_code) {
       toast.error('Please select a template');
       return false;
     }
 
-    if (!formData.scheduledAt) {
+    if (!formData.scheduled_at) {
       toast.error('Please set a schedule date and time');
       return false;
     }
 
-    const scheduledDate = new Date(formData.scheduledAt);
+    const scheduledDate = new Date(formData.scheduled_at);
     if (scheduledDate <= new Date()) {
       toast.error('Schedule time must be in the future');
+      return false;
+    }
+
+    if (Object.keys(formData.audience).length === 0) {
+      toast.error('Please define at least one audience filter');
       return false;
     }
 
@@ -290,23 +245,17 @@ const AddEditBroadcastPage: React.FC = () => {
     setIsSaving(true);
 
     try {
-      const broadcastData = isAdminBroadcast
-        ? {
-          ...formData,
-          scheduledAt: new Date(formData.scheduledAt).toISOString()
-        }
-        : {
-          title: formData.title,
-          description: formData.description,
-          templateCode: formData.templateCode,
-          channel: formData.channel,
-          audience: {
-            segment: formData.audience.segment,
-            country: formData.audience.country,
-            language: formData.audience.language
-          },
-          scheduledAt: new Date(formData.scheduledAt).toISOString()
-        };
+      // Format the data according to the API requirements
+      const broadcastData = {
+        title: formData.title,
+        template_code: formData.template_code,
+        channel: formData.channel,
+        scheduled_at: formData.scheduled_at,
+        audience: formData.audience,
+        payload: formData.payload,
+        priority: formData.priority,
+        // description: formData.description
+      };
 
       let response;
       if (isEditMode && id) {
@@ -319,11 +268,7 @@ const AddEditBroadcastPage: React.FC = () => {
           }
         });
       } else {
-        if (isAdminBroadcast) {
-          response = await notificationService.createAdminBroadcast(broadcastData);
-        } else {
-          response = await notificationService.createBroadcast(broadcastData);
-        }
+        response = await notificationService.createBroadcast(broadcastData);
         toast.success('Broadcast created successfully!', {
           style: {
             background: '#10B981',
@@ -439,12 +384,10 @@ const AddEditBroadcastPage: React.FC = () => {
               >
                 Cancel
               </button>
-              <motion.button
+              <button
                 type="submit"
                 form="broadcast-form"
                 className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
                 disabled={isSaving}
               >
                 {isSaving ? (
@@ -453,7 +396,7 @@ const AddEditBroadcastPage: React.FC = () => {
                   <Save size={16} className="mr-2" />
                 )}
                 {isSaving ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Broadcast' : 'Create Broadcast')}
-              </motion.button>
+              </button>
             </div>
           </div>
         </div>
@@ -461,11 +404,8 @@ const AddEditBroadcastPage: React.FC = () => {
 
       {/* Content */}
       <div className="max-w-4xl mx-auto p-6">
-        <motion.div
+        <div
           className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200/50 overflow-hidden"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
         >
           <div className="p-8">
             <div className="mb-8">
@@ -476,29 +416,6 @@ const AddEditBroadcastPage: React.FC = () => {
             </div>
 
             <form id="broadcast-form" onSubmit={handleSubmit} className="space-y-8">
-              {/* Broadcast Type Selection */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700">
-                    <input
-                      type="checkbox"
-                      name="isAdminBroadcast"
-                      checked={isAdminBroadcast}
-                      onChange={(e) => setIsAdminBroadcast(e.target.checked)}
-                      className="rounded text-primary-600 focus:ring-primary-500"
-                    />
-                    <span>Advanced Broadcast (Admin)</span>
-                  </label>
-
-                  {isAdminBroadcast && (
-                    <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full flex items-center">
-                      <Sparkles size={12} className="mr-1" />
-                      Advanced Options Enabled
-                    </span>
-                  )}
-                </div>
-              </div>
-
               {/* Basic Information */}
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center">
@@ -519,30 +436,13 @@ const AddEditBroadcastPage: React.FC = () => {
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
-                      placeholder="e.g., Monthly Newsletter"
-                      disabled={isSaving}
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                      Description
-                    </label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      rows={3}
-                      className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all resize-none"
-                      placeholder="Describe the purpose of this broadcast..."
+                      placeholder="e.g., Welcome to our service"
                       disabled={isSaving}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Channel & Template */}
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center">
                   <LayoutTemplate size={18} className="mr-2 text-gray-500" />
@@ -561,8 +461,8 @@ const AddEditBroadcastPage: React.FC = () => {
                           type="button"
                           onClick={() => setFormData(prev => ({ ...prev, channel: channel as any }))}
                           className={`flex items-center justify-center py-3 px-4 rounded-xl text-sm font-medium transition-all ${formData.channel === channel
-                              ? `${getChannelActiveBackground(channel)} text-white shadow-sm`
-                              : `${getChannelBackground(channel)} text-gray-700 hover:bg-gray-100`
+                            ? `${getChannelActiveBackground(channel)} text-white shadow-sm`
+                            : `${getChannelBackground(channel)} text-gray-700 hover:bg-gray-100`
                             }`}
                           disabled={isSaving}
                         >
@@ -576,14 +476,14 @@ const AddEditBroadcastPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="templateCode" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="template_code" className="block text-sm font-medium text-gray-700 mb-2">
                       Message Template *
                     </label>
                     <div className="relative">
                       <select
-                        id="templateCode"
-                        name="templateCode"
-                        value={formData.templateCode}
+                        id="template_code"
+                        name="template_code"
+                        value={formData.template_code}
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all appearance-none"
@@ -591,7 +491,7 @@ const AddEditBroadcastPage: React.FC = () => {
                       >
                         <option value="">Select a template</option>
                         {TEMPLATES[formData.channel]?.map(template => (
-                          <option key={template} value={template}>
+                          <option key={template} value={template.toLowerCase()}>
                             {template.replace(/_/g, ' ')}
                           </option>
                         ))}
@@ -614,126 +514,95 @@ const AddEditBroadcastPage: React.FC = () => {
                   Audience Targeting
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <label htmlFor="audience.segment" className="block text-sm font-medium text-gray-700 mb-2">
-                      Segment *
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Audience Filters *
                     </label>
-                    <div className="relative">
-                      <select
-                        id="audience.segment"
-                        name="audience.segment"
-                        value={formData?.audience?.segment}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all appearance-none"
-                        disabled={isSaving}
-                      >
-                        {SEGMENTS.map(segment => (
-                          <option key={segment} value={segment}>
-                            {segment.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                        <UserRound size={16} className="text-gray-400" />
-                      </div>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowAudienceModal(true)}
+                      className="flex items-center text-xs px-2 py-1 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all"
+                    >
+                      <Plus size={12} className="mr-1" />
+                      Add Filter
+                    </button>
                   </div>
 
-                  <div>
-                    <label htmlFor="audience.country" className="block text-sm font-medium text-gray-700 mb-2">
-                      Country
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="audience.country"
-                        name="audience.country"
-                        value={formData?.audience?.country}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all appearance-none"
-                        disabled={isSaving}
-                      >
-                        {COUNTRIES.map(country => (
-                          <option key={country} value={country}>
-                            {country}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                        <Globe size={16} className="text-gray-400" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="audience.language" className="block text-sm font-medium text-gray-700 mb-2">
-                      Language
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="audience.language"
-                        name="audience.language"
-                        value={formData?.audience?.language}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all appearance-none"
-                        disabled={isSaving}
-                      >
-                        {LANGUAGES.map(language => (
-                          <option key={language} value={language}>
-                            {language.toUpperCase()}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                        <Languages size={16} className="text-gray-400" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {isAdminBroadcast && (
-                  <div className="mt-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Custom Filters
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowCustomFilterModal(true)}
-                        className="flex items-center text-xs px-2 py-1 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all"
-                      >
-                        <Plus size={12} className="mr-1" />
-                        Add Filter
-                      </button>
-                    </div>
-
-                    {formData.audience.customFilters && Object.keys(formData.audience.customFilters).length > 0 ? (
-                      <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                        {Object.entries(formData.audience.customFilters).map(([key, value]) => (
-                          <div key={key} className="flex items-center justify-between bg-white p-2 rounded-lg">
-                            <div className="flex items-center">
-                              <Filter size={14} className="text-gray-500 mr-2" />
-                              <span className="text-sm font-medium">{key}:</span>
-                              <span className="text-sm ml-2">{value}</span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveCustomFilter(key)}
-                              className="p-1 text-gray-400 hover:text-red-500 rounded-full"
-                            >
-                              <X size={14} />
-                            </button>
+                  {Object.keys(formData.audience).length > 0 ? (
+                    <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                      {Object.entries(formData.audience).map(([key, value]) => (
+                        <div key={key} className="flex items-center justify-between bg-white p-2 rounded-lg">
+                          <div className="flex items-center">
+                            <Filter size={14} className="text-gray-500 mr-2" />
+                            <span className="text-sm font-medium">{key}:</span>
+                            <span className="text-sm ml-2">{value}</span>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-500 text-center">
-                        No custom filters added
-                      </div>
-                    )}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveAudienceFilter(key)}
+                            className="p-1 text-gray-400 hover:text-red-500 rounded-full"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-500 text-center">
+                      No audience filters added. Please add at least one filter.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Payload Data */}
+              <div className="space-y-6">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <Key size={18} className="mr-2 text-gray-500" />
+                  Payload Data
+                </h2>
+
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Template Variables
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowPayloadModal(true)}
+                      className="flex items-center text-xs px-2 py-1 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all"
+                    >
+                      <Plus size={12} className="mr-1" />
+                      Add Data
+                    </button>
                   </div>
-                )}
+
+                  {Object.keys(formData.payload).length > 0 ? (
+                    <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                      {Object.entries(formData.payload).map(([key, value]) => (
+                        <div key={key} className="flex items-center justify-between bg-white p-2 rounded-lg">
+                          <div className="flex items-center">
+                            <Key size={14} className="text-gray-500 mr-2" />
+                            <span className="text-sm font-medium">{key}:</span>
+                            <span className="text-sm ml-2">{value}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePayloadItem(key)}
+                            className="p-1 text-gray-400 hover:text-red-500 rounded-full"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-500 text-center">
+                      No payload data added. These values will be used to fill template variables.
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Scheduling */}
@@ -744,15 +613,15 @@ const AddEditBroadcastPage: React.FC = () => {
                 </h2>
 
                 <div>
-                  <label htmlFor="scheduledAt" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="scheduled_at" className="block text-sm font-medium text-gray-700 mb-2">
                     Schedule Date & Time *
                   </label>
                   <div className="relative">
                     <input
                       type="datetime-local"
-                      id="scheduledAt"
-                      name="scheduledAt"
-                      value={formData.scheduledAt}
+                      id="scheduled_at"
+                      name="scheduled_at"
+                      value={formData.scheduled_at.slice(0, 16)} // Format for datetime-local input
                       onChange={handleInputChange}
                       min={new Date().toISOString().slice(0, 16)}
                       required
@@ -769,143 +638,48 @@ const AddEditBroadcastPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Admin Options */}
-              {isAdminBroadcast && (
-                <div className="space-y-6">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <BadgeCheck size={18} className="mr-2 text-gray-500" />
-                    Advanced Options
-                  </h2>
+              {/* Priority Settings */}
+              <div className="space-y-6">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <BadgeCheck size={18} className="mr-2 text-gray-500" />
+                  Priority Settings
+                </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-2">
-                        Priority
-                      </label>
-                      <div className="relative">
-                        <select
-                          id="priority"
-                          name="priority"
-                          value={formData.priority}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all appearance-none"
-                          disabled={isSaving}
-                        >
-                          {PRIORITIES.map(priority => (
-                            <option key={priority} value={priority}>
-                              {priority.charAt(0).toUpperCase() + priority.slice(1)}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                          <AlertTriangle size={16} className="text-gray-400" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Admin Override
-                      </label>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id="adminOverride"
-                          name="adminOverride"
-                          checked={formData.adminOverride}
-                          onChange={handleInputChange}
-                          className="rounded text-primary-600 focus:ring-primary-500"
-                          disabled={isSaving}
-                        />
-                        <label htmlFor="adminOverride" className="text-sm text-gray-700">
-                          Override user preferences
-                        </label>
-                      </div>
-                      <p className="mt-2 text-xs text-gray-500">
-                        This will send the broadcast even to users who have opted out of communications.
-                        Use with caution for critical updates only.
-                      </p>
+                <div>
+                  <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-2">
+                    Priority
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="priority"
+                      name="priority"
+                      value={formData.priority}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all appearance-none"
+                      disabled={isSaving}
+                    >
+                      {PRIORITIES.map(priority => (
+                        <option key={priority} value={priority}>
+                          {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                      <AlertTriangle size={16} className="text-gray-400" />
                     </div>
                   </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Tags
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowTagInput(true)}
-                        className="flex items-center text-xs px-2 py-1 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all"
-                        disabled={showTagInput}
-                      >
-                        <Plus size={12} className="mr-1" />
-                        Add Tag
-                      </button>
-                    </div>
-
-                    <div className="min-h-12 bg-gray-50 rounded-xl p-4">
-                      {showTagInput ? (
-                        <div className="flex items-center">
-                          <input
-                            type="text"
-                            value={newTag}
-                            onChange={(e) => setNewTag(e.target.value)}
-                            placeholder="Enter tag"
-                            className="flex-1 px-3 py-2 border rounded-lg text-sm"
-                            onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-                            autoFocus
-                          />
-                          <button
-                            type="button"
-                            onClick={handleAddTag}
-                            className="ml-2 p-2 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-all"
-                          >
-                            <Check size={14} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setShowTagInput(false)}
-                            className="ml-1 p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all"
-                          >
-                            <X size={14} />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-wrap gap-2">
-                          {formData.metadata?.tags && formData.metadata.tags.length > 0 ? (
-                            formData.metadata.tags.map(tag => (
-                              <div key={tag} className="flex items-center px-3 py-1 bg-gray-100 rounded-lg">
-                                <Tag size={12} className="text-gray-500 mr-2" />
-                                <span className="text-sm">{tag}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveTag(tag)}
-                                  className="ml-2 text-gray-400 hover:text-red-500"
-                                >
-                                  <X size={12} />
-                                </button>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="text-sm text-gray-500">No tags added</div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Sets the delivery priority of this broadcast. Higher priority broadcasts may be delivered faster.
+                  </p>
                 </div>
-              )}
+              </div>
             </form>
           </div>
-        </motion.div>
+        </div>
 
         {/* Info Card */}
-        <motion.div
+        <div
           className="mt-6 bg-primary-50/70 backdrop-blur-sm rounded-2xl p-6 border border-primary-100"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
         >
           <div className="flex items-start space-x-4">
             <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
@@ -915,108 +689,183 @@ const AddEditBroadcastPage: React.FC = () => {
               <h3 className="font-semibold text-primary-900 mb-2">About Broadcasts</h3>
               <ul className="text-primary-700 text-sm space-y-1">
                 <li>• Broadcasts will be sent using the selected template via the chosen channel</li>
-                <li>• The audience is determined by segment, country, and language filters</li>
-                <li>• Advanced broadcasts allow for additional filtering and metadata</li>
+                <li>• The audience is determined by the filters you set</li>
+                <li>• Payload data is used to populate template variables</li>
                 <li>• Scheduled broadcasts can be paused, edited, or canceled before sending</li>
                 <li>• Ensure your templates are properly configured before sending</li>
               </ul>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Custom Filter Modal */}
-      <AnimatePresence>
-        {showCustomFilterModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setShowCustomFilterModal(false)}
+      {/* Audience Filter Modal */}
+      {showAudienceModal && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowAudienceModal(false)}
+        >
+          <div
+            className="bg-white/95 backdrop-blur-xl rounded-3xl border border-gray-200/50 p-6 max-w-md w-full mx-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2 }}
-              className="bg-white/95 backdrop-blur-xl rounded-3xl border border-gray-200/50 p-6 max-w-md w-full mx-4 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Custom Filter</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Audience Filter</h3>
 
-              <div className="space-y-4">
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="audienceKey" className="block text-sm font-medium text-gray-700 mb-2">
+                  Filter Attribute
+                </label>
+                <select
+                  id="audienceKey"
+                  value={audienceKey}
+                  onChange={(e) => setAudienceKey(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
+                >
+                  <option value="">Select an attribute</option>
+                  <option value="gender">Gender</option>
+                  <option value="country">Country</option>
+                  <option value="kyc_level">KYC Level</option>
+                  <option value="age_group">Age Group</option>
+                  <option value="subscription">Subscription Type</option>
+                  <option value="custom">Custom Attribute...</option>
+                </select>
+              </div>
+
+              {audienceKey === 'custom' ? (
                 <div>
-                  <label htmlFor="filterKey" className="block text-sm font-medium text-gray-700 mb-2">
-                    Filter Key
+                  <label htmlFor="customAudienceKey" className="block text-sm font-medium text-gray-700 mb-2">
+                    Custom Attribute Name
                   </label>
                   <input
                     type="text"
-                    id="filterKey"
-                    value={filterKey}
-                    onChange={(e) => setFilterKey(e.target.value)}
-                    placeholder="e.g., lastLogin, userType"
+                    id="customAudienceKey"
+                    value={audienceKey === 'custom' ? '' : audienceKey}
+                    onChange={(e) => setAudienceKey(e.target.value)}
+                    placeholder="e.g., subscription_status, region"
                     className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                   />
                 </div>
+              ) : null}
 
-                <div>
-                  <label htmlFor="filterValue" className="block text-sm font-medium text-gray-700 mb-2">
-                    Filter Value
-                  </label>
+              <div>
+                <label htmlFor="audienceValue" className="block text-sm font-medium text-gray-700 mb-2">
+                  Filter Value
+                </label>
+                {audienceKey && AUDIENCE_ATTRIBUTES[audienceKey as keyof typeof AUDIENCE_ATTRIBUTES] ? (
+                  <select
+                    id="audienceValue"
+                    value={audienceValue}
+                    onChange={(e) => setAudienceValue(e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
+                  >
+                    <option value="">Select a value</option>
+                    {AUDIENCE_ATTRIBUTES[audienceKey as keyof typeof AUDIENCE_ATTRIBUTES].map(value => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
                   <input
                     type="text"
-                    id="filterValue"
-                    value={filterValue}
-                    onChange={(e) => setFilterValue(e.target.value)}
-                    placeholder="e.g., >7days, premium"
+                    id="audienceValue"
+                    value={audienceValue}
+                    onChange={(e) => setAudienceValue(e.target.value)}
+                    placeholder="e.g., male, premium, US"
                     className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
                   />
-                </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center space-x-3">
+              <button
+                type="button"
+                onClick={() => setShowAudienceModal(false)}
+                className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl font-medium transition-all"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleAddAudienceFilter}
+                className="flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all"
+                disabled={!audienceKey.trim() || !audienceValue.trim() || audienceKey === 'custom'}
+              >
+                Add Filter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payload Data Modal */}
+      {showPayloadModal && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowPayloadModal(false)}
+        >
+          <div
+            className="bg-white/95 backdrop-blur-xl rounded-3xl border border-gray-200/50 p-6 max-w-md w-full mx-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Payload Data</h3>
+
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="payloadKey" className="block text-sm font-medium text-gray-700 mb-2">
+                  Variable Name
+                </label>
+                <input
+                  type="text"
+                  id="payloadKey"
+                  value={payloadKey}
+                  onChange={(e) => setPayloadKey(e.target.value)}
+                  placeholder="e.g., user_name, promo_code"
+                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
+                />
               </div>
 
-              <div className="mt-6 flex items-center space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setShowCustomFilterModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl font-medium transition-all"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleAddCustomFilter}
-                  className="flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all"
-                  disabled={!filterKey.trim() || !filterValue.trim()}
-                >
-                  Add Filter
-                </button>
+              <div>
+                <label htmlFor="payloadValue" className="block text-sm font-medium text-gray-700 mb-2">
+                  Variable Value
+                </label>
+                <input
+                  type="text"
+                  id="payloadValue"
+                  value={payloadValue}
+                  onChange={(e) => setPayloadValue(e.target.value)}
+                  placeholder="e.g., John Doe, SUMMER20"
+                  className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500/30 focus:bg-white text-gray-900 transition-all"
+                />
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+
+            <div className="mt-6 flex items-center space-x-3">
+              <button
+                type="button"
+                onClick={() => setShowPayloadModal(false)}
+                className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl font-medium transition-all"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleAddPayloadItem}
+                className="flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-all"
+                disabled={!payloadKey.trim() || !payloadValue.trim()}
+              >
+                Add Data
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
-// Simple Check icon component for tag adding
-const Check = ({ size = 24, className = "" }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polyline points="20 6 9 17 4 12" />
-  </svg>
-);
 
 export default AddEditBroadcastPage;

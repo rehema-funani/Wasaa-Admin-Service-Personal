@@ -80,7 +80,7 @@ const BroadcastsPage: React.FC = () => {
     setError(null);
     try {
       const response = await notificationService.getBroadcasts();
-      setBroadcasts(response);
+      setBroadcasts(response.broadcasts);
     } catch (err) {
       setError('Failed to fetch broadcasts. Please try again.');
       console.error(err);
@@ -88,20 +88,7 @@ const BroadcastsPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  const filteredBroadcasts = broadcasts.filter(broadcast => {
-    const matchesSearch =
-      broadcast.title?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
-      broadcast.description?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
-      broadcast.templateCode?.toLowerCase()?.includes(searchQuery?.toLowerCase());
-
-    const matchesStatus = statusFilter === 'all' || broadcast.status === statusFilter;
-    const matchesChannel = channelFilter === 'all' || broadcast.channel === channelFilter;
-
-    return matchesSearch && matchesStatus && matchesChannel;
-  });
-
-  // Delete broadcast handlers
+  
   const handleDeleteClick = (broadcast: Broadcast) => {
     setBroadcastToDelete(broadcast);
     setShowDeleteModal(true);

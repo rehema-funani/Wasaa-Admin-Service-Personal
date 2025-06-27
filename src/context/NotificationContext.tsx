@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
-// Define notification types
 type NotificationType = 'info' | 'success' | 'warning' | 'error';
 
-// Individual notification interface
 interface Notification {
     id: string;
     type: NotificationType;
@@ -13,7 +11,6 @@ interface Notification {
     duration?: number;
 }
 
-// Context type
 interface NotificationContextType {
     notifications: Notification[];
     addNotification: (notification: Omit<Notification, 'id'>) => string;
@@ -30,19 +27,17 @@ interface NotificationProviderProps {
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
 
-    // Add a new notification
     const addNotification = useCallback((notification: Omit<Notification, 'id'>): string => {
         const id = Date.now().toString();
         const newNotification: Notification = {
             ...notification,
             id,
             autoClose: notification.autoClose !== false,
-            duration: notification.duration || 5000, // Default to 5 seconds
+            duration: notification.duration || 5000,
         };
 
         setNotifications(prev => [...prev, newNotification]);
 
-        // Auto-close if enabled
         if (newNotification.autoClose) {
             setTimeout(() => {
                 removeNotification(id);
@@ -52,17 +47,14 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         return id;
     }, []);
 
-    // Remove a notification by ID
     const removeNotification = useCallback((id: string) => {
         setNotifications(prev => prev.filter(notification => notification.id !== id));
     }, []);
 
-    // Clear all notifications
     const clearAllNotifications = useCallback(() => {
         setNotifications([]);
     }, []);
 
-    // Create the context value
     const value: NotificationContextType = {
         notifications,
         addNotification,
@@ -73,16 +65,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     return (
         <NotificationContext.Provider value={value}>
             {children}
-
-            {/* This would typically include a NotificationContainer component */}
-            {/* that renders the actual notifications UI */}
-            {/* For example: */}
             {/* <NotificationContainer notifications={notifications} onClose={removeNotification} /> */}
         </NotificationContext.Provider>
     );
 };
 
-// Custom hook for using notifications
 export const useNotifications = () => {
     const context = useContext(NotificationContext);
     if (context === undefined) {
