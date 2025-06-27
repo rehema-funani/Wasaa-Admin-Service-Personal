@@ -51,8 +51,8 @@ export const notificationService = {
 
 
   // ======== BROADCASTS ==========
-  getBroadcasts: async (page: any, limit: any) => {
-    const response = await notification.get(`/broadcasts?page=${page}&limit=${limit}`);
+  getBroadcasts: async () => {
+    const response = await notification.get(`/broadcasts`);
     return response.data;
   },
 

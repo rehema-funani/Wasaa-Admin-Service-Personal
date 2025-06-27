@@ -39,7 +39,7 @@ interface Metadata {
 }
 
 interface Broadcast {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   templateCode: string;
@@ -79,7 +79,7 @@ const BroadcastsPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await notificationService.getBroadcasts({ page: 1, limit: 10 });
+      const response = await notificationService.getBroadcasts();
       setBroadcasts(response.broadcasts);
     } catch (err) {
       setError('Failed to fetch broadcasts. Please try again.');
@@ -99,8 +99,8 @@ const BroadcastsPage: React.FC = () => {
 
     setIsDeleting(true);
     try {
-      await notificationService.deleteBroadcast(broadcastToDelete.id);
-      setBroadcasts(broadcasts.filter(b => b.id !== broadcastToDelete.id));
+      await notificationService.deleteBroadcast(broadcastToDelete._id);
+      setBroadcasts(broadcasts.filter(b => b._id !== broadcastToDelete._id));
       setShowDeleteModal(false);
       setBroadcastToDelete(null);
       toast.success('Broadcast deleted successfully', {
@@ -297,7 +297,7 @@ const BroadcastsPage: React.FC = () => {
         return (
           <>
             <motion.button
-              onClick={() => handleActionClick('execute', broadcast.id)}
+              onClick={() => handleActionClick('execute', broadcast._id)}
               className="p-2 hover:bg-green-100 text-gray-400 hover:text-green-600 rounded-full transition-all"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -310,7 +310,7 @@ const BroadcastsPage: React.FC = () => {
       case 'sending':
         return (
           <motion.button
-            onClick={() => handleActionClick('pause', broadcast.id)}
+            onClick={() => handleActionClick('pause', broadcast._id)}
             className="p-2 hover:bg-purple-100 text-gray-400 hover:text-purple-600 rounded-full transition-all"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -322,7 +322,7 @@ const BroadcastsPage: React.FC = () => {
       case 'paused':
         return (
           <motion.button
-            onClick={() => handleActionClick('resume', broadcast.id)}
+            onClick={() => handleActionClick('resume', broadcast._id)}
             className="p-2 hover:bg-green-100 text-gray-400 hover:text-green-600 rounded-full transition-all"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -546,7 +546,7 @@ const BroadcastsPage: React.FC = () => {
                   <AnimatePresence>
                     {broadcasts.map((broadcast, index) => (
                       <motion.tr
-                        key={broadcast.id}
+                        key={broadcast._id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
@@ -627,7 +627,7 @@ const BroadcastsPage: React.FC = () => {
                             {getActionButtons(broadcast)}
 
                             <motion.button
-                              onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast.id}`, {
+                              onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast._id}`, {
                                 state: { broadcast }
                               })}
                               className="p-2 hover:bg-primary-100 text-gray-400 hover:text-primary-600 rounded-full transition-all"
