@@ -522,7 +522,6 @@ const SystemWalletsPage = () => {
                 <p className="text-neutral-500 dark:text-neutral-400 text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              // Wallet Cards
               filteredWallets.map((wallet) => (
                 <div
                   key={wallet.id}
@@ -618,61 +617,6 @@ const SystemWalletsPage = () => {
                 </div>
               ))
             )}
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 shadow-sm mb-6">
-          <div className="flex justify-between items-center px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
-            <h2 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 flex items-center">
-              <BarChart3 size={16} className="mr-1.5 text-blue-500" />
-              Performance Overview
-            </h2>
-
-            <div className="flex items-center bg-neutral-100 dark:bg-neutral-750 rounded-md p-0.5">
-              <button
-                onClick={() => setSelectedTimeframe('24h')}
-                className={`px-2 py-1 rounded text-xs transition-all ${selectedTimeframe === '24h'
-                  ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-800 dark:text-neutral-200'
-                  : 'text-neutral-500 dark:text-neutral-400'
-                  }`}
-              >
-                24h
-              </button>
-              <button
-                onClick={() => setSelectedTimeframe('7d')}
-                className={`px-2 py-1 rounded text-xs transition-all ${selectedTimeframe === '7d'
-                  ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-800 dark:text-neutral-200'
-                  : 'text-neutral-500 dark:text-neutral-400'
-                  }`}
-              >
-                7d
-              </button>
-              <button
-                onClick={() => setSelectedTimeframe('30d')}
-                className={`px-2 py-1 rounded text-xs transition-all ${selectedTimeframe === '30d'
-                  ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-800 dark:text-neutral-200'
-                  : 'text-neutral-500 dark:text-neutral-400'
-                  }`}
-              >
-                30d
-              </button>
-              <button
-                onClick={() => setSelectedTimeframe('90d')}
-                className={`px-2 py-1 rounded text-xs transition-all ${selectedTimeframe === '90d'
-                  ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-800 dark:text-neutral-200'
-                  : 'text-neutral-500 dark:text-neutral-400'
-                  }`}
-              >
-                90d
-              </button>
-            </div>
-          </div>
-
-          {/* Chart placeholder */}
-          <div className="px-4 py-4">
-            <div className="bg-neutral-50 dark:bg-neutral-750 rounded-lg h-48 flex items-center justify-center">
-              <p className="text-neutral-400 dark:text-neutral-500 text-sm">Chart visualization would appear here</p>
-            </div>
           </div>
         </div>
 

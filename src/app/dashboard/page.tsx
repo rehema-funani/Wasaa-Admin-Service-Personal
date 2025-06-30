@@ -249,7 +249,7 @@ const Dashboard = () => {
           >
             <button
               onClick={() => handleTimeframeChange('day')}
-              className={`px-4 py-2 text-sm rounded-full transition-all ${activeTimeframe === 'day'
+              className={`px-4 py-2 text-xs rounded-full transition-all ${activeTimeframe === 'day'
                 ? 'bg-primary-500 text-white shadow-sm dark:shadow-dark-sm'
                 : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
                 }`}
@@ -258,7 +258,7 @@ const Dashboard = () => {
             </button>
             <button
               onClick={() => handleTimeframeChange('week')}
-              className={`px-4 py-2 text-sm rounded-full transition-all ${activeTimeframe === 'week'
+              className={`px-4 py-2 text-xs rounded-full transition-all ${activeTimeframe === 'week'
                 ? 'bg-primary-500 text-white shadow-sm dark:shadow-dark-sm'
                 : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
                 }`}
@@ -267,7 +267,7 @@ const Dashboard = () => {
             </button>
             <button
               onClick={() => handleTimeframeChange('month')}
-              className={`px-4 py-2 text-sm rounded-full transition-all ${activeTimeframe === 'month'
+              className={`px-4 py-2 text-xs rounded-full transition-all ${activeTimeframe === 'month'
                 ? 'bg-primary-500 text-white shadow-sm dark:shadow-dark-sm'
                 : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
                 }`}
@@ -276,7 +276,7 @@ const Dashboard = () => {
             </button>
             <button
               onClick={() => handleTimeframeChange('year')}
-              className={`px-4 py-2 text-sm rounded-full transition-all ${activeTimeframe === 'year'
+              className={`px-4 py-2 text-xs rounded-full transition-all ${activeTimeframe === 'year'
                 ? 'bg-primary-500 text-white shadow-sm dark:shadow-dark-sm'
                 : 'text-gray-600 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-dark-hover'
                 }`}
@@ -346,7 +346,7 @@ const Dashboard = () => {
           whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
         >
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">User Activity</h2>
+            <h2 className="text-md font-semibold text-gray-800 dark:text-neutral-200">User Activity</h2>
             <div className="flex items-center space-x-2">
               <motion.button
                 onClick={() => handleTabChange('users')}
@@ -390,7 +390,7 @@ const Dashboard = () => {
           className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 overflow-hidden"
           whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
         >
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200 mb-4">Login Devices</h2>
+          <h2 className="text-md font-semibold text-gray-800 dark:text-neutral-200 mb-4">Login Devices</h2>
           <LoginTypesPieChart />
 
           <div className="mt-4 grid grid-cols-1 gap-2">
@@ -399,9 +399,9 @@ const Dashboard = () => {
                 <div className="p-2 rounded-lg bg-primary-50 dark:bg-primary-900/30 mr-3">
                   <Smartphone size={16} className="text-primary-500 dark:text-primary-400" strokeWidth={1.8} />
                 </div>
-                <span className="text-sm text-gray-700 dark:text-neutral-300">Mobile</span>
+                <span className="text-xs text-gray-700 dark:text-neutral-300">Mobile</span>
               </div>
-              <span className="text-sm font-medium text-gray-700 dark:text-neutral-300">68%</span>
+              <span className="text-xs font-medium text-gray-700 dark:text-neutral-300">68%</span>
             </div>
 
             <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50">
@@ -409,9 +409,9 @@ const Dashboard = () => {
                 <div className="p-2 rounded-lg bg-primary-50 dark:bg-primary-900/30 mr-3">
                   <Laptop size={16} className="text-primary-500 dark:text-primary-400" strokeWidth={1.8} />
                 </div>
-                <span className="text-sm text-gray-700 dark:text-neutral-300">Desktop</span>
+                <span className="text-xs text-gray-700 dark:text-neutral-300">Desktop</span>
               </div>
-              <span className="text-sm font-medium text-gray-700 dark:text-neutral-300">26%</span>
+              <span className="text-xs font-medium text-gray-700 dark:text-neutral-300">26%</span>
             </div>
 
             <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50/70 dark:bg-dark-active/50">
@@ -419,9 +419,9 @@ const Dashboard = () => {
                 <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30 mr-3">
                   <Tablet size={16} className="text-violet-500 dark:text-violet-400" strokeWidth={1.8} />
                 </div>
-                <span className="text-sm text-gray-700 dark:text-neutral-300">Tablet</span>
+                <span className="text-xs text-gray-700 dark:text-neutral-300">Tablet</span>
               </div>
-              <span className="text-sm font-medium text-gray-700 dark:text-neutral-300">6%</span>
+              <span className="text-xs font-medium text-gray-700 dark:text-neutral-300">6%</span>
             </div>
           </div>
         </motion.div>
@@ -441,12 +441,12 @@ const Dashboard = () => {
                 <RefreshCw size={18} className="text-white" strokeWidth={1.8} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Live Exchange Rates</h3>
-                <p className="text-gray-500 dark:text-neutral-400 text-sm">Real-time currency exchange rates</p>
+                <h3 className="text-md font-semibold text-gray-800 dark:text-neutral-200">Live Exchange Rates</h3>
+                <p className="text-gray-500 dark:text-neutral-400 text-xs">Real-time currency exchange rates</p>
               </div>
             </div>
             <motion.button
-              className="text-sm text-primary-600 dark:text-primary-400 flex items-center"
+              className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
               whileHover={{ x: 3 }}
             >
               View all rates <ChevronRight size={14} />
@@ -465,12 +465,12 @@ const Dashboard = () => {
                     <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" strokeWidth={1.8} />
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-800 dark:text-neutral-200">{rate.pair}</span>
+                    <span className="text-xs font-medium text-gray-800 dark:text-neutral-200">{rate.pair}</span>
                     <div className="text-xs text-gray-500 dark:text-neutral-400">{rate.source}</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-semibold text-gray-800 dark:text-neutral-200">{rate.rate}</div>
+                  <div className="text-xs font-semibold text-gray-800 dark:text-neutral-200">{rate.rate}</div>
                   <div className={`text-xs flex items-center justify-end ${rate.isUp ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
                     {rate.isUp ? <ArrowUp size={12} className="mr-0.5" /> : <ArrowDown size={12} className="mr-0.5" />}
                     {rate.change}
@@ -592,7 +592,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-800 dark:text-neutral-200">2 minutes ago</span>
+                  <span className="text-xs font-medium text-gray-800 dark:text-neutral-200">2 minutes ago</span>
                   <span className="text-xs text-gray-500 dark:text-neutral-400">28ms</span>
                 </div>
               </div>
@@ -606,7 +606,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-800 dark:text-neutral-200">5 minutes ago</span>
+                  <span className="text-xs font-medium text-gray-800 dark:text-neutral-200">5 minutes ago</span>
                   <span className="text-xs text-gray-500 dark:text-neutral-400">357ms</span>
                 </div>
               </div>
@@ -620,7 +620,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-800 dark:text-neutral-200">Real-time</span>
+                  <span className="text-xs font-medium text-gray-800 dark:text-neutral-200">Real-time</span>
                   <motion.button
                     className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
                     whileHover={{ scale: 1.05 }}
@@ -664,12 +664,12 @@ const Dashboard = () => {
                       <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">USD → KES</div>
+                      <div className="text-xs font-medium text-gray-800 dark:text-neutral-200">USD → KES</div>
                       <div className="text-xs text-gray-500 dark:text-neutral-400">User #3829</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">$500 → KSh 65,225</div>
+                    <div className="text-xs font-medium text-gray-800 dark:text-neutral-200">$500 → KSh 65,225</div>
                     <div className="text-xs text-gray-500 dark:text-neutral-400">3 mins ago</div>
                   </div>
                 </div>
@@ -683,12 +683,12 @@ const Dashboard = () => {
                       <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">EUR → KES</div>
+                      <div className="text-xs font-medium text-gray-800 dark:text-neutral-200">EUR → KES</div>
                       <div className="text-xs text-gray-500 dark:text-neutral-400">User #2771</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">€200 → KSh 28,436</div>
+                    <div className="text-xs font-medium text-gray-800 dark:text-neutral-200">€200 → KSh 28,436</div>
                     <div className="text-xs text-gray-500 dark:text-neutral-400">12 mins ago</div>
                   </div>
                 </div>
@@ -702,12 +702,12 @@ const Dashboard = () => {
                       <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">GBP → KES</div>
+                      <div className="text-xs font-medium text-gray-800 dark:text-neutral-200">GBP → KES</div>
                       <div className="text-xs text-gray-500 dark:text-neutral-400">User #4526</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">£750 → KSh 126,690</div>
+                    <div className="text-xs font-medium text-gray-800 dark:text-neutral-200">£750 → KSh 126,690</div>
                     <div className="text-xs text-gray-500 dark:text-neutral-400">23 mins ago</div>
                   </div>
                 </div>
@@ -721,12 +721,12 @@ const Dashboard = () => {
                       <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">USD → UGX</div>
+                      <div className="text-xs font-medium text-gray-800 dark:text-neutral-200">USD → UGX</div>
                       <div className="text-xs text-gray-500 dark:text-neutral-400">User #1845</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-medium text-gray-800 dark:text-neutral-200">$300 → UGX 1,113,075</div>
+                    <div className="text-xs font-medium text-gray-800 dark:text-neutral-200">$300 → UGX 1,113,075</div>
                     <div className="text-xs text-gray-500 dark:text-neutral-400">45 mins ago</div>
                   </div>
                 </div>
@@ -748,7 +748,7 @@ const Dashboard = () => {
           >
             <div className="p-5 border-b border-gray-50 dark:border-dark-border">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Recent Users</h2>
+                <h2 className="text-md font-semibold text-gray-800 dark:text-neutral-200">Recent Users</h2>
                 <motion.button
                   className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
                   whileHover={{ x: 3 }}
@@ -766,7 +766,7 @@ const Dashboard = () => {
           >
             <div className="p-5 border-b border-gray-50 dark:border-dark-border">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Recent Groups</h2>
+                <h2 className="text-md font-semibold text-gray-800 dark:text-neutral-200">Recent Groups</h2>
                 <motion.button
                   className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
                   whileHover={{ x: 3 }}
@@ -788,12 +788,12 @@ const Dashboard = () => {
             <div className="p-5 border-b border-gray-50 dark:border-dark-border">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Active Users</h2>
+                  <h2 className="text-md font-semibold text-gray-800 dark:text-neutral-200">Active Users</h2>
                   <div className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 rounded-full text-xs text-green-700 dark:text-green-400 flex items-center">
                     <Clock size={10} className="mr-1" /> 30m
                   </div>
                 </div>
-                <div className="bg-gray-50 dark:bg-dark-active py-1 px-2 rounded-lg text-sm text-gray-800 dark:text-neutral-200 font-medium">
+                <div className="bg-gray-50 dark:bg-dark-active py-1 px-2 rounded-lg text-xs text-gray-800 dark:text-neutral-200 font-medium">
                   328
                 </div>
               </div>
@@ -809,12 +809,12 @@ const Dashboard = () => {
             <div className="p-5 border-b border-gray-50 dark:border-dark-border">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Active Groups</h2>
+                  <h2 className="text-md font-semibold text-gray-800 dark:text-neutral-200">Active Groups</h2>
                   <div className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 rounded-full text-xs text-green-700 dark:text-green-400 flex items-center">
                     <Clock size={10} className="mr-1" /> 30m
                   </div>
                 </div>
-                <div className="bg-gray-50 dark:bg-dark-active py-1 px-2 rounded-lg text-sm text-gray-800 dark:text-neutral-200 font-medium">
+                <div className="bg-gray-50 dark:bg-dark-active py-1 px-2 rounded-lg text-xs text-gray-800 dark:text-neutral-200 font-medium">
                   42
                 </div>
               </div>
@@ -840,8 +840,8 @@ const Dashboard = () => {
                 <Activity size={18} className="text-white" strokeWidth={1.8} />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Livestream Metrics</h2>
-                <p className="text-gray-500 dark:text-neutral-400 text-sm">Performance and engagement analytics</p>
+                <h2 className="text-md font-semibold text-gray-800 dark:text-neutral-200">Livestream Metrics</h2>
+                <p className="text-gray-500 dark:text-neutral-400 text-xs">Performance and engagement analytics</p>
               </div>
             </div>
             <motion.button
@@ -865,8 +865,8 @@ const Dashboard = () => {
                 <Wallet size={18} className="text-white" strokeWidth={1.8} />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-neutral-200">Wallet Analytics</h2>
-                <p className="text-gray-500 dark:text-neutral-400 text-sm">Transaction and balance insights</p>
+                <h2 className="text-md font-semibold text-gray-800 dark:text-neutral-200">Wallet Analytics</h2>
+                <p className="text-gray-500 dark:text-neutral-400 text-xs">Transaction and balance insights</p>
               </div>
             </div>
             <motion.button
@@ -895,12 +895,12 @@ const Dashboard = () => {
                 <Zap size={24} className="text-white" strokeWidth={1.8} />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Coming Soon: Predictive Analytics</h3>
-                <p className="text-blue-100 text-sm max-w-md">Get ahead with AI-powered forecasting and predictive insights for your business metrics</p>
+                <h3 className="text-lg font-bold text-white">Coming Soon: Predictive Analytics</h3>
+                <p className="text-blue-100 text-xs max-w-md">Get ahead with AI-powered forecasting and predictive insights for your business metrics</p>
               </div>
             </div>
             <motion.button
-              className="px-5 py-2.5 bg-white text-primary-600 rounded-xl font-medium text-sm shadow-lg"
+              className="px-5 py-2.5 bg-white text-primary-600 rounded-xl font-medium text-xs shadow-lg"
               whileHover={{ scale: 1.05, boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)' }}
               whileTap={{ scale: 0.98 }}
             >
