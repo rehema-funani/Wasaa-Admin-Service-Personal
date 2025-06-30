@@ -16,7 +16,9 @@ import {
   Zap,
   X,
   Loader,
-  FileText
+  FileText,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { notificationService } from '../../../api/services/notification';
@@ -265,80 +267,56 @@ const AddBroadcastPage = () => {
   const getStepIcon = (step: any) => {
     switch (step) {
       case 1:
-        return <Zap size={20} />;
+        return <Zap size={16} />;
       case 2:
-        return <Target size={20} />;
+        return <Target size={16} />;
       case 3:
-        return <Calendar size={20} />;
+        return <Calendar size={16} />;
       default:
-        return <CheckCircle size={20} />;
+        return <CheckCircle size={16} />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none z-50">
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(50)].map((_, i) => (
-              <div
-                key={i}
-                className={`absolute animate-confetti-${i % 5} bg-${i % 2 ? 'blue' : i % 3 ? 'emerald' : 'amber'}-${300 + (i % 3) * 100} w-2 h-2 rounded-full`}
-                style={{
-                  top: `-10px`,
-                  left: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 0.5}s`
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="bg-white sticky top-0 border-b border-slate-100 z-10 ">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
+      <div className="bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 sticky top-0 z-10 shadow-sm">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <button
                 onClick={() => navigate(-1)}
-                className="mr-4 p-2 rounded-full hover:bg-slate-100 transition-colors group"
+                className="mr-3 p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
-                <ArrowLeft size={20} className="text-slate-500 group-hover:text-slate-700" />
+                <ArrowLeft size={16} className="text-neutral-500 dark:text-neutral-400" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-slate-800 flex items-center">
-                  <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">Create New Broadcast</span>
-                  <span className="ml-3 flex h-6 items-center">
-                    <span className="relative inline-flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animate-ping"></span>
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
-                    </span>
-                  </span>
+                <h1 className="text-lg font-medium text-neutral-900 dark:text-white">
+                  Create New Broadcast
                 </h1>
-                <p className="text-slate-500 text-sm mt-1">Set up a new broadcast to engage with your audience</p>
+                <p className="text-neutral-500 dark:text-neutral-400 text-xs">Set up a new broadcast to engage with your audience</p>
               </div>
             </div>
 
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden md:flex items-center space-x-1">
               {[1, 2, 3].map(step => (
                 <div
                   key={step}
-                  className={`flex items-center ${step < activeStep ? 'text-blue-500' : step === activeStep ? 'text-blue-700' : 'text-slate-400'}`}
+                  className="flex items-center"
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step < activeStep
-                    ? 'bg-blue-100 text-blue-600'
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${step < activeStep
+                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400'
                     : step === activeStep
-                      ? 'bg-blue-600 text-white ring-2 ring-blue-100 ring-offset-2'
-                      : 'bg-slate-100 text-slate-500'
+                      ? 'bg-blue-500 text-white ring-1 ring-blue-200 dark:ring-blue-900/50'
+                      : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500'
                     }`}>
                     {step < activeStep ? (
-                      <CheckCircle size={16} />
+                      <CheckCircle size={14} />
                     ) : (
                       getStepIcon(step)
                     )}
                   </div>
                   {step < 3 && (
-                    <div className={`w-10 h-1 ${step < activeStep ? 'bg-blue-400' : 'bg-slate-200'}`}></div>
+                    <div className={`w-6 h-px ${step < activeStep ? 'bg-blue-400 dark:bg-blue-600' : 'bg-neutral-200 dark:bg-neutral-700'}`}></div>
                   )}
                 </div>
               ))}
@@ -347,285 +325,243 @@ const AddBroadcastPage = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         <form onSubmit={(e) => handleSubmit(e, false)}>
           {error && (
-            <div className="mb-6 bg-red-50 backdrop-blur-sm border border-red-100 rounded-xl p-4 flex items-start animate-fade-in">
-              <div className="h-10 w-10 flex-shrink-0 bg-red-100 rounded-full flex items-center justify-center">
-                <AlertTriangle className="text-red-600" size={20} />
-              </div>
-              <div className="ml-4 flex-1">
-                <h3 className="text-red-800 font-medium">Error</h3>
-                <p className="text-red-700 mt-1">{error}</p>
+            <div className="mb-4 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-lg p-3 flex items-start">
+              <AlertTriangle className="text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" size={16} />
+              <div className="ml-3 flex-1">
+                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
               </div>
               <button
                 type="button"
-                className="ml-4 text-red-500 hover:text-red-700"
+                className="ml-3 text-red-400 hover:text-red-500 dark:text-red-500 dark:hover:text-red-400"
                 onClick={() => setError(null)}
               >
-                <X size={16} />
+                <X size={14} />
               </button>
             </div>
           )}
 
-          <div className="space-y-8">
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all hover:shadow-md group">
-              <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600"></div>
+          <div className="space-y-6">
+            {/* Broadcast Details */}
+            <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+              <div className="border-l-4 border-l-blue-500 dark:border-l-blue-600 p-4">
+                <div className="flex items-center">
+                  <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Broadcast Details</div>
+                  <div className="ml-2 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded">Step 1</div>
+                </div>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Define the basic information for your broadcast</p>
+              </div>
 
-              <div className="p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                        <Zap className="text-blue-600" size={20} />
-                      </div>
-                      <h2 className="text-xl font-bold text-slate-800">Broadcast Details</h2>
-                    </div>
-                    <p className="text-slate-500 text-sm mt-1 ml-13">Define the basic information for your broadcast</p>
-                  </div>
-                  <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">Step 1 of 3</span>
+              <div className="p-4 space-y-4">
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                    Broadcast Title
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    placeholder="Enter a title for your broadcast"
+                    className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all text-neutral-800 dark:text-neutral-200 text-sm"
+                  />
+                  <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-500">A clear title helps you identify this broadcast later</p>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="group/field">
-                    <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-2 group-hover/field:text-blue-600 transition-colors">
-                      Broadcast Title
-                    </label>
-                    <input
-                      type="text"
-                      id="title"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleInputChange}
-                      placeholder="Enter a catchy title for your broadcast"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all shadow-sm hover:border-blue-300 text-slate-800 placeholder-slate-400"
-                    />
-                    <p className="mt-1.5 text-xs text-slate-500">A clear title helps you identify this broadcast later</p>
+                <div>
+                  <label htmlFor="template_id" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                    Communication Template
+                  </label>
+                  <div className="relative">
+                    {isLoadingTemplates ? (
+                      <div className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg flex items-center">
+                        <Loader size={14} className="text-blue-500 animate-spin mr-2" />
+                        <span className="text-neutral-500 dark:text-neutral-400 text-sm">Loading templates...</span>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <select
+                          id="template_id"
+                          name="template_id"
+                          value={formData.template_id}
+                          onChange={handleTemplateChange}
+                          className="w-full px-3 py-2 appearance-none bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all text-neutral-800 dark:text-neutral-200 text-sm pr-8"
+                        >
+                          <option value="">Select a template</option>
+                          {templates.map(template => (
+                            <option key={template._id} value={template._id}>
+                              {template.template_code} - {template.channel}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+                          <ChevronDown size={14} />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="group/field">
-                    <label htmlFor="template_id" className="block text-sm font-medium text-slate-700 mb-2 group-hover/field:text-blue-600 transition-colors">
-                      Communication Template
-                    </label>
-                    <div className="relative">
-                      {isLoadingTemplates ? (
-                        <div className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center">
-                          <Loader size={18} className="text-blue-500 animate-spin mr-2" />
-                          <span className="text-slate-500">Loading templates...</span>
+                  {isLoadingTemplateDetails && (
+                    <div className="mt-2 p-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg flex items-center">
+                      <Loader size={14} className="text-blue-500 animate-spin mr-2" />
+                      <span className="text-neutral-500 dark:text-neutral-400 text-xs">Loading template details...</span>
+                    </div>
+                  )}
+
+                  {selectedTemplate && (
+                    <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg">
+                      <div className="flex justify-between items-start">
+                        <p className="text-xs text-blue-700 dark:text-blue-400">
+                          <span className="font-medium">Template:</span> {selectedTemplate.template_code}
+                        </p>
+                        <span className={`px-1.5 py-0.5 text-[10px] rounded-full ${selectedTemplate.channel === 'email' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' :
+                          selectedTemplate.channel === 'sms' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' :
+                            'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                          }`}>
+                          {selectedTemplate.channel}
+                        </span>
+                      </div>
+
+                      {selectedTemplate.content && (
+                        <div className="mt-2 p-2 bg-white/70 dark:bg-neutral-800/70 rounded border border-blue-100 dark:border-blue-900/30 text-xs text-neutral-600 dark:text-neutral-300">
+                          <p>{selectedTemplate.content}</p>
                         </div>
-                      ) : (
-                        <>
-                          <select
-                            id="template_id"
-                            name="template_id"
-                            value={formData.template_id}
-                            onChange={handleTemplateChange}
-                            className="w-full px-4 py-3 appearance-none bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 transition-all shadow-sm hover:border-blue-300 text-slate-800"
-                          >
-                            <option value="">Select a template</option>
-                            {templates.map(template => (
-                              <option key={template._id} value={template._id}>
-                                {template.template_code} - {template.channel}
-                              </option>
-                            ))}
-                          </select>
-                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
-                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
-                          </div>
-                        </>
                       )}
                     </div>
-
-                    {isLoadingTemplateDetails && (
-                      <div className="mt-3 p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center">
-                        <Loader size={16} className="text-blue-500 animate-spin mr-2" />
-                        <span className="text-slate-500 text-sm">Loading template details...</span>
-                      </div>
-                    )}
-
-                    {selectedTemplate && (
-                      <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                        <div className="flex justify-between items-start">
-                          <p className="text-sm text-blue-700">
-                            <span className="font-medium">Template:</span> {selectedTemplate.template_code}
-                          </p>
-                          <span className={`px-2 py-0.5 text-xs rounded-full ${selectedTemplate.channel === 'email' ? 'bg-blue-100 text-blue-700' :
-                              selectedTemplate.channel === 'sms' ? 'bg-emerald-100 text-emerald-700' :
-                                'bg-amber-100 text-amber-700'
-                            }`}>
-                            {selectedTemplate.channel}
-                          </span>
-                        </div>
-
-                        {selectedTemplate.content && (
-                          <div className="mt-2 p-2 bg-white/70 rounded border border-blue-100 text-sm text-slate-600">
-                            <p>{selectedTemplate.content}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Channel selection */}
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-              {/* Section header with gradient accent */}
-              <div className="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600"></div>
-
-              <div className="p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mr-3">
-                        <MessageSquare className="text-emerald-600" size={20} />
-                      </div>
-                      <h2 className="text-xl font-bold text-slate-800">Communication Channel</h2>
-                    </div>
-                    <p className="text-slate-500 text-sm mt-1 ml-13">Choose how you want to reach your audience</p>
-                  </div>
-                  <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full">Step 2 of 3</span>
+            <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+              <div className="border-l-4 border-l-emerald-500 dark:border-l-emerald-600 p-4">
+                <div className="flex items-center">
+                  <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Communication Channel</div>
+                  <div className="ml-2 px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs rounded">Step 2</div>
                 </div>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Choose how you want to reach your audience</p>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <button
                     type="button"
                     onClick={() => handleChannelChange('email')}
-                    className={`relative p-6 rounded-xl border-2 transition-all ${formData.channel === 'email'
-                      ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-blue-100'
-                      : 'border-slate-200 hover:border-blue-200 hover:bg-blue-50/30'
+                    className={`relative p-3 rounded-lg border transition-all ${formData.channel === 'email'
+                      ? 'border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/10'
+                      : 'border-neutral-200 dark:border-neutral-700 hover:border-blue-200 dark:hover:border-blue-800 hover:bg-neutral-50 dark:hover:bg-neutral-750'
                       } group`}
                   >
-                    <div className="absolute top-3 right-3">
+                    <div className="flex items-center">
+                      <div className={`w-8 h-8 rounded-md flex items-center justify-center ${formData.channel === 'email'
+                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400'
+                        : 'bg-neutral-100 dark:bg-neutral-750 text-neutral-500 dark:text-neutral-400'
+                        }`}>
+                        <Mail size={16} />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${formData.channel === 'email' ? 'text-blue-700 dark:text-blue-400' : 'text-neutral-700 dark:text-neutral-300'
+                          }`}>Email</h3>
+                        <p className="text-xs mt-0.5 text-neutral-500 dark:text-neutral-500">Send detailed messages to inboxes</p>
+                      </div>
                       {formData.channel === 'email' && (
-                        <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
-                          <CheckCircle size={12} className="text-white" />
+                        <div className="ml-auto">
+                          <div className="w-4 h-4 rounded-full bg-blue-500 dark:bg-blue-600 flex items-center justify-center">
+                            <CheckCircle size={10} className="text-white" />
+                          </div>
                         </div>
                       )}
                     </div>
-                    <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center ${formData.channel === 'email'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-blue-100 text-blue-500 group-hover:bg-blue-200 transition-colors'
-                      }`}>
-                      <Mail size={24} />
-                    </div>
-                    <h3 className={`font-semibold text-lg ${formData.channel === 'email' ? 'text-blue-700' : 'text-slate-700'
-                      }`}>Email</h3>
-                    <p className="text-sm mt-1 text-slate-500">Send detailed messages to your users' inboxes</p>
-
-                    {formData.channel === 'email' && (
-                      <div className="mt-3 text-xs text-blue-600 flex items-center">
-                        <span>Average open rate:</span>
-                        <span className="ml-1 font-semibold">24.8%</span>
-                      </div>
-                    )}
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleChannelChange('sms')}
-                    className={`relative p-6 rounded-xl border-2 transition-all ${formData.channel === 'sms'
-                      ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100 shadow-emerald-100'
-                      : 'border-slate-200 hover:border-emerald-200 hover:bg-emerald-50/30'
+                    className={`relative p-3 rounded-lg border transition-all ${formData.channel === 'sms'
+                      ? 'border-emerald-500 dark:border-emerald-600 bg-emerald-50 dark:bg-emerald-900/10'
+                      : 'border-neutral-200 dark:border-neutral-700 hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-neutral-50 dark:hover:bg-neutral-750'
                       } group`}
                   >
-                    <div className="absolute top-3 right-3">
+                    <div className="flex items-center">
+                      <div className={`w-8 h-8 rounded-md flex items-center justify-center ${formData.channel === 'sms'
+                        ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-500 dark:text-emerald-400'
+                        : 'bg-neutral-100 dark:bg-neutral-750 text-neutral-500 dark:text-neutral-400'
+                        }`}>
+                        <MessageSquare size={16} />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${formData.channel === 'sms' ? 'text-emerald-700 dark:text-emerald-400' : 'text-neutral-700 dark:text-neutral-300'
+                          }`}>SMS</h3>
+                        <p className="text-xs mt-0.5 text-neutral-500 dark:text-neutral-500">Reach users on mobile devices</p>
+                      </div>
                       {formData.channel === 'sms' && (
-                        <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
-                          <CheckCircle size={12} className="text-white" />
+                        <div className="ml-auto">
+                          <div className="w-4 h-4 rounded-full bg-emerald-500 dark:bg-emerald-600 flex items-center justify-center">
+                            <CheckCircle size={10} className="text-white" />
+                          </div>
                         </div>
                       )}
                     </div>
-                    <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center ${formData.channel === 'sms'
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-emerald-100 text-emerald-500 group-hover:bg-emerald-200 transition-colors'
-                      }`}>
-                      <MessageSquare size={24} />
-                    </div>
-                    <h3 className={`font-semibold text-lg ${formData.channel === 'sms' ? 'text-emerald-700' : 'text-slate-700'
-                      }`}>SMS</h3>
-                    <p className="text-sm mt-1 text-slate-500">Reach users directly on their mobile devices</p>
-
-                    {formData.channel === 'sms' && (
-                      <div className="mt-3 text-xs text-emerald-600 flex items-center">
-                        <span>Average response rate:</span>
-                        <span className="ml-1 font-semibold">19.2%</span>
-                      </div>
-                    )}
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleChannelChange('push')}
-                    className={`relative p-6 rounded-xl border-2 transition-all ${formData.channel === 'push'
-                      ? 'border-amber-500 bg-gradient-to-br from-amber-50 to-amber-100 shadow-amber-100'
-                      : 'border-slate-200 hover:border-amber-200 hover:bg-amber-50/30'
+                    className={`relative p-3 rounded-lg border transition-all ${formData.channel === 'push'
+                      ? 'border-amber-500 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/10'
+                      : 'border-neutral-200 dark:border-neutral-700 hover:border-amber-200 dark:hover:border-amber-800 hover:bg-neutral-50 dark:hover:bg-neutral-750'
                       } group`}
                   >
-                    <div className="absolute top-3 right-3">
+                    <div className="flex items-center">
+                      <div className={`w-8 h-8 rounded-md flex items-center justify-center ${formData.channel === 'push'
+                        ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-500 dark:text-amber-400'
+                        : 'bg-neutral-100 dark:bg-neutral-750 text-neutral-500 dark:text-neutral-400'
+                        }`}>
+                        <Bell size={16} />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className={`text-sm font-medium ${formData.channel === 'push' ? 'text-amber-700 dark:text-amber-400' : 'text-neutral-700 dark:text-neutral-300'
+                          }`}>Push Notification</h3>
+                        <p className="text-xs mt-0.5 text-neutral-500 dark:text-neutral-500">Send instant alerts to app users</p>
+                      </div>
                       {formData.channel === 'push' && (
-                        <div className="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center">
-                          <CheckCircle size={12} className="text-white" />
+                        <div className="ml-auto">
+                          <div className="w-4 h-4 rounded-full bg-amber-500 dark:bg-amber-600 flex items-center justify-center">
+                            <CheckCircle size={10} className="text-white" />
+                          </div>
                         </div>
                       )}
                     </div>
-                    <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center ${formData.channel === 'push'
-                      ? 'bg-amber-500 text-white'
-                      : 'bg-amber-100 text-amber-500 group-hover:bg-amber-200 transition-colors'
-                      }`}>
-                      <Bell size={24} />
-                    </div>
-                    <h3 className={`font-semibold text-lg ${formData.channel === 'push' ? 'text-amber-700' : 'text-slate-700'
-                      }`}>Push Notification</h3>
-                    <p className="text-sm mt-1 text-slate-500">Send instant alerts to users of your app</p>
-
-                    {formData.channel === 'push' && (
-                      <div className="mt-3 text-xs text-amber-600 flex items-center">
-                        <span>Average click rate:</span>
-                        <span className="ml-1 font-semibold">12.5%</span>
-                      </div>
-                    )}
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Audience selection */}
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-              {/* Section header with gradient accent */}
-              <div className="h-1.5 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600"></div>
-
-              <div className="p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-                        <Target className="text-indigo-600" size={20} />
-                      </div>
-                      <h2 className="text-xl font-bold text-slate-800">Target Audience</h2>
-                    </div>
-                    <p className="text-slate-500 text-sm mt-1 ml-13">Define demographic filters for your target audience</p>
-                  </div>
-
-                  <div className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center">
-                    <Users size={14} className="mr-1.5" />
-                    <span>Demographic Targeting</span>
-                  </div>
+            {/* Target Audience */}
+            <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+              <div className="border-l-4 border-l-violet-500 dark:border-l-violet-600 p-4">
+                <div className="flex items-center">
+                  <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Target Audience</div>
+                  <div className="ml-2 px-1.5 py-0.5 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 text-xs rounded">Demographics</div>
                 </div>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Define demographic filters for your target audience</p>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Gender Selection */}
-                  <div className="space-y-3">
-                    <label className="block text-sm font-medium text-slate-700">Gender</label>
-                    <div className="bg-slate-50 rounded-xl p-1 border border-slate-200">
+                  <div>
+                    <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Gender</label>
+                    <div className="relative">
                       <select
                         name="gender"
                         value={formData.audience.gender}
                         onChange={handleAudienceChange}
-                        className="w-full px-3 py-2 bg-transparent border-none focus:outline-none focus:ring-0 text-slate-800 appearance-none"
+                        className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg appearance-none focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 transition-all text-neutral-800 dark:text-neutral-200 text-sm pr-8"
                       >
                         {genderOptions.map(option => (
                           <option key={option.value} value={option.value}>
@@ -633,19 +569,22 @@ const AddBroadcastPage = () => {
                           </option>
                         ))}
                       </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+                        <ChevronDown size={14} />
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-500">Target users by gender identity</p>
+                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-500">Target users by gender identity</p>
                   </div>
 
                   {/* Country Selection */}
-                  <div className="space-y-3">
-                    <label className="block text-sm font-medium text-slate-700">Country</label>
-                    <div className="bg-slate-50 rounded-xl p-1 border border-slate-200">
+                  <div>
+                    <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Country</label>
+                    <div className="relative">
                       <select
                         name="country"
                         value={formData.audience.country}
                         onChange={handleAudienceChange}
-                        className="w-full px-3 py-2 bg-transparent border-none focus:outline-none focus:ring-0 text-slate-800 appearance-none"
+                        className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg appearance-none focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 transition-all text-neutral-800 dark:text-neutral-200 text-sm pr-8"
                       >
                         {countryOptions.map(option => (
                           <option key={option.value} value={option.value}>
@@ -653,19 +592,22 @@ const AddBroadcastPage = () => {
                           </option>
                         ))}
                       </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+                        <ChevronDown size={14} />
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-500">Target users by geographic location</p>
+                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-500">Target users by geographic location</p>
                   </div>
 
                   {/* KYC Level Selection */}
-                  <div className="space-y-3">
-                    <label className="block text-sm font-medium text-slate-700">KYC Level</label>
-                    <div className="bg-slate-50 rounded-xl p-1 border border-slate-200">
+                  <div>
+                    <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">KYC Level</label>
+                    <div className="relative">
                       <select
                         name="kyc_level"
                         value={formData.audience.kyc_level}
                         onChange={handleAudienceChange}
-                        className="w-full px-3 py-2 bg-transparent border-none focus:outline-none focus:ring-0 text-slate-800 appearance-none"
+                        className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg appearance-none focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 transition-all text-neutral-800 dark:text-neutral-200 text-sm pr-8"
                       >
                         {kycLevelOptions.map(option => (
                           <option key={option.value} value={option.value}>
@@ -673,28 +615,31 @@ const AddBroadcastPage = () => {
                           </option>
                         ))}
                       </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+                        <ChevronDown size={14} />
+                      </div>
                     </div>
-                    <p className="text-xs text-slate-500">Target users by verification level</p>
+                    <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-500">Target users by verification level</p>
                   </div>
                 </div>
 
                 {/* Active Audience Preview */}
                 {(formData.audience.gender || formData.audience.country || formData.audience.kyc_level) && (
-                  <div className="mt-6 p-4 bg-indigo-50 border border-indigo-100 rounded-xl">
-                    <h4 className="text-sm font-semibold text-indigo-700 mb-3">Active Audience Filters</h4>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="mt-4 p-3 bg-violet-50 dark:bg-violet-900/10 border border-violet-100 dark:border-violet-900/30 rounded-lg">
+                    <h4 className="text-xs font-medium text-violet-700 dark:text-violet-400 mb-2">Active Audience Filters</h4>
+                    <div className="flex flex-wrap gap-1.5">
                       {formData.audience.gender && (
-                        <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">
+                        <span className="px-2 py-1 bg-white dark:bg-neutral-800 text-violet-700 dark:text-violet-400 rounded-md text-xs border border-violet-200 dark:border-violet-800/30">
                           Gender: {genderOptions.find(o => o.value === formData.audience.gender)?.label}
                         </span>
                       )}
                       {formData.audience.country && (
-                        <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">
+                        <span className="px-2 py-1 bg-white dark:bg-neutral-800 text-violet-700 dark:text-violet-400 rounded-md text-xs border border-violet-200 dark:border-violet-800/30">
                           Country: {countryOptions.find(o => o.value === formData.audience.country)?.label}
                         </span>
                       )}
                       {formData.audience.kyc_level && (
-                        <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">
+                        <span className="px-2 py-1 bg-white dark:bg-neutral-800 text-violet-700 dark:text-violet-400 rounded-md text-xs border border-violet-200 dark:border-violet-800/30">
                           KYC: {kycLevelOptions.find(o => o.value === formData.audience.kyc_level)?.label}
                         </span>
                       )}
@@ -706,124 +651,107 @@ const AddBroadcastPage = () => {
 
             {/* Dynamic Placeholders */}
             {selectedTemplate && Object.keys(placeholders).length > 0 && (
-              <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-                <div className="h-1.5 w-full bg-gradient-to-r from-teal-500 via-cyan-500 to-teal-600"></div>
+              <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+                <div className="border-l-4 border-l-teal-500 dark:border-l-teal-600 p-4">
+                  <div className="flex items-center">
+                    <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Template Placeholders</div>
+                  </div>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Fill in the values for placeholders in your template</p>
+                </div>
 
-                <div className="p-8">
-                  <div className="flex items-start justify-between mb-6">
-                    <div>
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-3">
-                          <FileText className="text-teal-600" size={20} />
-                        </div>
-                        <h2 className="text-xl font-bold text-slate-800">Template Placeholders</h2>
+                <div className="p-4 space-y-4">
+                  {selectedTemplate.content && (
+                    <div className="p-3 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg mb-4">
+                      <h4 className="text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">Template Preview:</h4>
+                      <div className="text-neutral-800 dark:text-neutral-200 text-sm">
+                        {selectedTemplate.content.split(/(\{\{[^}]+\}\})/).map((part, index) => {
+                          if (part.match(/\{\{([^}]+)\}\}/)) {
+                            const placeholder = part.replace(/\{\{|\}\}/g, '');
+                            return (
+                              <span key={index} className="bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300 px-1 rounded border border-teal-200 dark:border-teal-800/30 text-xs">
+                                {part}
+                              </span>
+                            );
+                          }
+                          return <span key={index}>{part}</span>;
+                        })}
                       </div>
-                      <p className="text-slate-500 text-sm mt-1 ml-13">Fill in the values for placeholders in your template</p>
                     </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {Object.entries(placeholders).map(([key, description]) => (
+                      <div key={key}>
+                        <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                          <span>{key}</span>
+                          <span className="text-[10px] text-neutral-500 dark:text-neutral-500 ml-1">({String(description)})</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.payload[key] || ''}
+                          onChange={(e) => handlePayloadChange(key, e.target.value)}
+                          placeholder={`Enter value for ${key}`}
+                          className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all text-neutral-800 dark:text-neutral-200 text-sm"
+                        />
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="space-y-6">
-                    {selectedTemplate.content && (
-                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl mb-6">
-                        <h4 className="text-sm font-medium text-slate-700 mb-2">Template Preview:</h4>
-                        <div className="text-slate-800">
-                          {selectedTemplate.content.split(/(\{\{[^}]+\}\})/).map((part, index) => {
-                            if (part.match(/\{\{([^}]+)\}\}/)) {
-                              const placeholder = part.replace(/\{\{|\}\}/g, '');
-                              return (
-                                <span key={index} className="bg-teal-100 text-teal-800 px-1 rounded border border-teal-200">
-                                  {part}
-                                </span>
-                              );
-                            }
-                            return <span key={index}>{part}</span>;
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(placeholders).map(([key, description]) => (
-                        <div key={key} className="space-y-3">
-                          <label className="block text-sm font-medium text-slate-700 justify-between">
-                            <span>{key}</span>
-                            <span className="text-xs text-slate-500">{String(description)}</span>
-                          </label>
-                          <input
-                            type="text"
-                            value={formData.payload[key] || ''}
-                            onChange={(e) => handlePayloadChange(key, e.target.value)}
-                            placeholder={`Enter value for ${key}`}
-                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-400 transition-all shadow-sm hover:border-teal-300 text-slate-800"
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="p-4 bg-teal-50 rounded-xl border border-teal-100">
-                      <p className="text-sm text-teal-700">
-                        <span className="font-medium">Tip:</span> These values will replace the placeholders in your template content.
-                        For example, <code className="bg-white px-1 py-0.5 rounded border border-teal-200">{'{{date}}'}</code> will be replaced with the value you enter for "date".
-                      </p>
-                    </div>
+                  <div className="p-3 bg-teal-50 dark:bg-teal-900/10 rounded-lg border border-teal-100 dark:border-teal-900/30 text-xs">
+                    <p className="text-teal-700 dark:text-teal-400">
+                      <span className="font-medium">Tip:</span> These values will replace the placeholders in your template content.
+                      For example, <code className="bg-white dark:bg-neutral-800 px-1 py-0.5 rounded border border-teal-200 dark:border-teal-800/30 text-[10px]">{'{{date}}'}</code> will be replaced with the value you enter for "date".
+                    </p>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Priority Selection */}
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-              {/* Section header with gradient accent */}
-              <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600"></div>
-
-              <div className="p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mr-3">
-                        <Zap className="text-amber-600" size={20} />
-                      </div>
-                      <h2 className="text-xl font-bold text-slate-800">Delivery Priority</h2>
-                    </div>
-                    <p className="text-slate-500 text-sm mt-1 ml-13">Set the importance level of this broadcast</p>
-                  </div>
+            <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+              <div className="border-l-4 border-l-amber-500 dark:border-l-amber-600 p-4">
+                <div className="flex items-center">
+                  <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Delivery Priority</div>
                 </div>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Set the importance level of this broadcast</p>
+              </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="p-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {priorityOptions.map(option => (
                     <button
                       key={option.value}
                       type="button"
                       onClick={() => handlePriorityChange(option.value)}
-                      className={`relative p-4 rounded-xl border-2 transition-all ${formData.priority === option.value
-                        ? option.value === 'low' ? 'border-slate-500 bg-slate-50'
-                          : option.value === 'medium' ? 'border-blue-500 bg-blue-50'
-                            : option.value === 'high' ? 'border-amber-500 bg-amber-50'
-                              : 'border-red-500 bg-red-50'
-                        : 'border-slate-200 hover:border-slate-300'
-                        } group`}
+                      className={`p-3 rounded-lg border transition-all ${formData.priority === option.value
+                        ? option.value === 'low' ? 'border-neutral-500 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/80'
+                          : option.value === 'medium' ? 'border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/10'
+                            : option.value === 'high' ? 'border-amber-500 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/10'
+                              : 'border-red-500 dark:border-red-600 bg-red-50 dark:bg-red-900/10'
+                        : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
+                        }`}
                     >
-                      <div className="absolute top-3 right-3">
+                      <div className="flex items-center mb-1.5">
+                        <h3 className={`text-sm font-medium ${formData.priority === option.value
+                          ? option.value === 'low' ? 'text-neutral-700 dark:text-neutral-300'
+                            : option.value === 'medium' ? 'text-blue-700 dark:text-blue-400'
+                              : option.value === 'high' ? 'text-amber-700 dark:text-amber-400'
+                                : 'text-red-700 dark:text-red-400'
+                          : 'text-neutral-700 dark:text-neutral-300'
+                          }`}>
+                          {option.label}
+                        </h3>
                         {formData.priority === option.value && (
-                          <div className={`w-5 h-5 rounded-full ${option.value === 'low' ? 'bg-slate-500'
-                            : option.value === 'medium' ? 'bg-blue-500'
-                              : option.value === 'high' ? 'bg-amber-500'
-                                : 'bg-red-500'
+                          <div className={`ml-auto w-3.5 h-3.5 rounded-full ${option.value === 'low' ? 'bg-neutral-500 dark:bg-neutral-400'
+                            : option.value === 'medium' ? 'bg-blue-500 dark:bg-blue-400'
+                              : option.value === 'high' ? 'bg-amber-500 dark:bg-amber-400'
+                                : 'bg-red-500 dark:bg-red-400'
                             } flex items-center justify-center`}>
-                            <CheckCircle size={12} className="text-white" />
+                            <CheckCircle size={8} className="text-white" />
                           </div>
                         )}
                       </div>
-                      <h3 className={`font-medium text-center ${formData.priority === option.value
-                        ? option.value === 'low' ? 'text-slate-700'
-                          : option.value === 'medium' ? 'text-blue-700'
-                            : option.value === 'high' ? 'text-amber-700'
-                              : 'text-red-700'
-                        : 'text-slate-700'
-                        }`}>
-                        {option.label}
-                      </h3>
-                      <p className="text-xs mt-2 text-slate-500 text-center">
+                      <p className="text-[10px] text-neutral-500 dark:text-neutral-500">
                         {option.description}
                       </p>
                     </button>
@@ -833,68 +761,71 @@ const AddBroadcastPage = () => {
             </div>
 
             {/* Schedule */}
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all hover:shadow-md">
-              {/* Section header with gradient accent */}
-              <div className="h-1.5 w-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-violet-600"></div>
-
-              <div className="p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center mr-3">
-                        <Calendar className="text-violet-600" size={20} />
-                      </div>
-                      <h2 className="text-xl font-bold text-slate-800">Schedule</h2>
-                    </div>
-                    <p className="text-slate-500 text-sm mt-1 ml-13">Set when your broadcast should be delivered</p>
-                  </div>
+            <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
+              <div className="border-l-4 border-l-blue-500 dark:border-l-blue-600 p-4">
+                <div className="flex items-center">
+                  <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">Schedule</div>
+                  <div className="ml-2 px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded">Step 3</div>
                 </div>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">Set when your broadcast should be delivered</p>
+              </div>
 
-                <div className="bg-gradient-to-r from-violet-50 to-fuchsia-50 p-6 rounded-xl border border-violet-100">
-                  <label htmlFor="scheduled_at" className="block text-sm font-medium text-slate-700 mb-2">
-                    Date and Time
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                      <Calendar size={18} className="text-violet-500" />
+              <div className="p-4">
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="scheduled_at" className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                      Date and Time
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <Calendar size={14} className="text-neutral-400 dark:text-neutral-500" />
+                      </div>
+                      <input
+                        type="datetime-local"
+                        id="scheduled_at"
+                        name="scheduled_at"
+                        value={formData.scheduled_at}
+                        onChange={handleDateChange}
+                        className="w-full pl-9 pr-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all text-neutral-800 dark:text-neutral-200 bg-neutral-50 dark:bg-neutral-750 text-sm"
+                      />
                     </div>
-                    <input
-                      type="datetime-local"
-                      id="scheduled_at"
-                      name="scheduled_at"
-                      value={formData.scheduled_at}
-                      onChange={handleDateChange}
-                      className="w-full pl-12 pr-4 py-3 border border-violet-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 transition-all shadow-sm hover:border-violet-300 text-slate-800 bg-white"
-                    />
-                  </div>
 
-                  <div className="mt-4 flex items-start">
-                    <div className="flex-shrink-0 mt-0.5">
-                      <Clock size={16} className="text-violet-500" />
+                    <div className="mt-2 flex items-start">
+                      <Clock size={12} className="text-neutral-400 dark:text-neutral-500 mt-0.5 flex-shrink-0" />
+                      <p className="ml-2 text-xs text-neutral-500 dark:text-neutral-500">
+                        Leave empty to save as draft without scheduling.
+                      </p>
                     </div>
-                    <p className="ml-3 text-sm text-slate-600">
-                      Leave empty to save as draft without scheduling.
-                      <span className="text-violet-600 font-medium"> Broadcasts can be scheduled later from the dashboard.</span>
-                    </p>
                   </div>
 
                   {formData.scheduled_at && (
-                    <div className="mt-4 p-3 bg-white/80 backdrop-blur-sm border border-violet-200 rounded-lg shadow-sm">
-                      <h4 className="text-sm font-medium text-violet-700">Broadcast Summary</h4>
-                      <div className="mt-2 grid grid-cols-1 gap-2 text-sm">
+                    <div className="p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg">
+                      <h4 className="text-xs font-medium text-blue-700 dark:text-blue-400 mb-2">Broadcast Summary</h4>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Channel:</span>
-                          <span className="font-medium text-slate-800 capitalize">{formData.channel}</span>
+                          <span className="text-neutral-500 dark:text-neutral-500">Channel:</span>
+                          <span className="font-medium text-neutral-800 dark:text-neutral-200 capitalize font-mono">{formData.channel}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Priority:</span>
-                          <span className="font-medium text-slate-800 capitalize">{formData.priority}</span>
+                          <span className="text-neutral-500 dark:text-neutral-500">Priority:</span>
+                          <span className="font-medium text-neutral-800 dark:text-neutral-200 capitalize font-mono">{formData.priority}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-slate-500">Audience:</span>
-                          <span className="font-medium text-slate-800">
+                          <span className="text-neutral-500 dark:text-neutral-500">Audience:</span>
+                          <span className="font-medium text-neutral-800 dark:text-neutral-200 font-mono">
                             {(formData.audience.gender || formData.audience.country || formData.audience.kyc_level) ?
-                              'Custom demographic filter' : 'No filter set'}
+                              'Custom filter' : 'All users'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-500 dark:text-neutral-500">Schedule:</span>
+                          <span className="font-medium text-neutral-800 dark:text-neutral-200 font-mono">
+                            {new Date(formData.scheduled_at).toLocaleString(undefined, {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </span>
                         </div>
                       </div>
@@ -906,40 +837,40 @@ const AddBroadcastPage = () => {
           </div>
 
           {/* Action buttons */}
-          <div className="mt-8 flex justify-between items-center">
+          <div className="mt-6 flex justify-between items-center">
             <button
               type="button"
               onClick={() => navigate('/admin/communication/broadcasts')}
-              className="px-6 py-3 border border-slate-200 rounded-xl text-slate-700 font-medium hover:bg-slate-50 transition-all flex items-center"
+              className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-700 dark:text-neutral-300 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-all flex items-center"
             >
-              <ArrowLeft size={18} className="mr-2" />
-              Back to Broadcasts
+              <ArrowLeft size={14} className="mr-1.5" />
+              Back
             </button>
 
-            <div className="flex space-x-4">
+            <div className="flex space-x-3">
               <button
                 type="button"
                 onClick={(e) => handleSubmit(e, true)}
-                className="px-6 py-3 border-2 border-blue-200 bg-blue-50 rounded-xl text-blue-700 font-medium hover:bg-blue-100 transition-all flex items-center shadow-sm"
+                className="px-4 py-2 border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/10 rounded-lg text-blue-700 dark:text-blue-400 text-sm hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-all flex items-center"
                 disabled={isSubmitting}
               >
-                <Save size={18} className="mr-2" />
+                <Save size={14} className="mr-1.5" />
                 Save as Draft
               </button>
 
               <button
                 type="submit"
-                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl text-white font-medium transition-all flex items-center hover:shadow-indigo-100"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg text-white text-sm transition-all flex items-center shadow-sm"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
                   <>
-                    <span className="inline-block h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></span>
+                    <Loader size={14} className="animate-spin mr-1.5" />
                     Processing...
                   </>
                 ) : (
                   <>
-                    <Send size={18} className="mr-2" />
+                    <Send size={14} className="mr-1.5" />
                     Schedule Broadcast
                   </>
                 )}
