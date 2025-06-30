@@ -1,5 +1,4 @@
 import { AlertTriangle } from 'lucide-react'
-import React from 'react'
 
 const WalletSettings = ({
   selectedWallet,
@@ -8,7 +7,6 @@ const WalletSettings = ({
   return (
     <div className="space-y-4">
       <div className="space-y-3">
-        {/* Wallet Name */}
         <div>
           <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Wallet Name</label>
           <input
@@ -18,7 +16,6 @@ const WalletSettings = ({
           />
         </div>
 
-        {/* Wallet Status */}
         <div>
           <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Wallet Status</label>
           <select
@@ -31,7 +28,6 @@ const WalletSettings = ({
           </select>
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Description</label>
           <textarea
@@ -41,7 +37,6 @@ const WalletSettings = ({
           />
         </div>
 
-        {/* Balance Alerts */}
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Low Balance Alert</label>
@@ -73,7 +68,6 @@ const WalletSettings = ({
         </div>
       </div>
 
-      {/* Notification Settings */}
       <div className="bg-neutral-50 dark:bg-dark-active p-3 rounded-md border border-neutral-200 dark:border-dark-border">
         <h3 className="text-xs font-medium text-neutral-800 dark:text-neutral-200 mb-2.5">Notification Settings</h3>
 
@@ -112,7 +106,6 @@ const WalletSettings = ({
         </div>
       </div>
 
-      {/* Danger Zone */}
       <div className="bg-danger-50 dark:bg-danger-900/20 border-l-2 border-danger-500 dark:border-danger-700 p-2.5 rounded-md">
         <div className="flex">
           <div className="flex-shrink-0">
