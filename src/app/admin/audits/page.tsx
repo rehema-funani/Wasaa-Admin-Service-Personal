@@ -127,15 +127,13 @@ const AuditLogsPage: React.FC = () => {
   const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLimit = parseInt(e.target.value);
     setItemsPerPage(newLimit);
-    setPage(1); // Reset to first page when changing items per page
+    setPage(1);
 
-    // Scroll to top of the list
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    // Scroll to top of the list when changing pages
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -199,7 +197,6 @@ const AuditLogsPage: React.FC = () => {
     }
   };
 
-  // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
@@ -406,7 +403,6 @@ const AuditLogsPage: React.FC = () => {
                         let startPage = Math.max(1, page - 2);
                         let endPage = Math.min(totalPages, startPage + 4);
 
-                        // Adjust start page if we're at the end
                         if (endPage - startPage < 4) {
                           startPage = Math.max(1, endPage - 4);
                         }
