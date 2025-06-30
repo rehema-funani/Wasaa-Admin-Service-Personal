@@ -88,4 +88,44 @@ export const supportService = {
     const response = await api.patch(`/users/${id}/deactivate`);
     return response.data;
   },
+
+  // ======= SLA ========
+  createSLARule: async (slaData: any) => {
+    const response = await api.post('/sla', slaData);
+    return response.data;
+  },
+
+  getSLARules: async (params?: {
+    includeInactive?: boolean;
+  }) => {
+    const response = await api.get('/sla', { params });
+    return response.data;
+  },
+
+  getSLAMetrics: async (params?: {
+    period?: string;
+  }) => {
+    const response = await api.get('/sla/metrics', { params });
+    return response.data;
+  },
+
+  processExpiredTickets: async () => {
+    const response = await api.post('/sla/process-expired');
+    return response.data;
+  },
+
+  getSLARuleById: async (id: string) => {
+    const response = await api.get(`/sla/${id}`);
+    return response.data;
+  },
+
+  updateSLARule: async (id: string, slaData: any) => {
+    const response = await api.put(`/sla/${id}`, slaData);
+    return response.data;
+  },
+
+  deleteSLARule: async (id: string) => {
+    const response = await api.delete(`/sla/${id}`);
+    return response.data;
+  }
 };
