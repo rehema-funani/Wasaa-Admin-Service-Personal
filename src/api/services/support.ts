@@ -154,4 +154,35 @@ export const supportService = {
     const response = await api.delete(`/categories/${id}`);
     return response.data;
   },
+
+  // ======== CANNED RESPONSES =======
+  createCannedResponse: async (responseData: any) => {
+    const response = await api.post('/canned-responses', responseData);
+    return response.data;
+  },
+
+  getCannedResponses: async () => {
+    const response = await api.get('/canned-responses');
+    return response.data;
+  },
+
+  getCannedResponseById: async (id: string) => {
+    const response = await api.get(`/canned-responses/${id}`);
+    return response.data;
+  },
+
+  updateCannedResponse: async (id: string, responseData: any) => {
+    const response = await api.patch(`/canned-responses/${id}`, responseData);
+    return response.data;
+  },
+
+  deleteCannedResponse: async (id: string) => {
+    const response = await api.delete(`/canned-responses/${id}`);
+    return response.data;
+  },
+
+  getPopularTags: async () => {
+    const response = await api.get('/tickets/tags/popular');
+    return response.data;
+  },
 };
