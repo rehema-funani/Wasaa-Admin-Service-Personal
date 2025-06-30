@@ -117,44 +117,44 @@ const routes: Route[] = [
             },
           ],
         },
-        {
-          type: 'dropdown',
-          title: 'Forex Exchange',
-          icon: DollarSign,
-          key: 'forex',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/finance/forex/dashboard',
-              title: 'Forex Dashboard',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/forex/currencies',
-              title: 'Currency Management',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/forex/currency-pairs',
-              title: 'Currency Pairs',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/forex/exchange-rates',
-              title: 'Exchange Rate Viewer',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/forex/alerts',
-              title: 'User Alerts',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/forex/settings',
-              title: 'Forex Settings',
-            },
-          ],
-        },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Forex Exchange',
+        //   icon: DollarSign,
+        //   key: 'forex',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/forex/dashboard',
+        //       title: 'Forex Dashboard',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/forex/currencies',
+        //       title: 'Currency Management',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/forex/currency-pairs',
+        //       title: 'Currency Pairs',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/forex/exchange-rates',
+        //       title: 'Exchange Rate Viewer',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/forex/alerts',
+        //       title: 'User Alerts',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/forex/settings',
+        //       title: 'Forex Settings',
+        //     },
+        //   ],
+        // },
         {
           type: 'dropdown',
           title: 'Payments & Banking',
@@ -251,48 +251,48 @@ const routes: Route[] = [
           icon: FileCheck,
           description: 'Regulatory compliance monitoring'
         },
-        {
-          type: 'link',
-          path: '/admin/finance/gift-history',
-          title: 'Rewards',
-          icon: Gift,
-          description: 'Manage reward distributions'
-        },
-        {
-          type: 'dropdown',
-          title: 'Settlements',
-          icon: ArrowRightLeft,
-          key: 'settlements',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/finance/settlements/creator',
-              title: 'Creator Payments',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/settlements/vendor',
-              title: 'Vendor Settlements',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/settlements/royalty',
-              title: 'Royalty Disbursements',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/settlements/schedule',
-              title: 'Payment Schedules',
-            },
-          ],
-        },
-        {
-          type: 'link',
-          path: '/admin/finance/calculator',
-          title: 'Financial Calculator',
-          icon: Calculator,
-          description: 'Revenue and fee calculator'
-        },
+        // {
+        //   type: 'link',
+        //   path: '/admin/finance/gift-history',
+        //   title: 'Rewards',
+        //   icon: Gift,
+        //   description: 'Manage reward distributions'
+        // },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Settlements',
+        //   icon: ArrowRightLeft,
+        //   key: 'settlements',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/settlements/creator',
+        //       title: 'Creator Payments',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/settlements/vendor',
+        //       title: 'Vendor Settlements',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/settlements/royalty',
+        //       title: 'Royalty Disbursements',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/finance/settlements/schedule',
+        //       title: 'Payment Schedules',
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'link',
+        //   path: '/admin/finance/calculator',
+        //   title: 'Financial Calculator',
+        //   icon: Calculator,
+        //   description: 'Revenue and fee calculator'
+        // },
       ],
     },
     {
@@ -889,20 +889,20 @@ const routes: Route[] = [
           icon: Cog,
           description: 'Configure media preferences'
         },
-        {
-          type: 'link',
-          path: '/admin/livestreams/settings',
-          title: 'Stream Settings',
-          icon: Video,
-          description: 'Configure streaming options'
-        },
-        {
-          type: 'link',
-          path: '/admin/themes',
-          title: 'Theme Management',
-          icon: Bookmark,
-          description: 'Manage platform themes'
-        },
+        // {
+        //   type: 'link',
+        //   path: '/admin/livestreams/settings',
+        //   title: 'Stream Settings',
+        //   icon: Video,
+        //   description: 'Configure streaming options'
+        // },
+        // {
+        //   type: 'link',
+        //   path: '/admin/themes',
+        //   title: 'Theme Management',
+        //   icon: Bookmark,
+        //   description: 'Manage platform themes'
+        // },
       ],
     },
     {
@@ -951,29 +951,29 @@ const routes: Route[] = [
             },
           ],
         },
-        {
-          type: 'dropdown',
-          title: 'Knowledge Base',
-          icon: FileText,
-          key: 'knowledge-base',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/support/knowledge/articles',
-              title: 'KB Articles',
-            },
-            {
-              type: 'link',
-              path: '/admin/support/knowledge/categories',
-              title: 'KB Categories',
-            },
-            {
-              type: 'link',
-              path: '/admin/support/knowledge/analytics',
-              title: 'KB Analytics',
-            },
-          ],
-        },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Knowledge Base',
+        //   icon: FileText,
+        //   key: 'knowledge-base',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/support/knowledge/articles',
+        //       title: 'KB Articles',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/support/knowledge/categories',
+        //       title: 'KB Categories',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/support/knowledge/analytics',
+        //       title: 'KB Analytics',
+        //     },
+        //   ],
+        // },
       ],
     },
     {
