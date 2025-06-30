@@ -6,7 +6,8 @@ import {
   MoreHorizontal, ArrowUp, ArrowDown,
   Command, Languages, ChevronLeft, ChevronRight,
   Smartphone, Mail, BellRing, CheckCircle,
-  Eye, AlertCircle, Loader, Shield
+  Eye, AlertCircle, Loader, Shield,
+  ChevronDown
 } from 'lucide-react';
 import { notificationService } from '../../../api/services/notification';
 
@@ -85,6 +86,18 @@ const NotificationsPage = () => {
   const [sortBy, setSortBy] = useState('template_code');
   const [sortDirection, setSortDirection] = useState('asc');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Close sort menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setIsSortMenuOpen(false);
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const getTemplates = async () => {
     try {
@@ -207,26 +220,26 @@ const NotificationsPage = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'delivered':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-emerald-500" />;
       case 'failed':
         return <AlertCircle className="w-4 h-4 text-red-500" />;
       case 'pending':
-        return <Loader className="w-4 h-4 text-yellow-500" />;
+        return <Loader className="w-4 h-4 text-amber-500" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
+        return <Clock className="w-4 h-4 text-neutral-500" />;
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-50 text-red-700 border-red-100';
+        return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-100 dark:border-red-900/30';
       case 'medium':
-        return 'bg-yellow-50 text-yellow-700 border-yellow-100';
+        return 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30';
       case 'low':
-        return 'bg-blue-50 text-blue-700 border-blue-100';
+        return 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30';
       default:
-        return 'bg-gray-50 text-gray-700 border-gray-100';
+        return 'bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border-neutral-100 dark:border-neutral-700';
     }
   };
 
@@ -304,107 +317,110 @@ const NotificationsPage = () => {
   }, [search, activeTab]);
 
   return (
-    <div className="h-auto bg-transparent w-full text-gray-900 relative">
-      <div className="relative z-10 p-8 mx-auto max-w-7xl">
-        <div className="flex justify-between items-center mb-8">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+            <h1 className="text-xl font-medium text-neutral-900 dark:text-white">
               Notification Management
             </h1>
-            <p className="text-gray-500 mt-1">Create and manage notification templates for users</p>
+            <p className="text-neutral-500 dark:text-neutral-400 text-sm">Create and manage notification templates for users</p>
           </div>
 
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full hover:shadow-lg hover:shadow-blue-200 text-sm font-medium flex items-center transition-all duration-300 hover:translate-y-[-2px]"
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center shadow-sm transition-colors"
           >
-            <Plus size={16} className="mr-2" />
+            <Plus size={16} className="mr-1.5" />
             New Template
           </button>
         </div>
 
-        <div className="backdrop-blur-xl bg-white/70 rounded-3xl shadow-xl border border-gray-100 mb-8 overflow-hidden transition-all hover:shadow-2xl hover:shadow-blue-100/40">
-          <div className="backdrop-blur-sm border-b border-gray-100">
+        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 mb-6 overflow-hidden">
+          <div className="border-b border-neutral-200 dark:border-neutral-700">
             <nav className="flex">
               <button
                 onClick={() => handleTabChange('templates')}
-                className={`px-8 py-5 text-sm font-medium flex items-center transition-all duration-300 ${activeTab === 'templates'
-                  ? 'text-blue-600 border-b-2 border-blue-500 bg-blue-50/30'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
+                className={`px-5 py-3 text-sm font-medium flex items-center transition-colors ${activeTab === 'templates'
+                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-600 bg-blue-50/50 dark:bg-blue-900/20'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'
                   }`}
               >
-                <FileText size={16} className="mr-2" />
+                <FileText size={16} className="mr-1.5" />
                 Templates
               </button>
 
               <button
                 onClick={() => handleTabChange('history')}
-                className={`px-8 py-5 text-sm font-medium flex items-center transition-all duration-300 ${activeTab === 'history'
-                  ? 'text-blue-600 border-b-2 border-blue-500 bg-blue-50/30'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
+                className={`px-5 py-3 text-sm font-medium flex items-center transition-colors ${activeTab === 'history'
+                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-600 bg-blue-50/50 dark:bg-blue-900/20'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'
                   }`}
               >
-                <Clock size={16} className="mr-2" />
+                <Clock size={16} className="mr-1.5" />
                 Notification History
               </button>
             </nav>
           </div>
 
-          <div className="p-5 flex flex-wrap gap-3 bg-gray-50/50">
+          <div className="p-3 flex flex-wrap gap-2 items-center bg-neutral-50 dark:bg-neutral-750 border-b border-neutral-200 dark:border-neutral-700">
             <div className="relative flex-grow">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search size={16} className="text-gray-400" />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search size={14} className="text-neutral-400 dark:text-neutral-500" />
               </div>
               <input
                 type="text"
                 placeholder={activeTab === 'templates' ? "Search templates..." : "Search notification history..."}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 pr-4 py-3 w-full bg-white border border-gray-200 rounded-full focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 text-gray-700 text-sm backdrop-blur-sm transition-all placeholder-gray-400 shadow-sm outline-none"
+                className="pl-9 pr-3 py-2 w-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-800 dark:text-neutral-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
               />
             </div>
 
             <div className="relative">
               <button
-                onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
-                className="p-3 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-all text-gray-600 backdrop-blur-sm shadow-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsSortMenuOpen(!isSortMenuOpen);
+                }}
+                className="p-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors text-neutral-600 dark:text-neutral-400"
               >
-                <Filter size={18} />
+                <Filter size={16} />
               </button>
 
               {isSortMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-10 overflow-hidden">
-                  <div className="p-2 border-b border-gray-100">
-                    <p className="text-xs font-medium text-gray-500">SORT BY</p>
+                <div className="absolute right-0 mt-1 w-44 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 z-10 overflow-hidden">
+                  <div className="p-2 border-b border-neutral-200 dark:border-neutral-700">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">SORT BY</p>
                   </div>
                   <div className="py-1">
                     {activeTab === 'templates' ? (
                       <>
                         <button
                           onClick={() => handleSort('template_code')}
-                          className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'template_code' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                          className={`flex items-center justify-between w-full px-3 py-1.5 text-xs ${sortBy === 'template_code' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                         >
                           <span>Template Code</span>
                           {sortBy === 'template_code' && (
-                            sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                            sortDirection === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                           )}
                         </button>
                         <button
                           onClick={() => handleSort('channel')}
-                          className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'channel' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                          className={`flex items-center justify-between w-full px-3 py-1.5 text-xs ${sortBy === 'channel' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                         >
                           <span>Channel</span>
                           {sortBy === 'channel' && (
-                            sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                            sortDirection === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                           )}
                         </button>
                         <button
                           onClick={() => handleSort('language')}
-                          className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'language' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                          className={`flex items-center justify-between w-full px-3 py-1.5 text-xs ${sortBy === 'language' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                         >
                           <span>Language</span>
                           {sortBy === 'language' && (
-                            sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                            sortDirection === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                           )}
                         </button>
                       </>
@@ -412,49 +428,49 @@ const NotificationsPage = () => {
                       <>
                         <button
                           onClick={() => handleSort('createdAt')}
-                          className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'createdAt' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                          className={`flex items-center justify-between w-full px-3 py-1.5 text-xs ${sortBy === 'createdAt' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                         >
                           <span>Date Sent</span>
                           {sortBy === 'createdAt' && (
-                            sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                            sortDirection === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                           )}
                         </button>
                         <button
                           onClick={() => handleSort('channel')}
-                          className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'channel' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                          className={`flex items-center justify-between w-full px-3 py-1.5 text-xs ${sortBy === 'channel' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                         >
                           <span>Channel</span>
                           {sortBy === 'channel' && (
-                            sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                            sortDirection === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                           )}
                         </button>
                         <button
                           onClick={() => handleSort('status')}
-                          className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'status' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                          className={`flex items-center justify-between w-full px-3 py-1.5 text-xs ${sortBy === 'status' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                         >
                           <span>Status</span>
                           {sortBy === 'status' && (
-                            sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                            sortDirection === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                           )}
                         </button>
                         <button
                           onClick={() => handleSort('priority')}
-                          className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'priority' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                          className={`flex items-center justify-between w-full px-3 py-1.5 text-xs ${sortBy === 'priority' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                         >
                           <span>Priority</span>
                           {sortBy === 'priority' && (
-                            sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                            sortDirection === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                           )}
                         </button>
                       </>
                     )}
                     <button
                       onClick={() => handleSort('createdAt')}
-                      className={`flex items-center justify-between w-full px-4 py-2 text-sm ${sortBy === 'createdAt' ? 'text-blue-600 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                      className={`flex items-center justify-between w-full px-3 py-1.5 text-xs ${sortBy === 'createdAt' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                     >
                       <span>Date Created</span>
                       {sortBy === 'createdAt' && (
-                        sortDirection === 'asc' ? <ArrowUp size={14} /> : <ArrowDown size={14} />
+                        sortDirection === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                       )}
                     </button>
                   </div>
@@ -462,365 +478,370 @@ const NotificationsPage = () => {
               )}
             </div>
           </div>
-        </div>
 
-        {/* Loading indicator */}
-        {isLoading && (
-          <div className="flex justify-center items-center py-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          </div>
-        )}
+          {/* Loading indicator */}
+          {isLoading && (
+            <div className="flex justify-center items-center py-10">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-neutral-300 dark:border-neutral-600 border-t-blue-500"></div>
+            </div>
+          )}
 
-        {/* Templates Tab */}
-        {!isLoading && activeTab === 'templates' && (
-          <div className="backdrop-blur-xl bg-white/80 rounded-3xl shadow-xl border border-gray-100 overflow-hidden transition-all hover:shadow-xl">
-            <div className="grid grid-cols-1 divide-y divide-gray-100">
-              {filteredTemplates.length > 0 ? (
-                filteredTemplates.map((template) => (
-                  <div key={template._id} className="p-5 hover:bg-blue-50/30 transition-colors group">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border border-blue-200/50">
-                          {template.channel === 'sms' ? (
-                            <Smartphone className="w-5 h-5 text-blue-600" />
-                          ) : template.channel === 'email' ? (
-                            <Mail className="w-5 h-5 text-blue-600" />
-                          ) : (
-                            <BellRing className="w-5 h-5 text-blue-600" />
-                          )}
-                        </div>
-                        <div>
-                          <h3 className="text-base font-medium text-gray-900">{template.template_code}</h3>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <span className="text-xs font-medium text-gray-500 bg-gray-100 py-0.5 px-2 rounded-full">
-                              {template.channel}
-                            </span>
-                            <div className="flex items-center text-xs text-gray-500">
-                              <Languages className="w-3 h-3 mr-1" />
-                              {template?.language?.toUpperCase()}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              v{template.version}
+          {/* Templates Tab */}
+          {!isLoading && activeTab === 'templates' && (
+            <div>
+              <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
+                {filteredTemplates.length > 0 ? (
+                  filteredTemplates.map((template) => (
+                    <div key={template._id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-neutral-750 flex items-center justify-center border border-neutral-200 dark:border-neutral-700">
+                            {template.channel === 'sms' ? (
+                              <Smartphone className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                            ) : template.channel === 'email' ? (
+                              <Mail className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                            ) : (
+                              <BellRing className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{template.template_code}</h3>
+                            <div className="flex items-center space-x-2 mt-0.5">
+                              <span className="text-xs px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-750 text-neutral-600 dark:text-neutral-400 rounded">
+                                {template.channel}
+                              </span>
+                              <div className="flex items-center text-xs text-neutral-500 dark:text-neutral-500">
+                                <Languages className="w-3 h-3 mr-0.5" />
+                                {template?.language?.toUpperCase()}
+                              </div>
+                              <div className="text-xs text-neutral-500 dark:text-neutral-500 font-mono">
+                                v{template.version}
+                              </div>
                             </div>
                           </div>
                         </div>
+
+                        <div className="flex items-center space-x-1">
+                          <button
+                            onClick={() => viewTemplate(template._id)}
+                            className="p-1.5 text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded transition-colors"
+                          >
+                            <Eye size={16} />
+                          </button>
+                          <button className="p-1.5 text-neutral-400 dark:text-neutral-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded transition-colors">
+                            <Send size={16} />
+                          </button>
+                          <button className="p-1.5 text-neutral-400 dark:text-neutral-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors">
+                            <Trash size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="inline-block p-3 rounded-full bg-neutral-100 dark:bg-neutral-750 mb-3">
+                      <Bell size={24} className="text-neutral-400 dark:text-neutral-500" />
+                    </div>
+                    <p className="text-neutral-500 dark:text-neutral-400 text-sm">No templates found matching your criteria.</p>
+                    <button
+                      onClick={() => setShowCreateModal(true)}
+                      className="mt-3 px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                    >
+                      Create your first template
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Notification History Tab */}
+          {!isLoading && activeTab === 'history' && (
+            <div>
+              {notifications.length > 0 ? (
+                <>
+                  <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
+                    {notifications.map((notification) => (
+                      <div key={notification._id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors">
+                        <div className="flex items-start justify-between">
+                          <div className="flex space-x-3">
+                            <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-neutral-750 flex items-center justify-center border border-neutral-200 dark:border-neutral-700 flex-shrink-0">
+                              {getChannelIcon(notification.channel)}
+                            </div>
+
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{notification.template_code_id}</h3>
+
+                                <div className="flex items-center text-xs">
+                                  {getStatusIcon(notification.status)}
+                                  <span className="ml-0.5 text-neutral-700 dark:text-neutral-300">{notification.status}</span>
+                                </div>
+
+                                <span className={`text-xs py-0.5 px-1.5 rounded border ${getPriorityColor(notification.priority)}`}>
+                                  {notification.priority}
+                                </span>
+                              </div>
+
+                              <div className="text-xs text-neutral-500 dark:text-neutral-500 mb-2">
+                                {notification.channel === 'sms' ? (
+                                  <span>Sent to: {notification.user_phone}</span>
+                                ) : (
+                                  <span>Sent to: {notification.user_email || notification.user_phone}</span>
+                                )}
+                              </div>
+
+                              <div className="bg-neutral-50 dark:bg-neutral-750 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700 mb-2">
+                                <div className="text-xs text-neutral-700 dark:text-neutral-300">
+                                  {/* Display payload content nicely */}
+                                  <div className="grid grid-cols-2 gap-2">
+                                    {Object.entries(notification.payload).map(([key, value]) => (
+                                      <div key={key} className="flex items-start">
+                                        <span className="text-[10px] font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-1 py-0.5 rounded mr-1.5">
+                                          {key}
+                                        </span>
+                                        <span className="text-neutral-700 dark:text-neutral-300 font-mono">{String(value)}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center text-[10px] text-neutral-500 dark:text-neutral-500 mt-1 space-x-3 font-mono">
+                                <div className="flex items-center">
+                                  <Clock className="w-3 h-3 mr-0.5" />
+                                  {formatDate(notification.createdAt)}
+                                </div>
+
+                                {notification.delivered_at && (
+                                  <div className="flex items-center">
+                                    <CheckCircle className="w-3 h-3 mr-0.5" />
+                                    {formatDate(notification.delivered_at)}
+                                  </div>
+                                )}
+
+                                <div className="flex items-center">
+                                  <Shield className="w-3 h-3 mr-0.5" />
+                                  {notification.origin_service}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex space-x-1">
+                            <button className="p-1.5 text-neutral-400 dark:text-neutral-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors">
+                              <Eye size={16} />
+                            </button>
+                            <button className="p-1.5 text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded transition-colors">
+                              <MoreHorizontal size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Pagination Controls */}
+                  {pagination.totalPages > 1 && (
+                    <div className="flex items-center justify-between border-t border-neutral-200 dark:border-neutral-700 px-4 py-3">
+                      <div className="text-xs text-neutral-500 dark:text-neutral-500">
+                        Showing <span className="font-medium">{(pagination.currentPage - 1) * 10 + 1}</span> to <span className="font-medium">{Math.min(pagination.currentPage * 10, pagination.totalCount)}</span> of <span className="font-medium">{pagination.totalCount}</span> notifications
                       </div>
 
                       <div className="flex items-center space-x-1">
                         <button
-                          onClick={() => viewTemplate(template._id)}
-                          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all opacity-0 group-hover:opacity-100"
+                          onClick={() => handlePageChange(Math.max(1, pagination.currentPage - 1))}
+                          disabled={pagination.currentPage === 1}
+                          className={`p-1.5 rounded border ${pagination.currentPage === 1 ? 'text-neutral-300 dark:text-neutral-600 border-neutral-200 dark:border-neutral-700 cursor-not-allowed' : 'text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
                         >
-                          <Eye size={18} />
+                          <ChevronLeft size={14} />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-all opacity-0 group-hover:opacity-100">
-                          <Send size={18} />
-                        </button>
-                        <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all opacity-0 group-hover:opacity-100">
-                          <Trash size={18} />
+
+                        {[...Array(pagination.totalPages)].map((_, i) => {
+                          // Show limited page numbers with ellipsis
+                          const page = i + 1;
+                          const isCurrentPage = page === pagination.currentPage;
+                          const isFirstPage = page === 1;
+                          const isLastPage = page === pagination.totalPages;
+                          const isWithinRange = Math.abs(page - pagination.currentPage) <= 1;
+
+                          if (isFirstPage || isLastPage || isWithinRange) {
+                            return (
+                              <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={`w-7 h-7 rounded text-xs flex items-center justify-center ${isCurrentPage
+                                  ? 'bg-blue-500 dark:bg-blue-600 text-white'
+                                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-750'
+                                  }`}
+                              >
+                                {page}
+                              </button>
+                            );
+                          } else if (
+                            (page === 2 && pagination.currentPage > 3) ||
+                            (page === pagination.totalPages - 1 && pagination.currentPage < pagination.totalPages - 2)
+                          ) {
+                            return <span key={page} className="text-neutral-400 dark:text-neutral-500">...</span>;
+                          }
+
+                          return null;
+                        })}
+
+                        <button
+                          onClick={() => handlePageChange(Math.min(pagination.totalPages, pagination.currentPage + 1))}
+                          disabled={pagination.currentPage === pagination.totalPages}
+                          className={`p-1.5 rounded border ${pagination.currentPage === pagination.totalPages ? 'text-neutral-300 dark:text-neutral-600 border-neutral-200 dark:border-neutral-700 cursor-not-allowed' : 'text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-750'}`}
+                        >
+                          <ChevronRight size={14} />
                         </button>
                       </div>
                     </div>
-                  </div>
-                ))
+                  )}
+                </>
               ) : (
-                <div className="text-center py-16">
-                  <div className="inline-block p-4 rounded-full bg-blue-50 mb-4">
-                    <Bell size={32} className="text-blue-400" />
+                <div className="text-center py-12">
+                  <div className="inline-block p-3 rounded-full bg-neutral-100 dark:bg-neutral-750 mb-3">
+                    <Clock size={24} className="text-neutral-400 dark:text-neutral-500" />
                   </div>
-                  <p className="text-gray-500">No templates found matching your criteria.</p>
-                  <button
-                    onClick={() => setShowCreateModal(true)}
-                    className="mt-4 px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100 transition-colors"
-                  >
-                    Create your first template
+                  <p className="text-neutral-500 dark:text-neutral-400 text-sm">No notification history found.</p>
+                  <button className="mt-3 px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                    Send your first notification
                   </button>
                 </div>
               )}
             </div>
-          </div>
-        )}
-
-        {/* Notification History Tab */}
-        {!isLoading && activeTab === 'history' && (
-          <div className="backdrop-blur-xl bg-white/80 rounded-3xl shadow-xl border border-gray-100 overflow-hidden transition-all hover:shadow-xl">
-            {notifications.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 divide-y divide-gray-100">
-                  {notifications.map((notification) => (
-                    <div key={notification._id} className="p-5 hover:bg-blue-50/30 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex space-x-4">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border border-blue-200/50 flex-shrink-0">
-                            {getChannelIcon(notification.channel)}
-                          </div>
-
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-base font-medium text-gray-900">{notification.template_code_id}</h3>
-
-                              <div className="flex items-center text-xs">
-                                {getStatusIcon(notification.status)}
-                                <span className="ml-1 text-gray-700">{notification.status}</span>
-                              </div>
-
-                              <span className={`text-xs py-0.5 px-2 rounded-full border ${getPriorityColor(notification.priority)}`}>
-                                {notification.priority}
-                              </span>
-                            </div>
-
-                            <div className="text-sm text-gray-500 mb-2">
-                              {notification.channel === 'sms' ? (
-                                <span>Sent to: {notification.user_phone}</span>
-                              ) : (
-                                <span>Sent to: {notification.user_email || notification.user_phone}</span>
-                              )}
-                            </div>
-
-                            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-2">
-                              <div className="text-sm text-gray-700">
-                                {/* Display payload content nicely */}
-                                <div className="grid grid-cols-2 gap-2">
-                                  {Object.entries(notification.payload).map(([key, value]) => (
-                                    <div key={key} className="flex items-start">
-                                      <span className="text-xs font-medium bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded mr-2">
-                                        {key}
-                                      </span>
-                                      <span className="text-gray-700">{String(value)}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center text-xs text-gray-500 mt-1 space-x-3">
-                              <div className="flex items-center">
-                                <Clock className="w-3 h-3 mr-1" />
-                                Sent: {formatDate(notification.createdAt)}
-                              </div>
-
-                              {notification.delivered_at && (
-                                <div className="flex items-center">
-                                  <CheckCircle className="w-3 h-3 mr-1" />
-                                  Delivered: {formatDate(notification.delivered_at)}
-                                </div>
-                              )}
-
-                              <div className="flex items-center">
-                                <Shield className="w-3 h-3 mr-1" />
-                                Origin: {notification.origin_service}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex space-x-1">
-                          <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all">
-                            <Eye size={18} />
-                          </button>
-                          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all">
-                            <MoreHorizontal size={18} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Pagination Controls */}
-                {pagination.totalPages > 1 && (
-                  <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3">
-                    <div className="text-sm text-gray-500">
-                      Showing <span className="font-medium">{(pagination.currentPage - 1) * 10 + 1}</span> to <span className="font-medium">{Math.min(pagination.currentPage * 10, pagination.totalCount)}</span> of <span className="font-medium">{pagination.totalCount}</span> notifications
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handlePageChange(Math.max(1, pagination.currentPage - 1))}
-                        disabled={pagination.currentPage === 1}
-                        className={`p-2 rounded-lg border ${pagination.currentPage === 1 ? 'text-gray-300 border-gray-200' : 'text-gray-700 border-gray-200 hover:bg-gray-50'}`}
-                      >
-                        <ChevronLeft size={16} />
-                      </button>
-
-                      {[...Array(pagination.totalPages)].map((_, i) => {
-                        // Show limited page numbers with ellipsis
-                        const page = i + 1;
-                        const isCurrentPage = page === pagination.currentPage;
-                        const isFirstPage = page === 1;
-                        const isLastPage = page === pagination.totalPages;
-                        const isWithinRange = Math.abs(page - pagination.currentPage) <= 1;
-
-                        if (isFirstPage || isLastPage || isWithinRange) {
-                          return (
-                            <button
-                              key={page}
-                              onClick={() => handlePageChange(page)}
-                              className={`w-8 h-8 rounded-lg text-sm flex items-center justify-center ${isCurrentPage
-                                  ? 'bg-blue-500 text-white'
-                                  : 'text-gray-700 hover:bg-gray-50'
-                                }`}
-                            >
-                              {page}
-                            </button>
-                          );
-                        } else if (
-                          (page === 2 && pagination.currentPage > 3) ||
-                          (page === pagination.totalPages - 1 && pagination.currentPage < pagination.totalPages - 2)
-                        ) {
-                          return <span key={page} className="text-gray-400">...</span>;
-                        }
-
-                        return null;
-                      })}
-
-                      <button
-                        onClick={() => handlePageChange(Math.min(pagination.totalPages, pagination.currentPage + 1))}
-                        disabled={pagination.currentPage === pagination.totalPages}
-                        className={`p-2 rounded-lg border ${pagination.currentPage === pagination.totalPages ? 'text-gray-300 border-gray-200' : 'text-gray-700 border-gray-200 hover:bg-gray-50'}`}
-                      >
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-16">
-                <div className="inline-block p-4 rounded-full bg-gray-50 mb-4">
-                  <Clock size={32} className="text-gray-400" />
-                </div>
-                <p className="text-gray-500">No notification history found.</p>
-                <button className="mt-4 px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-full hover:bg-blue-100 transition-colors">
-                  Send your first notification
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Create Template Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
           <div
-            className="bg-white rounded-3xl max-h-[80vh] overflow-y-auto mt-12 w-full max-w-2xl border border-gray-100 shadow-2xl"
+            className="bg-white dark:bg-neutral-800 rounded-lg max-h-[90vh] overflow-y-auto w-full max-w-xl border border-neutral-200 dark:border-neutral-700 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900 flex items-center">
-                <Sparkles size={18} className="mr-2 text-blue-500" />
+            <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 flex justify-between items-center">
+              <h3 className="text-base font-medium text-neutral-900 dark:text-white flex items-center">
+                <Sparkles size={16} className="mr-1.5 text-blue-500 dark:text-blue-400" />
                 Create New Template
               </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded transition-colors"
               >
-                <X size={20} />
+                <X size={16} />
               </button>
             </div>
-            <div className="p-6 space-y-5">
+            <div className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Template Code</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Template Code</label>
                 <input
                   type="text"
                   placeholder="e.g., OTP_VERIFICATION"
                   value={newTemplate.template_code}
                   onChange={(e) => setNewTemplate({ ...newTemplate, template_code: e.target.value })}
-                  className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
+                  className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-800 dark:text-neutral-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Channel</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Channel</label>
                   <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-500 dark:text-neutral-400">
+                      {getChannelIcon(newTemplate.channel)}
+                    </div>
                     <select
                       value={newTemplate.channel}
                       onChange={(e) => setNewTemplate({ ...newTemplate, channel: e.target.value })}
-                      className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm shadow-sm outline-none appearance-none pl-10"
-                      style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: `right 0.75rem center`, backgroundRepeat: `no-repeat`, backgroundSize: `1rem` }}
+                      className="w-full pl-9 pr-8 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-800 dark:text-neutral-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none"
                     >
                       <option value="email">Email</option>
                       <option value="sms">SMS</option>
                       <option value="push">Push Notification</option>
                     </select>
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      {getChannelIcon(newTemplate.channel)}
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral-400 dark:text-neutral-500">
+                      <ChevronDown size={14} />
                     </div>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Language</label>
                   <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-500 dark:text-neutral-400">
+                      <Languages size={14} />
+                    </div>
                     <select
                       value={newTemplate.language}
                       onChange={(e) => setNewTemplate({ ...newTemplate, language: e.target.value })}
-                      className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm shadow-sm outline-none appearance-none pl-10"
-                      style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: `right 0.75rem center`, backgroundRepeat: `no-repeat`, backgroundSize: `1rem` }}
+                      className="w-full pl-9 pr-8 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-800 dark:text-neutral-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none"
                     >
                       <option value="en">English</option>
                       <option value="es">Spanish</option>
                       <option value="fr">French</option>
                     </select>
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      <Languages className="w-4 h-4" />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral-400 dark:text-neutral-500">
+                      <ChevronDown size={14} />
                     </div>
                   </div>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Content</label>
                 <textarea
                   placeholder="e.g., Your verification code is {{otp}}. Valid for {{expires_at}} minutes. Do not share this code with anyone."
                   value={newTemplate.content}
                   onChange={(e) => setNewTemplate({ ...newTemplate, content: e.target.value })}
-                  className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none h-28"
+                  className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-800 dark:text-neutral-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all h-24 resize-none"
                 />
-                <div className="flex items-center justify-end mt-1 text-xs text-gray-500">
+                <div className="flex items-center justify-end mt-1 text-xs text-neutral-500 dark:text-neutral-500">
                   <Command className="w-3 h-3 mr-1" />
                   Use {'{{ placeholder_name }}'} for variables
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Placeholders</label>
-                <div className="grid grid-cols-2 gap-3 mb-3">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Placeholders</label>
+                <div className="grid grid-cols-2 gap-2 mb-2">
                   <input
                     type="text"
                     placeholder="Placeholder name (e.g., otp)"
                     value={currentPlaceholder}
                     onChange={(e) => setCurrentPlaceholder(e.target.value)}
-                    className="p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
+                    className="px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-800 dark:text-neutral-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   />
                   <input
                     type="text"
                     placeholder="Description (e.g., OTP code)"
                     value={currentDescription}
                     onChange={(e) => setCurrentDescription(e.target.value)}
-                    className="p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-gray-700 text-sm placeholder-gray-400 shadow-sm outline-none"
+                    className="px-3 py-2 bg-neutral-50 dark:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-800 dark:text-neutral-200 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   />
                 </div>
                 <button
                   onClick={addPlaceholder}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg hover:shadow-blue-200 w-full"
+                  className="px-3 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg text-sm transition-colors w-full"
                 >
                   Add Placeholder
                 </button>
 
                 <div className="mt-3">
                   {Object.keys(newTemplate.placeholders).length > 0 && (
-                    <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 mb-2">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">Added Placeholders:</h4>
-                      <div className="space-y-2">
+                    <div className="bg-neutral-50 dark:bg-neutral-750 rounded-lg p-3 border border-neutral-200 dark:border-neutral-700">
+                      <h4 className="text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-2">Added Placeholders:</h4>
+                      <div className="space-y-1.5">
                         {Object.entries(newTemplate.placeholders).map(([key, description]) => (
-                          <div key={key} className="flex items-center justify-between bg-white rounded-lg p-2 border border-gray-100">
+                          <div key={key} className="flex items-center justify-between bg-white dark:bg-neutral-800 rounded-lg p-2 border border-neutral-200 dark:border-neutral-700">
                             <div>
-                              <span className="text-blue-600 font-medium text-sm">{`{{ ${key} }}`}</span>
-                              <span className="text-xs text-gray-500">{description}</span>
+                              <span className="text-blue-600 dark:text-blue-400 font-medium text-xs font-mono">{`{{ ${key} }}`}</span>
+                              <span className="text-[10px] text-neutral-500 dark:text-neutral-500 ml-1.5">{description}</span>
                             </div>
                             <button
                               onClick={() => removePlaceholder(key)}
-                              className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-full"
+                              className="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
                             >
-                              <X size={16} />
+                              <X size={14} />
                             </button>
                           </div>
                         ))}
@@ -830,21 +851,19 @@ const NotificationsPage = () => {
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-gray-100 flex justify-end space-x-4">
+            <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 flex justify-end space-x-3">
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="px-5 py-2.5 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-all"
+                className="px-4 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors text-sm"
               >
                 Cancel
               </button>
               <button
                 onClick={createTemplate}
-                className="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:shadow-lg hover:shadow-blue-200 transition-all"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors text-sm flex items-center"
               >
-                <div className="flex items-center">
-                  <Zap size={16} className="mr-2" />
-                  Create Template
-                </div>
+                <Zap size={14} className="mr-1.5" />
+                Create Template
               </button>
             </div>
           </div>
