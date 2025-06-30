@@ -10,5 +10,12 @@ export const logsService = {
     const response = await logsaudit.get(`/audits/${id}`);
     return response.data;
   },
-};
 
+  exportAuditLogs: async (format: 'csv' | 'json', filters: Record<string, any> = {}) => {
+    const response = await logsaudit.post('/audits/export', {
+      format,
+      filters
+    });
+    return response.data;
+  }
+};
