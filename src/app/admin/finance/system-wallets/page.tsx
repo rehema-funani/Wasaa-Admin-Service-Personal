@@ -341,7 +341,7 @@ const SystemWalletsPage = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <button
               className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-xs shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-all"
               disabled={isLoading}
@@ -356,7 +356,7 @@ const SystemWalletsPage = () => {
               <Plus size={14} />
               <span>New Wallet</span>
             </button>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center mb-5">

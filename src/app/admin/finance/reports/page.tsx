@@ -36,18 +36,17 @@ import {
   Area
 } from 'recharts';
 
-const page = () => {
+const page: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
   const [selectedYear, setSelectedYear] = useState(2025);
-  const [selectedMonth, setSelectedMonth] = useState(4); // April
-  const [selectedQuarter, setSelectedQuarter] = useState(2); // Q2
+  const [selectedMonth, setSelectedMonth] = useState(4);
+  const [selectedQuarter, setSelectedQuarter] = useState(2);
   const [isLoading, setIsLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<any[]>([]);
   const [usersData, setUsersData] = useState<any[]>([]);
   const [transactionsData, setTransactionsData] = useState<any[]>([]);
   const [paymentDistribution, setPaymentDistribution] = useState<any[]>([]);
 
-  // Statistics Cards Data
   const statsData = [
     {
       title: 'Total Revenue',
@@ -349,7 +348,7 @@ const page = () => {
                 </div>
               </div>
               <div className={`
-                p-3 rounded-lg 
+                p-3 rounded-lg
                 ${stat.color === 'primary' ? 'bg-primary-100 text-primary-600' :
                   stat.color === 'green' ? 'bg-green-100 text-green-600' :
                     stat.color === 'purple' ? 'bg-purple-100 text-purple-600' :
