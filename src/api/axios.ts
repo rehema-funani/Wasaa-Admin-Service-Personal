@@ -42,10 +42,10 @@ const refreshAuthToken = async () => {
     });
 
     if (response.data && response.data.new_access_token) {
-      Cookies.set('authToken', response.data.new_access_token);
+      localStorage.setItem('authToken', response.data.new_access_token);
 
       if (response.data.new_refresh_token) {
-        Cookies.set('refreshToken', response.data.new_refresh_token);
+        localStorage.setItem('refreshToken', response.data.new_refresh_token);
       }
 
       return response.data.token;

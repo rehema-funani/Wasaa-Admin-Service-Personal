@@ -485,7 +485,7 @@ const WalletDetailPage = () => {
             dateRange={dateRange}
             setDateRange={setDateRange}
             currencySymbol={currencySymbol}
-            formatDate={ formatDate}
+            formatDate={formatDate}
             timeAgo={timeAgo}
           />
         )}

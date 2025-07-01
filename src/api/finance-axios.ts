@@ -40,15 +40,16 @@ const refreshAuthToken = async () => {
         'x-api-key': apiKey
       }
     });
+    console.log(response);
 
     if (response.data && response.data.new_access_token) {
-      Cookies.set('authToken', response.data.new_access_token);
+      localStorage.setItem('authToken', response.data.new_access_token);
 
       if (response.data.new_refresh_token) {
-        Cookies.set('refreshToken', response.data.new_refresh_token);
+        localStorage.setItem('refreshToken', response.data.new_refresh_token);
       }
 
-      return response.data.token;
+      return response.data.new_access_token;
     } else {
       throw new Error('Failed to refresh token');
     }
