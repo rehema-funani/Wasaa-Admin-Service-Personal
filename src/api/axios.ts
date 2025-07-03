@@ -48,7 +48,7 @@ const refreshAuthToken = async () => {
         localStorage.setItem('refreshToken', response.data.new_refresh_token);
       }
 
-      return response.data.token;
+      return response.data.new_access_token;
     } else {
       throw new Error('Failed to refresh token');
     }

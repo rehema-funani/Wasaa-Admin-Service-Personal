@@ -1,5 +1,4 @@
 import { Activity, ArrowDownRight, ArrowUpRight, Download, PieChart, Send, Wallet } from 'lucide-react'
-import React from 'react'
 
 const Analytics = ({
   wallet,

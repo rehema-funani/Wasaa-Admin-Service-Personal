@@ -171,16 +171,16 @@ const routes: Route[] = [
               path: '/admin/finance/fee-rules',
               title: 'Fee Structures',
             },
-            {
-              type: 'link',
-              path: '/admin/finance/payment-gateways',
-              title: 'Payment Gateways',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/settlement',
-              title: 'Settlement Processing',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/payment-gateways',
+            //   title: 'Payment Gateways',
+            // },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/settlement',
+            //   title: 'Settlement Processing',
+            // },
           ],
         },
         {
@@ -189,21 +189,21 @@ const routes: Route[] = [
           icon: Shield,
           key: 'risk-management-finance',
           items: [
-            {
-              type: 'link',
-              path: '/admin/finance/risk/monitoring',
-              title: 'Transaction Monitoring',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/risk/thresholds',
-              title: 'Risk Thresholds',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/risk/fraud-detection',
-              title: 'Fraud Detection',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/risk/monitoring',
+            //   title: 'Transaction Monitoring',
+            // },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/risk/thresholds',
+            //   title: 'Risk Thresholds',
+            // },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/risk/fraud-detection',
+            //   title: 'Fraud Detection',
+            // },
             {
               type: 'link',
               path: '/admin/finance/risk/aml',
@@ -222,26 +222,26 @@ const routes: Route[] = [
               path: '/admin/finance/reports',
               title: 'Financial Reports',
             },
-            {
-              type: 'link',
-              path: '/admin/finance/analytics/performance',
-              title: 'Performance Metrics',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/analytics/revenue',
-              title: 'Revenue Analysis',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/analytics/forecasting',
-              title: 'Financial Forecasting',
-            },
-            {
-              type: 'link',
-              path: '/admin/finance/analytics/audit',
-              title: 'Audit Reports',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/analytics/performance',
+            //   title: 'Performance Metrics',
+            // },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/analytics/revenue',
+            //   title: 'Revenue Analysis',
+            // },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/analytics/forecasting',
+            //   title: 'Financial Forecasting',
+            // },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/analytics/audit',
+            //   title: 'Audit Reports',
+            // },
           ],
         },
         {
@@ -858,16 +858,16 @@ const routes: Route[] = [
               path: '/admin/media/shorts/notifications/templates',
               title: 'Message Templates',
             },
-            {
-              type: 'link',
-              path: '/admin/notifications/campaigns',
-              title: 'Notification Campaigns',
-            },
-            {
-              type: 'link',
-              path: '/admin/notifications/preferences',
-              title: 'User Preferences',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/notifications/campaigns',
+            //   title: 'Notification Campaigns',
+            // },
+            // {
+            //   type: 'link',
+            //   path: '/admin/notifications/preferences',
+            //   title: 'User Preferences',
+            // },
             {
               type: 'link',
               path: '/admin/system/notifications/broadcasts',

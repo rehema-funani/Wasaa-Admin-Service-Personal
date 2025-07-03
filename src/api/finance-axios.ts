@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const baseURL = import.meta.env.VITE_API_URL || 'http://138.68.190.213:3030/api';
 const apiKey = import.meta.env.VITE_API_KEY || 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==';
@@ -40,7 +39,6 @@ const refreshAuthToken = async () => {
         'x-api-key': apiKey
       }
     });
-    console.log(response);
 
     if (response.data && response.data.new_access_token) {
       localStorage.setItem('authToken', response.data.new_access_token);
@@ -148,13 +146,12 @@ finance.interceptors.response.use(
 );
 
 function handleLogout() {
-  // Cookies.remove('authToken');
-  // Cookies.remove('refreshToken');
-  // Cookies.remove('user');
-  // Cookies.remove('userType');
-  // Cookies.remove('source');
-  // window.location.href = '/auth/login';
-  console.log('Logout handled: Tokens removed and user redirected to login.');
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+  localStorage.removeItem('userType');
+  localStorage.removeItem('source');
+  window.location.href = '/auth/login';
 }
 
 export default finance;
