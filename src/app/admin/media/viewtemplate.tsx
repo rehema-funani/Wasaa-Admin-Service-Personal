@@ -24,7 +24,7 @@ import { notificationService } from '../../../api/services/notification';
 import { useParams } from 'react-router-dom';
 
 interface Template {
-  _id: string;
+  id: string;
   template_code: string;
   channel: string;
   language: string;
@@ -133,7 +133,7 @@ const TemplateView = () => {
     setValidationStatus('idle');
 
     try {
-      await notificationService.validateTemplate(template._id);
+      await notificationService.validateTemplate(template.id);
       setValidationStatus('success');
       setValidationMessage('Template is valid and ready to use.');
     } catch (err) {
@@ -159,7 +159,7 @@ const TemplateView = () => {
       };
 
       const response = await notificationService.createTemplate(newTemplate);
-      navigateTo(`/admin/media/shorts/notifications/templates/${response._id}`);
+      navigateTo(`/admin/media/shorts/notifications/templates/${response.id}`);
     } catch (err) {
       setError('Failed to duplicate template. Please try again.');
       console.error('Error duplicating template:', err);
@@ -192,7 +192,7 @@ const TemplateView = () => {
     if (!editedTemplate || !template) return;
 
     try {
-      const response = await notificationService.updateTemplate(template._id, editedTemplate);
+      const response = await notificationService.updateTemplate(template.id, editedTemplate);
       setTemplate(response);
       setIsEditing(false);
       setValidationStatus('idle');

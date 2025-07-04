@@ -12,7 +12,7 @@ import {
 import { notificationService } from '../../../api/services/notification';
 
 interface Template {
-  _id: string;
+  id: string;
   template_code: string;
   channel: string;
   language: string;
@@ -35,7 +35,7 @@ interface NewTemplateData {
 }
 
 interface Notification {
-  _id: string;
+  id: string;
   user_id: string;
   channel: string;
   user_email: string | null;
@@ -87,7 +87,6 @@ const NotificationsPage = () => {
   const [sortDirection, setSortDirection] = useState('asc');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Close sort menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setIsSortMenuOpen(false);
@@ -158,7 +157,6 @@ const NotificationsPage = () => {
     }
   };
 
-  // Add a placeholder to the new template
   const addPlaceholder = () => {
     if (currentPlaceholder && !newTemplate.placeholders[currentPlaceholder]) {
       setNewTemplate({
@@ -262,7 +260,6 @@ const NotificationsPage = () => {
     }
   };
 
-  // Initial data fetch
   useEffect(() => {
     if (activeTab === 'templates') {
       getTemplates();
@@ -271,7 +268,6 @@ const NotificationsPage = () => {
     }
   }, [activeTab]);
 
-  // Handle search and filtering for templates
   useEffect(() => {
     if (activeTab === 'templates') {
       let filtered = [...templates];
@@ -304,10 +300,8 @@ const NotificationsPage = () => {
     }
   }, [search, templates, sortBy, sortDirection, activeTab]);
 
-  // Handle search for notifications
   useEffect(() => {
     if (activeTab === 'history' && search) {
-      // Debounce search for notifications
       const timer = setTimeout(() => {
         getNotifications(1);
       }, 500);
@@ -479,20 +473,18 @@ const NotificationsPage = () => {
             </div>
           </div>
 
-          {/* Loading indicator */}
           {isLoading && (
             <div className="flex justify-center items-center py-10">
               <div className="animate-spin rounded-full h-6 w-6 border-2 border-neutral-300 dark:border-neutral-600 border-t-blue-500"></div>
             </div>
           )}
 
-          {/* Templates Tab */}
           {!isLoading && activeTab === 'templates' && (
             <div>
               <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
                 {filteredTemplates.length > 0 ? (
                   filteredTemplates.map((template) => (
-                    <div key={template._id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors">
+                    <div key={template.id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-neutral-750 flex items-center justify-center border border-neutral-200 dark:border-neutral-700">
@@ -523,7 +515,7 @@ const NotificationsPage = () => {
 
                         <div className="flex items-center space-x-1">
                           <button
-                            onClick={() => viewTemplate(template._id)}
+                            onClick={() => viewTemplate(template.id)}
                             className="p-1.5 text-neutral-400 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded transition-colors"
                           >
                             <Eye size={16} />
@@ -556,14 +548,13 @@ const NotificationsPage = () => {
             </div>
           )}
 
-          {/* Notification History Tab */}
           {!isLoading && activeTab === 'history' && (
             <div>
               {notifications.length > 0 ? (
                 <>
                   <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
                     {notifications.map((notification) => (
-                      <div key={notification._id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors">
+                      <div key={notification.id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-colors">
                         <div className="flex items-start justify-between">
                           <div className="flex space-x-3">
                             <div className="w-8 h-8 rounded-md bg-neutral-100 dark:bg-neutral-750 flex items-center justify-center border border-neutral-200 dark:border-neutral-700 flex-shrink-0">
@@ -594,7 +585,6 @@ const NotificationsPage = () => {
 
                               <div className="bg-neutral-50 dark:bg-neutral-750 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700 mb-2">
                                 <div className="text-xs text-neutral-700 dark:text-neutral-300">
-                                  {/* Display payload content nicely */}
                                   <div className="grid grid-cols-2 gap-2">
                                     {Object.entries(notification.payload).map(([key, value]) => (
                                       <div key={key} className="flex items-start">
@@ -642,7 +632,6 @@ const NotificationsPage = () => {
                     ))}
                   </div>
 
-                  {/* Pagination Controls */}
                   {pagination.totalPages > 1 && (
                     <div className="flex items-center justify-between border-t border-neutral-200 dark:border-neutral-700 px-4 py-3">
                       <div className="text-xs text-neutral-500 dark:text-neutral-500">
@@ -659,7 +648,6 @@ const NotificationsPage = () => {
                         </button>
 
                         {[...Array(pagination.totalPages)].map((_, i) => {
-                          // Show limited page numbers with ellipsis
                           const page = i + 1;
                           const isCurrentPage = page === pagination.currentPage;
                           const isFirstPage = page === 1;
@@ -716,7 +704,6 @@ const NotificationsPage = () => {
         </div>
       </div>
 
-      {/* Create Template Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
           <div
