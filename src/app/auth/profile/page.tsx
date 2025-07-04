@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   ExternalLink
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Define TypeScript interface for user data based on the provided structure
 interface Permission {
@@ -58,17 +59,16 @@ const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<'account' | 'security' | 'permissions'>('account');
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     try {
-      // Retrieve user data from localStorage
       const storedUserData = localStorage.getItem('userData');
 
       if (!storedUserData) {
         throw new Error('No user data found');
       }
 
-      // Parse the JSON data
       const parsedUserData: UserData = JSON.parse(storedUserData);
       setUserData(parsedUserData);
       setIsLoading(false);
@@ -78,7 +78,6 @@ const UserProfile: React.FC = () => {
     }
   }, []);
 
-  // Format date to be more readable
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
@@ -92,7 +91,13 @@ const UserProfile: React.FC = () => {
     }
   };
 
-  // Calculate time since last login
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userData');
+    navigate('/auth/login');
+  };
+
   const getTimeSince = (dateString: string): string => {
     try {
       const date = new Date(dateString);
@@ -114,27 +119,21 @@ const UserProfile: React.FC = () => {
     }
   };
 
-  // Generate initials from name for avatar fallback
   const getInitials = (firstName: string, lastName: string): string => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
-  // Group permissions by category (derived from the permission title)
   const groupPermissionsByCategory = (permissions: RolePermission[]): Record<string, Permission[]> => {
     const grouped: Record<string, Permission[]> = {};
 
     permissions.forEach(rp => {
       const perm = rp.permissions;
       const parts = perm.title.split('_');
-      // Extract category (everything after "can_" and before the action)
       let category = 'General';
 
       if (parts.length >= 2 && parts[0] === 'can') {
-        // Find where the entity starts (after "can_")
         const entityParts = parts.slice(1);
 
-        // Extract the entity (e.g., "user", "ticket", "report")
-        // This simple approach looks for common entities
         const entities = ['user', 'ticket', 'report', 'dashboard', 'payment', 'account', 'profile'];
         const foundEntity = entityParts.find(part => entities.includes(part));
 
@@ -160,12 +159,9 @@ const UserProfile: React.FC = () => {
     }));
   };
 
-  // Get a human-readable permission name
   const formatPermissionTitle = (title: string): string => {
-    // Remove "can_" prefix and replace underscores with spaces
     let formatted = title.replace(/^can_/, '').replace(/_/g, ' ');
 
-    // Capitalize first letter of each word
     formatted = formatted.split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
@@ -206,24 +202,20 @@ const UserProfile: React.FC = () => {
     );
   }
 
-  // Group permissions by category
   const groupedPermissions = userData.role?.role_permissions
     ? groupPermissionsByCategory(userData.role.role_permissions)
     : {};
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Header */}
+    <div className="h-auto bg-slate-50">
+      <div className="mx-auto max-w-7xl">
         <div className="mb-10">
           <h1 className="text-3xl font-light text-slate-900 mb-1">My Profile</h1>
           <p className="text-slate-500 text-sm">Manage your personal information and account settings</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left sidebar with user info and navigation */}
           <div className="w-full lg:w-80 flex-shrink-0">
-            {/* User Card */}
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
               <div className="bg-gradient-to-br from-primary-600 via-primary-500 to-primary-600 pt-8 pb-6 px-6 relative">
                 <div className="flex flex-col items-center relative z-10">
@@ -252,7 +244,6 @@ const UserProfile: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Decorative pattern */}
                 <div className="absolute inset-0 opacity-10">
                   <svg className="w-full h-full" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 0H40V40H0V0Z" fill="white" />
@@ -303,14 +294,13 @@ const UserProfile: React.FC = () => {
               </div>
             </div>
 
-            {/* Navigation */}
             <nav className="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
               <div className="p-2">
                 <button
                   onClick={() => setActiveSection('account')}
                   className={`w-full flex items-center px-4 py-3 rounded-xl text-left ${activeSection === 'account'
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-slate-700 hover:bg-slate-50'
+                    ? 'bg-primary-50 text-primary-600'
+                    : 'text-slate-700 hover:bg-slate-50'
                     } transition-colors`}
                 >
                   <User className={`h-5 w-5 mr-3 ${activeSection === 'account' ? 'text-primary-500' : 'text-slate-400'}`} />
@@ -320,8 +310,8 @@ const UserProfile: React.FC = () => {
                 <button
                   onClick={() => setActiveSection('security')}
                   className={`w-full flex items-center px-4 py-3 rounded-xl text-left ${activeSection === 'security'
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-slate-700 hover:bg-slate-50'
+                    ? 'bg-primary-50 text-primary-600'
+                    : 'text-slate-700 hover:bg-slate-50'
                     } transition-colors`}
                 >
                   <Lock className={`h-5 w-5 mr-3 ${activeSection === 'security' ? 'text-primary-500' : 'text-slate-400'}`} />
@@ -331,8 +321,8 @@ const UserProfile: React.FC = () => {
                 <button
                   onClick={() => setActiveSection('permissions')}
                   className={`w-full flex items-center px-4 py-3 rounded-xl text-left ${activeSection === 'permissions'
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-slate-700 hover:bg-slate-50'
+                    ? 'bg-primary-50 text-primary-600'
+                    : 'text-slate-700 hover:bg-slate-50'
                     } transition-colors`}
                 >
                   <Shield className={`h-5 w-5 mr-3 ${activeSection === 'permissions' ? 'text-primary-500' : 'text-slate-400'}`} />
@@ -341,7 +331,7 @@ const UserProfile: React.FC = () => {
               </div>
 
               <div className="px-4 py-4 border-t border-slate-100">
-                <button className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+                <button onClick={handleLogout} className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
                   <LogOut className="h-4 w-4 mr-2" />
                   <span>Sign Out</span>
                 </button>
@@ -349,9 +339,7 @@ const UserProfile: React.FC = () => {
             </nav>
           </div>
 
-          {/* Main content area */}
           <div className="flex-grow">
-            {/* Account Section */}
             {activeSection === 'account' && (
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100">
@@ -383,8 +371,8 @@ const UserProfile: React.FC = () => {
                       <div>
                         <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Account Status</label>
                         <div className={`inline-flex items-center px-3 py-1 rounded-lg ${userData.account_status === 'active'
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-slate-100 text-slate-700'
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : 'bg-slate-100 text-slate-700'
                           }`}>
                           <div className={`h-1.5 w-1.5 rounded-full mr-2 ${userData.account_status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'
                             }`}></div>
@@ -448,7 +436,6 @@ const UserProfile: React.FC = () => {
               </div>
             )}
 
-            {/* Security Section */}
             {activeSection === 'security' && (
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div className="px-8 py-5 border-b border-slate-100">
@@ -456,7 +443,6 @@ const UserProfile: React.FC = () => {
                 </div>
 
                 <div className="p-8">
-                  {/* Login Activity */}
                   <div className="mb-10">
                     <h3 className="text-lg font-light text-slate-800 mb-4 flex items-center">
                       <Clock className="h-5 w-5 text-primary-500 mr-2" />
@@ -497,7 +483,6 @@ const UserProfile: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Password Management */}
                   <div className="mb-10">
                     <h3 className="text-lg font-light text-slate-800 mb-4 flex items-center">
                       <Key className="h-5 w-5 text-primary-500 mr-2" />
@@ -524,7 +509,6 @@ const UserProfile: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Two-Factor Authentication */}
                   <div>
                     <h3 className="text-lg font-light text-slate-800 mb-4 flex items-center">
                       <Shield className="h-5 w-5 text-primary-500 mr-2" />
@@ -589,14 +573,14 @@ const UserProfile: React.FC = () => {
                           key={category}
                           onClick={() => toggleCategory(category)}
                           className={`flex items-center px-4 py-2.5 rounded-full text-sm transition-colors ${expandedCategories[category]
-                              ? 'bg-primary-100 text-primary-700 font-medium'
-                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            ? 'bg-primary-100 text-primary-700 font-medium'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                             }`}
                         >
                           <span className="mr-2">{category}</span>
                           <span className={`flex items-center justify-center w-5 h-5 rounded-full text-xs ${expandedCategories[category]
-                              ? 'bg-primary-200 text-primary-800'
-                              : 'bg-slate-200 text-slate-600'
+                            ? 'bg-primary-200 text-primary-800'
+                            : 'bg-slate-200 text-slate-600'
                             }`}>{perms.length}</span>
                         </button>
                       ))}

@@ -10,7 +10,6 @@ import {
 import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 import logo from '../../assets/images/logo-wasaa.png';
-// Import the getUserPermissions function directly from your permissions utility
 import { getUserPermissions, routePermissionsMap } from '../../utils/permissions';
 
 const getRequiredPermissionsForRoute = (path: string) => {
@@ -275,7 +274,6 @@ const TopNavigation = () => {
     setActiveNestedDropdown(activeNestedDropdown === key ? null : key);
   };
 
-  // Filter items based on permissions
   const filterItems = (items: any) => {
     return items.filter(item => {
       if (item.type === 'link') {
@@ -684,7 +682,6 @@ const TopNavigation = () => {
 
               {notificationsOpen && (
                 <div className="absolute right-0 mt-3 w-80 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown">
-                  {/* Light effects */}
                   <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
                   <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
 
