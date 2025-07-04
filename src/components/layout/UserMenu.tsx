@@ -55,14 +55,14 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
 
                         <div className="px-1 py-1">
                             <NavLink
-                                to="/profile"
+                                to="/accounts/profile"
                                 className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 dark:hover:bg-dark-hover text-sm flex items-center text-gray-700 dark:text-neutral-300"
                             >
                                 <User size={16} className="mr-3 text-gray-500 dark:text-neutral-400" />
                                 <span>My Profile</span>
                             </NavLink>
                             <NavLink
-                                to="/settings"
+                                to="/admin/settings"
                                 className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-50/50 dark:hover:bg-dark-hover text-sm flex items-center text-gray-700 dark:text-neutral-300"
                             >
                                 <Settings size={16} className="mr-3 text-gray-500 dark:text-neutral-400" />

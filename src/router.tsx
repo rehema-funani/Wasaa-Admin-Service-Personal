@@ -20,6 +20,7 @@ const Reset = lazy(() => import('./app/auth/forgot-password/reset'));
 const Set = lazy(() => import('./app/auth/forgot-password/set'));
 
 // User management pages
+const UserProfile = lazy(() => import('./app/auth/profile/page'));
 const UserDetails = lazy(() => import('./app/admin/users/user-details/page'));
 const Userdetail = lazy(() => import('./app/admin/users/user-details/userdetail'));
 const CountrywiseUsers = lazy(() => import('./app/admin/users/countrywise-Analysis/page'));
@@ -220,6 +221,11 @@ const AppRouter: React.FC = () => {
             <Route index element={<Dashboard />} />
 
             {/* ===== User Management ===== */}
+            <Route path="accounts/profile" element={
+              <PermissionRouteGuard permissions={[]}>
+                <UserProfile />
+              </PermissionRouteGuard>
+            } />
             <Route path="admin/users/user-details" element={
               <PermissionRouteGuard permissions={PermissionMap.Users.view}>
                 <UserDetails />

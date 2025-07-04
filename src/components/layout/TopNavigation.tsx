@@ -774,7 +774,7 @@ const TopNavigation = () => {
 
                     <div className="px-1 py-1">
                       <NavLink
-                        to="/profile"
+                        to="/accounts/profile"
                         onClick={() => closeAllMenus()}
                         className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center transition-all duration-500"
                       >
@@ -782,7 +782,7 @@ const TopNavigation = () => {
                         <span>My Profile</span>
                       </NavLink>
                       <NavLink
-                        to="/settings"
+                        to="/admin/settings"
                         onClick={() => closeAllMenus()}
                         className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center transition-all duration-500"
                       >

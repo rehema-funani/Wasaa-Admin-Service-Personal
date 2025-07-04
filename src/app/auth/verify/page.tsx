@@ -91,8 +91,6 @@ const OtpVerificationPage = () => {
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('userData', JSON.stringify(userData));
       console.log('User data saved to localStorage:', userData);
-
-      // setErrors({});
       navigate('/');
     } catch (err) {
       setErrors({
