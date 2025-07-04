@@ -236,12 +236,6 @@ const UserProfile: React.FC = () => {
                     </h2>
                     <p className="text-primary-100 text-sm mt-1">{userData.email}</p>
                   </div>
-
-                  <div className="absolute top-0 right-0">
-                    <button className="text-white/70 hover:text-white p-1.5 rounded-full transition-colors">
-                      <Edit size={16} />
-                    </button>
-                  </div>
                 </div>
 
                 <div className="absolute inset-0 opacity-10">
@@ -344,10 +338,6 @@ const UserProfile: React.FC = () => {
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100">
                   <h2 className="text-xl font-light text-slate-800">Account Information</h2>
-                  <button className="inline-flex items-center px-3 py-1.5 rounded-lg bg-primary-50 text-primary-600 text-sm font-medium hover:bg-primary-100 transition-colors">
-                    <Edit className="h-3.5 w-3.5 mr-1.5" />
-                    <span>Edit Profile</span>
-                  </button>
                 </div>
 
                 <div className="p-8">
