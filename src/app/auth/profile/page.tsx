@@ -573,45 +573,112 @@ const UserProfile: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Permissions Overview */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-base font-medium text-slate-800">Permissions Overview</h3>
+                      <div className="flex items-center text-sm text-primary-600">
+                        <span className="font-medium mr-1">{Object.values(groupedPermissions).flat().length}</span>
+                        <span className="text-slate-500">total permissions</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 mb-6">
+                      {Object.entries(groupedPermissions).map(([category, perms]) => (
+                        <button
+                          key={category}
+                          onClick={() => toggleCategory(category)}
+                          className={`flex items-center px-4 py-2.5 rounded-full text-sm transition-colors ${expandedCategories[category]
+                              ? 'bg-primary-100 text-primary-700 font-medium'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            }`}
+                        >
+                          <span className="mr-2">{category}</span>
+                          <span className={`flex items-center justify-center w-5 h-5 rounded-full text-xs ${expandedCategories[category]
+                              ? 'bg-primary-200 text-primary-800'
+                              : 'bg-slate-200 text-slate-600'
+                            }`}>{perms.length}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Permission Cards */}
                   <div className="space-y-6">
                     {Object.entries(groupedPermissions).map(([category, permissions]) => (
-                      <div key={category} className="border border-slate-200 rounded-xl overflow-hidden">
-                        <button
-                          className="w-full flex items-center justify-between px-6 py-4 bg-slate-50 text-left"
-                          onClick={() => toggleCategory(category)}
-                        >
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center mr-3">
-                              <Shield className="h-4 w-4 text-primary-600" />
-                            </div>
-                            <h3 className="font-medium text-slate-800">{category} Permissions</h3>
-                          </div>
-                          <div className="flex items-center">
-                            <span className="text-xs text-slate-500 mr-3">{permissions.length} permissions</span>
-                            <div className={`transition-transform ${expandedCategories[category] ? 'rotate-180' : ''}`}>
-                              <ChevronRight size={18} className="text-slate-400" />
-                            </div>
-                          </div>
-                        </button>
-
-                        {expandedCategories[category] && (
-                          <div className="p-6 bg-white">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {permissions.map((permission) => (
-                                <div key={permission.id} className="flex items-center">
-                                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center mr-2 flex-shrink-0">
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                                  </div>
-                                  <span className="text-sm text-slate-700">
-                                    {formatPermissionTitle(permission.title)}
-                                  </span>
+                      expandedCategories[category] && (
+                        <div key={category} className="bg-white rounded-xl overflow-hidden">
+                          <div className="bg-slate-50 px-6 py-4 border border-slate-200 rounded-t-xl">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center">
+                                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center mr-3">
+                                  <Shield className="h-4 w-4 text-primary-600" />
                                 </div>
-                              ))}
+                                <h3 className="font-medium text-slate-800">{category} Permissions</h3>
+                              </div>
+                              <button
+                                onClick={() => toggleCategory(category)}
+                                className="text-slate-400 hover:text-slate-600 p-1 rounded-full"
+                              >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                  <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              </button>
                             </div>
                           </div>
-                        )}
-                      </div>
+
+                          <div className="p-6 border border-t-0 border-slate-200 rounded-b-xl">
+                            <div className="flex flex-wrap gap-2">
+                              {permissions.map((permission) => {
+                                // Extract action from permission title (e.g., "view", "edit", "delete")
+                                const permTitle = permission.title;
+                                let actionType = "view"; // default
+
+                                if (permTitle.includes("create") || permTitle.includes("add")) {
+                                  actionType = "create";
+                                } else if (permTitle.includes("edit") || permTitle.includes("update")) {
+                                  actionType = "edit";
+                                } else if (permTitle.includes("delete") || permTitle.includes("remove")) {
+                                  actionType = "delete";
+                                }
+
+                                // Determine color based on action type
+                                const colors = {
+                                  view: "bg-blue-50 text-blue-700 border-blue-100",
+                                  create: "bg-green-50 text-green-700 border-green-100",
+                                  edit: "bg-amber-50 text-amber-700 border-amber-100",
+                                  delete: "bg-red-50 text-red-700 border-red-100"
+                                };
+
+                                return (
+                                  <div
+                                    key={permission.id}
+                                    className={`px-3 py-1.5 rounded-lg border text-sm ${colors[actionType]}`}
+                                    title={permission.title}
+                                  >
+                                    {formatPermissionTitle(permission.title)}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      )
                     ))}
+
+                    {/* If no categories are expanded, show a message */}
+                    {Object.values(expandedCategories).every(expanded => !expanded) && (
+                      <div className="bg-slate-50 rounded-xl p-8 text-center border border-slate-200">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-4">
+                          <Shield className="h-6 w-6 text-slate-400" />
+                        </div>
+                        <h4 className="text-slate-700 font-medium mb-2">Select a permission category</h4>
+                        <p className="text-slate-500 text-sm max-w-md mx-auto">
+                          Click on any of the permission categories above to view the detailed permissions for that section.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="mt-8 p-5 border border-slate-200 rounded-xl bg-slate-50">
