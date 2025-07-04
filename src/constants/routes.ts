@@ -835,11 +835,11 @@ const routes: Route[] = [
               path: '/admin/Avatar/list-all-avatar',
               title: 'Avatars',
             },
-            {
-              type: 'link',
-              path: '/admin/Avatar/add-a-new-avatar',
-              title: 'Add Avatar',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/Avatar/add-a-new-avatar',
+            //   title: 'Add Avatar',
+            // },
           ],
         },
         {
