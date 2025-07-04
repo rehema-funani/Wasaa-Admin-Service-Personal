@@ -431,59 +431,7 @@ const Dashboard = () => {
         className="mb-8"
         variants={itemVariants}
       >
-        <motion.div
-          className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 mb-6 overflow-hidden"
-          whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
-        >
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center mr-3">
-                <RefreshCw size={18} className="text-white" strokeWidth={1.8} />
-              </div>
-              <div>
-                <h3 className="text-md font-semibold text-gray-800 dark:text-neutral-200">Live Exchange Rates</h3>
-                <p className="text-gray-500 dark:text-neutral-400 text-xs">Real-time currency exchange rates</p>
-              </div>
-            </div>
-            <motion.button
-              className="text-xs text-primary-600 dark:text-primary-400 flex items-center"
-              whileHover={{ x: 3 }}
-            >
-              View all rates <ChevronRight size={14} />
-            </motion.button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {exchangeRates.map((rate, index) => (
-              <motion.div
-                key={index}
-                className="flex items-center justify-between p-4 rounded-xl bg-gray-50/70 dark:bg-dark-active/50 border border-gray-100/80 dark:border-dark-border/50 hover:bg-gray-100/80 dark:hover:bg-dark-active/70 transition-all duration-200"
-                whileHover={{ y: -3, boxShadow: '0 8px 20px rgba(0, 0, 0, 0.05)' }}
-              >
-                <div className="flex items-center">
-                  <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-900/30 mr-3">
-                    <RefreshCw size={14} className="text-cyan-500 dark:text-cyan-400" strokeWidth={1.8} />
-                  </div>
-                  <div>
-                    <span className="text-xs font-medium text-gray-800 dark:text-neutral-200">{rate.pair}</span>
-                    <div className="text-xs text-gray-500 dark:text-neutral-400">{rate.source}</div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-xs font-semibold text-gray-800 dark:text-neutral-200">{rate.rate}</div>
-                  <div className={`text-xs flex items-center justify-end ${rate.isUp ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
-                    {rate.isUp ? <ArrowUp size={12} className="mr-0.5" /> : <ArrowDown size={12} className="mr-0.5" />}
-                    {rate.change}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Forex Charts & Status */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Alert Status Chart */}
           <motion.div
             className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 overflow-hidden"
             whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
@@ -521,9 +469,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Alert Status Chart Component Would Go Here */}
             <div className="mb-3 flex justify-center">
-              {/* Placeholder for chart */}
               <div className="w-32 h-32 rounded-full bg-gray-100 dark:bg-dark-active/50 flex items-center justify-center relative">
                 <div className="absolute inset-0 rounded-full border-8 border-violet-500/20 dark:border-violet-500/10"></div>
                 <div className="absolute inset-0 rounded-full border-8 border-transparent border-t-violet-500 border-r-violet-500 rotate-45"></div>
@@ -565,7 +511,6 @@ const Dashboard = () => {
             </div>
           </motion.div>
 
-          {/* System Health & Last Sync Status */}
           <motion.div
             className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 p-5 overflow-hidden"
             whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
@@ -632,7 +577,6 @@ const Dashboard = () => {
             </div>
           </motion.div>
 
-          {/* Recent Conversions */}
           <motion.div
             className="bg-white/90 dark:bg-dark-elevated/90 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-dark-sm border border-gray-100/60 dark:border-dark-border/60 overflow-hidden"
             whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' }}
@@ -879,7 +823,7 @@ const Dashboard = () => {
           <WalletMetrics />
         </motion.div>
       </motion.div>
-    </motion.div>
+    </motion.div >
   );
 };
 

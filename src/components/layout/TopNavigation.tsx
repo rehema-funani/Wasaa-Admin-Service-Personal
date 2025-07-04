@@ -681,7 +681,6 @@ const TopNavigation = () => {
               )}
             </div>
 
-            {/* Notifications */}
             <div className="relative" ref={notificationsRef}>
               {/* <button
                 className="p-2.5 rounded-xl hover:bg-white/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 hover:text-indigo-600 relative"
