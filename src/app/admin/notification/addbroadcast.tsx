@@ -6,24 +6,20 @@ import {
   Bell,
   Calendar,
   Clock,
-  Users,
   Save,
   Send,
   AlertTriangle,
   CheckCircle,
   Target,
-  BarChart,
   Zap,
   X,
   Loader,
-  FileText,
   ChevronDown,
-  ChevronRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { notificationService } from '../../../api/services/notification';
 
-const AddBroadcastPage = () => {
+const AddBroadcastPage: React.FC = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -39,7 +35,6 @@ const AddBroadcastPage = () => {
   const [formData, setFormData] = useState({
     title: '',
     template_id: '',
-    template_code: '',
     channel: 'email',
     scheduled_at: '',
     audience: {
@@ -60,7 +55,12 @@ const AddBroadcastPage = () => {
 
   const countryOptions = [
     { value: '', label: 'All Countries' },
-    { value: 'KE', label: 'Kenya' },
+    { value: 'Kenya', label: 'Kenya' },
+    { value: 'TZ', label: 'Tanzania' },
+    { value: 'UG', label: 'Uganda' },
+    { value: 'RW', label: 'Rwanda' },
+    { value: 'ET', label: 'Ethiopia' },
+    { value: 'NG', label: 'Nigeria' },
     { value: 'US', label: 'United States' },
     { value: 'UK', label: 'United Kingdom' },
     { value: 'CA', label: 'Canada' },
@@ -109,7 +109,7 @@ const AddBroadcastPage = () => {
     }
   };
 
-  const fetchTemplateDetails = async (templateId) => {
+  const fetchTemplateDetails = async (templateId: string) => {
     setIsLoadingTemplateDetails(true);
     try {
       const template = await notificationService.getTemplateById(templateId);
@@ -136,7 +136,7 @@ const AddBroadcastPage = () => {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -150,7 +150,6 @@ const AddBroadcastPage = () => {
       setFormData({
         ...formData,
         template_id: '',
-        template_code: '',
         payload: {}
       });
       setSelectedTemplate(null);
@@ -164,12 +163,11 @@ const AddBroadcastPage = () => {
     });
   };
 
-  const handleChannelChange = (channel) => {
+  const handleChannelChange = (channel: any) => {
     setFormData({
       ...formData,
       channel,
       template_id: '',
-      template_code: '',
       payload: {}
     });
     setSelectedTemplate(null);
@@ -183,7 +181,7 @@ const AddBroadcastPage = () => {
     });
   };
 
-  const handleAudienceChange = (e) => {
+  const handleAudienceChange = (e: any) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -194,7 +192,7 @@ const AddBroadcastPage = () => {
     });
   };
 
-  const handlePayloadChange = (key, value) => {
+  const handlePayloadChange = (key: any, value: any) => {
     setFormData({
       ...formData,
       payload: {
@@ -204,7 +202,7 @@ const AddBroadcastPage = () => {
     });
   };
 
-  const handleDateChange = (e) => {
+  const handleDateChange = (e: any) => {
     setFormData({
       ...formData,
       scheduled_at: e.target.value
@@ -219,7 +217,7 @@ const AddBroadcastPage = () => {
       return;
     }
 
-    if (!formData.template_code) {
+    if (!formData.template_id) {
       setError('Please select a template');
       return;
     }
@@ -245,9 +243,10 @@ const AddBroadcastPage = () => {
     setError(null);
 
     try {
-      const { template_id, ...submissionData } = formData;
+      const { template_code, ...dataWithoutTemplateCode } = formData;
+
       const broadcastData = {
-        ...submissionData,
+        ...dataWithoutTemplateCode
       };
 
       await notificationService.createBroadcast(broadcastData);
@@ -392,7 +391,7 @@ const AddBroadcastPage = () => {
                         >
                           <option value="">Select a template</option>
                           {templates.map(template => (
-                            <option key={template._id} value={template._id}>
+                            <option key={template.id} value={template.id}>
                               {template.template_code} - {template.channel}
                             </option>
                           ))}
@@ -436,7 +435,6 @@ const AddBroadcastPage = () => {
               </div>
             </div>
 
-            {/* Channel selection */}
             <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
               <div className="border-l-4 border-l-emerald-500 dark:border-l-emerald-600 p-4">
                 <div className="flex items-center">
@@ -541,7 +539,6 @@ const AddBroadcastPage = () => {
               </div>
             </div>
 
-            {/* Target Audience */}
             <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm overflow-hidden">
               <div className="border-l-4 border-l-violet-500 dark:border-l-violet-600 p-4">
                 <div className="flex items-center">
@@ -553,7 +550,6 @@ const AddBroadcastPage = () => {
 
               <div className="p-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Gender Selection */}
                   <div>
                     <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Gender</label>
                     <div className="relative">
@@ -576,7 +572,6 @@ const AddBroadcastPage = () => {
                     <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-500">Target users by gender identity</p>
                   </div>
 
-                  {/* Country Selection */}
                   <div>
                     <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Country</label>
                     <div className="relative">

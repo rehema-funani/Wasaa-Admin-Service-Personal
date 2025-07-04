@@ -86,8 +86,8 @@ const BroadcastsPage = () => {
 
     setIsDeleting(true);
     try {
-      await notificationService.deleteBroadcast(broadcastToDelete._id);
-      setBroadcasts(broadcasts.filter(b => b._id !== broadcastToDelete._id));
+      await notificationService.deleteBroadcast(broadcastToDelete.id);
+      setBroadcasts(broadcasts.filter(b => b.id !== broadcastToDelete.id));
       setShowDeleteModal(false);
       setBroadcastToDelete(null);
       toast.success('Broadcast deleted successfully');
@@ -104,7 +104,6 @@ const BroadcastsPage = () => {
     setBroadcastToDelete(null);
   };
 
-  // Broadcast actions
   const handleActionClick = async (action: string, id: string) => {
     try {
       let actionText = '';
@@ -287,7 +286,7 @@ const BroadcastsPage = () => {
       case 'scheduled':
         return (
           <motion.button
-            onClick={() => handleActionClick('execute', broadcast._id)}
+            onClick={() => handleActionClick('execute', broadcast.id)}
             className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-300 rounded-full transition-all"
             title="Send Now"
           >
@@ -297,7 +296,7 @@ const BroadcastsPage = () => {
       case 'sending':
         return (
           <motion.button
-            onClick={() => handleActionClick('pause', broadcast._id)}
+            onClick={() => handleActionClick('pause', broadcast.id)}
             className="p-1.5 hover:bg-purple-50 dark:hover:bg-purple-900/20 text-neutral-400 hover:text-purple-600 dark:hover:text-purple-300 rounded-full transition-all"
             title="Pause"
           >
@@ -307,7 +306,7 @@ const BroadcastsPage = () => {
       case 'paused':
         return (
           <motion.button
-            onClick={() => handleActionClick('resume', broadcast._id)}
+            onClick={() => handleActionClick('resume', broadcast.id)}
             className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-300 rounded-full transition-all"
             title="Resume"
           >
@@ -569,7 +568,7 @@ const BroadcastsPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {broadcasts?.map((broadcast, index) => (
               <div
-                key={broadcast._id}
+                key={broadcast.id}
                 className="group relative bg-white dark:bg-neutral-800 rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md"
               >
                 <div className="p-4">
@@ -592,16 +591,16 @@ const BroadcastsPage = () => {
                         className="p-1 text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setShowBroadcastDetail(showBroadcastDetail === broadcast._id ? null : broadcast._id);
+                          setShowBroadcastDetail(showBroadcastDetail === broadcast.id ? null : broadcast.id);
                         }}
                       >
                         <MoreVertical size={16} />
                       </button>
 
-                      {showBroadcastDetail === broadcast._id && (
+                      {showBroadcastDetail === broadcast.id && (
                         <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-neutral-800 rounded-md shadow-lg border border-neutral-200 dark:border-neutral-700 py-1 z-10">
                           <button
-                            onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast._id}`, {
+                            onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast.id}`, {
                               state: { broadcast }
                             })}
                             className="w-full text-left px-3 py-1.5 text-xs text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center"
@@ -623,7 +622,7 @@ const BroadcastsPage = () => {
                     </div>
                   </div>
 
-                  <div onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast._id}`, { state: { broadcast } })} className="cursor-pointer">
+                  <div onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast.id}`, { state: { broadcast } })} className="cursor-pointer">
                     <div className="mb-3">
                       <h3 className="text-sm font-medium text-neutral-900 dark:text-white mb-1 line-clamp-1">
                         {broadcast.title}
@@ -691,7 +690,7 @@ const BroadcastsPage = () => {
                     {getActionButtons(broadcast)}
 
                     <motion.button
-                      onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast._id}`, {
+                      onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast.id}`, {
                         state: { broadcast }
                       })}
                       className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 rounded-full transition-all"
