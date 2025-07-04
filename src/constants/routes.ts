@@ -1012,41 +1012,41 @@ const routes: Route[] = [
           icon: FileText,
           description: 'System activity monitoring'
         },
-        {
-          type: 'dropdown',
-          title: 'Security',
-          icon: LockKeyhole,
-          key: 'security',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/security/access-logs',
-              title: 'Access Logs',
-            },
-            {
-              type: 'link',
-              path: '/admin/security/auth-settings',
-              title: 'Authentication Settings',
-            },
-            {
-              type: 'link',
-              path: '/admin/security/data-protection',
-              title: 'Data Protection',
-            },
-            {
-              type: 'link',
-              path: '/admin/security/vulnerability',
-              title: 'Vulnerability Management',
-            },
-          ],
-        },
-        {
-          type: 'link',
-          path: '/admin/compliance/dashboard',
-          title: 'Compliance Dashboard',
-          icon: BadgeAlert,
-          description: 'Regulatory compliance monitoring'
-        },
+        // {
+        //   type: 'dropdown',
+        //   title: 'Security',
+        //   icon: LockKeyhole,
+        //   key: 'security',
+        //   items: [
+        //     {
+        //       type: 'link',
+        //       path: '/admin/security/access-logs',
+        //       title: 'Access Logs',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/security/auth-settings',
+        //       title: 'Authentication Settings',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/security/data-protection',
+        //       title: 'Data Protection',
+        //     },
+        //     {
+        //       type: 'link',
+        //       path: '/admin/security/vulnerability',
+        //       title: 'Vulnerability Management',
+        //     },
+        //   ],
+        // },
+        // {
+        //   type: 'link',
+        //   path: '/admin/compliance/dashboard',
+        //   title: 'Compliance Dashboard',
+        //   icon: BadgeAlert,
+        //   description: 'Regulatory compliance monitoring'
+        // },
       ],
     },
 ];
