@@ -8,6 +8,11 @@ export const notificationService = {
     return response.data;
   },
 
+  getUserNotifications: async (user_id: String, params: any) => {
+    const response = await notification.get(`/notifications?user_id=${user_id}`, { params });
+    return response.data;
+  },
+
   // ======== TEMPLATES ==========
   getTemplates: async () => {
     const response = await notification.get('/templates');
