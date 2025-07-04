@@ -118,7 +118,7 @@ class FinanceService {
   async getSystemWallets(filters: FilterOptions = {}): Promise<Wallet[]> {
     try {
       const response = await finance.get('/wallets/system', { params: filters });
-      return response.data;
+      return response.data.wallets;
     } catch (error) {
       this.handleError(error, 'Failed to get system wallets');
     }

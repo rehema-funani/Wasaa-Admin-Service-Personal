@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-// Define TypeScript interface for user data based on the provided structure
 interface Permission {
   id: string;
   title: string;
@@ -524,7 +523,6 @@ const UserProfile: React.FC = () => {
               </div>
             )}
 
-            {/* Permissions Section */}
             {activeSection === 'permissions' && (
               <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div className="px-8 py-5 border-b border-slate-100">

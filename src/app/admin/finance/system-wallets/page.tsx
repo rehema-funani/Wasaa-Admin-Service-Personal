@@ -80,7 +80,6 @@ const SystemWalletsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('7d');
   const [totalBalance, setTotalBalance] = useState(0);
   const [totalVolume, setTotalVolume] = useState(0);
   const [showDropdown, setShowDropdown] = useState(null);
@@ -91,7 +90,7 @@ const SystemWalletsPage = () => {
       try {
         const response = await financeService.getSystemWallets();
 
-        const processedWallets = response.wallets.map(wallet => ({
+        const processedWallets = response.map((wallet: any) => ({
           ...wallet,
           balance: parseFloat(wallet.availableBalance) || 0,
           type: wallet.systemWalletType || wallet.type,

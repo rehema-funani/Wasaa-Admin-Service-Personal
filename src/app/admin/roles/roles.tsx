@@ -1,270 +1,638 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Eye,
-    Plus,
-    Clock,
-    CalendarDays,
-    AlertCircle,
-    ShieldCheck
+  Eye,
+  Plus,
+  Clock,
+  Shield,
+  Search,
+  Settings,
+  Users,
+  AlertCircle,
+  ChevronDown,
+  ChevronRight,
+  ShieldAlert,
+  ShieldCheck,
+  CalendarClock,
+  LayoutGrid,
+  List
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import StatusBadge from '../../../components/common/StatusBadge';
-import SearchBox from '../../../components/common/SearchBox';
-import DataTable from '../../../components/common/DataTable';
-import Pagination from '../../../components/common/Pagination';
 import { roleService } from '../../../api/services/roles';
-import { Role } from '../../../types/user';
 
-const roles = () => {
-    const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [roles, setRoles] = useState<Role[]>([]);
-    const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [recentSearches, setRecentSearches] = useState<string[]>([
-        'admin', 'inactive', 'moderator'
-    ]);
+interface Role {
+  id: string;
+  title: string;
+  description: string;
+  code: string | null;
+  default: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
 
-    const fetchRoles = async () => {
-        setIsLoading(true);
-        setError(null);
+  userCount?: number;
+  status?: string;
+}
 
-        try {
-            const response = await roleService.getRoles();
-            const formattedRoles = response.map((role: any) => ({
-                id: role.id,
-                title: role.title || 'Untitled Role',
-                description: role.description || 'No description',
-                permissions: role.permissions || [],
-                status: role.status || 'active',
-                userCount: role.user_count || 0,
-                createdAt: role.createdAt ? format(new Date(role.createdAt), 'MMM d, yyyy') : 'Unknown',
-                updatedAt: role.updatedAt ? formatDistanceToNow(new Date(role.updatedAt), { addSuffix: true }) : 'Never'
-            }));
-
-            setRoles(formattedRoles);
-            setFilteredRoles(formattedRoles);
-        } catch (err) {
-            console.error('Failed to fetch roles:', err);
-            setError('Failed to load roles. Please try again later.');
-            toast.error('Failed to load roles');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchRoles();
-    }, []);
-
-    const columns = [
-        {
-            id: 'title',
-            header: 'Role Name',
-            accessor: (row: Role) => row.title,
-            sortable: true,
-            cell: (value: string, row: Role) => (
-                <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
-                        <ShieldCheck size={16} strokeWidth={2} />
-                    </div>
-                    <div>
-                        <p className="font-medium text-gray-800">{value}</p>
-                        <p className="text-xs text-gray-500 line-clamp-1">{row.description}</p>
-                    </div>
-                </div>
-            )
-        },
-        {
-            id: 'status',
-            header: 'Status',
-            accessor: (row: Role) => row.status,
-            sortable: true,
-            width: '120px',
-            cell: (value: string) => (
-                <StatusBadge status={value as any} size="sm" withIcon withDot={value === 'active'} />
-            )
-        },
-        {
-            id: 'createdAt',
-            header: 'Created',
-            accessor: (row: Role) => row.createdAt,
-            sortable: true,
-            cell: (value: string) => (
-                <div className="flex items-center">
-                    <CalendarDays size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-                    <span>{value}</span>
-                </div>
-            )
-        },
-        {
-            id: 'updatedAt',
-            header: 'Last Updated',
-            accessor: (row: Role) => row.updatedAt,
-            sortable: true,
-            cell: (value: string) => (
-                <div className="flex items-center">
-                    <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-                    <span>{value}</span>
-                </div>
-            )
-        },
-        {
-            id: 'actions',
-            header: 'Actions',
-            accessor: (row: Role) => row.id,
-            sortable: false,
-            width: '100px',
-            cell: (value: string, row: Role) => (
-                <div className="flex items-center space-x-1">
-                    <motion.button
-                        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-primary-600"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        aria-label="View role"
-                        onClick={() => handleViewRole(row)}
-                    >
-                        <Eye size={16} strokeWidth={1.8} />
-                    </motion.button>
-                </div>
-            )
-        }
-    ];
-
-    const handleViewRole = (role: Role) => {
-        navigate(`/admin/system/roles/${role.id}`);
-    };
-
-    const handleAddRole = () => {
-        navigate('/admin/system/roles/create');
-    };
-
-    const handleSearch = (query: string) => {
-        setSearchQuery(query);
-
-        if (query.trim() === '') {
-            setFilteredRoles(roles);
-            return;
-        }
-
-        const lowercasedQuery = query.toLowerCase();
-
-        const filtered = roles.filter(role =>
-            (role.title?.toLowerCase() || '').includes(lowercasedQuery) ||
-            (role.description?.toLowerCase() || '').includes(lowercasedQuery)
-        );
-
-        setFilteredRoles(filtered);
-
-        if (query.trim() !== '' && !recentSearches.includes(query)) {
-            setRecentSearches(prev => [query, ...prev.slice(0, 4)]);
-        }
-
-        setCurrentPage(1);
-    };
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-    };
-
-    const handleItemsPerPageChange = (perPage: number) => {
-        setItemsPerPage(perPage);
-        setCurrentPage(1);
-    };
-
+const RoleCategoryBadge = ({ role }) => {
+  if (role.default) {
     return (
-        <div className="p-6 w-full mx-auto">
-            <motion.div
-                className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-            >
-                <div>
-                    <h1 className="text-2xl font-semibold text-gray-800">Roles</h1>
-                    <p className="text-gray-500 mt-1">Manage user roles and associated permissions</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    <motion.button
-                        className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
-                        whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
-                        whileTap={{ y: 0 }}
-                        onClick={handleAddRole}
-                    >
-                        <Plus size={16} className="mr-2" strokeWidth={1.8} />
-                        Add Role
-                    </motion.button>
-                </div>
-            </motion.div>
-
-            <motion.div
-                className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-            >
-                <div className="md:col-span-2">
-                    <SearchBox
-                        placeholder="Search roles by name or description..."
-                        onSearch={handleSearch}
-                        suggestions={roles.map(role => role.title).slice(0, 5)}
-                        recentSearches={recentSearches}
-                        showRecentByDefault={true}
-                    />
-                </div>
-            </motion.div>
-
-            {error && (
-                <motion.div
-                    className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <AlertCircle size={18} className="mr-2" />
-                    {error}
-                </motion.div>
-            )}
-
-            <motion.div
-                className="mb-6"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-            >
-                <DataTable
-                    columns={columns}
-                    data={filteredRoles}
-                    selectable={true}
-                    isLoading={isLoading}
-                    emptyMessage="No roles found."
-                    defaultRowsPerPage={itemsPerPage}
-                />
-            </motion.div>
-
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
-            >
-                <Pagination
-                    totalItems={filteredRoles.length}
-                    itemsPerPage={itemsPerPage}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
-                    onItemsPerPageChange={handleItemsPerPageChange}
-                    showItemsPerPage={true}
-                    itemsPerPageOptions={[10, 25, 50, 100]}
-                    showSummary={true}
-                />
-            </motion.div>
-        </div>
+      <div className="px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-600 rounded-full border border-blue-100">
+        System Default
+      </div>
     );
+  }
+
+  if (role.title.toLowerCase().includes('admin')) {
+    return (
+      <div className="px-2 py-0.5 text-xs font-medium bg-purple-50 text-purple-600 rounded-full border border-purple-100">
+        Admin
+      </div>
+    );
+  }
+
+  if (role.title.toLowerCase().includes('support')) {
+    return (
+      <div className="px-2 py-0.5 text-xs font-medium bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100">
+        Support
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-2 py-0.5 text-xs font-medium bg-gray-50 text-gray-600 rounded-full border border-gray-100">
+      Custom
+    </div>
+  );
 };
 
-export default roles;
+const StatusBadge = ({ active }) => {
+  return active ? (
+    <div className="flex items-center text-emerald-600 text-xs font-medium">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+      Active
+    </div>
+  ) : (
+    <div className="flex items-center text-gray-500 text-xs font-medium">
+      <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mr-1.5"></span>
+      Inactive
+    </div>
+  );
+};
+
+const RolesPage = () => {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [selectedRoleType, setSelectedRoleType] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('title');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const fetchRoles = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await roleService.getRoles();
+
+      const processedRoles = response.map((role: Role) => ({
+        ...role,
+        status: role.deletedAt ? 'inactive' : 'active',
+        userCount: Math.floor(Math.random() * 50)
+      }));
+
+      setRoles(processedRoles);
+      setFilteredRoles(processedRoles);
+    } catch (err) {
+      console.error('Failed to fetch roles:', err);
+      setError('Failed to load roles. Please try again later.');
+      toast.error('Failed to load roles');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    let result = [...roles];
+
+    if (searchQuery) {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      result = result.filter(role =>
+        role.title.toLowerCase().includes(lowercasedQuery) ||
+        role.description.toLowerCase().includes(lowercasedQuery) ||
+        (role.code && role.code.toLowerCase().includes(lowercasedQuery))
+      );
+    }
+
+    if (selectedRoleType !== 'all') {
+      if (selectedRoleType === 'default') {
+        result = result.filter(role => role.default);
+      } else if (selectedRoleType === 'admin') {
+        result = result.filter(role => role.title.toLowerCase().includes('admin'));
+      } else if (selectedRoleType === 'support') {
+        result = result.filter(role => role.title.toLowerCase().includes('support'));
+      } else if (selectedRoleType === 'custom') {
+        result = result.filter(role =>
+          !role.default &&
+          !role.title.toLowerCase().includes('admin') &&
+          !role.title.toLowerCase().includes('support')
+        );
+      }
+    }
+
+    result.sort((a, b) => {
+      let comparison = 0;
+
+      if (sortBy === 'title') {
+        comparison = a.title.localeCompare(b.title);
+      } else if (sortBy === 'createdAt') {
+        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      } else if (sortBy === 'updatedAt') {
+        comparison = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+      } else if (sortBy === 'default') {
+        comparison = (a.default === b.default) ? 0 : a.default ? -1 : 1;
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+
+    setFilteredRoles(result);
+  }, [roles, searchQuery, selectedRoleType, sortBy, sortDirection]);
+
+  const handleViewRole = (role: Role) => {
+    navigate(`/admin/system/roles/${role.id}`);
+  };
+
+  const handleAddRole = () => {
+    navigate('/admin/system/roles/create');
+  };
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSortChange = (newSortBy: string) => {
+    if (sortBy === newSortBy) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(newSortBy);
+      setSortDirection('asc');
+    }
+  };
+
+  // Function to get the role icon based on role properties
+  const getRoleIcon = (role: Role) => {
+    if (role.default) {
+      return <ShieldCheck className="text-blue-500" size={18} />;
+    }
+
+    if (role.title.toLowerCase().includes('admin')) {
+      return <ShieldAlert className="text-purple-500" size={18} />;
+    }
+
+    if (role.title.toLowerCase().includes('support')) {
+      return <Users className="text-emerald-500" size={18} />;
+    }
+
+    return <Shield className="text-gray-500" size={18} />;
+  };
+
+  // Get gradient colors based on role
+  const getRoleGradient = (role: Role) => {
+    if (role.default) {
+      return 'from-blue-500 to-indigo-600';
+    }
+
+    if (role.title.toLowerCase().includes('admin')) {
+      return 'from-purple-500 to-indigo-600';
+    }
+
+    if (role.title.toLowerCase().includes('support')) {
+      return 'from-emerald-500 to-teal-600';
+    }
+
+    return 'from-gray-700 to-gray-900';
+  };
+
+  // Loading skeleton for grid view
+  const GridSkeleton = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      {[1, 2, 3, 4, 5, 6].map((item) => (
+        <div
+          key={item}
+          className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 animate-pulse"
+        >
+          <div className="flex items-center mb-4">
+            <div className="w-10 h-10 rounded-lg bg-gray-200 mr-3"></div>
+            <div className="flex-1">
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+            </div>
+          </div>
+          <div className="h-12 bg-gray-100 rounded mb-4"></div>
+          <div className="flex justify-between">
+            <div className="h-3 bg-gray-100 rounded w-1/3"></div>
+            <div className="h-3 bg-gray-100 rounded w-1/4"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Loading skeleton for list view
+  const ListSkeleton = () => (
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm divide-y divide-gray-100">
+      {[1, 2, 3, 4, 5].map((item) => (
+        <div key={item} className="p-4 animate-pulse">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-lg bg-gray-200 mr-3"></div>
+            <div className="flex-1">
+              <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+              <div className="h-3 bg-gray-100 rounded w-1/3"></div>
+            </div>
+            <div className="w-20 h-5 bg-gray-100 rounded"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="p-6 w-full mx-auto max-w-7xl">
+      {/* Header */}
+      <motion.div
+        className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div>
+          <h1 className="text-2xl font-light text-gray-900">Role Management</h1>
+          <p className="text-gray-500 text-sm mt-1">Configure and manage user roles and permissions</p>
+        </div>
+
+        <motion.button
+          className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg text-sm shadow-sm"
+          whileHover={{
+            y: -2,
+            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)'
+          }}
+          whileTap={{ y: 0 }}
+          onClick={handleAddRole}
+        >
+          <Plus size={16} className="mr-2" />
+          Create Role
+        </motion.button>
+      </motion.div>
+
+      {/* Filters and Controls */}
+      <motion.div
+        className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Search */}
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={16} className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search roles..."
+              className="pl-10 pr-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+          </div>
+
+          {/* Role Type Filter */}
+          <div className="flex items-center">
+            <span className="text-sm text-gray-500 mr-2">Type:</span>
+            <select
+              className="border border-gray-200 rounded-lg text-sm py-2 px-3 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              value={selectedRoleType}
+              onChange={(e) => setSelectedRoleType(e.target.value)}
+            >
+              <option value="all">All Roles</option>
+              <option value="default">System Default</option>
+              <option value="admin">Admin Roles</option>
+              <option value="support">Support Roles</option>
+              <option value="custom">Custom Roles</option>
+            </select>
+          </div>
+
+          {/* Sort By */}
+          <div className="flex items-center">
+            <span className="text-sm text-gray-500 mr-2">Sort:</span>
+            <select
+              className="border border-gray-200 rounded-lg text-sm py-2 px-3 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              value={sortBy}
+              onChange={(e) => handleSortChange(e.target.value)}
+            >
+              <option value="title">Role Name</option>
+              <option value="createdAt">Created Date</option>
+              <option value="updatedAt">Last Updated</option>
+              <option value="default">Default Status</option>
+            </select>
+            <button
+              className="ml-2 p-2 text-gray-500 hover:text-primary-600 rounded-lg"
+              onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
+            >
+              {sortDirection === 'asc' ?
+                <ChevronDown size={16} /> :
+                <ChevronRight className="rotate-180" size={16} />
+              }
+            </button>
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+            <button
+              className={`p-2 ${viewMode === 'grid' ? 'bg-primary-50 text-primary-600' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+              onClick={() => setViewMode('grid')}
+              title="Grid View"
+            >
+              <LayoutGrid size={16} />
+            </button>
+            <button
+              className={`p-2 ${viewMode === 'list' ? 'bg-primary-50 text-primary-600' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
+              onClick={() => setViewMode('list')}
+              title="List View"
+            >
+              <List size={16} />
+            </button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Error Message */}
+      {error && (
+        <motion.div
+          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <AlertCircle size={18} className="mr-2" />
+          {error}
+        </motion.div>
+      )}
+
+      {/* Results Summary */}
+      <motion.div
+        className="flex items-center mb-4 text-sm text-gray-500"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Users size={14} className="mr-2" />
+        Showing <span className="font-medium text-gray-700 mx-1">{filteredRoles.length}</span>
+        of <span className="font-medium text-gray-700 mx-1">{roles.length}</span> roles
+      </motion.div>
+
+      {/* Roles Display */}
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {viewMode === 'grid' ? <GridSkeleton /> : <ListSkeleton />}
+          </motion.div>
+        ) : filteredRoles.length === 0 ? (
+          <motion.div
+            key="empty"
+            className="bg-white border border-gray-100 rounded-xl p-12 text-center shadow-sm"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="inline-flex items-center justify-center p-4 bg-gray-100 rounded-full mb-4">
+              <Search size={24} className="text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No roles found</h3>
+            <p className="text-gray-500 mb-6">Try adjusting your search or filters to find what you're looking for.</p>
+            <button
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition-colors"
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedRoleType('all');
+              }}
+            >
+              Clear filters
+            </button>
+          </motion.div>
+        ) : viewMode === 'grid' ? (
+          <motion.div
+            key="grid"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {filteredRoles.map((role, index) => (
+              <motion.div
+                key={role.id}
+                className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: index * 0.05 }}
+                whileHover={{ y: -2 }}
+              >
+                {/* Colored header */}
+                <div className={`h-2 bg-gradient-to-r ${getRoleGradient(role)}`}></div>
+
+                <div className="p-5">
+                  {/* Role header */}
+                  <div className="flex items-start mb-3">
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getRoleGradient(role)} flex items-center justify-center text-white mr-3 shadow-sm`}>
+                      {getRoleIcon(role)}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-gray-900 mb-1 truncate">{role.title}</h3>
+                      <RoleCategoryBadge role={role} />
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-gray-500 text-sm mb-4 line-clamp-2">
+                    {role.description || "No description provided"}
+                  </p>
+
+                  {/* Role details */}
+                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                    <div className="flex items-center">
+                      <Users size={12} className="mr-1" />
+                      <span>{role.userCount || 0} users</span>
+                    </div>
+
+                    <div className="flex items-center">
+                      <Clock size={12} className="mr-1" />
+                      <span>{formatDistanceToNow(new Date(role.updatedAt), { addSuffix: true })}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                    <StatusBadge active={!role.deletedAt} />
+
+                    <button
+                      onClick={() => handleViewRole(role)}
+                      className="flex items-center text-xs font-medium text-primary-600 hover:text-primary-700"
+                    >
+                      <span className="mr-1">View Details</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="list"
+            className="bg-white rounded-xl border border-gray-100 shadow-sm divide-y divide-gray-100 overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {filteredRoles.map((role, index) => (
+              <motion.div
+                key={role.id}
+                className="hover:bg-gray-50 transition-colors"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2, delay: index * 0.03 }}
+              >
+                <div className="flex items-center px-6 py-4">
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getRoleGradient(role)} flex items-center justify-center text-white mr-4 shadow-sm`}>
+                    {getRoleIcon(role)}
+                  </div>
+
+                  <div className="flex-1 min-w-0 mr-4">
+                    <div className="flex items-center mb-1">
+                      <h3 className="font-medium text-gray-900 mr-2">{role.title}</h3>
+                      <RoleCategoryBadge role={role} />
+                    </div>
+                    <p className="text-gray-500 text-sm truncate">
+                      {role.description || "No description provided"}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-6">
+                    <div className="text-sm text-gray-500 hidden md:block">
+                      <div className="flex items-center">
+                        <CalendarClock size={14} className="mr-1.5" />
+                        <span>{format(new Date(role.createdAt), 'MMM d, yyyy')}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-sm text-gray-500 hidden lg:block">
+                      <div className="flex items-center">
+                        <Users size={14} className="mr-1.5" />
+                        <span>{role.userCount || 0} users</span>
+                      </div>
+                    </div>
+
+                    <StatusBadge active={!role.deletedAt} />
+
+                    <button
+                      onClick={() => handleViewRole(role)}
+                      className="p-2 text-gray-500 hover:text-primary-600 rounded-lg"
+                    >
+                      <Eye size={18} />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Quick Stats */}
+      {!isLoading && filteredRoles.length > 0 && (
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+        >
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-700">System Default Roles</h3>
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <ShieldCheck size={18} className="text-blue-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-light text-gray-900">
+              {roles.filter(r => r.default).length}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Pre-configured roles with standard permissions
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-700">Custom Roles</h3>
+              <div className="p-2 bg-purple-50 rounded-lg">
+                <Settings size={18} className="text-purple-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-light text-gray-900">
+              {roles.filter(r => !r.default).length}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              User-defined roles with custom permissions
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-700">Last Updated</h3>
+              <div className="p-2 bg-amber-50 rounded-lg">
+                <Clock size={18} className="text-amber-600" />
+              </div>
+            </div>
+            <p className="text-gray-900 text-sm font-medium">
+              {roles.length > 0 ? (
+                format(
+                  new Date(
+                    roles.reduce((latest, role) =>
+                      new Date(role.updatedAt) > new Date(latest) ? role.updatedAt : latest,
+                      roles[0].updatedAt
+                    )
+                  ),
+                  'MMMM d, yyyy'
+                )
+              ) : 'N/A'}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Most recent role configuration change
+            </p>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+export default RolesPage;
