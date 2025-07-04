@@ -22,7 +22,6 @@ import {
   Zap,
   ChevronRight
 } from 'lucide-react'
-import GradientBackground from '../common/GradientBackground'
 
 const AdminLayout = () => {
   const [sessionTimeRemaining, setSessionTimeRemaining] = useState(1800)
@@ -141,7 +140,6 @@ const AdminLayout = () => {
     }
   }
 
-  // Get risk indicator
   const getRiskIndicator = (risk: any) => {
     switch (risk) {
       case 'low':
@@ -155,8 +153,7 @@ const AdminLayout = () => {
     }
   }
 
-  // Get alert severity indicator
-  const getAlertSeverityIndicator = (severity) => {
+  const getAlertSeverityIndicator = (severity: any) => {
     switch (severity) {
       case 'low':
         return <span className="text-blue-500 font-medium">Low</span>
@@ -171,11 +168,6 @@ const AdminLayout = () => {
 
   return (
     <div className="relative flex h-screen transition-colors duration-300">
-      {/* Position the GradientBackground at the root level with a negative z-index */}
-      <div className="absolute inset-0 z-[-1]">
-        <GradientBackground />
-      </div>
-
       <PageTitle />
       <SlimSidebar />
 
@@ -184,7 +176,6 @@ const AdminLayout = () => {
 
         {showGlobalMetrics && (
           <div className="bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm px-4 py-2 transition-all duration-300 mt-[70px]">
-            {/* Metrics content */}
           </div>
         )}
 

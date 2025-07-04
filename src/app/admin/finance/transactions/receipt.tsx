@@ -18,54 +18,18 @@ import {
   Tag,
   Info,
   Wallet,
-  CircleDollarSign,
-  ArrowDown,
-  ArrowUp
+  CircleDollarSign
 } from 'lucide-react';
-
-const financeService = {
-  getTransaction: async (id) => {
-    return {
-      status: true,
-      transaction: {
-        id: "15806753-7598-4cd8-bd3d-3a6957c78aaa",
-        user_uuid: "cab44deb-b976-4a06-b4db-8e196ea99b6b",
-        amount: "1000",
-        description: "You have received KES 1000 from Daniel",
-        source: null,
-        type: "RECEIVE",
-        debit: "10012400",
-        credit: "220",
-        status: "COMPLETED",
-        counterpartyId: "4985a920-53ea-464b-968f-3ca95d1fe9a8",
-        reference: "TX-1750687285782",
-        createdAt: "2025-06-23T14:01:25.737Z",
-        wallet: {
-          id: "4985a920-53ea-464b-968f-3ca95d1fe9a8",
-          user_uuid: "4d0ee74a-1dc0-4eeb-bee5-e7a46d1cc608",
-          group_uuid: null,
-          systemWalletType: null,
-          type: "user",
-          status: "Active",
-          availableBalance: "999978010010",
-          lockedBalance: "0",
-          debit: "10012400",
-          credit: "220",
-          currencyId: "77c16786-eb9d-4c51-bf7f-facb3589396a",
-          createdAt: "2025-06-20T07:30:35.785Z",
-          updatedAt: "2025-06-23T14:01:25.737Z"
-        }
-      }
-    };
-  }
-};
+import financeService from '../../../../api/services/finance';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const TransactionReceiptPage = () => {
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [id, setId] = useState("15806753-7598-4cd8-bd3d-3a6957c78aaa");
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -94,23 +58,16 @@ const TransactionReceiptPage = () => {
   }, [id]);
 
   const navigateBack = () => {
-    // window.history.back();
-    console.log("Navigating back");
+    navigate(-1)
   };
 
-  const navigateTo = (url) => {
-    // window.location.href = url;
-    console.log("Navigating to:", url);
-  };
-
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text: any) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const formatCurrency = (amount) => {
-    // Format large numbers properly
+  const formatCurrency = (amount: any) => {
     const numAmount = parseFloat(amount) || 0;
     return new Intl.NumberFormat('en-KE', {
       style: 'currency',
@@ -194,7 +151,7 @@ const TransactionReceiptPage = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
         return 'bg-emerald-50 text-emerald-700';
@@ -231,7 +188,7 @@ const TransactionReceiptPage = () => {
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Transaction Not Found</h2>
           <p className="text-gray-600 mb-8">{error || "We couldn't locate the requested transaction record."}</p>
           <button
-            onClick={() => navigateTo('/admin/finance/transactions')}
+            onClick={() => navigate('/admin/finance/transactions')}
             className="px-8 py-3 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-blue-100"
           >
             Return to Transactions
@@ -241,12 +198,10 @@ const TransactionReceiptPage = () => {
     );
   }
 
-  const transactionColor = getTransactionColor(transaction.type);
   const isCredit = transaction.type === 'RECEIVE' || transaction.type === 'DEPOSIT';
   const transactionDate = formatDate(transaction.createdAt);
   const transactionTime = formatTime(transaction.createdAt);
 
-  // Format the wallet balance to a more reasonable value
   const formattedBalance = formatCurrency(
     transaction.wallet.availableBalance.length > 10
       ? transaction.wallet.availableBalance.slice(0, 10)
@@ -255,8 +210,7 @@ const TransactionReceiptPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm print:hidden">
+      <div className="bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm print:hidden">
         <div className="max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <button
@@ -294,7 +248,6 @@ const TransactionReceiptPage = () => {
       </div>
 
       <div className="max-w-5xl mx-auto pb-20 pt-8">
-        {/* Transaction Header */}
         <div className="mb-10 text-center">
           <h1 className="text-blue-500 text-xl font-medium mb-1">
             Transaction Receipt
@@ -489,7 +442,7 @@ const TransactionReceiptPage = () => {
 
         <div className="text-center print:hidden">
           <button
-            onClick={() => navigateTo('/admin/finance/transactions')}
+            onClick={() => navigate('/admin/finance/transactions')}
             className="px-6 py-2.5 text-blue-500 hover:text-blue-600 font-medium transition-colors"
           >
             Return to Transaction Registry
