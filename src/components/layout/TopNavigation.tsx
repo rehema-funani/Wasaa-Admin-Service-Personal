@@ -89,7 +89,7 @@ const TopNavigation = () => {
 
   useEffect(() => {
     getNotifications();
-  }, []);
+  }, [notificationsOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -683,7 +683,7 @@ const TopNavigation = () => {
 
             {/* Notifications */}
             <div className="relative" ref={notificationsRef}>
-              <button
+              {/* <button
                 className="p-2.5 rounded-xl hover:bg-white/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 hover:text-indigo-600 relative"
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
               >
@@ -691,7 +691,7 @@ const TopNavigation = () => {
                 {unreadNotifications > 0 && (
                   <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full shadow-lg shadow-rose-500/50 animate-pulse"></span>
                 )}
-              </button>
+              </button> */}
 
               {notificationsOpen && (
                 <div className="absolute right-0 mt-3 w-80 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown">
