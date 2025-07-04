@@ -11,6 +11,7 @@ import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 import logo from '../../assets/images/logo-wasaa.png';
 import { getUserPermissions, routePermissionsMap } from '../../utils/permissions';
+import { notificationService } from '../../api/services/notification';
 
 const getRequiredPermissionsForRoute = (path: string) => {
   if (!routePermissionsMap[path]) {
@@ -63,6 +64,7 @@ const TopNavigation = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(3);
 
@@ -76,7 +78,18 @@ const TopNavigation = () => {
   const user = localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : null;
   const userPermissions = getUserPermissions();
 
-  const notifications = [];
+  const getNotifications = async () => {
+    try {
+      const response = await notificationService.getUserNotifications(user?.id);
+      setNotifications(response.notifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  }
+
+  useEffect(() => {
+    getNotifications();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
