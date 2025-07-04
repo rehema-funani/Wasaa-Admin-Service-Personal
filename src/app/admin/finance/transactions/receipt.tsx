@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   Calendar,
@@ -10,7 +10,6 @@ import {
   Hash,
   Share,
   Printer,
-  CreditCard,
   Shield,
   ArrowDownToLine,
   ArrowUpFromLine,
@@ -22,14 +21,18 @@ import {
 } from 'lucide-react';
 import financeService from '../../../../api/services/finance';
 import { useNavigate, useParams } from 'react-router-dom';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const TransactionReceiptPage = () => {
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
   const { id } = useParams();
   const navigate = useNavigate();
+  const receiptRef = useRef(null);
 
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -58,16 +61,102 @@ const TransactionReceiptPage = () => {
   }, [id]);
 
   const navigateBack = () => {
-    navigate(-1)
+    navigate(-1);
   };
 
-  const copyToClipboard = (text: any) => {
+  // Show notification
+  const showNotification = (message, type = 'success') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
+  };
+
+  // Copy to clipboard function
+  const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const formatCurrency = (amount: any) => {
+  // Share functionality
+  const shareTransaction = async () => {
+    const shareData = {
+      title: `Transaction Receipt: ${transaction.reference}`,
+      text: `Transaction of ${formatCurrency(transaction.amount)} on ${formatDate(transaction.createdAt)}`,
+      url: window.location.href
+    };
+
+    try {
+      if (navigator.share && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        showNotification('Transaction shared successfully');
+      } else {
+        // Fallback to copying URL to clipboard
+        copyToClipboard(window.location.href);
+        showNotification('Transaction URL copied to clipboard');
+      }
+    } catch (error) {
+      console.error('Error sharing transaction:', error);
+      // Fallback to copying URL
+      copyToClipboard(window.location.href);
+      showNotification('Transaction URL copied to clipboard');
+    }
+  };
+
+  // Print functionality with improved handling
+  const printReceipt = () => {
+    window.print();
+  };
+
+  // Download functionality
+  const downloadReceipt = async () => {
+    if (!receiptRef.current) {
+      showNotification('Could not generate receipt', 'error');
+      return;
+    }
+
+    try {
+      setNotification({ show: true, message: 'Generating PDF...', type: 'info' });
+
+      const element = receiptRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+
+      // A4 dimensions: 210 × 297 mm
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgWidth = 210 - 40; // A4 width with margins
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+      pdf.save(`Transaction_${transaction.reference}_${formatDateForFilename(transaction.createdAt)}.pdf`);
+
+      showNotification('Receipt downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading receipt:', error);
+      showNotification('Failed to download receipt', 'error');
+    }
+  };
+
+  const formatDateForFilename = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0];
+    } catch (error) {
+      return 'unknown-date';
+    }
+  };
+
+  const formatCurrency = (amount) => {
     const numAmount = parseFloat(amount) || 0;
     return new Intl.NumberFormat('en-KE', {
       style: 'currency',
@@ -151,7 +240,7 @@ const TransactionReceiptPage = () => {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case 'COMPLETED':
         return 'bg-emerald-50 text-emerald-700';
@@ -223,20 +312,21 @@ const TransactionReceiptPage = () => {
 
             <div className="flex items-center space-x-3">
               <button
-                onClick={() => copyToClipboard(transaction.id)}
+                onClick={shareTransaction}
                 className="flex items-center px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition"
               >
                 <Share size={16} className="mr-2" />
                 Share
               </button>
               <button
-                onClick={() => window.print()}
+                onClick={printReceipt}
                 className="flex items-center px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition"
               >
                 <Printer size={16} className="mr-2" />
                 Print
               </button>
               <button
+                onClick={downloadReceipt}
                 className="flex items-center px-5 py-2 text-sm bg-blue-500 text-white rounded-full hover:bg-blue-600 transition shadow-md shadow-blue-100"
               >
                 <Download size={16} className="mr-2" />
@@ -260,9 +350,9 @@ const TransactionReceiptPage = () => {
           </div>
         </div>
 
-        {/* Main Receipt Card */}
+        {/* Main Receipt Card - Add ref for PDF generation */}
         <div className="mx-auto px-6 mb-8">
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          <div ref={receiptRef} className="bg-white rounded-3xl shadow-xl overflow-hidden">
             {/* Amount Section */}
             <div className="px-8 py-10 bg-blue-50 border-b border-blue-100">
               <div className="flex items-center justify-between mb-6">
@@ -451,9 +541,16 @@ const TransactionReceiptPage = () => {
       </div>
 
       {copied && (
-        <div className="fixed bottom-6 right-6 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center">
+        <div className="fixed bottom-6 right-6 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center print:hidden">
           <CheckCircle size={16} className="mr-2 text-emerald-400" />
           <span>Copied to clipboard</span>
+        </div>
+      )}
+
+      {notification.show && (
+        <div className={`fixed bottom-6 right-6 ${notification.type === 'error' ? 'bg-red-600' : notification.type === 'info' ? 'bg-blue-600' : 'bg-slate-800'} text-white px-4 py-2 rounded-lg shadow-lg flex items-center print:hidden`}>
+          <CheckCircle size={16} className="mr-2 text-white" />
+          <span>{notification.message}</span>
         </div>
       )}
     </div>
