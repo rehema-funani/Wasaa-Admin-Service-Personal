@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Users,
   UserCheck,
@@ -16,13 +16,9 @@ import {
   Percent,
   RefreshCw,
   Radio,
-  ArrowUp,
-  ArrowDown,
   Shield,
   AlertCircle,
   Check,
-  Zap,
-  Lock,
   MessageCircle,
   User,
   Heart
@@ -119,76 +115,6 @@ const Dashboard = () => {
       isPositive: false,
       icon: <DollarSign size={20} className="text-amber-500 dark:text-amber-400" strokeWidth={1.8} />,
       bgColor: 'from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-900/20'
-    }
-  ];
-
-  const engagementStatsData = [
-    {
-      title: 'Avg. Session Time',
-      value: '8m 24s',
-      change: '+1.2m',
-      isPositive: true,
-      icon: <Clock size={20} className="text-violet-500 dark:text-violet-400" strokeWidth={1.8} />,
-      bgColor: 'from-violet-50 to-fuchsia-50 dark:from-violet-950/30 dark:to-fuchsia-900/20'
-    },
-    {
-      title: 'Message Sent',
-      value: '1.4M',
-      change: '+18.5%',
-      isPositive: true,
-      icon: <MessageCircle size={20} className="text-blue-500 dark:text-blue-400" strokeWidth={1.8} />,
-      bgColor: 'from-blue-50 to-sky-50 dark:from-blue-950/30 dark:to-sky-900/20'
-    },
-    {
-      title: 'Daily Active Users',
-      value: '1,892',
-      change: '+4.3%',
-      isPositive: true,
-      icon: <User size={20} className="text-teal-500 dark:text-teal-400" strokeWidth={1.8} />,
-      bgColor: 'from-teal-50 to-green-50 dark:from-teal-950/30 dark:to-green-900/20'
-    },
-    {
-      title: 'Engagement Rate',
-      value: '67.8%',
-      change: '+3.2%',
-      isPositive: true,
-      icon: <Heart size={20} className="text-pink-500 dark:text-pink-400" strokeWidth={1.8} />,
-      bgColor: 'from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-900/20'
-    }
-  ];
-
-  const forexStatsData = [
-    {
-      title: 'Forex Conversions',
-      value: '1,487',
-      change: '+15.3%',
-      isPositive: true,
-      icon: <RefreshCw size={20} className="text-cyan-500 dark:text-cyan-400" strokeWidth={1.8} />,
-      bgColor: 'from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-900/20'
-    },
-    {
-      title: 'Active Alerts',
-      value: '258',
-      change: '+5.7%',
-      isPositive: true,
-      icon: <Bell size={20} className="text-violet-500 dark:text-violet-400" strokeWidth={1.8} />,
-      bgColor: 'from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-900/20'
-    },
-    {
-      title: 'Current Spread',
-      value: '1.85%',
-      change: '-0.2%',
-      isPositive: true,
-      icon: <Percent size={20} className="text-indigo-500 dark:text-indigo-400" strokeWidth={1.8} />,
-      bgColor: 'from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-900/20'
-    },
-    {
-      title: 'Rate Sources',
-      value: '4/4',
-      change: 'All Active',
-      isPositive: true,
-      icon: <Radio size={20} className="text-emerald-500 dark:text-emerald-400" strokeWidth={1.8} />,
-      bgColor: 'from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-900/20'
     }
   ];
 
@@ -293,40 +219,6 @@ const Dashboard = () => {
         {statsData.map((stat, index) => (
           <StatCard
             key={index}
-            title={stat.title}
-            value={stat.value}
-            change={stat.change}
-            isPositive={stat.isPositive}
-            icon={stat.icon}
-            bgColor={stat.bgColor}
-          />
-        ))}
-      </motion.div>
-
-      <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-        variants={itemVariants}
-      >
-        {engagementStatsData.map((stat, index) => (
-          <StatCard
-            key={`engagement-${index}`}
-            title={stat.title}
-            value={stat.value}
-            change={stat.change}
-            isPositive={stat.isPositive}
-            icon={stat.icon}
-            bgColor={stat.bgColor}
-          />
-        ))}
-      </motion.div>
-
-      <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-        variants={itemVariants}
-      >
-        {forexStatsData.map((stat, index) => (
-          <StatCard
-            key={`forex-${index}`}
             title={stat.title}
             value={stat.value}
             change={stat.change}
