@@ -879,36 +879,6 @@ const Dashboard = () => {
           <WalletMetrics />
         </motion.div>
       </motion.div>
-
-      {/* Upcoming Features Teaser */}
-      <motion.div
-        className="mb-6"
-        variants={itemVariants}
-      >
-        <motion.div
-          className="bg-gradient-to-r from-blue-500/90 to-primary-600/90 rounded-2xl shadow-lg overflow-hidden backdrop-blur-sm p-5"
-          whileHover={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)' }}
-        >
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center mb-4 md:mb-0">
-              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mr-4">
-                <Zap size={24} className="text-white" strokeWidth={1.8} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Coming Soon: Predictive Analytics</h3>
-                <p className="text-blue-100 text-xs max-w-md">Get ahead with AI-powered forecasting and predictive insights for your business metrics</p>
-              </div>
-            </div>
-            <motion.button
-              className="px-5 py-2.5 bg-white text-primary-600 rounded-xl font-medium text-xs shadow-lg"
-              whileHover={{ scale: 1.05, boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)' }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Join Waitlist
-            </motion.button>
-          </div>
-        </motion.div>
-      </motion.div>
     </motion.div>
   );
 };
