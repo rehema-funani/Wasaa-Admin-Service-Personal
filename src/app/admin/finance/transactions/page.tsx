@@ -62,13 +62,6 @@ interface Transaction {
   wallet: Wallet;
 }
 
-interface TransactionResponse {
-  transactions: Transaction[];
-  total: number;
-  page: number;
-  pages: number;
-}
-
 interface PaginationData {
   total: number;
   page: number;
@@ -147,11 +140,18 @@ const TransactionsPage: React.FC = () => {
     };
   }, [currentPage, itemsPerPage, searchQuery, filterStatus, sortConfig]);
 
+  // Fixed useEffect with proper parameter passing
   useEffect(() => {
     const loadTransactions = async () => {
       setIsLocalLoading(true);
       try {
-        const result = await financeService.getAllTransactions();
+        const filters = {
+          page: currentPage,
+          limit: itemsPerPage,
+        };
+
+        const result = await financeService.getAllTransactions(filters);
+
         if (result) {
           setTransactions(result.transactions || []);
           setPaginationData({
@@ -178,7 +178,7 @@ const TransactionsPage: React.FC = () => {
     loadTransactions();
   }, [currentPage, itemsPerPage, searchQuery, filterStatus]);
 
-  // Sort transactions based on the current sort configuration
+
   const sortTransactions = useCallback((transactionsToSort: Transaction[], key: string, direction: 'asc' | 'desc') => {
     return [...transactionsToSort].sort((a, b) => {
       if (key === 'amount') {
@@ -190,7 +190,6 @@ const TransactionsPage: React.FC = () => {
           ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       } else if (key === 'walletBalance') {
-        // For balance, we'll use the wallet's availableBalance
         const aBalance = a.wallet ? parseFloat(a.wallet.availableBalance || '0') : 0;
         const bBalance = b.wallet ? parseFloat(b.wallet.availableBalance || '0') : 0;
         return direction === 'asc' ? aBalance - bBalance : bBalance - aBalance;
@@ -232,7 +231,6 @@ const TransactionsPage: React.FC = () => {
     }
   };
 
-  // Map the API transaction types to user-friendly display types
   const getTransactionType = (transaction: Transaction): string => {
     if (!transaction.type) return 'Other';
 
@@ -248,7 +246,6 @@ const TransactionsPage: React.FC = () => {
     }
   };
 
-  // Get transaction amount as a number
   const getTransactionAmount = (transaction: Transaction): number => {
     return parseFloat(transaction.amount) || 0;
   };
@@ -277,23 +274,6 @@ const TransactionsPage: React.FC = () => {
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= paginationData.pages) {
       setCurrentPage(page);
-    }
-  };
-
-  const toggleTransactionSelection = (e: React.ChangeEvent<HTMLInputElement>, transactionId: string) => {
-    e.stopPropagation();
-    setSelectedTransactions(prev =>
-      prev.includes(transactionId)
-        ? prev.filter(id => id !== transactionId)
-        : [...prev, transactionId]
-    );
-  };
-
-  const toggleAllTransactions = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      setSelectedTransactions(transactions.map(t => t.id));
-    } else {
-      setSelectedTransactions([]);
     }
   };
 
@@ -519,13 +499,11 @@ const TransactionsPage: React.FC = () => {
     );
   };
 
-  // Determine wallet balance - handle NaN cases
   const getWalletBalance = (wallet: Wallet): string => {
     if (!wallet) return "0.00";
 
     const availableBalance = wallet.availableBalance;
     if (availableBalance === "NaN") {
-      // If availableBalance is NaN, calculate from credit-debit
       const credit = parseFloat(wallet.credit || "0");
       const debit = parseFloat(wallet.debit || "0");
 
@@ -539,11 +517,9 @@ const TransactionsPage: React.FC = () => {
     return parseFloat(availableBalance).toFixed(2);
   };
 
-  // Get reference number in a user-friendly format
   const formatReference = (reference: string): string => {
     if (!reference) return "N/A";
 
-    // If it starts with CREDIT- or DEBIT-, remove that prefix
     if (reference.startsWith("CREDIT-") || reference.startsWith("DEBIT-")) {
       return reference.split("-")[1];
     }

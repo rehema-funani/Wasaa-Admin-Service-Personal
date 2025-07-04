@@ -178,11 +178,11 @@ class FinanceService {
   }
 
   // ======== TRANSACTION ENDPOINTS ========
-  async getAllTransactions(filters: any = {}): Promise<any[]> {
+  async getAllTransactions(filters: any = {}): Promise < any[] > {
     try {
       const response = await finance.get('/transactions/filter', { params: filters });
       return response.data;
-    } catch (error) {
+    } catch(error) {
       this.handleError(error, 'Failed to get transactions');
     }
   }

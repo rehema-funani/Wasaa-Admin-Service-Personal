@@ -16,11 +16,8 @@ import {
   ChevronUp,
   Users,
   CheckCircle,
-  XCircle,
-  BarChart3,
   Calendar,
   Mail,
-  Phone,
   ArrowLeft,
   ArrowRight,
   CheckSquare,
@@ -77,7 +74,6 @@ const UserManagementPage: React.FC = () => {
   ]);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Table state
   const [sortBy, setSortBy] = useState('name');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -140,14 +136,12 @@ const UserManagementPage: React.FC = () => {
     fetchRoles();
   }, []);
 
-  // Update pagination when filtered users change
   useEffect(() => {
     setCurrentPage(1);
     setSelectedRows([]);
     setSelectAll(false);
   }, [filteredUsers]);
 
-  // Handle select all checkbox
   useEffect(() => {
     if (selectAll) {
       setSelectedRows(paginatedUsers.map(user => user.id));
@@ -171,7 +165,6 @@ const UserManagementPage: React.FC = () => {
     }
   };
 
-  // Get user initials from name
   const getUserInitials = (name: string) => {
     if (!name) return '?';
     return name.split(' ')
@@ -181,7 +174,6 @@ const UserManagementPage: React.FC = () => {
       .substring(0, 2);
   };
 
-  // Get random color based on user id for profile avatar
   const getUserColor = (id: string) => {
     const colors = [
       'from-blue-500 to-indigo-600',
@@ -192,12 +184,10 @@ const UserManagementPage: React.FC = () => {
       'from-sky-500 to-blue-600'
     ];
 
-    // Use the last character of the ID to determine the color
     const index = parseInt(id.slice(-1), 16) % colors.length;
     return colors[index];
   };
 
-  // Get role badge styling based on role name
   const getRoleBadgeStyle = (role: string) => {
     const roleLower = role.toLowerCase();
 
@@ -214,7 +204,6 @@ const UserManagementPage: React.FC = () => {
     return 'bg-blue-50 text-blue-700 border border-blue-100';
   };
 
-  // Sort filtered users
   const sortedUsers = [...filteredUsers].sort((a, b) => {
     let valueA, valueB;
 
@@ -255,13 +244,11 @@ const UserManagementPage: React.FC = () => {
     }
   });
 
-  // Paginate sorted users
   const paginatedUsers = sortedUsers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Handle table header click for sorting
   const handleSort = (columnId: string) => {
     if (sortBy === columnId) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -271,7 +258,6 @@ const UserManagementPage: React.FC = () => {
     }
   };
 
-  // Handle row selection
   const handleRowSelect = (userId: string) => {
     setSelectedRows(prev =>
       prev.includes(userId)
@@ -280,7 +266,6 @@ const UserManagementPage: React.FC = () => {
     );
   };
 
-  // Handle select all
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
   };
@@ -384,7 +369,6 @@ const UserManagementPage: React.FC = () => {
     fetchUsers();
   };
 
-  // Get statistics for the dashboard
   const getStatistics = () => {
     const totalUsers = users.length;
     const activeUsers = users.filter(user => user.status === 'active').length;
@@ -400,7 +384,6 @@ const UserManagementPage: React.FC = () => {
     return { totalUsers, activeUsers, adminUsers, recentUsers };
   };
 
-  // Custom table pagination component
   const CustomPagination = () => {
     const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage + 1;
@@ -481,7 +464,6 @@ const UserManagementPage: React.FC = () => {
     );
   };
 
-  // Empty state component
   const EmptyState = () => (
     <div className="py-12 px-4 text-center">
       <div className="inline-flex items-center justify-center p-4 bg-slate-100 rounded-full mb-4">
@@ -500,7 +482,6 @@ const UserManagementPage: React.FC = () => {
     </div>
   );
 
-  // Loading state component
   const LoadingState = () => (
     <div className="py-12 px-4 text-center">
       <div className="inline-flex items-center justify-center">
@@ -535,7 +516,6 @@ const UserManagementPage: React.FC = () => {
         </motion.button>
       </motion.div>
 
-      {/* Stats Cards */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -633,7 +613,6 @@ const UserManagementPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Filters Panel */}
         <AnimatePresence>
           {showFilters && (
             <motion.div
@@ -792,7 +771,7 @@ const UserManagementPage: React.FC = () => {
                     onClick={() => handleSort('lastActive')}
                     className="flex items-center text-xs font-medium text-slate-700 uppercase tracking-wider focus:outline-none"
                   >
-                    <span>Last Active</span>
+                    <span>Last Login</span>
                     {sortBy === 'lastActive' && (
                       <span className="ml-1 text-primary-500">
                         {sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
