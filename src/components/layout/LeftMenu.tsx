@@ -130,22 +130,6 @@ const SlimSidebar = () => {
         }
     ];
 
-    // Get badge style based on type
-    const getBadgeStyle = (type) => {
-        switch (type) {
-            case 'danger':
-                return 'bg-red-500 text-white dark:bg-red-600';
-            case 'warning':
-                return 'bg-amber-500 text-white dark:bg-amber-600';
-            case 'info':
-                return 'bg-blue-500 text-white dark:bg-blue-600';
-            case 'success':
-                return 'bg-emerald-500 text-white dark:bg-emerald-600';
-            default:
-                return 'bg-gray-500 text-white dark:bg-gray-600';
-        }
-    };
-
     return (
         <div
             className={`flex flex-col h-full bg-gradient-to-b from-slate-900 to-primary-900 dark:from-charcoal-950 dark:to-dark-surface transition-all duration-300 z-50 shadow-xl dark:shadow-dark-lg ${isExpanded ? 'w-64' : 'w-[65px]'
@@ -154,7 +138,6 @@ const SlimSidebar = () => {
             onMouseLeave={() => setIsExpanded(false)}
         >
             <div className={`flex flex-col h-full p-4 space-y-3 ${isExpanded ? 'px-5' : 'px-2'}`}>
-                {/* User Profile Section - Enhanced */}
                 <div className="mb-4">
                     <div className="flex items-center">
                         <div className="relative">
@@ -175,7 +158,6 @@ const SlimSidebar = () => {
                     </div>
                 </div>
 
-                {/* System Status - Only visible when expanded */}
                 {isExpanded && (
                     <div className="bg-slate-800/60 dark:bg-dark-elevated/60 rounded-lg p-2.5 flex justify-between items-center mb-1">
                         <div className="flex items-center">
@@ -186,7 +168,6 @@ const SlimSidebar = () => {
                     </div>
                 )}
 
-                {/* Time Display - Only visible when expanded */}
                 {isExpanded && (
                     <div className="bg-slate-800/60 dark:bg-dark-elevated/60 rounded-lg p-2.5 flex justify-between items-center mb-2">
                         <div className="flex items-center">
@@ -197,20 +178,7 @@ const SlimSidebar = () => {
                     </div>
                 )}
 
-                {/* Pending Approvals Indicator - Only visible when expanded */}
-                {isExpanded && pendingApprovals > 0 && (
-                    <div className="bg-amber-900/20 dark:bg-amber-900/30 border border-amber-800/30 rounded-lg p-2.5 flex justify-between items-center mb-4">
-                        <div className="flex items-center">
-                            <Bell size={14} className="text-amber-500 dark:text-amber-400 mr-2" />
-                            <span className="text-xs text-amber-300 dark:text-amber-300">Pending Approvals</span>
-                        </div>
-                        <span className="px-1.5 py-0.5 bg-amber-500 dark:bg-amber-600 text-white rounded-full text-[10px] font-medium">{pendingApprovals}</span>
-                    </div>
-                )}
-
-                {/* Main Navigation */}
                 <div className="flex-1 space-y-1 py-1">
-                    {/* Main Navigation Group */}
                     {isExpanded && (
                         <div className="mb-2">
                             <p className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-600 font-medium px-2 mb-1.5">
@@ -219,7 +187,6 @@ const SlimSidebar = () => {
                         </div>
                     )}
 
-                    {/* Dashboard Link - Enhanced */}
                     <Link
                         to="/"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/')
@@ -240,7 +207,6 @@ const SlimSidebar = () => {
                         )}
                     </Link>
 
-                    {/* Activity Link - Enhanced with financial icons and badges */}
                     <Link
                         to="/admin/logs"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/admin/logs')
@@ -271,7 +237,6 @@ const SlimSidebar = () => {
                         )}
                     </Link>
 
-                    {/* Analytics Link - Enhanced */}
                     <Link
                         to="/admin/finance/reports"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/admin/finance/reports')
@@ -292,7 +257,6 @@ const SlimSidebar = () => {
                         )}
                     </Link>
 
-                    {/* Account Section Divider */}
                     {isExpanded && (
                         <div className="pt-4 pb-2 mt-3">
                             <div className="flex items-center">
@@ -308,7 +272,6 @@ const SlimSidebar = () => {
                         <div className="my-3 h-px bg-slate-700/50 dark:bg-dark-border/50"></div>
                     )}
 
-                    {/* Profile Link */}
                     <Link
                         to="/accounts/profile"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/accounts/profile')
@@ -329,7 +292,6 @@ const SlimSidebar = () => {
                         )}
                     </Link>
 
-                    {/* Settings Link */}
                     <Link
                         to="/admin/settings"
                         className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${isActive('/admin/settings')
@@ -351,7 +313,6 @@ const SlimSidebar = () => {
                     </Link>
                 </div>
 
-                {/* Security Zone Section - Only visible when expanded */}
                 {isExpanded && (
                     <div className="mb-3 p-3 rounded-lg bg-slate-800/60 dark:bg-dark-elevated/60 border border-slate-700/50 dark:border-dark-border/50">
                         <div className="flex items-center">
@@ -365,7 +326,6 @@ const SlimSidebar = () => {
                     </div>
                 )}
 
-                {/* Logout Button */}
                 <div className="mt-auto pt-3 border-t border-slate-700/50 dark:border-dark-border/50">
                     <button
                         className="w-full flex items-center p-3 rounded-xl text-red-300 dark:text-red-400 hover:text-white hover:bg-red-600/30 dark:hover:bg-red-900/30 transition-all duration-200 group"
@@ -375,7 +335,6 @@ const SlimSidebar = () => {
                     </button>
                 </div>
 
-                {/* System Version - Only visible when expanded */}
                 {isExpanded && (
                     <div className="pt-2 flex items-center justify-between">
                         <div className="flex items-center">
