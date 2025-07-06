@@ -1,6 +1,6 @@
 import { api } from "../axios";
 
-export const supportService = {
+const supportService = {
 
   //  ======= TICKETS =======
   getTickets: async (params?: {
@@ -186,3 +186,5 @@ export const supportService = {
     return response.data;
   },
 };
+
+export default supportService;
