@@ -117,14 +117,14 @@ const NotificationsDetail = lazy(() => import('./app/admin/media/viewtemplate'))
 const ShortsSettings = lazy(() => import('./app/admin/media/settings'));
 
 // Support center
-const SupportDashboard = lazy(() => import('./app/admin/support/dashboard'));
-const Tickets = lazy(() => import('./app/admin/support/ticketlist'));
-const TicketDetails = lazy(() => import('./app/admin/support/ticketdetail'));
-const Agents = lazy(() => import('./app/admin/support/agentlist'));
-const Categories = lazy(() => import('./app/admin/support/categorymanagement'));
-const CannedResponses = lazy(() => import('./app/admin/support/CannedResponses'));
-const SLA = lazy(() => import('./app/admin/support/SLAManagement'));
-const Analytics = lazy(() => import('./app/admin/support/analytics'));
+// const SupportDashboard = lazy(() => import('./app/admin/support/dashboard'));
+// const Tickets = lazy(() => import('./app/admin/support/ticketlist'));
+// const TicketDetails = lazy(() => import('./app/admin/support/ticketdetail'));
+// const Agents = lazy(() => import('./app/admin/support/agentlist'));
+// const Categories = lazy(() => import('./app/admin/support/categorymanagement'));
+// const CannedResponses = lazy(() => import('./app/admin/support/CannedResponses'));
+// const SLA = lazy(() => import('./app/admin/support/SLAManagement'));
+// const Analytics = lazy(() => import('./app/admin/support/analytics'));
 
 // Auditing
 const Logs = lazy(() => import('./app/admin/audits/page'));
@@ -663,14 +663,6 @@ const AppRouter: React.FC = () => {
             } />
 
             {/* ===== Support Center ===== */}
-            <Route path="admin/support" element={<SupportDashboard />} />
-            <Route path="/admin/support/tickets" element={<Tickets />} />
-            <Route path="/admin/support/tickets/:id" element={<TicketDetails />} />
-            <Route path="/admin/support/agents" element={<Agents />} />
-            <Route path="/admin/support/categories/" element={<Categories />} />
-            <Route path="/admin/support/canned-responses" element={<CannedResponses />} />
-            <Route path="/admin/support/sla" element={<SLA />} />
-            <Route path="/admin/support/analytics" element={<Analytics />} />
 
             {/* ===== Audit Logs ===== */}
             <Route path="admin/logs" element={
