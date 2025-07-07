@@ -26,7 +26,6 @@ import toast from 'react-hot-toast';
 import { roleService } from '../../../api/services/roles';
 import { permissionService } from '../../../api/services/permissions';
 
-// Helper functions
 const getPermissionCategory = (permissionTitle) => {
   const parts = permissionTitle.split('_');
   if (parts.length > 2) {
