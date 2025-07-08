@@ -89,8 +89,8 @@ const AvatarList = lazy(() => import('./app/admin/Avatar/list-all-avatar/page'))
 const AddAvatar = lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page'));
 
 // Settings management
-const GeneralSettings = lazy(() => import('./app/admin/Settings/page'));
-const Emoji = lazy(() => import('./app/admin/Settings/emoji'));
+const GeneralSettings = lazy(() => import('./app/admin/settings/page'));
+const Emoji = lazy(() => import('./app/admin/settings/emoji'));
 const Languages = lazy(() => import('./app/admin/languages/all-languages/page'));
 const Translations = lazy(() => import('./app/admin/languages/all-languages/details'));
 

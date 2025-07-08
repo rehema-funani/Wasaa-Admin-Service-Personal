@@ -81,7 +81,7 @@ getTicketStats: async (params?: {
     dateFrom?: string;
     dateTo?: string;
   }) => {
-    const response = await supportaxios.get('/tickets/statistics', { params });
+    const response = await supportaxios.get('/tickets/statistics');
     return response.data;
   },
 
