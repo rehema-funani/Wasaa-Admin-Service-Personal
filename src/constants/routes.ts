@@ -39,7 +39,8 @@ import {
   Grid3x3,
   Zap,
   MessageCircle,
-  BellRing
+  BellRing,
+  Building2
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -911,7 +912,7 @@ const routes: Route[] = [
       items: [
         {
           type: 'link',
-          path: '/admin/support',
+          path: '/admin/support/dashboard',
           title: 'Support Dashboard',
           icon: LifeBuoy,
           description: 'Customer support overview'
@@ -924,56 +925,26 @@ const routes: Route[] = [
           description: 'Manage customer inquiries'
         },
         {
-          type: 'dropdown',
-          title: 'Team Management',
+          type: 'link',
+          path: '/admin/support/sla',
+          title: 'SLA Management',
           icon: UsersIcon,
-          key: 'support-teams',
-          items: [
-            {
-              type: 'link',
-              path: '/admin/support/teams',
-              title: 'Support Teams',
-            },
-            {
-              type: 'link',
-              path: '/admin/support/assignments',
-              title: 'Ticket Assignments',
-            },
-            {
-              type: 'link',
-              path: '/admin/support/performance',
-              title: 'Team Performance',
-            },
-            {
-              type: 'link',
-              path: '/admin/support/slas',
-              title: 'Service Level Agreements',
-            },
-          ],
+          description: 'Service Level Agreements'
         },
-        // {
-        //   type: 'dropdown',
-        //   title: 'Knowledge Base',
-        //   icon: FileText,
-        //   key: 'knowledge-base',
-        //   items: [
-        //     {
-        //       type: 'link',
-        //       path: '/admin/support/knowledge/articles',
-        //       title: 'KB Articles',
-        //     },
-        //     {
-        //       type: 'link',
-        //       path: '/admin/support/knowledge/categories',
-        //       title: 'KB Categories',
-        //     },
-        //     {
-        //       type: 'link',
-        //       path: '/admin/support/knowledge/analytics',
-        //       title: 'KB Analytics',
-        //     },
-        //   ],
-        // },
+        {
+          type: 'link',
+          path: '/admin/support/agents',
+          title: 'Agents',
+          icon: UsersIcon,
+          description: 'Support agent management & team'
+        },
+        {
+          type: 'link',
+          path: '/admin/support/categories',
+          title: 'Categories',
+          icon: Building2,
+          description: 'Categories for support tickets'
+        },
       ],
     },
     {
