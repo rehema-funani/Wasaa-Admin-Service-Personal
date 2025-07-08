@@ -149,6 +149,8 @@ const MediaModule = {
 const SupportAuditModule = {
   TicketDashboard: lazy(() => import('./app/admin/support/ticketdashboard')),
   Tickets: lazy(() => import('./app/admin/support/tickets')),
+  NewTicket: lazy(() => import('./app/admin/support/newticket')),
+  TicketDetail: lazy(() => import('./app/admin/support/ticketdetail')),
   Logs: lazy(() => import('./app/admin/audits/page')),
   AuditDetails: lazy(() => import('./app/admin/audits/auditdetails')),
 };
@@ -373,10 +375,11 @@ const mediaRoutes = [
   { path: PATHS.ADMIN.COMMUNICATION.BROADCASTS.EDIT, element: MediaModule.EditBroadcast, permissions: PermissionMap.Settings.view },
 ];
 
-// Support & Audit Routes
 const supportAuditRoutes = [
   { path: PATHS.ADMIN.SUPPORT.DASHBOARD, element: SupportAuditModule.TicketDashboard },
   { path: PATHS.ADMIN.SUPPORT.TICKETS, element: SupportAuditModule.Tickets },
+  { path: PATHS.ADMIN.SUPPORT.NEW_TICKET, element: SupportAuditModule.NewTicket },
+  { path: PATHS.ADMIN.SUPPORT.TICKET_DETAIL, element: SupportAuditModule.TicketDetail },
   { path: PATHS.ADMIN.AUDITS.LOGS, element: SupportAuditModule.Logs, permissions: PermissionMap.Admin },
   { path: PATHS.ADMIN.AUDITS.DETAILS, element: SupportAuditModule.AuditDetails, permissions: PermissionMap.Admin },
 ];

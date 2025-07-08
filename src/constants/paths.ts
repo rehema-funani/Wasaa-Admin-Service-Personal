@@ -150,6 +150,8 @@ export const PATHS = {
     SUPPORT: {
       DASHBOARD: 'admin/support/dashboard',
       TICKETS: 'admin/support/tickets',
+      TICKET_DETAIL: 'admin/support/tickets/:id',
+      NEW_TICKET: 'admin/support/tickets/new',
     },
     AUDITS: {
       LOGS: 'admin/logs',

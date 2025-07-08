@@ -11,8 +11,8 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
+import { useNavigate } from 'react-router-dom';
 
-// Define ticket interfaces based on the actual API response
 interface User {
   id: string;
   externalUserId: string;
@@ -124,15 +124,6 @@ interface Pagination {
   pages: number;
 }
 
-interface TicketsResponse {
-  success: boolean;
-  data: {
-    tickets: Ticket[];
-    pagination: Pagination;
-  };
-}
-
-// Define filter parameters
 interface FilterParams {
   page?: number;
   limit?: number;
@@ -144,7 +135,6 @@ interface FilterParams {
 }
 
 export default function TicketsListPage() {
-  // State
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -159,23 +149,19 @@ export default function TicketsListPage() {
     limit: 10,
   });
   const [filterOpen, setFilterOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Options based on actual data
   const statusOptions = ["All", "OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
   const priorityOptions = ["All", "LOW", "MEDIUM", "HIGH", "CRITICAL"];
 
-  // Fetch categories for the filter
   const [categories, setCategories] = useState<Category[]>([]);
   const [agents, setAgents] = useState<Agent[]>([]);
 
   useEffect(() => {
-    // This would typically be a separate API call to get all categories
-    // For now, we'll extract unique categories from tickets
     const fetchCategories = async () => {
       try {
-        // In a real app, you would fetch categories from an API
-        // const response = await supportService.getCategories();
-        // setCategories(response.data);
+        const response = await supportService.getCategories();
+        setCategories(response.data);
       } catch (err) {
         console.error('Failed to fetch categories', err);
       }
@@ -190,12 +176,10 @@ export default function TicketsListPage() {
       try {
         const response = await supportService.getTickets(filterParams);
 
-        // Using the actual response structure
         if (response.success) {
           setTickets(response.data.tickets);
           setPagination(response.data.pagination);
 
-          // Extract unique categories if we don't have them
           if (categories.length === 0) {
             const uniqueCategories = Array.from(
               new Set(response.data.tickets.map(ticket => ticket.category))
@@ -203,7 +187,6 @@ export default function TicketsListPage() {
             setCategories(uniqueCategories as unknown as Category[]);
           }
 
-          // Extract unique agents
           const uniqueAgents = Array.from(
             new Set(response.data.tickets
               .filter(ticket => ticket.agent)
@@ -224,14 +207,12 @@ export default function TicketsListPage() {
     fetchTickets();
   }, [filterParams]);
 
-  // Handle search
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const searchValue = (e.currentTarget.elements.namedItem('search') as HTMLInputElement).value;
     setFilterParams(prev => ({ ...prev, search: searchValue, page: 1 }));
   };
 
-  // Handle filter change
   const handleFilterChange = (key: string, value: string) => {
     setFilterParams(prev => ({
       ...prev,
@@ -240,12 +221,10 @@ export default function TicketsListPage() {
     }));
   };
 
-  // Handle pagination
   const handlePageChange = (newPage: number) => {
     setFilterParams(prev => ({ ...prev, page: newPage }));
   };
 
-  // Reset filters
   const resetFilters = () => {
     setFilterParams({
       page: 1,
@@ -253,7 +232,6 @@ export default function TicketsListPage() {
     });
   };
 
-  // Format date to relative time
   const formatRelativeDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -276,13 +254,11 @@ export default function TicketsListPage() {
     }
   };
 
-  // Get full name
   const getFullName = (firstName: string, lastName: string) => {
     if (!firstName && !lastName) return 'Unknown';
     return `${firstName} ${lastName}`;
   };
 
-  // Calculate time remaining for SLA
   const getTimeRemaining = (dueDate: string) => {
     const now = new Date();
     const due = new Date(dueDate);
@@ -303,7 +279,6 @@ export default function TicketsListPage() {
     }
   };
 
-  // Get SLA color
   const getSlaStatusColor = (dueDate: string, status: string) => {
     if (status === 'RESOLVED' || status === 'CLOSED') {
       return 'bg-gray-100 text-gray-800';
@@ -315,17 +290,16 @@ export default function TicketsListPage() {
     const diffHours = diffMs / (1000 * 60 * 60);
 
     if (diffHours < 0) {
-      return 'bg-red-100 text-red-800'; // Overdue
+      return 'bg-red-100 text-red-800';
     } else if (diffHours < 1) {
-      return 'bg-yellow-100 text-yellow-800'; // Critical - less than 1 hour
+      return 'bg-yellow-100 text-yellow-800';
     } else if (diffHours < 3) {
-      return 'bg-orange-100 text-orange-800'; // Warning - less than 3 hours
+      return 'bg-orange-100 text-orange-800';
     } else {
-      return 'bg-green-100 text-green-800'; // Good
+      return 'bg-green-100 text-green-800';
     }
   };
 
-  // Get status badge style - fintech inspired, sleek design
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'OPEN':
@@ -366,7 +340,6 @@ export default function TicketsListPage() {
     }
   };
 
-  // Get priority badge
   const getPriorityBadge = (priority: string) => {
     let bgColor = '';
     let textColor = '';
@@ -412,7 +385,7 @@ export default function TicketsListPage() {
           </div>
           <button
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            onClick={() => window.location.href = '/tickets/new'}
+            onClick={() => navigate('/admin/support/tickets/new')}
           >
             <Plus className="w-4 h-4 mr-2" />
             New Ticket
@@ -618,7 +591,7 @@ export default function TicketsListPage() {
               <button
                 type="button"
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={() => window.location.href = '/tickets/new'}
+                onClick={() => navigate('/admin/support/tickets/new')}
               >
                 <Plus className="-ml-1 mr-2 h-5 w-5" />
                 New Ticket
@@ -630,7 +603,7 @@ export default function TicketsListPage() {
             <ul className="divide-y divide-gray-200">
               {tickets.map((ticket) => (
                 <li key={ticket.id} className="hover:bg-gray-50">
-                  <a href={`/tickets/${ticket.id}`} className="block">
+                  <a href={`/admin/support/tickets/${ticket.id}`} className="block">
                     <div className="px-6 py-5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-start">
@@ -713,8 +686,8 @@ export default function TicketsListPage() {
                       onClick={() => handlePageChange(Math.max(1, pagination.page - 1))}
                       disabled={pagination.page === 1}
                       className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${pagination.page === 1
-                          ? 'text-gray-300 cursor-not-allowed'
-                          : 'text-gray-500 hover:bg-gray-50'
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : 'text-gray-500 hover:bg-gray-50'
                         }`}
                     >
                       <span className="sr-only">Previous</span>
@@ -732,8 +705,8 @@ export default function TicketsListPage() {
                       onClick={() => handlePageChange(Math.min(pagination.pages, pagination.page + 1))}
                       disabled={pagination.page === pagination.pages}
                       className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${pagination.page === pagination.pages
-                          ? 'text-gray-300 cursor-not-allowed'
-                          : 'text-gray-500 hover:bg-gray-50'
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : 'text-gray-500 hover:bg-gray-50'
                         }`}
                     >
                       <span className="sr-only">Next</span>
