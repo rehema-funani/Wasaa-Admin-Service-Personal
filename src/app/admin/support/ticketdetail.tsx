@@ -211,88 +211,15 @@ export default function TicketDetailPage() {
   const [escalateData, setEscalateData] = useState<EscalateModalData>({ reason: '', escalateToUserId: '' });
   const [resolveData, setResolveData] = useState<ResolveModalData>({ notes: '' });
 
-  // For a real implementation, fetch these from an API
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loadingAgents, setLoadingAgents] = useState(false);
 
-  // Fetch agents
   useEffect(() => {
     const fetchAgents = async () => {
       setLoadingAgents(true);
       try {
-        // This would be a real API call in production
-        // const response = await supportService.getAgents();
-        // setAgents(response.data);
-
-        // Mock data for now
-        setAgents([
-          {
-            id: 'agent1',
-            userId: 'user1',
-            role: 'support_agent',
-            department: 'Customer Support',
-            specializations: ['technical', 'general'],
-            isOnline: true,
-            isAvailable: true,
-            maxConcurrentChats: 5,
-            currentChats: 2,
-            performanceScore: 95,
-            totalTicketsHandled: 120,
-            avgResolutionTime: 35,
-            slaComplianceRate: 98,
-            createdAt: '2025-01-01T00:00:00Z',
-            updatedAt: '2025-01-01T00:00:00Z',
-            user: {
-              id: 'user1',
-              externalUserId: 'ext1',
-              email: 'agent1@example.com',
-              firstName: 'Alex',
-              lastName: 'Johnson',
-              phoneNumber: null,
-              role: 'support_agent',
-              department: null,
-              language: 'en',
-              timezone: 'UTC',
-              isActive: true,
-              lastActiveAt: null,
-              createdAt: '2025-01-01T00:00:00Z',
-              updatedAt: '2025-01-01T00:00:00Z'
-            }
-          },
-          {
-            id: 'agent2',
-            userId: 'user2',
-            role: 'supervisor',
-            department: 'Technical Support',
-            specializations: ['streaming', 'technical'],
-            isOnline: true,
-            isAvailable: true,
-            maxConcurrentChats: 3,
-            currentChats: 1,
-            performanceScore: 92,
-            totalTicketsHandled: 85,
-            avgResolutionTime: 42,
-            slaComplianceRate: 95,
-            createdAt: '2025-01-01T00:00:00Z',
-            updatedAt: '2025-01-01T00:00:00Z',
-            user: {
-              id: 'user2',
-              externalUserId: 'ext2',
-              email: 'agent2@example.com',
-              firstName: 'Sarah',
-              lastName: 'Miller',
-              phoneNumber: null,
-              role: 'supervisor',
-              department: null,
-              language: 'en',
-              timezone: 'UTC',
-              isActive: true,
-              lastActiveAt: null,
-              createdAt: '2025-01-01T00:00:00Z',
-              updatedAt: '2025-01-01T00:00:00Z'
-            }
-          }
-        ]);
+        const response = await supportService.getAgents();
+        setAgents(response.data);
       } catch (err) {
         console.error('Failed to fetch agents:', err);
       } finally {
@@ -303,7 +230,6 @@ export default function TicketDetailPage() {
     fetchAgents();
   }, []);
 
-  // Fetch ticket data
   useEffect(() => {
     const fetchTicketData = async () => {
       if (!id) return;
@@ -327,14 +253,12 @@ export default function TicketDetailPage() {
     fetchTicketData();
   }, [id]);
 
-  // Scroll to bottom of messages when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [ticket?.messages]);
 
-  // Handle send message
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -347,9 +271,7 @@ export default function TicketDetailPage() {
         isInternal
       };
 
-      const response = await supportService.createMessage(id, messageData);
-
-      // Refresh ticket data to get the new message
+      await supportService.createMessage(id, messageData);
       const updatedTicket = await supportService.getTicketById(id);
       if (updatedTicket.success) {
         setTicket(updatedTicket.data.ticket);
@@ -364,14 +286,12 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Handle assign ticket
   const handleAssignTicket = async () => {
     if (!id || !assignData.userId) return;
 
     try {
       await supportService.assignTicket(id, assignData.userId);
 
-      // Refresh ticket data
       const updatedTicket = await supportService.getTicketById(id);
       if (updatedTicket.success) {
         setTicket(updatedTicket.data.ticket);
@@ -383,14 +303,12 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Handle escalate ticket
   const handleEscalateTicket = async () => {
     if (!id || !escalateData.reason || !escalateData.escalateToUserId) return;
 
     try {
       await supportService.escalateTicket(id, escalateData);
 
-      // Refresh ticket data
       const updatedTicket = await supportService.getTicketById(id);
       if (updatedTicket.success) {
         setTicket(updatedTicket.data.ticket);
@@ -402,14 +320,12 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Handle resolve ticket
   const handleResolveTicket = async () => {
     if (!id) return;
 
     try {
       await supportService.resolveTicket(id, resolveData);
 
-      // Refresh ticket data
       const updatedTicket = await supportService.getTicketById(id);
       if (updatedTicket.success) {
         setTicket(updatedTicket.data.ticket);
@@ -421,7 +337,6 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Handle close ticket
   const handleCloseTicket = async () => {
     if (!id) return;
 
@@ -430,7 +345,6 @@ export default function TicketDetailPage() {
     try {
       await supportService.closeTicket(id);
 
-      // Refresh ticket data
       const updatedTicket = await supportService.getTicketById(id);
       if (updatedTicket.success) {
         setTicket(updatedTicket.data.ticket);
@@ -440,7 +354,6 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Format date to relative time
   const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -460,7 +373,6 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Format date standard format
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString(undefined, {
@@ -472,12 +384,10 @@ export default function TicketDetailPage() {
     });
   };
 
-  // Get full name
   const getFullName = (firstName: string, lastName: string) => {
     return `${firstName} ${lastName}`;
   };
 
-  // Get sender name from message
   const getSenderName = (message: Message) => {
     if (message.senderType === 'USER' && message.user) {
       return getFullName(message.user.firstName, message.user.lastName);
@@ -488,7 +398,6 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Calculate time remaining for SLA
   const getTimeRemaining = (dueDate: string) => {
     const now = new Date();
     const due = new Date(dueDate);
@@ -509,7 +418,6 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Get SLA status badge
   const getSlaStatusBadge = (slaStatus: string) => {
     switch (slaStatus) {
       case 'WITHIN_SLA':
@@ -543,7 +451,6 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Get status badge style - fintech inspired, sleek design
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'OPEN':
@@ -584,7 +491,6 @@ export default function TicketDetailPage() {
     }
   };
 
-  // Get priority badge
   const getPriorityBadge = (priority: string) => {
     let bgColor = '';
     let textColor = '';
@@ -625,7 +531,6 @@ export default function TicketDetailPage() {
     );
   };
 
-  // Get activity icon
   const getActivityIcon = (activityType: string) => {
     switch (activityType) {
       case 'CREATED':
@@ -735,7 +640,6 @@ export default function TicketDetailPage() {
               </div>
             </div>
 
-            {/* Conversation */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-lg font-medium text-gray-900">Conversation</h2>
@@ -765,10 +669,10 @@ export default function TicketDetailPage() {
                       >
                         <div
                           className={`max-w-[80%] rounded-lg p-4 ${message.isInternal
-                              ? 'bg-yellow-50 border border-yellow-100'
-                              : message.senderType === 'USER'
-                                ? 'bg-white border border-gray-200'
-                                : 'bg-indigo-50 border border-indigo-100'
+                            ? 'bg-yellow-50 border border-yellow-100'
+                            : message.senderType === 'USER'
+                              ? 'bg-white border border-gray-200'
+                              : 'bg-indigo-50 border border-indigo-100'
                             }`}
                         >
                           <div className="flex justify-between items-start mb-2">
@@ -848,8 +752,8 @@ export default function TicketDetailPage() {
                         type="submit"
                         disabled={messageLoading || !newMessage.trim()}
                         className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${messageLoading || !newMessage.trim()
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
                           }`}
                       >
                         {messageLoading ? (
@@ -928,8 +832,8 @@ export default function TicketDetailPage() {
                         {ticket.firstResponseAt ? 'Completed' : 'Pending'}
                       </div>
                       <div className={`text-sm ${new Date(ticket.firstResponseDue) < new Date() && !ticket.firstResponseAt
-                          ? 'text-red-600'
-                          : 'text-gray-500'
+                        ? 'text-red-600'
+                        : 'text-gray-500'
                         }`}>
                         {ticket.firstResponseAt
                           ? formatRelativeTime(ticket.firstResponseAt)
@@ -939,10 +843,10 @@ export default function TicketDetailPage() {
                     <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${ticket.firstResponseAt
-                            ? 'bg-green-500'
-                            : new Date(ticket.firstResponseDue) < new Date()
-                              ? 'bg-red-500'
-                              : 'bg-blue-500'
+                          ? 'bg-green-500'
+                          : new Date(ticket.firstResponseDue) < new Date()
+                            ? 'bg-red-500'
+                            : 'bg-blue-500'
                           }`}
                         style={{
                           width: ticket.firstResponseAt ? '100%' : '50%'
@@ -958,8 +862,8 @@ export default function TicketDetailPage() {
                         {ticket.resolvedAt ? 'Completed' : 'Pending'}
                       </div>
                       <div className={`text-sm ${new Date(ticket.resolutionDue) < new Date() && !ticket.resolvedAt
-                          ? 'text-red-600'
-                          : 'text-gray-500'
+                        ? 'text-red-600'
+                        : 'text-gray-500'
                         }`}>
                         {ticket.resolvedAt
                           ? formatRelativeTime(ticket.resolvedAt)
@@ -969,10 +873,10 @@ export default function TicketDetailPage() {
                     <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${ticket.resolvedAt
-                            ? 'bg-green-500'
-                            : new Date(ticket.resolutionDue) < new Date()
-                              ? 'bg-red-500'
-                              : 'bg-blue-500'
+                          ? 'bg-green-500'
+                          : new Date(ticket.resolutionDue) < new Date()
+                            ? 'bg-red-500'
+                            : 'bg-blue-500'
                           }`}
                         style={{
                           width: ticket.resolvedAt ? '100%' : '50%'
@@ -1143,8 +1047,8 @@ export default function TicketDetailPage() {
                 onClick={handleAssignTicket}
                 disabled={!assignData.userId}
                 className={`px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${!assignData.userId
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
                   }`}
               >
                 Assign
@@ -1216,8 +1120,8 @@ export default function TicketDetailPage() {
                 onClick={handleEscalateTicket}
                 disabled={!escalateData.escalateToUserId || !escalateData.reason}
                 className={`px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${!escalateData.escalateToUserId || !escalateData.reason
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
                   }`}
               >
                 Escalate
