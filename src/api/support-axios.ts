@@ -8,7 +8,7 @@ const supportaxios = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'x-api-key': apiKey
+    // 'x-api-key': apiKey
   },
   timeout: 30_000,
 });
