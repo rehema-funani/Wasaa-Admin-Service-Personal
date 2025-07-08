@@ -151,6 +151,7 @@ const SupportAuditModule = {
   Tickets: lazy(() => import('./app/admin/support/tickets')),
   NewTicket: lazy(() => import('./app/admin/support/newticket')),
   TicketDetail: lazy(() => import('./app/admin/support/ticketdetail')),
+  SLAList: lazy(() => import('./app/admin/support/sla')),
   Logs: lazy(() => import('./app/admin/audits/page')),
   AuditDetails: lazy(() => import('./app/admin/audits/auditdetails')),
 };
@@ -380,6 +381,7 @@ const supportAuditRoutes = [
   { path: PATHS.ADMIN.SUPPORT.TICKETS, element: SupportAuditModule.Tickets },
   { path: PATHS.ADMIN.SUPPORT.NEW_TICKET, element: SupportAuditModule.NewTicket },
   { path: PATHS.ADMIN.SUPPORT.TICKET_DETAIL, element: SupportAuditModule.TicketDetail },
+  { path: PATHS.ADMIN.SUPPORT.SLA_LIST, element: SupportAuditModule.SLAList },
   { path: PATHS.ADMIN.AUDITS.LOGS, element: SupportAuditModule.Logs, permissions: PermissionMap.Admin },
   { path: PATHS.ADMIN.AUDITS.DETAILS, element: SupportAuditModule.AuditDetails, permissions: PermissionMap.Admin },
 ];
