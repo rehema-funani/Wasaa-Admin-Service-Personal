@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
 
-// Define agent type
 interface Agent {
   id: string;
   userId: string;
