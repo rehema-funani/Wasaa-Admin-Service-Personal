@@ -3,7 +3,6 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-mo
 import {
   Check,
   X,
-  RefreshCw,
   Settings,
   Sliders,
   Globe,
@@ -11,17 +10,12 @@ import {
   Link as LinkIcon,
   PaintBucket,
   ChevronRight,
-  ChevronDown,
-  Save,
-  Upload,
-  Image,
   Shield,
   Bell
 } from "lucide-react";
 import { settingsService } from "../../../api/services/settings";
 import SettingsTabs from "./SettingsTab";
 
-// Animation variants
 const fadeIn = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.4, ease: "easeOut" } }
