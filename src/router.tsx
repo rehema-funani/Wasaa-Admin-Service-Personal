@@ -58,16 +58,16 @@ const RoleModule = {
 };
 
 // Livestream Management
-const LivestreamModule = {
-  AllLivestreams: lazy(() => import('./app/admin/livestreams/all-livestreams/page')),
-  ScheduledStreams: lazy(() => import('./app/admin/livestreams/scheduled/page')),
-  StreamSettings: lazy(() => import('./app/admin/livestreams/settings/page')),
-  StreamCategories: lazy(() => import('./app/admin/livestreams/categories/page')),
-  FeaturedStreams: lazy(() => import('./app/admin/livestreams/featured/page')),
-  StreamAnalytics: lazy(() => import('./app/admin/livestreams/analytics/page')),
-  StreamModeration: lazy(() => import('./app/admin/livestreams/moderation/page')),
-  ReportedStreams: lazy(() => import('./app/admin/livestreams/reported/page')),
-};
+// const LivestreamModule = {
+//   AllLivestreams: lazy(() => import('./app/admin/livestreams/all-livestreams/page')),
+//   ScheduledStreams: lazy(() => import('./app/admin/livestreams/scheduled/page')),
+//   // StreamSettings: lazy(() => import('./app/admin/livestreams/settings/page')),
+//   StreamCategories: lazy(() => import('./app/admin/livestreams/categories/page')),
+//   FeaturedStreams: lazy(() => import('./app/admin/livestreams/featured/page')),
+//   StreamAnalytics: lazy(() => import('./app/admin/livestreams/analytics/page')),
+//   StreamModeration: lazy(() => import('./app/admin/livestreams/moderation/page')),
+//   ReportedStreams: lazy(() => import('./app/admin/livestreams/reported/page')),
+// };
 
 // Forex Management
 const ForexModule = {
@@ -282,16 +282,16 @@ const roleRoutes = [
 ];
 
 // Livestream Routes
-const livestreamRoutes = [
-  { path: PATHS.ADMIN.LIVESTREAMS.ALL, element: LivestreamModule.AllLivestreams },
-  { path: PATHS.ADMIN.LIVESTREAMS.SCHEDULED, element: LivestreamModule.ScheduledStreams },
-  { path: PATHS.ADMIN.LIVESTREAMS.SETTINGS, element: LivestreamModule.StreamSettings, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.LIVESTREAMS.CATEGORIES, element: LivestreamModule.StreamCategories },
-  { path: PATHS.ADMIN.LIVESTREAMS.FEATURED, element: LivestreamModule.FeaturedStreams },
-  { path: PATHS.ADMIN.LIVESTREAMS.ANALYTICS, element: LivestreamModule.StreamAnalytics },
-  { path: PATHS.ADMIN.LIVESTREAMS.MODERATION, element: LivestreamModule.StreamModeration },
-  { path: PATHS.ADMIN.LIVESTREAMS.REPORTED, element: LivestreamModule.ReportedStreams, permissions: PermissionMap.ViewReported },
-];
+// const livestreamRoutes = [
+//   { path: PATHS.ADMIN.LIVESTREAMS.ALL, element: LivestreamModule.AllLivestreams },
+//   { path: PATHS.ADMIN.LIVESTREAMS.SCHEDULED, element: LivestreamModule.ScheduledStreams },
+//   { path: PATHS.ADMIN.LIVESTREAMS.SETTINGS, element: LivestreamModule.StreamSettings, permissions: PermissionMap.Settings.view },
+//   { path: PATHS.ADMIN.LIVESTREAMS.CATEGORIES, element: LivestreamModule.StreamCategories },
+//   { path: PATHS.ADMIN.LIVESTREAMS.FEATURED, element: LivestreamModule.FeaturedStreams },
+//   { path: PATHS.ADMIN.LIVESTREAMS.ANALYTICS, element: LivestreamModule.StreamAnalytics },
+//   { path: PATHS.ADMIN.LIVESTREAMS.MODERATION, element: LivestreamModule.StreamModeration },
+//   { path: PATHS.ADMIN.LIVESTREAMS.REPORTED, element: LivestreamModule.ReportedStreams, permissions: PermissionMap.ViewReported },
+// ];
 
 // Forex Routes
 const forexRoutes = [
@@ -405,7 +405,7 @@ const protectedRoutes = [
   ...userRoutes,
   ...groupRoutes,
   ...roleRoutes,
-  ...livestreamRoutes,
+  // ...livestreamRoutes,
   ...forexRoutes,
   ...financeRoutes,
   ...mediaRoutes,
