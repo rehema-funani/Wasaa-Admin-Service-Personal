@@ -3,18 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Save,
-  X,
   Clock,
-  Tag,
   AlertTriangle,
-  CheckCircle,
-  Info,
-  Plus,
-  Loader
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
 
-// Interface for Category
 interface Category {
   id: string;
   name: string;
@@ -25,7 +18,6 @@ interface Category {
   isActive: boolean;
 }
 
-// Interface for SLA rule
 interface SLARule {
   id: string;
   name: string;
@@ -44,7 +36,6 @@ interface SLARule {
   }[];
 }
 
-// Form data interface
 interface SLAFormData {
   name: string;
   description: string;
@@ -60,7 +51,6 @@ export default function SLAEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // State
   const [formData, setFormData] = useState<SLAFormData>({
     name: '',
     description: '',
@@ -81,19 +71,16 @@ export default function SLAEditPage() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  // Fetch SLA rule and categories
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
 
       setInitialLoading(true);
       try {
-        // Fetch SLA rule
         const slaResponse = await supportService.getSLARuleById(id);
         const slaData = slaResponse.data.rule;
         setSLARule(slaData);
 
-        // Set form data
         setFormData({
           name: slaData.name,
           description: slaData.description,
@@ -107,7 +94,6 @@ export default function SLAEditPage() {
 
         setSelectedCategories(slaData.categoryIds);
 
-        // Fetch categories
         const categoriesResponse = await supportService.getCategories();
         setCategories(categoriesResponse.data.categories);
         setCategoriesLoading(false);
@@ -122,31 +108,26 @@ export default function SLAEditPage() {
     fetchData();
   }, [id]);
 
-  // Handle form field changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
-    // Handle number values
     if (name === 'responseTime' || name === 'resolutionTime') {
       setFormData({ ...formData, [name]: parseInt(value) || 0 });
     } else {
       setFormData({ ...formData, [name]: value });
     }
 
-    // Mark field as touched
     setTouched({ ...touched, [name]: true });
   };
 
-  // Handle checkbox changes
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setFormData({ ...formData, [name]: checked });
     setTouched({ ...touched, [name]: true });
   };
 
-  // Handle category selection
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
     setSelectedCategories(selectedOptions);
@@ -154,7 +135,6 @@ export default function SLAEditPage() {
     setTouched({ ...touched, categoryIds: true });
   };
 
-  // Form validation
   const validate = () => {
     const errors: Record<string, string> = {};
 
@@ -170,7 +150,6 @@ export default function SLAEditPage() {
     return errors;
   };
 
-  // Get validation error for a field
   const getError = (field: string) => {
     if (!touched[field]) return null;
 
@@ -178,16 +157,13 @@ export default function SLAEditPage() {
     return errors[field] || null;
   };
 
-  // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!id) return;
 
-    // Validate form
     const errors = validate();
     if (Object.keys(errors).length > 0) {
-      // Mark all fields as touched to show errors
       const allTouched: Record<string, boolean> = {};
       Object.keys(formData).forEach(key => {
         allTouched[key] = true;
@@ -201,7 +177,7 @@ export default function SLAEditPage() {
 
     try {
       await supportService.updateSLARule(id, formData);
-      navigate(`/sla/${id}`);
+      navigate(`/admin/support/sla/${id}`);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to update SLA rule');
       console.error(err);
@@ -227,7 +203,7 @@ export default function SLAEditPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
             <button
-              onClick={() => navigate('/sla')}
+              onClick={() => navigate('/admin/support/sla')}
               className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-900"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
@@ -255,7 +231,7 @@ export default function SLAEditPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <button
-            onClick={() => navigate(`/sla/${id}`)}
+            onClick={() => navigate(`/admin/support/sla/${id}`)}
             className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-900"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
@@ -286,7 +262,6 @@ export default function SLAEditPage() {
             )}
 
             <div className="space-y-6">
-              {/* Basic Information */}
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h2>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
