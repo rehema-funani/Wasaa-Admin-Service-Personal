@@ -158,6 +158,7 @@ const SupportAuditModule = {
   Categories: lazy(() => import('./app/admin/support/categories')),
   CannedResponses: lazy(() => import('./app/admin/support/cannedresponse')),
   CreateCannedResponse: lazy(() => import('./app/admin/support/cannedresponseaddedit')),
+  ResponseDetail: lazy(() => import('./app/admin/support/cannedresponsedetail')),
   Logs: lazy(() => import('./app/admin/audits/page')),
   AuditDetails: lazy(() => import('./app/admin/audits/auditdetails')),
 };
@@ -394,6 +395,7 @@ const supportAuditRoutes = [
   { path: PATHS.ADMIN.SUPPORT.CATEGORIES, element: SupportAuditModule.Categories },
   { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSES, element: SupportAuditModule.CannedResponses },
   { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_CREATE, element: SupportAuditModule.CreateCannedResponse },
+  { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_DETAIL, element: SupportAuditModule.ResponseDetail },
   { path: PATHS.ADMIN.AUDITS.LOGS, element: SupportAuditModule.Logs, permissions: PermissionMap.Admin },
   { path: PATHS.ADMIN.AUDITS.DETAILS, element: SupportAuditModule.AuditDetails, permissions: PermissionMap.Admin },
 ];
