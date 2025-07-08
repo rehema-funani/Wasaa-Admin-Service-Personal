@@ -942,7 +942,7 @@ const routes: Route[] = [
           type: 'link',
           path: '/admin/support/categories',
           title: 'Categories',
-          icon: Building2,
+          icon: Building,
           description: 'Categories for support tickets'
         },
       ],

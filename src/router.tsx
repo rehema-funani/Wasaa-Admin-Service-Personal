@@ -155,6 +155,7 @@ const SupportAuditModule = {
   SLADetail: lazy(() => import('./app/admin/support/sladetail')),
   SLAEdit: lazy(() => import('./app/admin/support/slaedit')),
   SLACreate: lazy(() => import('./app/admin/support/slacreate')),
+  Categories: lazy(() => import('./app/admin/support/categories')),
   Logs: lazy(() => import('./app/admin/audits/page')),
   AuditDetails: lazy(() => import('./app/admin/audits/auditdetails')),
 };
@@ -388,6 +389,7 @@ const supportAuditRoutes = [
   { path: PATHS.ADMIN.SUPPORT.SLA_DETAIL, element: SupportAuditModule.SLADetail },
   { path: PATHS.ADMIN.SUPPORT.SLA_EDIT, element: SupportAuditModule.SLAEdit },
   { path: PATHS.ADMIN.SUPPORT.SLA_CREATE, element: SupportAuditModule.SLACreate },
+  { path: PATHS.ADMIN.SUPPORT.CATEGORIES, element: SupportAuditModule.Categories },
   { path: PATHS.ADMIN.AUDITS.LOGS, element: SupportAuditModule.Logs, permissions: PermissionMap.Admin },
   { path: PATHS.ADMIN.AUDITS.DETAILS, element: SupportAuditModule.AuditDetails, permissions: PermissionMap.Admin },
 ];

@@ -39,7 +39,6 @@ interface Category {
 export default function CategoriesListPage() {
   const navigate = useNavigate();
 
-  // State
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,13 +46,12 @@ export default function CategoriesListPage() {
   const [showInactive, setShowInactive] = useState(false);
   const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
 
-  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
         const response = await supportService.getCategories();
-        setCategories(response.data);
+        setCategories(response.data.categories || []);
       } catch (err) {
         setError('Failed to fetch categories');
         console.error(err);
@@ -65,16 +63,13 @@ export default function CategoriesListPage() {
     fetchCategories();
   }, []);
 
-  // Organize categories into a hierarchical structure
   const organizedCategories = useMemo(() => {
     const categoryMap = new Map<string, Category>();
 
-    // First pass: add all categories to the map
     categories.forEach(category => {
       categoryMap.set(category.id, { ...category, children: [] });
     });
 
-    // Second pass: organize into hierarchy
     const rootCategories: Category[] = [];
 
     categoryMap.forEach(category => {
@@ -91,9 +86,7 @@ export default function CategoriesListPage() {
     return rootCategories;
   }, [categories]);
 
-  // Filter categories by search term and active status
   const filteredCategories = useMemo(() => {
-    // Helper function to check if a category matches the search term
     const matchesSearch = (category: Category): boolean => {
       const lowerSearchTerm = searchTerm.toLowerCase();
       return (
@@ -103,12 +96,10 @@ export default function CategoriesListPage() {
       );
     };
 
-    // Helper function to check if a category matches the active filter
     const matchesActiveFilter = (category: Category): boolean => {
       return showInactive ? true : category.isActive;
     };
 
-    // Perform the filtering
     return organizedCategories.filter(category =>
       matchesSearch(category) && matchesActiveFilter(category)
     );
