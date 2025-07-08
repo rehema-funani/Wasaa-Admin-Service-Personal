@@ -2,7 +2,6 @@ import supportaxios from "../support-axios";
 
 const supportService = {
 
-
   // ======= HEALTH CHECK =======
   healthCheck: async () => {
     const response = await supportaxios.get('/health');
@@ -10,12 +9,11 @@ const supportService = {
   },
 
   //  ======= TICKETS =======
-
   createTicket: async (ticketData: any) => {
     const response = await supportaxios.post('/tickets', ticketData);
     return response.data;
   },
-  
+
   getTickets: async (params?: {
     page?: number;
     limit?: number;
@@ -183,6 +181,42 @@ getTicketStats: async (params?: {
 
   deleteCategory: async (id: string) => {
     const response = await supportaxios.delete(`/categories/${id}`);
+    return response.data;
+  },
+
+  // ======== AGENTS =======
+  createAgent: async (agentData: any) => {
+    const response = await supportaxios.post('/agents', agentData);
+    return response.data;
+  },
+
+  getAgents: async () => {
+    const response = await supportaxios.get('/agents');
+    return response.data;
+  },
+
+  getAgentById: async (id: string) => {
+    const response = await supportaxios.get(`/agents/${id}`);
+    return response.data;
+  },
+
+  updateAgent: async (id: string, agentData: any) => {
+    const response = await supportaxios.put(`/agents/${id}`, agentData);
+    return response.data;
+  },
+
+  updateAgentStatus: async (id: string, status: string) => {
+    const response = await supportaxios.patch(`/agents/${id}/status`, { status });
+    return response.data;
+  },
+
+  getAgentStatistics: async (id: string) => {
+    const response = await supportaxios.get(`/agents/${id}/statistics`);
+    return response.data;
+  },
+
+  deleteAgent: async (id: string) => {
+    const response = await supportaxios.delete(`/agents/${id}`);
     return response.data;
   },
 
