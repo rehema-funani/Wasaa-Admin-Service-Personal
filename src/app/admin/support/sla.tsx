@@ -185,7 +185,7 @@ export default function SLAListPage() {
               Process Expired
             </button>
             <button
-              onClick={() => navigate('/sla/create')}
+              onClick={() => navigate('/admin/support/sla/create')}
               className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -194,7 +194,6 @@ export default function SLAListPage() {
           </div>
         </div>
 
-        {/* Search and Filter */}
         <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <form onSubmit={handleSearch} className="flex-grow">
@@ -264,7 +263,7 @@ export default function SLAListPage() {
             <div className="mt-6">
               <button
                 type="button"
-                onClick={() => navigate('/sla/create')}
+                onClick={() => navigate('/admin/support/sla/create')}
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <Plus className="-ml-1 mr-2 h-5 w-5" />

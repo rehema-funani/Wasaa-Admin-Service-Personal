@@ -158,7 +158,7 @@ export default function SLACreatePage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <button
-            onClick={() => navigate('/sla')}
+            onClick={() => navigate(-1)}
             className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-900"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
