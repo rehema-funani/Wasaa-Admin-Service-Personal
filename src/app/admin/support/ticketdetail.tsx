@@ -667,7 +667,7 @@ export default function TicketDetailPage() {
           <p className="text-gray-600 mb-6">We couldn't load the ticket information. Please try again or contact support.</p>
           <button
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            onClick={() => navigate('/tickets')}
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Tickets
@@ -680,19 +680,16 @@ export default function TicketDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Back button */}
         <button
           className="inline-flex items-center mb-6 text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
-          onClick={() => navigate('/tickets')}
+          onClick={() => navigate(-1)}
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Back to all tickets
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Column - Ticket Details & Conversation */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Ticket Header */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="border-b border-gray-200">
                 <div className="px-6 py-5">
