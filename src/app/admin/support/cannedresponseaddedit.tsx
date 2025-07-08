@@ -13,6 +13,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function CannedResponseForm({ isEditing = false }) {
   // Form state
@@ -25,7 +26,6 @@ export default function CannedResponseForm({ isEditing = false }) {
     isActive: true
   });
 
-  // UI state
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -42,23 +42,20 @@ export default function CannedResponseForm({ isEditing = false }) {
     ticketId: 'SUP-67890'
   });
   const [copiedContent, setCopiedContent] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-  // Fetch data for form
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch categories
         const categoriesResponse = await supportService.getCategories();
         setCategories(categoriesResponse.data.categories || []);
 
-        // Fetch popular tags
         const tagsResponse = await supportService.getPopularTags();
         setPopularTags(tagsResponse.data.tags || []);
 
-        // If editing, fetch canned response data
         if (isEditing) {
-          // In a real app, we'd get the ID from URL params
-          const responseId = '1';
+          const responseId = id;
           const responseData = await supportService.getCannedResponseById(responseId);
           setFormData(responseData.data.cannedResponse);
         }
@@ -73,7 +70,6 @@ export default function CannedResponseForm({ isEditing = false }) {
     fetchData();
   }, [isEditing]);
 
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -82,7 +78,6 @@ export default function CannedResponseForm({ isEditing = false }) {
     }));
   };
 
-  // Handle tag input
   const handleTagKeyDown = (e) => {
     if (e.key === 'Enter' && newTag.trim()) {
       e.preventDefault();
@@ -96,7 +91,6 @@ export default function CannedResponseForm({ isEditing = false }) {
     }
   };
 
-  // Add tag from popular tags
   const addPopularTag = (tag) => {
     if (!formData.tags.includes(tag)) {
       setFormData(prev => ({
@@ -106,7 +100,6 @@ export default function CannedResponseForm({ isEditing = false }) {
     }
   };
 
-  // Remove tag
   const removeTag = (tagToRemove) => {
     setFormData(prev => ({
       ...prev,
@@ -114,7 +107,6 @@ export default function CannedResponseForm({ isEditing = false }) {
     }));
   };
 
-  // Extract placeholders from content
   const extractPlaceholders = (content) => {
     if (!content) return [];
 
@@ -131,7 +123,6 @@ export default function CannedResponseForm({ isEditing = false }) {
     return placeholders;
   };
 
-  // Handle placeholder value change
   const handlePlaceholderChange = (placeholder, value) => {
     setPreviewValues(prev => ({
       ...prev,
@@ -139,17 +130,14 @@ export default function CannedResponseForm({ isEditing = false }) {
     }));
   };
 
-  // Replace placeholders with preview values
   const replacePlaceholders = (content) => {
     if (!content) return '';
 
-    // Replace all {{placeholders}} with their preview values
     return content.replace(/\{\{([^}]+)\}\}/g, (match, placeholder) => {
       return previewValues[placeholder] || match;
     });
   };
 
-  // Handle copy to clipboard
   const handleCopy = (content) => {
     navigator.clipboard.writeText(content).then(() => {
       setCopiedContent(true);
@@ -157,7 +145,6 @@ export default function CannedResponseForm({ isEditing = false }) {
     });
   };
 
-  // Form submission
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setSaving(true);
@@ -172,7 +159,6 @@ export default function CannedResponseForm({ isEditing = false }) {
         await supportService.createCannedResponse(formData);
         setSuccessMessage('Canned response created successfully!');
 
-        // Reset form for create mode
         if (!isEditing) {
           setFormData({
             id: '',
@@ -190,14 +176,12 @@ export default function CannedResponseForm({ isEditing = false }) {
     } finally {
       setSaving(false);
 
-      // Clear success message after a delay
       if (successMessage) {
         setTimeout(() => setSuccessMessage(null), 5000);
       }
     }
   };
 
-  // Get placeholders from current content
   const placeholders = extractPlaceholders(formData.content);
 
   if (loading) {
@@ -211,11 +195,10 @@ export default function CannedResponseForm({ isEditing = false }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Header */}
         <div className="mb-6">
           <div className="flex items-center mb-2">
             <button
-              onClick={() => console.log('Go back to list')}
+              onClick={() => navigate('/admin/support/canned-responses')}
               className="mr-3 p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -232,7 +215,6 @@ export default function CannedResponseForm({ isEditing = false }) {
           </p>
         </div>
 
-        {/* Error and Success Messages */}
         {error && (
           <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
             <div className="flex">
