@@ -161,6 +161,10 @@ export const PATHS = {
       CATEGORY_CREATE: 'admin/support/categories/create',
       CATEGORY_EDIT: 'admin/support/categories/:id/edit',
       STATISTICS: 'admin/support/statistics',
+      CANNED_RESPONSES: 'admin/support/canned-responses',
+      CANNED_RESPONSE_DETAIL: 'admin/support/canned-responses/:id',
+      CANNED_RESPONSE_CREATE: 'admin/support/canned-responses/create',
+      CANNED_RESPONSE_EDIT: 'admin/support/canned-responses/:id/edit',
     },
     AUDITS: {
       LOGS: 'admin/logs',

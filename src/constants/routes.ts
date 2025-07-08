@@ -40,7 +40,8 @@ import {
   Zap,
   MessageCircle,
   BellRing,
-  Building2
+  Building2,
+  Candy
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -944,6 +945,13 @@ const routes: Route[] = [
           title: 'Categories',
           icon: Building,
           description: 'Categories for support tickets'
+        },
+        {
+          type: 'link',
+          path: '/admin/support/canned-responses',
+          title: 'Cannes responses',
+          icon: Candy,
+          description: 'Canned responses for support tickets'
         },
       ],
     },
