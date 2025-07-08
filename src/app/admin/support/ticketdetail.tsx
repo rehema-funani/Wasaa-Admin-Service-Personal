@@ -1,540 +1,573 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-    ArrowLeft, Send, Paperclip, Tag,
-    MessageSquare, MoreVertical,
-    Sparkles, History, ChevronDown
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-hot-toast';
-import { CannedResponse, Ticket } from '../../../types/support';
-import support from '../../../api/services/support';
-import LoadingSpinner from '../../../components/support/LoadingSpinner';
-import StatusBadge from '../../../components/support/StatusBadge';
-import PriorityBadge from '../../../components/support/PriorityBadge';
-import SLACountdown from '../../../components/support/SLACountdown';
-import AgentAvatar from '../../../components/support/AgentAvatar';
+import { ArrowLeft, User, Clock, Tag, MoreHorizontal, Send, ChevronUp, ChevronDown, CheckCircle, AlertTriangle, X } from 'lucide-react';
+import supportService from '../../../api/services/support';
 
-const TicketDetail: React.FC = () => {
-    const { ticketId } = useParams<{ ticketId: string }>();
-    const navigate = useNavigate();
-    const messageEndRef = useRef<HTMLDivElement>(null);
+// Define ticket type
+interface Ticket {
+  id: string;
+  ticketNumber: string;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  category: string;
+  assignedTo: string;
+  assignedToName?: string;
+  createdBy: string;
+  createdByName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-    // State
-    const [ticket, setTicket] = useState<Ticket | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [replyContent, setReplyContent] = useState('');
-    const [isReplying, setIsReplying] = useState(false);
-    const [showActions, setShowActions] = useState(false);
-    const [showCannedResponses, setShowCannedResponses] = useState(false);
-    const [cannedResponses, setCannedResponses] = useState<CannedResponse[]>([]);
-    const [showStatusMenu, setShowStatusMenu] = useState(false);
-    const [showPriorityMenu, setShowPriorityMenu] = useState(false);
-    const [showAssignMenu, setShowAssignMenu] = useState(false);
-    const [agents, setAgents] = useState<any[]>([]);
+// Define message type
+interface Message {
+  id: string;
+  ticketId: string;
+  sender: string;
+  senderName: string;
+  content: string;
+  createdAt: string;
+  isInternal: boolean;
+}
 
-    useEffect(() => {
-        if (ticketId) {
-            fetchTicketDetails();
-            fetchCannedResponses();
-            fetchAgents();
-        }
-    }, [ticketId]);
+export default function TicketDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [ticket?.messages]);
+  // State
+  const [ticket, setTicket] = useState<Ticket | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [messageLoading, setMessageLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [newMessage, setNewMessage] = useState('');
+  const [isInternal, setIsInternal] = useState(false);
+  const [showActions, setShowActions] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showEscalateModal, setShowEscalateModal] = useState(false);
+  const [showResolveModal, setShowResolveModal] = useState(false);
+  const [assignToUserId, setAssignToUserId] = useState('');
+  const [escalationData, setEscalationData] = useState({ reason: '', escalateToUserId: '' });
+  const [resolutionData, setResolutionData] = useState({ notes: '' });
 
-    const fetchTicketDetails = async () => {
-        try {
-            setIsLoading(true);
-            const data = await support.getTicketById(ticketId);
-            setTicket(data);
-        } catch (error) {
-            toast.error('Failed to load ticket details');
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
+  // Mock data for users (in a real app, this would come from an API)
+  const users = [
+    { id: 'user1', name: 'John Doe' },
+    { id: 'user2', name: 'Jane Smith' },
+    { id: 'user3', name: 'Mike Johnson' },
+  ];
+
+  // Fetch ticket and messages
+  useEffect(() => {
+    const fetchTicketData = async () => {
+      if (!id) return;
+
+      setLoading(true);
+      try {
+        const ticketData = await supportService.getTicketById(id);
+        setTicket(ticketData);
+
+        const messagesData = await supportService.getTicketMessages(id);
+        setMessages(messagesData);
+      } catch (err) {
+        setError('Failed to fetch ticket data');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const fetchCannedResponses = async () => {
-        try {
-            const responses = await support.getCannedResponses();
-            setCannedResponses(responses);
-        } catch (error) {
-            console.error('Failed to load canned responses', error);
-        }
-    };
+    fetchTicketData();
+  }, [id]);
 
-    const fetchAgents = async () => {
-        try {
-            const agentList = await support.getAgents({ status: 'online' });
-            setAgents(agentList);
-        } catch (error) {
-            console.error('Failed to load agents', error);
-        }
-    };
+  // Handle send message
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    const scrollToBottom = () => {
-        messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
+    if (!newMessage.trim() || !id) return;
 
-    const handleSendReply = async () => {
-        if (!replyContent.trim() || !ticket) return;
+    setMessageLoading(true);
+    try {
+      const messageData = {
+        content: newMessage,
+        isInternal
+      };
 
-        setIsReplying(true);
-        try {
-            await support.sendMessage(ticket.id, {
-                content: replyContent,
-                senderId: 'agt_1', // Current agent ID
-                senderType: 'agent'
-            });
-            setReplyContent('');
-            fetchTicketDetails(); // Refresh to show new message
-            toast.success('Reply sent successfully');
-        } catch (error) {
-            toast.error('Failed to send reply');
-        } finally {
-            setIsReplying(false);
-        }
-    };
-
-    const handleStatusChange = async (newStatus: string) => {
-        if (!ticket) return;
-
-        try {
-            await support.updateTicket(ticket.id, { status: newStatus as any });
-            setTicket({ ...ticket, status: newStatus as any });
-            toast.success(`Ticket status updated to ${newStatus}`);
-            setShowStatusMenu(false);
-        } catch (error) {
-            toast.error('Failed to update status');
-        }
-    };
-
-    const handlePriorityChange = async (newPriority: string) => {
-        if (!ticket) return;
-
-        try {
-            await support.updateTicket(ticket.id, { priority: newPriority as any });
-            setTicket({ ...ticket, priority: newPriority as any });
-            toast.success(`Priority updated to ${newPriority}`);
-            setShowPriorityMenu(false);
-        } catch (error) {
-            toast.error('Failed to update priority');
-        }
-    };
-
-    const handleAssignAgent = async (agentId: string) => {
-        if (!ticket) return;
-
-        try {
-            await support.updateTicket(ticket.id, { assignedAgentId: agentId });
-            const agent = agents.find(a => a.id === agentId);
-            setTicket({ ...ticket, assignedAgentId: agentId, assignedAgent: agent });
-            toast.success(`Ticket assigned to ${agent?.name}`);
-            setShowAssignMenu(false);
-        } catch (error) {
-            toast.error('Failed to assign agent');
-        }
-    };
-
-    const insertCannedResponse = (response: CannedResponse) => {
-        setReplyContent(response.content);
-        setShowCannedResponses(false);
-    };
-
-    if (isLoading) {
-        return (
-            <div className="min-h-screen bg-[#FCFCFD] p-6 flex items-center justify-center">
-                <LoadingSpinner size="large" message="Loading ticket..." />
-            </div>
-        );
+      const response = await supportService.createMessage(id, messageData);
+      setMessages(prev => [...prev, response]);
+      setNewMessage('');
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    } finally {
+      setMessageLoading(false);
     }
+  };
 
-    if (!ticket) {
-        return (
-            <div className="min-h-screen bg-[#FCFCFD] p-6">
-                <div className="max-w-2xl mx-auto text-center">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-2">Ticket not found</h2>
-                    <p className="text-gray-600 mb-4">The ticket you're looking for doesn't exist.</p>
-                    <button
-                        onClick={() => navigate('/admin/support/tickets')}
-                        className="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700"
-                    >
-                        Back to Tickets
-                    </button>
-                </div>
-            </div>
-        );
+  // Handle assign ticket
+  const handleAssignTicket = async () => {
+    if (!id || !assignToUserId) return;
+
+    try {
+      const response = await supportService.assignTicket(id, assignToUserId);
+      setTicket(response);
+      setShowAssignModal(false);
+    } catch (err) {
+      console.error('Failed to assign ticket:', err);
     }
+  };
 
+  // Handle escalate ticket
+  const handleEscalateTicket = async () => {
+    if (!id || !escalationData.reason || !escalationData.escalateToUserId) return;
+
+    try {
+      const response = await supportService.escalateTicket(id, escalationData);
+      setTicket(response);
+      setShowEscalateModal(false);
+    } catch (err) {
+      console.error('Failed to escalate ticket:', err);
+    }
+  };
+
+  // Handle resolve ticket
+  const handleResolveTicket = async () => {
+    if (!id) return;
+
+    try {
+      const response = await supportService.resolveTicket(id, resolutionData);
+      setTicket(response);
+      setShowResolveModal(false);
+    } catch (err) {
+      console.error('Failed to resolve ticket:', err);
+    }
+  };
+
+  // Handle close ticket
+  const handleCloseTicket = async () => {
+    if (!id) return;
+
+    if (!window.confirm('Are you sure you want to close this ticket?')) return;
+
+    try {
+      const response = await supportService.closeTicket(id);
+      setTicket(response);
+    } catch (err) {
+      console.error('Failed to close ticket:', err);
+    }
+  };
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  };
+
+  // Get status color
+  const getStatusColor = (status: string) => {
+    switch(status.toLowerCase()) {
+      case 'open':
+        return 'bg-blue-100 text-blue-800';
+      case 'in progress':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'resolved':
+        return 'bg-green-100 text-green-800';
+      case 'closed':
+        return 'bg-gray-100 text-gray-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Get priority color
+  const getPriorityColor = (priority: string) => {
+    switch(priority?.toLowerCase()) {
+      case 'critical':
+        return 'text-red-600';
+      case 'high':
+        return 'text-orange-500';
+      case 'medium':
+        return 'text-yellow-500';
+      case 'low':
+        return 'text-green-500';
+      default:
+        return 'text-gray-500';
+    }
+  };
+
+  if (loading) {
     return (
-        <div className="min-h-screen bg-[#FCFCFD] font-['Inter',sans-serif]">
-            <div className="flex h-screen">
-                {/* Main Content Area */}
-                <div className="flex-1 flex flex-col">
-                    {/* Header */}
-                    <div className="bg-white border-b border-gray-200 px-6 py-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <button
-                                    onClick={() => navigate('/admin/support/tickets')}
-                                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                                >
-                                    <ArrowLeft size={20} />
-                                </button>
-                                <div>
-                                    <h1 className="text-lg font-semibold text-gray-900">
-                                        {ticket.subject}
-                                    </h1>
-                                    <div className="flex items-center gap-3 mt-1">
-                                        <span className="text-sm text-gray-500">#{ticket.id}</span>
-                                        <StatusBadge status={ticket.status} size="small" />
-                                        <PriorityBadge priority={ticket.priority} size="small" />
-                                        <SLACountdown
-                                            deadline={ticket.slaDeadline}
-                                            status={ticket.slaStatus}
-                                            size="small"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                                    <History size={20} />
-                                </button>
-                                <button
-                                    onClick={() => setShowActions(!showActions)}
-                                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                                >
-                                    <MoreVertical size={20} />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto bg-gray-50 px-6 py-4">
-                        <div className="max-w-4xl mx-auto space-y-4">
-                            {ticket.messages.map((message) => (
-                                <div
-                                    key={message.id}
-                                    className={`flex ${message.senderType === 'agent' ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    <div className={`max-w-2xl ${message.senderType === 'agent' ? 'order-2' : ''}`}>
-                                        <div className="flex items-start gap-3">
-                                            {message.senderType === 'user' && (
-                                                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-sm font-medium text-gray-700">
-                                                    {ticket.user?.avatar}
-                                                </div>
-                                            )}
-                                            <div>
-                                                <div className={`
-                          rounded-2xl px-4 py-3 
-                          ${message.senderType === 'agent'
-                                                        ? 'bg-primary-600 text-white'
-                                                        : 'bg-white border border-gray-200'
-                                                    }
-                        `}>
-                                                    <p className={`text-sm ${message.senderType === 'agent' ? 'text-white' : 'text-gray-900'}`}>
-                                                        {message.content}
-                                                    </p>
-                                                </div>
-                                                <div className="flex items-center gap-2 mt-1 px-1">
-                                                    <span className="text-xs text-gray-500">
-                                                        {message.senderName || 'Unknown'}
-                                                    </span>
-                                                    <span className="text-xs text-gray-400">
-                                                        {new Date(message.timestamp).toLocaleTimeString()}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            {message.senderType === 'agent' && (
-                                                <AgentAvatar
-                                                    name={message.senderName || 'Agent'}
-                                                    status="online"
-                                                    size="medium"
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                            <div ref={messageEndRef} />
-                        </div>
-                    </div>
-
-                    {/* Reply Box */}
-                    <div className="bg-white border-t border-gray-200 p-4">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex items-start gap-3">
-                                <div className="flex-1">
-                                    <textarea
-                                        value={replyContent}
-                                        onChange={(e) => setReplyContent(e.target.value)}
-                                        onKeyPress={(e) => {
-                                            if (e.key === 'Enter' && !e.shiftKey) {
-                                                e.preventDefault();
-                                                handleSendReply();
-                                            }
-                                        }}
-                                        placeholder="Type your reply..."
-                                        className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-primary-500 focus:bg-white resize-none"
-                                        rows={3}
-                                    />
-                                    <div className="flex items-center justify-between mt-3">
-                                        <div className="flex items-center gap-2">
-                                            <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">
-                                                <Paperclip size={20} />
-                                            </button>
-                                            <button
-                                                onClick={() => setShowCannedResponses(!showCannedResponses)}
-                                                className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
-                                            >
-                                                <MessageSquare size={20} />
-                                            </button>
-                                            <button className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">
-                                                <Sparkles size={20} />
-                                            </button>
-                                        </div>
-                                        <motion.button
-                                            onClick={handleSendReply}
-                                            disabled={!replyContent.trim() || isReplying}
-                                            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                        >
-                                            {isReplying ? (
-                                                <LoadingSpinner size="small" color="white" />
-                                            ) : (
-                                                <>
-                                                    <Send size={16} />
-                                                    <span className="text-sm font-medium">Send</span>
-                                                </>
-                                            )}
-                                        </motion.button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Canned Responses Dropdown */}
-                            <AnimatePresence>
-                                {showCannedResponses && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        className="mt-3 bg-white border border-gray-200 rounded-xl shadow-lg p-2 max-h-60 overflow-y-auto"
-                                    >
-                                        <p className="text-xs font-medium text-gray-500 px-3 py-2">CANNED RESPONSES</p>
-                                        {cannedResponses.map((response) => (
-                                            <button
-                                                key={response.id}
-                                                onClick={() => insertCannedResponse(response)}
-                                                className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
-                                            >
-                                                <p className="text-sm font-medium text-gray-900">{response.title}</p>
-                                                <p className="text-xs text-gray-500 truncate">{response.content}</p>
-                                            </button>
-                                        ))}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Sidebar */}
-                <div className="w-80 bg-white border-l border-gray-200 p-6 overflow-y-auto">
-                    {/* User Info */}
-                    <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-gray-900 mb-3">Customer</h3>
-                        <div className="flex items-start gap-3">
-                            <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-lg font-medium text-gray-700">
-                                {ticket.user?.avatar}
-                            </div>
-                            <div>
-                                <p className="font-medium text-gray-900">{ticket.user?.name}</p>
-                                <p className="text-sm text-gray-500">{ticket.user?.email}</p>
-                                <p className="text-xs text-gray-400 mt-1">
-                                    {ticket.user?.accountType} account
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Ticket Details */}
-                    <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-gray-900 mb-3">Details</h3>
-                        <div className="space-y-3">
-                            {/* Status */}
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">Status</p>
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowStatusMenu(!showStatusMenu)}
-                                        className="flex items-center gap-2 w-full"
-                                    >
-                                        <StatusBadge status={ticket.status} size="small" />
-                                        <ChevronDown size={14} className="text-gray-400" />
-                                    </button>
-                                    {showStatusMenu && (
-                                        <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                                            {['open', 'pending', 'resolved', 'escalated', 'closed'].map((status) => (
-                                                <button
-                                                    key={status}
-                                                    onClick={() => handleStatusChange(status)}
-                                                    className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm capitalize"
-                                                >
-                                                    {status}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Priority */}
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">Priority</p>
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowPriorityMenu(!showPriorityMenu)}
-                                        className="flex items-center gap-2 w-full"
-                                    >
-                                        <PriorityBadge priority={ticket.priority} size="small" />
-                                        <ChevronDown size={14} className="text-gray-400" />
-                                    </button>
-                                    {showPriorityMenu && (
-                                        <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                                            {['critical', 'high', 'medium', 'low'].map((priority) => (
-                                                <button
-                                                    key={priority}
-                                                    onClick={() => handlePriorityChange(priority)}
-                                                    className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm capitalize"
-                                                >
-                                                    {priority}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Category */}
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">Category</p>
-                                <p className="text-sm text-gray-900 capitalize">{ticket.category}</p>
-                            </div>
-
-                            {/* Assigned Agent */}
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">Assigned to</p>
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowAssignMenu(!showAssignMenu)}
-                                        className="flex items-center gap-2 w-full"
-                                    >
-                                        {ticket.assignedAgent ? (
-                                            <>
-                                                <AgentAvatar
-                                                    name={ticket.assignedAgent.name}
-                                                    status={ticket.assignedAgent.status}
-                                                    size="small"
-                                                />
-                                                <span className="text-sm">{ticket.assignedAgent.name}</span>
-                                            </>
-                                        ) : (
-                                            <span className="text-sm text-gray-400">Unassigned</span>
-                                        )}
-                                        <ChevronDown size={14} className="text-gray-400 ml-auto" />
-                                    </button>
-                                    {showAssignMenu && (
-                                        <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
-                                            {agents.map((agent) => (
-                                                <button
-                                                    key={agent.id}
-                                                    onClick={() => handleAssignAgent(agent.id)}
-                                                    className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center gap-2"
-                                                >
-                                                    <AgentAvatar
-                                                        name={agent.name}
-                                                        status={agent.status}
-                                                        size="small"
-                                                    />
-                                                    <span className="text-sm">{agent.name}</span>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Created Date */}
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">Created</p>
-                                <p className="text-sm text-gray-900">
-                                    {new Date(ticket.createdAt).toLocaleString()}
-                                </p>
-                            </div>
-
-                            {/* Updated Date */}
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">Last Updated</p>
-                                <p className="text-sm text-gray-900">
-                                    {new Date(ticket.updatedAt).toLocaleString()}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Tags */}
-                    {ticket.tags && ticket.tags.length > 0 && (
-                        <div className="mb-6">
-                            <h3 className="text-sm font-semibold text-gray-900 mb-3">Tags</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {ticket.tags.map((tag, index) => (
-                                    <span
-                                        key={index}
-                                        className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs"
-                                    >
-                                        <Tag size={12} />
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* AI Suggestions */}
-                    <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                            <Sparkles size={16} className="text-primary-600" />
-                            AI Suggestions
-                        </h3>
-                        <div className="bg-primary-50 rounded-xl p-3 text-sm text-primary-700">
-                            Based on similar tickets, consider checking the user's wallet transaction history for any pending operations.
-                        </div>
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className="space-y-2">
-                        <button className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition-colors">
-                            Escalate to Supervisor
-                        </button>
-                        <button className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition-colors">
-                            Add Internal Note
-                        </button>
-                        <button className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-medium transition-colors">
-                            View Similar Tickets
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
     );
-};
+  }
 
-export default TicketDetail;
+  if (error || !ticket) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-100 p-4 rounded-md text-red-700 mb-4">
+          {error || 'Ticket not found'}
+        </div>
+        <button
+          className="flex items-center text-blue-600 hover:text-blue-800"
+          onClick={() => navigate('/tickets')}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Tickets
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      {/* Back button */}
+      <button
+        className="flex items-center text-blue-600 hover:text-blue-800 mb-6"
+        onClick={() => navigate('/tickets')}
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Back to Tickets
+      </button>
+
+      {/* Ticket Header */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="flex justify-between items-start">
+          <div>
+            <div className="flex items-center mb-2">
+              <h1 className="text-2xl font-bold text-gray-800 mr-3">{ticket.title}</h1>
+              <span className="text-gray-500">#{ticket.ticketNumber}</span>
+            </div>
+
+            <div className="flex flex-wrap gap-3 mb-4">
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(ticket.status)}`}>
+                {ticket.status}
+              </span>
+              <span className={`flex items-center text-sm font-medium ${getPriorityColor(ticket.priority)}`}>
+                <AlertTriangle className="w-4 h-4 mr-1" />
+                {ticket.priority}
+              </span>
+              <span className="flex items-center text-sm text-gray-600">
+                <Tag className="w-4 h-4 mr-1" />
+                {ticket.category}
+              </span>
+            </div>
+          </div>
+
+          <div className="relative">
+            <button
+              onClick={() => setShowActions(!showActions)}
+              className="p-2 rounded-full hover:bg-gray-100"
+            >
+              <MoreHorizontal className="w-5 h-5 text-gray-600" />
+            </button>
+
+            {showActions && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                <div className="py-1">
+                  <button
+                    onClick={() => setShowAssignModal(true)}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Assign Ticket
+                  </button>
+                  <button
+                    onClick={() => setShowEscalateModal(true)}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Escalate Ticket
+                  </button>
+                  <button
+                    onClick={() => setShowResolveModal(true)}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    disabled={ticket.status === 'Resolved' || ticket.status === 'Closed'}
+                  >
+                    Resolve Ticket
+                  </button>
+                  <button
+                    onClick={handleCloseTicket}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    disabled={ticket.status === 'Closed'}
+                  >
+                    Close Ticket
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:justify-between text-sm text-gray-600 mt-4">
+          <div className="flex items-center mb-2 md:mb-0">
+            <User className="w-4 h-4 mr-1" />
+            <span>Created by: {ticket.createdByName || ticket.createdBy}</span>
+          </div>
+          <div className="flex items-center mb-2 md:mb-0">
+            <User className="w-4 h-4 mr-1" />
+            <span>Assigned to: {ticket.assignedToName || ticket.assignedTo || 'Unassigned'}</span>
+          </div>
+          <div className="flex items-center">
+            <Clock className="w-4 h-4 mr-1" />
+            <span>Created: {formatDate(ticket.createdAt)}</span>
+          </div>
+        </div>
+
+        <div className="mt-6 border-t pt-4">
+          <h2 className="text-lg font-semibold mb-2">Description</h2>
+          <p className="text-gray-700 whitespace-pre-wrap">{ticket.description}</p>
+        </div>
+      </div>
+
+      {/* Messages Section */}
+      <div className="bg-white rounded-lg shadow-md mb-6">
+        <div className="p-6 border-b">
+          <h2 className="text-lg font-semibold">Conversation</h2>
+        </div>
+
+        <div className="p-6 max-h-96 overflow-y-auto space-y-4">
+          {messages.length === 0 ? (
+            <p className="text-center text-gray-500">No messages yet</p>
+          ) : (
+            messages.map((message) => (
+              <div
+                key={message.id}
+                className={`p-4 rounded-lg ${
+                  message.isInternal
+                    ? 'bg-yellow-50 border border-yellow-100'
+                    : 'bg-gray-50 border border-gray-100'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex items-center">
+                    <div className="font-medium text-gray-900">
+                      {message.senderName || message.sender}
+                    </div>
+                    {message.isInternal && (
+                      <span className="ml-2 px-2 py-0.5 bg-yellow-200 text-yellow-800 text-xs rounded-full">
+                        Internal
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {formatDate(message.createdAt)}
+                  </div>
+                </div>
+                <p className="text-gray-700 whitespace-pre-wrap">{message.content}</p>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="p-6 border-t">
+          <form onSubmit={handleSendMessage}>
+            <div className="mb-2">
+              <textarea
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="flex items-center text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  checked={isInternal}
+                  onChange={() => setIsInternal(!isInternal)}
+                  className="mr-2 h-4 w-4 text-blue-600 rounded"
+                />
+                Internal note (not visible to customer)
+              </label>
+              <button
+                type="submit"
+                disabled={messageLoading || !newMessage.trim()}
+                className={`flex items-center px-4 py-2 rounded-md ${
+                  messageLoading || !newMessage.trim()
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                {messageLoading ? (
+                  <span>Sending...</span>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Send
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Assign Modal */}
+      {showAssignModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Assign Ticket</h2>
+              <button
+                onClick={() => setShowAssignModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Assign to
+              </label>
+              <select
+                value={assignToUserId}
+                onChange={(e) => setAssignToUserId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a user</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowAssignModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAssignTicket}
+                disabled={!assignToUserId}
+                className={`px-4 py-2 rounded-md ${
+                  !assignToUserId
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                Assign
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Escalate Modal */}
+      {showEscalateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Escalate Ticket</h2>
+              <button
+                onClick={() => setShowEscalateModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Escalate to
+              </label>
+              <select
+                value={escalationData.escalateToUserId}
+                onChange={(e) => setEscalationData({...escalationData, escalateToUserId: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a user</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Reason for escalation
+              </label>
+              <textarea
+                value={escalationData.reason}
+                onChange={(e) => setEscalationData({...escalationData, reason: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowEscalateModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEscalateTicket}
+                disabled={!escalationData.escalateToUserId || !escalationData.reason}
+                className={`px-4 py-2 rounded-md ${
+                  !escalationData.escalateToUserId || !escalationData.reason
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                Escalate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Resolve Modal */}
+      {showResolveModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Resolve Ticket</h2>
+              <button
+                onClick={() => setShowResolveModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Resolution notes
+              </label>
+              <textarea
+                value={resolutionData.notes}
+                onChange={(e) => setResolutionData({...resolutionData, notes: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowResolveModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResolveTicket}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+              >
+                Resolve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

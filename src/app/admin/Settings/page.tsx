@@ -96,7 +96,6 @@ export interface ThemeStyles {
 }
 
 const page = () => {
-  // State management
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("general");
@@ -105,11 +104,9 @@ const page = () => {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [id, setId] = useState("");
 
-  // Motion values for animations
   const scrollY = useMotionValue(0);
   const headerParallax = useTransform(scrollY, [0, 100], [0, -12]);
 
-  // Fetch settings data
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -168,7 +165,6 @@ const page = () => {
     { id: "notifications", label: "Notifications", icon: <Bell size={18} /> }
   ];
 
-  // Loading state
   if (loading) {
     return (
       <div className={`flex h-screen items-center justify-center bg-gradient-to-br ${currentTheme.bg}`}>
@@ -232,8 +228,8 @@ const page = () => {
             whileTap={{ scale: 0.95 }}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`p-2 rounded-full ${theme === "light"
-                ? "bg-gray-100 text-gray-600"
-                : "bg-gray-800 text-gray-300"
+              ? "bg-gray-100 text-gray-600"
+              : "bg-gray-800 text-gray-300"
               }`}
           >
             {mobileMenuOpen ? <X size={18} /> : <Sliders size={18} />}
@@ -250,8 +246,8 @@ const page = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
             className={`fixed top-16 left-0 right-0 z-10 backdrop-blur-xl lg:hidden rounded-b-2xl ${theme === "light"
-                ? "bg-white/95 border-b border-gray-200"
-                : "bg-gray-900/95 border-b border-gray-700/30"
+              ? "bg-white/95 border-b border-gray-200"
+              : "bg-gray-900/95 border-b border-gray-700/30"
               }`}
           >
             <div className="p-3">
@@ -265,12 +261,12 @@ const page = () => {
                     setMobileMenuOpen(false);
                   }}
                   className={`w-full flex items-center space-x-3 px-4 py-3.5 my-1 rounded-xl text-left text-[13px] ${activeTab === tab.id
-                      ? theme === "light"
-                        ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium shadow-md"
-                        : "bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium shadow-md"
-                      : theme === "light"
-                        ? "text-gray-700 hover:bg-gray-50"
-                        : "text-gray-300 hover:bg-gray-800/50"
+                    ? theme === "light"
+                      ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium shadow-md"
+                      : "bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium shadow-md"
+                    : theme === "light"
+                      ? "text-gray-700 hover:bg-gray-50"
+                      : "text-gray-300 hover:bg-gray-800/50"
                     } transition-all duration-200`}
                 >
                   <span className={activeTab === tab.id ? "text-white" : theme === "light" ? "text-gray-500" : "text-gray-400"}>
@@ -287,9 +283,7 @@ const page = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 pt-20 pb-8 lg:py-10 max-w-screen-xl relative z-1">
-        {/* Desktop Header */}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -309,8 +303,8 @@ const page = () => {
             <div>
               <motion.h1
                 className={`text-3xl font-bold ${theme === "light"
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600"
-                    : "bg-gradient-to-r from-blue-400 to-indigo-400"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600"
+                  : "bg-gradient-to-r from-blue-400 to-indigo-400"
                   } bg-clip-text text-transparent`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -325,7 +319,6 @@ const page = () => {
           </div>
         </motion.div>
 
-        {/* Settings Content */}
         <SettingsTabs
           id={id}
           theme={theme}
@@ -342,7 +335,6 @@ const page = () => {
         />
       </div>
 
-      {/* Success Toast */}
       <AnimatePresence>
         {showSuccess && (
           <motion.div
@@ -351,8 +343,8 @@ const page = () => {
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
             className={`fixed bottom-6 right-6 p-4 rounded-xl flex items-center text-[13px] shadow-xl ${theme === "light"
-                ? "bg-white border border-green-100"
-                : "bg-gray-800 border border-green-900/30"
+              ? "bg-white border border-green-100"
+              : "bg-gray-800 border border-green-900/30"
               }`}
           >
             <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${theme === "light" ? "bg-green-50" : "bg-green-900/30"

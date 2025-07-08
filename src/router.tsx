@@ -117,8 +117,8 @@ const NotificationsDetail = lazy(() => import('./app/admin/media/viewtemplate'))
 const ShortsSettings = lazy(() => import('./app/admin/media/settings'));
 
 // Support center
-// const SupportDashboard = lazy(() => import('./app/admin/support/dashboard'));
-// const Tickets = lazy(() => import('./app/admin/support/ticketlist'));
+const TicketDashboard = lazy(() => import('./app/admin/support/ticketdashboard'));
+const Tickets = lazy(() => import('./app/admin/support/tickets'));
 // const TicketDetails = lazy(() => import('./app/admin/support/ticketdetail'));
 // const Agents = lazy(() => import('./app/admin/support/agentlist'));
 // const Categories = lazy(() => import('./app/admin/support/categorymanagement'));
@@ -663,6 +663,16 @@ const AppRouter: React.FC = () => {
             } />
 
             {/* ===== Support Center ===== */}
+            <Route path="admin/support/dashboard" element={
+              <PermissionRouteGuard permissions={[]}>
+                <TicketDashboard />
+              </PermissionRouteGuard>
+            } />
+            <Route path="admin/support/tickets" element={
+              <PermissionRouteGuard permissions={[]}>
+                <Tickets />
+              </PermissionRouteGuard>
+            } />
 
             {/* ===== Audit Logs ===== */}
             <Route path="admin/logs" element={
