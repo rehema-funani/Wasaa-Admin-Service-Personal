@@ -112,7 +112,7 @@ export default function CategoriesListPage() {
       );
     };
 
-    const matchesActiveFilter = (category) => {
+    const matchesActiveFilter = (category: any) => {
       return showInactive ? true : category.isActive;
     };
 
@@ -121,8 +121,7 @@ export default function CategoriesListPage() {
     );
   }, [organizedCategories, searchTerm, showInactive]);
 
-  // Handle sort
-  const handleSort = (field) => {
+  const handleSort = (field: any) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
@@ -131,8 +130,7 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Handle delete category
-  const handleDeleteCategory = async (id) => {
+  const handleDeleteCategory = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
       return;
     }
@@ -146,8 +144,7 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Format time
-  const formatTime = (minutes) => {
+  const formatTime = (minutes: any) => {
     if (minutes < 60) {
       return `${minutes}m`;
     } else {
@@ -157,8 +154,7 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Get priority badge
-  const getPriorityBadge = (priority) => {
+  const getPriorityBadge = (priority: string) => {
     const classes = {
       LOW: "bg-green-100 text-green-800",
       MEDIUM: "bg-blue-100 text-blue-800",
@@ -168,7 +164,7 @@ export default function CategoriesListPage() {
     };
 
     return (
-      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${classes[priority] || classes.default}`}>
+      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-sm font-medium ${classes[priority] || classes.default}`}>
         {priority.charAt(0) + priority.slice(1).toLowerCase()}
       </span>
     );
@@ -238,16 +234,16 @@ export default function CategoriesListPage() {
                   {category.name}
                 </h3>
                 {!category.isActive && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600">
                     Inactive
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-500 truncate">{category.description}</p>
+              <p className="text-sm text-gray-500 truncate">{category.description}</p>
             </div>
 
             {/* SLA Info */}
-            <div className="hidden md:flex items-center space-x-6 text-xs mr-4">
+            <div className="hidden md:flex items-center space-x-6 text-sm mr-4">
               <div className="text-right">
                 <p className="text-gray-500">Response</p>
                 <div className="font-medium text-gray-700 flex items-center justify-end">
@@ -427,7 +423,7 @@ export default function CategoriesListPage() {
         ) : (
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             {/* Table Header */}
-            <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 flex items-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 flex items-center text-sm font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex-grow flex items-center">
                 <button
                   className="flex items-center text-left focus:outline-none"
