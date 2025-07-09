@@ -26,13 +26,13 @@ import {
   Folder,
   ArrowUpRight,
   Download,
-  X
+  X,
+  FileText
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
 import userService from '../../../api/services/users';
 
-// Get category icon component
-const getCategoryIcon = (iconName) => {
+const getCategoryIcon = (iconName: string) => {
   switch (iconName) {
     case 'video':
       return <Video />;
@@ -62,9 +62,17 @@ export default function CannedResponsesListPage() {
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 1 });
   const [creators, setCreators] = useState({});
   const [loadingCreators, setLoadingCreators] = useState(false);
-  const [viewMode, setViewMode] = useState('card'); // 'card' or 'compact'
+  const [viewMode, setViewMode] = useState('card');
 
-  // Fetch canned responses
+  const [isRenderModalOpen, setIsRenderModalOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [templateVariables, setTemplateVariables] = useState({});
+  const [renderedTemplate, setRenderedTemplate] = useState('');
+  const [renderLoading, setRenderLoading] = useState(false);
+  const [renderError, setRenderError] = useState(null);
+  const [showRawResponse, setShowRawResponse] = useState(false);
+  const [apiResponse, setApiResponse] = useState(null);
+
   useEffect(() => {
     const fetchResponses = async () => {
       setLoading(true);
@@ -213,10 +221,9 @@ export default function CannedResponsesListPage() {
   // Extract and count placeholders
   const extractPlaceholders = (content) => {
     const matches = content.match(/\{\{([^}]+)\}\}/g) || [];
-    return [...new Set(matches)].map((ph: string) => ph.replace(/[{}]/g, ''));
+    return [...new Set(matches)].map((ph) => (ph as string).replace(/[{}]/g, ''));
   };
 
-  // Highlight placeholders in content
   const highlightPlaceholders = (content) => {
     // Split by placeholder pattern {{...}} and join with highlighted spans
     const parts = content.split(/(\{\{[^}]+\}\})/g);
@@ -254,7 +261,54 @@ export default function CannedResponsesListPage() {
     }
   };
 
-  // Render category badge
+  // Handle template rendering
+  const handleRenderTemplate = (response) => {
+    // Extract placeholders from the template
+    const placeholders = extractPlaceholders(response.content);
+
+    // Initialize template variables with empty values
+    const initialVariables = {};
+    placeholders.forEach(placeholder => {
+      initialVariables[placeholder] = '';
+    });
+
+    // Set states to open the modal
+    setSelectedTemplate(response);
+    setTemplateVariables(initialVariables);
+    setRenderedTemplate('');
+    setRenderError(null);
+    setIsRenderModalOpen(true);
+  };
+
+  const renderTemplate = async () => {
+    if (!selectedTemplate) return;
+
+    setRenderLoading(true);
+    setRenderError(null);
+
+    try {
+      const result = await supportService.renderCannedResponseTemplate(
+        { variables: templateVariables },
+        selectedTemplate.id
+      );
+
+      const apiResponseObj = {
+        success: true,
+        data: {
+          content: result.renderedContent
+        }
+      };
+
+      setApiResponse(apiResponseObj);
+      setRenderedTemplate(result.renderedContent);
+    } catch (err) {
+      setRenderError('Failed to render template. Please check your variables and try again.');
+      console.error(err);
+    } finally {
+      setRenderLoading(false);
+    }
+  };
+
   const renderCategoryBadge = (category) => {
     if (!category) return null;
 
@@ -272,7 +326,6 @@ export default function CannedResponsesListPage() {
     );
   };
 
-  // Render creator avatar
   const renderCreatorAvatar = (creatorId) => {
     const creator = creators[creatorId];
     if (!creator) {
@@ -365,9 +418,33 @@ export default function CannedResponsesListPage() {
                     <div className="text-xs text-gray-500">uses</div>
                   </div>
 
-                  <div className="relative">
+                  <div className="flex items-center text-right space-x-2">
                     <button
-                      onClick={() => setActiveMenu(activeMenu === response.id ? null : response.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopy(response.content);
+                      }}
+                      className="p-1 rounded-full text-gray-400 hover:text-indigo-600"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </button>
+                    {extractPlaceholders(response.content).length > 0 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRenderTemplate(response);
+                        }}
+                        className="p-1 rounded-full text-gray-400 hover:text-indigo-600"
+                        title="Render Template"
+                      >
+                        <FileText className="h-4 w-4" />
+                      </button>
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveMenu(activeMenu === response.id ? null : response.id);
+                      }}
                       className="p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                     >
                       <MoreHorizontal className="h-5 w-5" />
@@ -501,7 +578,6 @@ export default function CannedResponsesListPage() {
     );
   };
 
-  // Render compact view
   const renderCompactView = () => {
     return (
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -628,6 +704,15 @@ export default function CannedResponsesListPage() {
                     >
                       <Copy className="h-4 w-4" />
                     </button>
+                    {extractPlaceholders(response.content).length > 0 && (
+                      <button
+                        onClick={() => handleRenderTemplate(response)}
+                        className="text-gray-400 hover:text-indigo-600"
+                        title="Render Template"
+                      >
+                        <FileText className="h-4 w-4" />
+                      </button>
+                    )}
                     <button
                       onClick={() => console.log('View details', response.id)}
                       className="text-gray-400 hover:text-indigo-600"
@@ -656,7 +741,6 @@ export default function CannedResponsesListPage() {
     );
   };
 
-  // Render pagination
   const renderPagination = () => {
     if (pagination.pages <= 1) return null;
 
@@ -667,8 +751,8 @@ export default function CannedResponsesListPage() {
             onClick={() => handlePageChange(pagination.page - 1)}
             disabled={pagination.page === 1}
             className={`relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ${pagination.page === 1
-                ? 'text-gray-300 cursor-not-allowed'
-                : 'text-gray-700 hover:bg-gray-50'
+              ? 'text-gray-300 cursor-not-allowed'
+              : 'text-gray-700 hover:bg-gray-50'
               }`}
           >
             Previous
@@ -677,8 +761,8 @@ export default function CannedResponsesListPage() {
             onClick={() => handlePageChange(pagination.page + 1)}
             disabled={pagination.page === pagination.pages}
             className={`relative ml-3 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ${pagination.page === pagination.pages
-                ? 'text-gray-300 cursor-not-allowed'
-                : 'text-gray-700 hover:bg-gray-50'
+              ? 'text-gray-300 cursor-not-allowed'
+              : 'text-gray-700 hover:bg-gray-50'
               }`}
           >
             Next
@@ -700,8 +784,8 @@ export default function CannedResponsesListPage() {
                 onClick={() => handlePageChange(pagination.page - 1)}
                 disabled={pagination.page === 1}
                 className={`relative inline-flex items-center rounded-l-md px-2 py-2 ${pagination.page === 1
-                    ? 'text-gray-300 cursor-not-allowed'
-                    : 'text-gray-500 hover:bg-gray-50'
+                  ? 'text-gray-300 cursor-not-allowed'
+                  : 'text-gray-500 hover:bg-gray-50'
                   }`}
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -731,8 +815,8 @@ export default function CannedResponsesListPage() {
                       <button
                         onClick={() => handlePageChange(page)}
                         className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${page === pagination.page
-                            ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                            : 'text-gray-500 hover:bg-gray-50'
+                          ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                          : 'text-gray-500 hover:bg-gray-50'
                           }`}
                       >
                         {page}
@@ -750,8 +834,8 @@ export default function CannedResponsesListPage() {
                 onClick={() => handlePageChange(pagination.page + 1)}
                 disabled={pagination.page === pagination.pages}
                 className={`relative inline-flex items-center rounded-r-md px-2 py-2 ${pagination.page === pagination.pages
-                    ? 'text-gray-300 cursor-not-allowed'
-                    : 'text-gray-500 hover:bg-gray-50'
+                  ? 'text-gray-300 cursor-not-allowed'
+                  : 'text-gray-500 hover:bg-gray-50'
                   }`}
               >
                 <ChevronRight className="h-5 w-5" />
@@ -764,7 +848,182 @@ export default function CannedResponsesListPage() {
     );
   };
 
-  // Helper function to render action menu
+  const handleVariableChange = (placeholder: string, value: string) => {
+    setTemplateVariables(prev => ({
+      ...prev,
+      [placeholder]: value
+    }));
+  };
+
+  const renderTemplateModal = () => {
+    if (!isRenderModalOpen || !selectedTemplate) return null;
+
+    const placeholders = extractPlaceholders(selectedTemplate.content);
+
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-80 backdrop-blur-sm">
+        <div className="w-full max-w-2xl max-h-[90vh] bg-white rounded-xl overflow-hidden shadow-2xl border border-gray-200 flex flex-col transform transition-all duration-300">
+          <div className="relative">
+            <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+            <div className="flex justify-between items-center px-6 py-4">
+              <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                <FileText className="h-5 w-5 mr-2 text-blue-500" />
+                <span>{selectedTemplate.title}</span>
+              </h3>
+              <button
+                onClick={() => setIsRenderModalOpen(false)}
+                className="rounded-full p-1 text-gray-400 hover:bg-gray-100 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-auto p-6 space-y-6">
+            {renderError && (
+              <div className="px-4 py-3 rounded-lg bg-red-50 border-l-4 border-red-500">
+                <div className="flex">
+                  <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">{renderError}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+              <div className="px-4 py-3 bg-gray-100 border-b border-gray-200 flex items-center">
+                <MessageSquare className="h-4 w-4 text-gray-500 mr-2" />
+                <span className="text-xs font-medium text-gray-700">Template Preview</span>
+              </div>
+              <div className="p-4 text-sm text-gray-700 whitespace-pre-wrap">
+                {highlightPlaceholders(selectedTemplate.content)}
+              </div>
+            </div>
+
+            {placeholders.length > 0 ? (
+              <div className="space-y-5">
+                <h4 className="text-sm font-medium text-gray-700 flex items-center">
+                  <Tag className="h-4 w-4 mr-2 text-blue-500" />
+                  Template Variables
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {placeholders.map(placeholder => (
+                    <div key={placeholder} className="relative">
+                      <input
+                        type="text"
+                        id={placeholder}
+                        value={templateVariables[placeholder] || ''}
+                        onChange={(e) => handleVariableChange(placeholder, e.target.value)}
+                        placeholder=" "
+                        className="block w-full px-4 py-3 text-gray-700 bg-transparent rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all peer"
+                      />
+                      <label
+                        htmlFor={placeholder}
+                        className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-2"
+                      >
+                        {placeholder}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="px-4 py-3 rounded-lg bg-gray-50 border border-gray-200">
+                <p className="text-sm text-gray-500 text-center">
+                  This template does not contain any variables.
+                </p>
+              </div>
+            )}
+
+            {renderedTemplate && (
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xs font-medium text-gray-700">
+                      {showRawResponse ? "API Response" : "Rendered Result"}
+                    </span>
+                    <div className="flex items-center">
+                      <button
+                        onClick={() => setShowRawResponse(false)}
+                        className={`px-2 py-1 text-xs rounded-l-md border ${!showRawResponse
+                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}
+                      >
+                        Content
+                      </button>
+                      <button
+                        onClick={() => setShowRawResponse(true)}
+                        className={`px-2 py-1 text-xs rounded-r-md border -ml-px ${showRawResponse
+                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}
+                      >
+                        JSON
+                      </button>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleCopy(showRawResponse ? JSON.stringify(apiResponse, null, 2) : renderedTemplate)}
+                    className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+                  >
+                    {copiedId === (showRawResponse ? JSON.stringify(apiResponse) : renderedTemplate) ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 mr-1" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5 mr-1" />
+                        Copy
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {showRawResponse ? (
+                  <div className="p-4 text-sm font-mono text-gray-700 whitespace-pre bg-gray-50 overflow-auto">
+                    {JSON.stringify(apiResponse, null, 2)}
+                  </div>
+                ) : (
+                  <div className="p-4 text-sm text-gray-700 whitespace-pre-wrap">
+                    {renderedTemplate}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+            <button
+              onClick={() => setIsRenderModalOpen(false)}
+              className="px-4 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={renderTemplate}
+              disabled={renderLoading || placeholders.length === 0}
+              className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
+            >
+              {renderLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Render Template
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   function renderActionMenu(response) {
     if (activeMenu !== response.id) return null;
 
@@ -804,6 +1063,19 @@ export default function CannedResponsesListPage() {
             <Copy className="mr-3 h-4 w-4 text-gray-500" />
             Copy Content
           </button>
+          {extractPlaceholders(response.content).length > 0 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRenderTemplate(response);
+                setActiveMenu(null);
+              }}
+              className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <FileText className="mr-3 h-4 w-4 text-gray-500" />
+              Render Template
+            </button>
+          )}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -892,8 +1164,8 @@ export default function CannedResponsesListPage() {
               <button
                 onClick={() => setShowInactive(!showInactive)}
                 className={`inline-flex items-center px-3 py-1.5 border text-sm font-medium rounded-md ${showInactive
-                    ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-                    : 'border-gray-200 bg-white text-gray-700'
+                  ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                  : 'border-gray-200 bg-white text-gray-700'
                   }`}
               >
                 <Filter className="w-3.5 h-3.5 mr-1.5" />
@@ -956,6 +1228,9 @@ export default function CannedResponsesListPage() {
             {renderPagination()}
           </div>
         )}
+
+        {/* Render Template Modal */}
+        {renderTemplateModal()}
       </div>
     </div>
   );

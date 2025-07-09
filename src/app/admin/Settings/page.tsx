@@ -48,7 +48,6 @@ const cardHover = {
   }
 };
 
-// Types
 export interface Settings {
   website_name?: string;
   website_description?: string;
@@ -89,7 +88,7 @@ export interface ThemeStyles {
   sectionBorder: string;
 }
 
-const page = () => {
+const page: React.FC = () => {
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("general");
@@ -117,7 +116,6 @@ const page = () => {
     fetchSettings();
   }, []);
 
-  // Add scroll listener
   useEffect(() => {
     const handleScroll = () => {
       scrollY.set(window.scrollY);
@@ -127,7 +125,6 @@ const page = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Theme styles
   const themeStyles = {
     light: {
       bg: "from-gray-50 via-gray-50 to-blue-50/30",
@@ -149,7 +146,6 @@ const page = () => {
 
   const currentTheme = themeStyles[theme];
 
-  // Tab definitions
   const tabs = [
     { id: "general", label: "General", icon: <Globe size={18} /> },
     { id: "appearance", label: "Appearance", icon: <PaintBucket size={18} /> },
@@ -197,7 +193,6 @@ const page = () => {
     <div
       className={`min-h-screen bg-gradient-to-br ${currentTheme.bg} transition-colors duration-300 pb-20`}
     >
-      {/* Mobile Header */}
       <motion.div
         className={`lg:hidden fixed top-0 left-0 right-0 z-20 backdrop-blur-xl shadow-sm px-5 py-4 flex items-center justify-between
         ${theme === "light" ? "bg-white/90 shadow-sm" : "bg-gray-900/90 shadow-gray-800/20"}`}

@@ -250,6 +250,11 @@ getTicketStats: async (params?: {
     const response = await supportaxios.get('/tickets/tags/popular');
     return response.data;
   },
+
+  renderCannedResponseTemplate: async (templateData: any, id: string) => {
+    const response = await supportaxios.post(`/canned-responses/${id}/render`, templateData);
+    return response.data;
+  },
 };
 
 export default supportService;

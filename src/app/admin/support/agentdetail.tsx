@@ -71,13 +71,11 @@ export default function AgentDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // State
   const [agent, setAgent] = useState<Agent | null>(null);
   const [statistics, setStatistics] = useState<AgentStatistics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch agent details
   useEffect(() => {
     const fetchAgentDetails = async () => {
       if (!id) return;
@@ -100,12 +98,10 @@ export default function AgentDetailsPage() {
     fetchAgentDetails();
   }, [id]);
 
-  // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
   };
 
-  // Get status badge style
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active':
@@ -130,7 +126,6 @@ export default function AgentDetailsPage() {
     }
   };
 
-  // Toggle agent status
   const toggleAgentStatus = async () => {
     if (!agent || !id) return;
 
@@ -138,7 +133,6 @@ export default function AgentDetailsPage() {
       const newStatus = agent.status === 'active' ? 'inactive' : 'active';
       await supportService.updateAgentStatus(id, newStatus);
 
-      // Update the local state
       setAgent(prev => prev ? { ...prev, status: newStatus } : null);
     } catch (err) {
       console.error('Failed to update agent status:', err);
