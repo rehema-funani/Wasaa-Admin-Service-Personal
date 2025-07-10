@@ -281,6 +281,11 @@ getTicketStats: async (params?: {
     return response.data;
   },
 
+  submitFAQFeedback: async (id: string, faqData: any) => {
+    const response = await supportaxios.patch(`/faqs/${id}`, faqData);
+    return response.data;
+  },
+
   deleteFAQ: async (id: string) => {
     const response = await supportaxios.delete(`/faqs/${id}`);
     return response.data;

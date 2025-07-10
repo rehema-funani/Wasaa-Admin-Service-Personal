@@ -13,7 +13,8 @@ import {
   CheckCircle,
   Loader,
   X,
-  Grid3X3
+  Grid3X3,
+  Eye
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
 
@@ -93,7 +94,6 @@ const FAQManagementPage = () => {
       setFaqs(faqs.filter(faq => faq.id !== faqToDelete));
       setSuccess('FAQ deleted successfully');
 
-      // Auto-hide success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
 
     } catch (err) {
@@ -105,13 +105,11 @@ const FAQManagementPage = () => {
     }
   };
 
-  // Open delete confirmation modal
   const openDeleteModal = (id) => {
     setFaqToDelete(id);
     setDeleteModalOpen(true);
   };
 
-  // Reset filters
   const resetFilters = () => {
     setSearchTerm('');
     setSelectedLanguage('');
@@ -272,6 +270,13 @@ const FAQManagementPage = () => {
                         </button>
 
                         <div className="relative hidden group-hover:block">
+                          <button
+                            onClick={() => navigate(`/admin/support/faqs/${faq.id}`)}
+                            className="p-2 text-gray-500 hover:text-teal-600 transition-colors"
+                          >
+                            <Eye className="h-5 w-5" />
+                          </button>
+
                           <button
                             onClick={() => navigate(`/admin/support/faqs/${faq.id}/edit`)}
                             className="p-2 text-gray-500 hover:text-teal-600 transition-colors"
