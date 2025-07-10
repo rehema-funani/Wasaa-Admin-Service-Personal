@@ -154,6 +154,7 @@ const SupportAuditModule = {
   ResponseDetail: lazy(() => import('./app/admin/support/cannedresponsedetail')),
   FAQs: lazy(() => import('./app/admin/support/faq')),
   FAQCreate: lazy(() => import('./app/admin/support/faqcreate')),
+  SupportReports: lazy(() => import('./app/admin/support/reports')),
   Logs: lazy(() => import('./app/admin/audits/page')),
   AuditDetails: lazy(() => import('./app/admin/audits/auditdetails')),
 };
@@ -368,6 +369,7 @@ const supportAuditRoutes = [
   { path: PATHS.ADMIN.SUPPORT.FAQS, element: SupportAuditModule.FAQs },
   { path: PATHS.ADMIN.SUPPORT.FAQ_CREATE, element: SupportAuditModule.FAQCreate },
   { path: PATHS.ADMIN.SUPPORT.FAQ_EDIT, element: SupportAuditModule.FAQCreate },
+  { path: PATHS.ADMIN.SUPPORT.REPORTS, element: SupportAuditModule.SupportReports },
   { path: PATHS.ADMIN.AUDITS.LOGS, element: SupportAuditModule.Logs, permissions: PermissionMap.Admin },
   { path: PATHS.ADMIN.AUDITS.DETAILS, element: SupportAuditModule.AuditDetails, permissions: PermissionMap.Admin },
 ];

@@ -168,6 +168,7 @@ export const PATHS = {
       FAQS: 'admin/support/faqs',
       FAQ_CREATE: 'admin/support/faqs/create',
       FAQ_EDIT: 'admin/support/faqs/:id/edit',
+      REPORTS: 'admin/support/reports',
     },
     AUDITS: {
       LOGS: 'admin/logs',

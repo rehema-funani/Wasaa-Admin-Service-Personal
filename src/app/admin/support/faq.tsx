@@ -18,7 +18,6 @@ import {
 import supportService from '../../../api/services/support';
 
 const FAQManagementPage = () => {
-  // State
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -178,22 +177,6 @@ const FAQManagementPage = () => {
           </motion.div>
         )}
 
-        {/* <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-xl font-medium text-gray-900">Ticket Categories</h1>
-            <p className="text-sm text-gray-500">
-              Manage support ticket categories and classification
-            </p>
-          </div>
-          <button
-            className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm"
-          >
-            <Plus className="w-4 h-4 mr-1" />
-            New Category
-          </button>
-        </div> */}
-
-        {/* FAQ List */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
           {loading ? (
