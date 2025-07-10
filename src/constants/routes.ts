@@ -953,6 +953,20 @@ const routes: Route[] = [
           icon: Candy,
           description: 'Canned responses for support tickets'
         },
+        {
+          type: 'link',
+          path: '/admin/support/faqs',
+          title: 'FAQs',
+          icon: Candy,
+          description: 'FAQs '
+        },
+        {
+          type: 'link',
+          path: '/admin/support/reports',
+          title: 'Reports',
+          icon: Candy,
+          description: 'Reports & stats'
+        },
       ],
     },
     {
