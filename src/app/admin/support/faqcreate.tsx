@@ -80,11 +80,11 @@ const FAQForm: React.FC = () => {
       const response = await supportService.getFAQById(id);
 
       setFormData({
-        question: response.question || '',
-        answer: response.answer || '',
-        categoryId: response.categoryId || '',
-        tags: response.tags || [],
-        language: response.language || 'en'
+        question: response.data.faq.question || '',
+        answer: response.data.faq.answer || '',
+        categoryId: response.data.faq.categoryId || '',
+        tags: response.data.faq.tags || [],
+        language: response.data.faq.language || 'en'
       });
 
     } catch (err) {
@@ -179,7 +179,6 @@ const FAQForm: React.FC = () => {
         await supportService.createFAQ(formData);
         setSuccess('FAQ created successfully');
 
-        // Reset form in create mode
         if (!isEditMode) {
           setFormData({
             question: '',
