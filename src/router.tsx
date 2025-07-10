@@ -105,29 +105,23 @@ const FinanceModule = {
   GiftHistory: lazy(() => import('./app/admin/finance/gift-history/page')),
 };
 
-// Media and Content Management
 const MediaModule = {
-  // Wallpaper & Avatar
   WallpaperList: lazy(() => import('./app/admin/Wallpaper/list-all-wallpaper/page')),
   AddWallpaper: lazy(() => import('./app/admin/Wallpaper/add-a-new-wallpaper/page')),
   AvatarList: lazy(() => import('./app/admin/Avatar/list-all-avatar/page')),
   AddAvatar: lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page')),
 
-  // Settings
   GeneralSettings: lazy(() => import('./app/admin/settings/page')),
   Emoji: lazy(() => import('./app/admin/settings/emoji')),
   Languages: lazy(() => import('./app/admin/languages/all-languages/page')),
   Translations: lazy(() => import('./app/admin/languages/all-languages/details')),
 
-  // Chat
   ModeratorDashboard: lazy(() => import('./app/admin/chat/page')),
 
-  // Gift
   AddGift: lazy(() => import('./app/admin/Gift/add-new-gift/page')),
   GiftList: lazy(() => import('./app/admin/Gift/gift-list/page')),
   GiftCategories: lazy(() => import('./app/admin/Gift/gift-categories/page')),
 
-  // Media
   MediaDashboard: lazy(() => import('./app/admin/media/index')),
   VideoModeration: lazy(() => import('./app/admin/media/moderation')),
   ReportsPage: lazy(() => import('./app/admin/media/reports')),
@@ -145,7 +139,6 @@ const MediaModule = {
   ShortsSettings: lazy(() => import('./app/admin/media/settings')),
 };
 
-// Support & Audit
 const SupportAuditModule = {
   TicketDashboard: lazy(() => import('./app/admin/support/ticketdashboard')),
   Tickets: lazy(() => import('./app/admin/support/tickets')),
@@ -159,6 +152,7 @@ const SupportAuditModule = {
   CannedResponses: lazy(() => import('./app/admin/support/cannedresponse')),
   CreateCannedResponse: lazy(() => import('./app/admin/support/cannedresponseaddedit')),
   ResponseDetail: lazy(() => import('./app/admin/support/cannedresponsedetail')),
+  FAQs: lazy(() => import('./app/admin/support/faq')),
   Logs: lazy(() => import('./app/admin/audits/page')),
   AuditDetails: lazy(() => import('./app/admin/audits/auditdetails')),
 };
@@ -244,7 +238,6 @@ const renderRoutes = (routes: RouteConfig[]) => {
   ));
 };
 
-// Auth Routes
 const authRoutes = [
   { path: PATHS.AUTH.LOGIN, element: AuthModule.Login },
   { path: PATHS.AUTH.VERIFY_OTP, element: AuthModule.VerifyOtp },
@@ -254,7 +247,6 @@ const authRoutes = [
   { path: PATHS.ERROR.UNAUTHORIZED, element: CoreModule.UnauthorizedPage },
 ];
 
-// User Management Routes
 const userRoutes = [
   { path: PATHS.ADMIN.PROFILE, element: CoreModule.UserProfile },
   { path: PATHS.ADMIN.USERS.DETAILS, element: UserModule.UserDetails, permissions: PermissionMap.Users.view },
@@ -264,14 +256,12 @@ const userRoutes = [
   { path: PATHS.ADMIN.USERS.REPORTED, element: UserModule.ReportedUsers, permissions: PermissionMap.ViewReported },
 ];
 
-// Group Management Routes
 const groupRoutes = [
   { path: PATHS.ADMIN.GROUPS.LIST, element: GroupModule.GroupList, permissions: PermissionMap.Groups.view },
   { path: PATHS.ADMIN.GROUPS.DETAIL, element: GroupModule.GroupDetailPage, permissions: PermissionMap.Groups.view },
   { path: PATHS.ADMIN.GROUPS.REPORTED, element: GroupModule.ReportedGroups, permissions: PermissionMap.ViewReported },
 ];
 
-// Role Management Routes
 const roleRoutes = [
   { path: PATHS.ADMIN.SYSTEM.ROLES.LIST, element: RoleModule.RolesPage, permissions: PermissionMap.Roles.view },
   { path: PATHS.ADMIN.SYSTEM.ROLES.DETAIL, element: RoleModule.RoleDetail, permissions: PermissionMap.Roles.view },
@@ -281,19 +271,6 @@ const roleRoutes = [
   { path: PATHS.ADMIN.USERS.STAFF_DETAIL, element: RoleModule.AdminUserDetails, permissions: PermissionMap.Users.viewStaff },
 ];
 
-// Livestream Routes
-// const livestreamRoutes = [
-//   { path: PATHS.ADMIN.LIVESTREAMS.ALL, element: LivestreamModule.AllLivestreams },
-//   { path: PATHS.ADMIN.LIVESTREAMS.SCHEDULED, element: LivestreamModule.ScheduledStreams },
-//   { path: PATHS.ADMIN.LIVESTREAMS.SETTINGS, element: LivestreamModule.StreamSettings, permissions: PermissionMap.Settings.view },
-//   { path: PATHS.ADMIN.LIVESTREAMS.CATEGORIES, element: LivestreamModule.StreamCategories },
-//   { path: PATHS.ADMIN.LIVESTREAMS.FEATURED, element: LivestreamModule.FeaturedStreams },
-//   { path: PATHS.ADMIN.LIVESTREAMS.ANALYTICS, element: LivestreamModule.StreamAnalytics },
-//   { path: PATHS.ADMIN.LIVESTREAMS.MODERATION, element: LivestreamModule.StreamModeration },
-//   { path: PATHS.ADMIN.LIVESTREAMS.REPORTED, element: LivestreamModule.ReportedStreams, permissions: PermissionMap.ViewReported },
-// ];
-
-// Forex Routes
 const forexRoutes = [
   { path: PATHS.ADMIN.FINANCE.FOREX.DASHBOARD, element: ForexModule.ForexDashboard, permissions: PermissionMap.Transactions.view },
   { path: PATHS.ADMIN.FINANCE.FOREX.CURRENCIES, element: ForexModule.Currencies, permissions: PermissionMap.Transactions.view },
@@ -303,7 +280,6 @@ const forexRoutes = [
   { path: PATHS.ADMIN.FINANCE.FOREX.SETTINGS, element: ForexModule.ForexSettings, permissions: PermissionMap.Transactions.view },
 ];
 
-// Finance Routes
 const financeRoutes = [
   { path: PATHS.ADMIN.FINANCE.TRANSACTIONS.LIST, element: FinanceModule.Transactions, permissions: PermissionMap.Transactions.view },
   { path: PATHS.ADMIN.FINANCE.TRANSACTIONS.RECEIPT, element: FinanceModule.Receipt, permissions: PermissionMap.Transactions.view },
@@ -329,31 +305,24 @@ const financeRoutes = [
   { path: PATHS.ADMIN.FINANCE.GIFT_HISTORY, element: FinanceModule.GiftHistory, permissions: PermissionMap.Transactions.view },
 ];
 
-// Media Routes
 const mediaRoutes = [
-  // Wallpaper
   { path: PATHS.ADMIN.WALLPAPER.LIST, element: MediaModule.WallpaperList, permissions: PermissionMap.Media.view },
   { path: PATHS.ADMIN.WALLPAPER.ADD, element: MediaModule.AddWallpaper, permissions: PermissionMap.Media.create },
 
-  // Avatar
   { path: PATHS.ADMIN.AVATAR.LIST, element: MediaModule.AvatarList, permissions: PermissionMap.Media.view },
   { path: PATHS.ADMIN.AVATAR.ADD, element: MediaModule.AddAvatar, permissions: PermissionMap.Media.create },
 
-  // Settings
   { path: PATHS.ADMIN.SETTINGS.GENERAL, element: MediaModule.GeneralSettings, permissions: PermissionMap.Settings.view },
   { path: PATHS.ADMIN.SETTINGS.EMOJI, element: MediaModule.Emoji, permissions: PermissionMap.Settings.view },
   { path: PATHS.ADMIN.SETTINGS.LANGUAGES.LIST, element: MediaModule.Languages, permissions: PermissionMap.Languages.view },
   { path: PATHS.ADMIN.SETTINGS.LANGUAGES.TRANSLATIONS, element: MediaModule.Translations, permissions: PermissionMap.Languages.view },
 
-  // Chat
   { path: PATHS.ADMIN.CHAT.MODERATION, element: MediaModule.ModeratorDashboard, permissions: PermissionMap.Media.view },
 
-  // Gifts
   { path: PATHS.ADMIN.GIFTS.LIST, element: MediaModule.GiftList, permissions: PermissionMap.Media.view },
   { path: PATHS.ADMIN.GIFTS.ADD, element: MediaModule.AddGift, permissions: PermissionMap.Media.create },
   { path: PATHS.ADMIN.GIFTS.CATEGORIES, element: MediaModule.GiftCategories, permissions: PermissionMap.Media.view },
 
-  // Shorts
   { path: PATHS.ADMIN.MEDIA.SHORTS.DASHBOARD, element: MediaModule.MediaDashboard, permissions: PermissionMap.Media.view },
   { path: PATHS.ADMIN.MEDIA.SHORTS.MODERATION, element: MediaModule.VideoModeration, permissions: PermissionMap.Media.view },
   { path: PATHS.ADMIN.MEDIA.SHORTS.MODERATION_DETAIL, element: MediaModule.VideoModeration, permissions: PermissionMap.Media.view },
@@ -377,7 +346,6 @@ const mediaRoutes = [
   { path: PATHS.ADMIN.MEDIA.SHORTS.NOTIFICATION_DETAIL, element: MediaModule.NotificationsDetail, permissions: PermissionMap.Media.view },
   { path: PATHS.ADMIN.MEDIA.SHORTS.SETTINGS, element: MediaModule.ShortsSettings, permissions: PermissionMap.Settings.view },
 
-  // Notifications & Broadcasts
   { path: PATHS.ADMIN.SYSTEM.NOTIFICATIONS.BROADCASTS, element: MediaModule.Broadcasts, permissions: PermissionMap.Settings.view },
   { path: PATHS.ADMIN.COMMUNICATION.BROADCASTS.ADD, element: MediaModule.AddBroadcast, permissions: PermissionMap.Settings.view },
   { path: PATHS.ADMIN.COMMUNICATION.BROADCASTS.EDIT, element: MediaModule.EditBroadcast, permissions: PermissionMap.Settings.view },
@@ -396,6 +364,7 @@ const supportAuditRoutes = [
   { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSES, element: SupportAuditModule.CannedResponses },
   { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_CREATE, element: SupportAuditModule.CreateCannedResponse },
   { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_DETAIL, element: SupportAuditModule.ResponseDetail },
+  { path: PATHS.ADMIN.SUPPORT.FAQS, element: SupportAuditModule.FAQs },
   { path: PATHS.ADMIN.AUDITS.LOGS, element: SupportAuditModule.Logs, permissions: PermissionMap.Admin },
   { path: PATHS.ADMIN.AUDITS.DETAILS, element: SupportAuditModule.AuditDetails, permissions: PermissionMap.Admin },
 ];

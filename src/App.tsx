@@ -4,7 +4,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import AppRouter from './router';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
-import { ThemeProvider } from './context/ThemeContext';
 import './styles/globals.css';
 
 const ErrorFallback = ({ error, resetErrorBoundary }) => {
@@ -125,13 +124,11 @@ const App: React.FC = () => {
     <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
       <AuthProvider>
         <NotificationProvider>
-          <ThemeProvider>
-            <Router>
-              <Suspense fallback={<LoadingFallback />}>
-                <AppRouter />
-              </Suspense>
-            </Router>
-          </ThemeProvider>
+          <Router>
+            <Suspense fallback={<LoadingFallback />}>
+              <AppRouter />
+            </Suspense>
+          </Router>
         </NotificationProvider>
       </AuthProvider>
     </ErrorBoundary>

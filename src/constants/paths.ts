@@ -165,6 +165,7 @@ export const PATHS = {
       CANNED_RESPONSE_DETAIL: 'admin/support/canned-responses/:id',
       CANNED_RESPONSE_CREATE: 'admin/support/canned-responses/create',
       CANNED_RESPONSE_EDIT: 'admin/support/canned-responses/:id/edit',
+      FAQS: 'admin/support/faqs',
     },
     AUDITS: {
       LOGS: 'admin/logs',

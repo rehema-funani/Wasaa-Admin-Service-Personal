@@ -255,6 +255,63 @@ getTicketStats: async (params?: {
     const response = await supportaxios.post(`/canned-responses/${id}/render`, templateData);
     return response.data;
   },
+
+  // ======== FAQS =======
+  createFAQ: async (faqData: any) => {
+    const response = await supportaxios.post('/faqs', faqData);
+    return response.data;
+  },
+
+  getFAQs: async (params?: {
+    q?: string;
+    language?: string;
+    tags?: string;
+  }) => {
+    const response = await supportaxios.get('/faqs');
+    return response.data;
+  },
+
+  getFAQById: async (id: string) => {
+    const response = await supportaxios.get(`/faqs/${id}`);
+    return response.data;
+  },
+
+  updateFAQ: async (id: string, faqData: any) => {
+    const response = await supportaxios.patch(`/faqs/${id}`, faqData);
+    return response.data;
+  },
+
+  deleteFAQ: async (id: string) => {
+    const response = await supportaxios.delete(`/faqs/${id}`);
+    return response.data;
+  },
+
+  // ========= REPORTS =========
+  generateReports: async (reportData: any) => {
+    const response = await supportaxios.post('/reports/generate', reportData);
+    return response.data;
+  },
+  getAvailableReports: async (params?: {
+    page: number;
+    limit: number;
+    type: string;
+    status?: string;
+  }) => {
+    const response = await supportaxios.get('/reports/available', { params });
+    return response.data;
+  },
+
+  downloadReport: async (reportId: string) => {
+    const response = await supportaxios.get(`/reports/download/${reportId}`, {
+      responseType: 'blob'
+    });
+    return response.data;
+  },
+
+  getQuickStats: async () => {
+    const response = await supportaxios.get('/reports/quick-stats');
+    return response.data;
+  }
 };
 
 export default supportService;

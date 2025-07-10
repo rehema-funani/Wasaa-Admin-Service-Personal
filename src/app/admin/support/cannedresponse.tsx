@@ -1030,7 +1030,7 @@ export default function CannedResponsesListPage() {
     return (
       <div className="absolute right-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
         <div className="py-1" role="menu">
-          <button
+          {/* <button
             onClick={(e) => {
               e.stopPropagation();
               console.log('View details', response.id);
@@ -1051,7 +1051,7 @@ export default function CannedResponsesListPage() {
           >
             <Edit className="mr-3 h-4 w-4 text-gray-500" />
             Edit
-          </button>
+          </button> */}
           <button
             onClick={(e) => {
               e.stopPropagation();

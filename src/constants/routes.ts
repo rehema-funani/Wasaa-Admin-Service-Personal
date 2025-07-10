@@ -884,13 +884,13 @@ const routes: Route[] = [
           icon: Languages,
           description: 'Manage platform languages'
         },
-        {
-          type: 'link',
-          path: '/admin/media/shorts/settings',
-          title: 'Media Settings',
-          icon: Cog,
-          description: 'Configure media preferences'
-        },
+        // {
+        //   type: 'link',
+        //   path: '/admin/media/shorts/settings',
+        //   title: 'Media Settings',
+        //   icon: Cog,
+        //   description: 'Configure media preferences'
+        // },
         // {
         //   type: 'link',
         //   path: '/admin/livestreams/settings',
@@ -949,7 +949,7 @@ const routes: Route[] = [
         {
           type: 'link',
           path: '/admin/support/canned-responses',
-          title: 'Cannes responses',
+          title: 'Canned responses',
           icon: Candy,
           description: 'Canned responses for support tickets'
         },
