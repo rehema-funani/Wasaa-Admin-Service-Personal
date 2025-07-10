@@ -180,7 +180,6 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Toggle category expansion
   const toggleExpand = (categoryId) => {
     setExpandedCategories(prev => ({
       ...prev,
@@ -188,7 +187,6 @@ export default function CategoriesListPage() {
     }));
   };
 
-  // Render category row
   const renderCategoryRow = (category, depth = 0) => {
     const hasChildren = category.children && category.children.length > 0;
     const isExpanded = expandedCategories[category.id];

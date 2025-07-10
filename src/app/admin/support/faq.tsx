@@ -290,7 +290,7 @@ const FAQManagementPage = () => {
 
                         <div className="relative hidden group-hover:block">
                           <button
-                            onClick={() => navigate(`/faqs/edit/${faq.id}`)}
+                            onClick={() => navigate(`/admin/support/faqs/${faq.id}/edit`)}
                             className="p-2 text-gray-500 hover:text-teal-600 transition-colors"
                           >
                             <Edit className="h-5 w-5" />
