@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search,
-  Filter,
   Plus,
   Trash2,
   Edit,
@@ -14,10 +12,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Loader,
-  RefreshCw,
-  Download,
   X,
-  MoreHorizontal,
   Grid3X3
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
@@ -34,7 +29,6 @@ const FAQManagementPage = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [faqToDelete, setFaqToDelete] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [languageOptions] = useState(['en', 'es', 'fr', 'de', 'zh']);
   const [commonTags, setCommonTags] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -53,15 +47,7 @@ const FAQManagementPage = () => {
     setLoading(true);
 
     try {
-      const params = {
-        q: searchTerm,
-        language: selectedLanguage,
-        tags: selectedTags.join(','),
-        page: pagination.page,
-        limit: pagination.limit
-      };
-
-      const response = await supportService.getFAQs(params);
+      const response = await supportService.getFAQs();
       setFaqs(response.data.faqs || []);
       setPagination({
         ...pagination,
@@ -90,41 +76,16 @@ const FAQManagementPage = () => {
     }
   };
 
-  // Handle language selection
-  const handleLanguageSelect = (language) => {
-    setSelectedLanguage(language === selectedLanguage ? '' : language);
-    setPagination({ ...pagination, page: 1 });
-  };
-
-  // Handle tag selection
-  const handleTagSelect = (tag) => {
-    setSelectedTags(prev =>
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
-    setPagination({ ...pagination, page: 1 });
-  };
-
-  // Handle search
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setPagination({ ...pagination, page: 1 });
-  };
-
-  // Handle pagination
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: any) => {
     if (newPage > 0 && newPage <= pagination.totalPages) {
       setPagination({ ...pagination, page: newPage });
     }
   };
 
-  // Toggle FAQ expansion
-  const toggleExpandFAQ = (id) => {
+  const toggleExpandFAQ = (id: string) => {
     setExpandedFAQ(expandedFAQ === id ? null : id);
   };
 
-  // Handle delete
   const handleDelete = async () => {
     if (!faqToDelete) return;
 
@@ -162,7 +123,6 @@ const FAQManagementPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-xl font-medium text-gray-900">FAQ Management</h1>
@@ -173,7 +133,7 @@ const FAQManagementPage = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => navigate('/faqs/create')}
+              onClick={() => navigate('/admin/support/faqs/create')}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-primary-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200"
             >
               <Plus className="h-4 w-4 mr-2" />
