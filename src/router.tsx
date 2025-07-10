@@ -367,6 +367,7 @@ const supportAuditRoutes = [
   { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_DETAIL, element: SupportAuditModule.ResponseDetail },
   { path: PATHS.ADMIN.SUPPORT.FAQS, element: SupportAuditModule.FAQs },
   { path: PATHS.ADMIN.SUPPORT.FAQ_CREATE, element: SupportAuditModule.FAQCreate },
+  { path: PATHS.ADMIN.SUPPORT.FAQ_EDIT, element: SupportAuditModule.FAQCreate },
   { path: PATHS.ADMIN.AUDITS.LOGS, element: SupportAuditModule.Logs, permissions: PermissionMap.Admin },
   { path: PATHS.ADMIN.AUDITS.DETAILS, element: SupportAuditModule.AuditDetails, permissions: PermissionMap.Admin },
 ];

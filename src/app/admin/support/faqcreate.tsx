@@ -44,7 +44,6 @@ const FAQForm: React.FC = () => {
   }>({});
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  // Language options
   const [languageOptions] = useState([
     { code: 'en', name: 'English' },
     { code: 'es', name: 'Spanish' },
@@ -105,11 +104,9 @@ const FAQForm: React.FC = () => {
     }
   };
 
-  // Handle tag input
   const handleAddTag = () => {
     if (!inputTag.trim()) return;
 
-    // Prevent duplicate tags
     if (formData.tags.includes(inputTag.trim().toLowerCase())) {
       setInputTag('');
       return;
@@ -123,24 +120,20 @@ const FAQForm: React.FC = () => {
     setInputTag('');
   };
 
-  // Handle tag remove
-  const handleRemoveTag = (tagToRemove) => {
+  const handleRemoveTag = (tagToRemove: any) => {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
   };
 
-  // Handle tag input keydown
-  const handleTagKeyDown = (e) => {
-    // Add tag on Enter or comma
+  const handleTagKeyDown = (e: any) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       handleAddTag();
     }
   };
 
-  // Validate form
   const validateForm = () => {
     const errors: {
       question?: string;
@@ -169,7 +162,6 @@ const FAQForm: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -201,7 +193,7 @@ const FAQForm: React.FC = () => {
 
       // Redirect after a short delay to show success message
       setTimeout(() => {
-        navigate('/faqs');
+        navigate('/admin/support/faqs');
       }, 1500);
 
     } catch (err) {
@@ -222,7 +214,7 @@ const FAQForm: React.FC = () => {
 
       // Redirect after a short delay to show success message
       setTimeout(() => {
-        navigate('/faqs');
+        navigate('/admin/support/faqs');
       }, 1500);
 
     } catch (err) {
@@ -256,7 +248,7 @@ const FAQForm: React.FC = () => {
           <div className="flex items-center">
             <button
               type="button"
-              onClick={() => navigate('/faqs')}
+              onClick={() => navigate('/admin/support/faqs')}
               className="mr-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
             >
               <ArrowLeft className="h-5 w-5 text-gray-500" />
@@ -497,7 +489,7 @@ const FAQForm: React.FC = () => {
             <div className="flex space-x-3">
               <button
                 type="button"
-                onClick={() => navigate('/faqs')}
+                onClick={() => navigate('/admin/support/faqs')}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
               >
                 Cancel
