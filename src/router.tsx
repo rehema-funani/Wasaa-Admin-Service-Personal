@@ -14,7 +14,6 @@ type RouteConfig = {
   children?: RouteConfig[];
 };
 
-// Auth Module
 const AuthModule = {
   Login: lazy(() => import('./app/auth/login/page')),
   VerifyOtp: lazy(() => import('./app/auth/verify/page')),
@@ -23,7 +22,6 @@ const AuthModule = {
   Set: lazy(() => import('./app/auth/password/page')),
 };
 
-// Core Module
 const CoreModule = {
   Dashboard: lazy(() => import('./app/dashboard/page')),
   ErrorPage: lazy(() => import('./app/error/error-page')),
@@ -31,7 +29,6 @@ const CoreModule = {
   UserProfile: lazy(() => import('./app/auth/profile/page')),
 };
 
-// User Management Module
 const UserModule = {
   UserDetails: lazy(() => import('./app/admin/users/user-details/page')),
   Userdetail: lazy(() => import('./app/admin/users/user-details/userdetail')),
@@ -40,14 +37,12 @@ const UserModule = {
   CountryDetailPage: lazy(() => import('./app/admin/users/countrywise-Analysis/CountryDetailPage')),
 };
 
-// Group Management Module
 const GroupModule = {
   GroupList: lazy(() => import('./app/admin/Group/all-group-list/page')),
   GroupDetailPage: lazy(() => import('./app/admin/Group/all-group-list/groupdetail')),
   ReportedGroups: lazy(() => import('./app/admin/Group/all-reported-group-list/page')),
 };
 
-// Role and System User Management
 const RoleModule = {
   RolesPage: lazy(() => import('./app/admin/roles/roles')),
   RoleDetail: lazy(() => import('./app/admin/roles/roledetail')),
@@ -57,7 +52,6 @@ const RoleModule = {
   AdminUserDetails: lazy(() => import('./app/admin/roles/userdetail')),
 };
 
-// Livestream Management
 // const LivestreamModule = {
 //   AllLivestreams: lazy(() => import('./app/admin/livestreams/all-livestreams/page')),
 //   ScheduledStreams: lazy(() => import('./app/admin/livestreams/scheduled/page')),
@@ -69,7 +63,6 @@ const RoleModule = {
 //   ReportedStreams: lazy(() => import('./app/admin/livestreams/reported/page')),
 // };
 
-// Forex Management
 const ForexModule = {
   ForexDashboard: lazy(() => import('./app/admin/finance/forex/dashboard')),
   Currencies: lazy(() => import('./app/admin/finance/forex/currency-management')),
@@ -79,7 +72,6 @@ const ForexModule = {
   ForexSettings: lazy(() => import('./app/admin/finance/forex/settings')),
 };
 
-// Finance Management
 const FinanceModule = {
   Transactions: lazy(() => import('./app/admin/finance/transactions/page')),
   Receipt: lazy(() => import('./app/admin/finance/transactions/receipt')),

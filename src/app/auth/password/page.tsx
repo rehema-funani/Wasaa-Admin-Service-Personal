@@ -532,7 +532,6 @@ const PasswordSetupPage = () => {
                   )}
                 </div>
 
-                {/* Password requirements */}
                 <div className="bg-gray-50 rounded-xl p-4">
                   <p className="text-sm font-medium text-gray-700 mb-2">
                     Password requirements:

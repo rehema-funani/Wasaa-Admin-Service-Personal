@@ -503,10 +503,10 @@ const TopNavigation = () => {
   }, {});
 
   const handleLogout = () => {
-    Cookies.remove('authToken');
-    Cookies.remove('refreshToken');
-    Cookies.remove('userData');
-    navigate('/auth/login');
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userData");
+    navigate("/auth/login");
   };
 
   const getCategoryIcon = (category: any) => {

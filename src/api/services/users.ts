@@ -13,40 +13,17 @@ type User = {
     permissions?: string[];
 };
 
-type LoginResponse = {
-    success?: boolean;
-    requiresOtp?: boolean;
-    message?: string;
-    accessToken?: string;
-    user?: {
-        id: string;
-        email?: string;
-        first_name?: string;
-        last_name?: string;
-        phone_number?: string;
-        profile_picture?: string;
-        role_id?: string;
-        role?: {
-            id: string;
-            title: string;
-            role_permissions: Array<any>;
-        };
-    };
-    refreshToken?: string;
-    user_id?: string;
-};
-
 export const userService = {
 
-  async login(email: string, password: string): Promise<LoginResponse> {
+  async login(email: string, password: string): Promise<any> {
     try {
-      const response = await axios.post<LoginResponse>(
+      const response = await axios.post<any>(
         'http://138.68.190.213:3010/auth/admin-signin',
         { email, password },
         {
           headers: {
             'x-api-key': `${API_KEY}`,
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 
           },
         }
       );
@@ -62,7 +39,7 @@ export const userService = {
   async setPassword(token: string, password: string): Promise<any> {
     try {
       const response = await axios.post<any>(
-        'http://138.68.190.213:3010/auth/set-password',
+        'http://138.68.190.213:3010/admin/set-password',
         { password },
         {
           headers: {
