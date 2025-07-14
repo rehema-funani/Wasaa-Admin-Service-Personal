@@ -15,13 +15,11 @@ import {
   DollarSign,
   RefreshCw,
   Activity,
-  Lock,
   BarChart3,
   FileText,
-  Filter,
-  Zap,
   ChevronRight
 } from 'lucide-react'
+import SystemHealthDashboard from './SystemHealthDashboard'
 
 const AdminLayout = () => {
   const [sessionTimeRemaining, setSessionTimeRemaining] = useState(1800)
@@ -47,23 +45,6 @@ const AdminLayout = () => {
     { id: 'A-4956', type: 'compliance', message: 'New regulatory update requires action', severity: 'medium', timestamp: '2 hours ago' },
     { id: 'A-4955', type: 'performance', message: 'Database query latency increased by 15%', severity: 'low', timestamp: '3 hours ago' },
   ])
-
-  const quickTools = [
-    { id: 'qt-1', name: 'Transaction Verification', icon: CheckCircle, color: 'emerald' },
-    { id: 'qt-2', name: 'Risk Assessment', icon: AlertTriangle, color: 'amber' },
-    { id: 'qt-3', name: 'Compliance Check', icon: Shield, color: 'violet' },
-    { id: 'qt-4', name: 'AML Screening', icon: Filter, color: 'indigo' },
-    { id: 'qt-5', name: 'Payment Override', icon: Zap, color: 'orange' },
-    { id: 'qt-6', name: 'Account Freeze', icon: Lock, color: 'red' }
-  ]
-
-  const systemHealthMetrics = [
-    { name: 'API Services', status: 'operational', uptime: '99.998%', incidents: 0 },
-    { name: 'Payment Gateway', status: 'operational', uptime: '99.995%', incidents: 0 },
-    { name: 'Database Cluster', status: 'operational', uptime: '99.999%', incidents: 0 },
-    { name: 'Auth Services', status: 'degraded', uptime: '99.87%', incidents: 1 },
-    { name: 'Reporting Engine', status: 'operational', uptime: '99.992%', incidents: 0 },
-  ]
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -94,19 +75,6 @@ const AdminLayout = () => {
 
     return () => clearInterval(loadTimer)
   }, [])
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'operational':
-        return 'text-emerald-500'
-      case 'degraded':
-        return 'text-amber-500'
-      case 'critical':
-        return 'text-red-500'
-      default:
-        return 'text-gray-500'
-    }
-  }
 
   const getTransactionStatusBadge = (status: string) => {
     switch (status) {
@@ -191,51 +159,9 @@ const AdminLayout = () => {
         <div className="relative flex flex-1 overflow-hidden">
           <div className={`absolute top-0 left-4 h-full z-20 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-r border-gray-200/50 ${showQuickTools ? 'w-64' : 'w-0'}`}>
             <div className="h-full overflow-y-auto">
-              <div className="p-4">
-                <h3 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
-                  <Zap size={16} className="mr-2 text-primary-500" />
-                  Quick Tools
-                </h3>
-
-                <div className="space-y-2">
-                  {quickTools.map(tool => (
-                    <button
-                      key={tool.id}
-                      className="w-full flex items-center p-3 rounded-lg bg-white border border-gray-100 hover:bg-gray-50 shadow-sm transition-all duration-200 hover:shadow-md"
-                    >
-                      <div className={`p-2 rounded-md bg-${tool.color}-50 mr-3`}>
-                        <tool.icon size={16} className={`text-${tool.color}-500`} />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">{tool.name}</span>
-                    </button>
-                  ))}
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-gray-100">
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">System Health</h4>
-
-                  <div className="space-y-3">
-                    {systemHealthMetrics.map((metric, index) => (
-                      <div key={index} className="p-3 rounded-lg bg-white border border-gray-100">
-                        <div className="flex justify-between mb-1">
-                          <span className="text-xs font-medium text-gray-700">{metric.name}</span>
-                          <div className={`flex items-center text-xs ${getStatusColor(metric.status)}`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${metric.status === 'operational' ? 'bg-emerald-500' : metric.status === 'degraded' ? 'bg-amber-500' : 'bg-red-500'} ${metric.status !== 'operational' ? 'animate-pulse' : ''} mr-1`}></div>
-                            {metric.status}
-                          </div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <span>Uptime: {metric.uptime}</span>
-                          <span>Incidents: {metric.incidents}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+             <SystemHealthDashboard />
             </div>
 
-            {/* Toggle button */}
             <button
               className="absolute -right-4 top-6 bg-white border border-gray-200 shadow-md rounded-r-md p-1.5"
               onClick={() => setShowQuickTools(!showQuickTools)}
