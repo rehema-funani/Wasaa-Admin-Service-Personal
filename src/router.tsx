@@ -20,7 +20,7 @@ const AuthModule = {
   VerifyOtp: lazy(() => import('./app/auth/verify/page')),
   ForgotPassword: lazy(() => import('./app/auth/forgot-password/page')),
   Reset: lazy(() => import('./app/auth/forgot-password/reset')),
-  Set: lazy(() => import('./app/auth/forgot-password/set')),
+  Set: lazy(() => import('./app/auth/password/page')),
 };
 
 // Core Module

@@ -59,6 +59,28 @@ export const userService = {
     }
   },
 
+  async setPassword(token: string, password: string): Promise<any> {
+    try {
+      const response = await axios.post<any>(
+        'http://138.68.190.213:3010/auth/set-password',
+        { password },
+        {
+          headers: {
+            'x-api-key': `${API_KEY}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to set password');
+      }
+      throw new Error('Failed to set password. Please check your network connection.');
+    }
+  },
+
   async verifyOtp(payload: { otp: string; user_id: string; source?: string }): Promise<any> {
   try {
     const response = await axios.post<any>(
