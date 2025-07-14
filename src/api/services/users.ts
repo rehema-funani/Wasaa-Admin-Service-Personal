@@ -90,7 +90,7 @@ export const userService = {
 
   async getUserById (userId: string): Promise<User> {
     try {
-      const response = await api.get<User>(`/auth/${userId}`);
+      const response = await api.get<User>(`/users/${userId}/profile`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
