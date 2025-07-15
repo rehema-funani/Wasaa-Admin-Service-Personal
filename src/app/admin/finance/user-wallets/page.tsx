@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from "react";
 import {
-  Download,
   Eye,
   Clock,
   Filter,
@@ -19,35 +18,38 @@ import {
   DollarSign,
   AlertTriangle,
   Hash,
-} from 'lucide-react';
-import financeService from '../../../../api/services/finance';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+} from "lucide-react";
+import financeService from "../../../../api/services/finance";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import ExportDropdown from "./ExportDropdown";
+import { exportWalletData } from "./walletExportFunctions";
 
-const STORAGE_KEY = 'wallet_page_state';
+const STORAGE_KEY = "wallet_page_state";
 
 const WalletsPage = () => {
   const navigate = useNavigate();
 
   const [wallets, setWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState(() => {
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) {
       const parsed = JSON.parse(savedState);
-      return parsed.searchTerm || '';
+      return parsed.searchTerm || "";
     }
-    return '';
+    return "";
   });
 
   const [filterType, setFilterType] = useState(() => {
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) {
       const parsed = JSON.parse(savedState);
-      return parsed.filterType || 'all';
+      return parsed.filterType || "all";
     }
-    return 'all';
+    return "all";
   });
 
   const [showFilters, setShowFilters] = useState(false);
@@ -56,18 +58,18 @@ const WalletsPage = () => {
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) {
       const parsed = JSON.parse(savedState);
-      return parsed.sortField || 'balance';
+      return parsed.sortField || "balance";
     }
-    return 'balance';
+    return "balance";
   });
 
   const [sortDirection, setSortDirection] = useState(() => {
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) {
       const parsed = JSON.parse(savedState);
-      return parsed.sortDirection || 'desc';
+      return parsed.sortDirection || "desc";
     }
-    return 'desc';
+    return "desc";
   });
 
   const [currentPage, setCurrentPage] = useState(() => {
@@ -103,11 +105,18 @@ const WalletsPage = () => {
         searchTerm,
         filterType,
         sortField,
-        sortDirection
+        sortDirection,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
     };
-  }, [currentPage, itemsPerPage, searchTerm, filterType, sortField, sortDirection]);
+  }, [
+    currentPage,
+    itemsPerPage,
+    searchTerm,
+    filterType,
+    sortField,
+    sortDirection,
+  ]);
 
   const fetchWallets = async () => {
     setIsLoading(true);
@@ -115,41 +124,50 @@ const WalletsPage = () => {
     try {
       const response = await financeService.getAllWallets();
 
-      const formattedWallets = response.data.map((wallet: any) => ({
-        id: wallet.id || '',
+      // The API now returns data in a specific structure
+      let walletsData = response.data || [];
+
+      // Format the wallets for the UI
+      const formattedWallets = walletsData.map((wallet) => ({
+        id: wallet.id || "",
         user: {
-          id: wallet.user_uuid || wallet.group_uuid || '',
-          name: wallet.user?.username || wallet.group?.name || (wallet.type === 'system' ? 'System Wallet' : 'Unknown'),
-          email: wallet.user?.email || 'N/A',
+          id: wallet.user_uuid || wallet.group_uuid || "",
+          name:
+            wallet.user?.username ||
+            wallet.group?.name ||
+            (wallet.type === "system" ? "System Wallet" : "Unknown"),
+          email: wallet.user?.email || "N/A",
         },
-        balance: parseFloat(wallet.balance) || 0,
+        balance: parseFloat(wallet.availableBalance) || 0,
         debit: parseFloat(wallet.debit) || 0,
         credit: parseFloat(wallet.credit) || 0,
-        currency: wallet.Currency?.symbol || 'KES',
-        currencyName: wallet.Currency?.name || 'Kenya Shillings',
-        status: wallet.status || 'Active',
-        type: wallet.type || 'user',
-        purpose: wallet.purpose || null,
-        created: new Date(wallet.createdAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
+        currency: wallet.currency?.symbol || "KES",
+        currencyName: wallet.currency?.name || "Kenya Shillings",
+        status: wallet.status || "Active",
+        type: wallet.type || "user",
+        purpose: wallet.systemWalletType || null,
+        created: new Date(wallet.createdAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
         }),
-        lastUpdated: new Date(wallet.updatedAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
+        lastUpdated: new Date(wallet.updatedAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
         }),
         activity: Math.floor(Math.random() * 100),
-        trend: Math.random() > 0.5 ? 'up' : 'down',
+        trend: Math.random() > 0.5 ? "up" : "down",
         trendPercentage: (Math.random() * 10).toFixed(2),
+        // Store the original data for export
+        originalData: wallet,
       }));
 
       setWallets(formattedWallets);
     } catch (err) {
-      toast.error('Failed to load wallets');
+      toast.error("Failed to load wallets");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -161,13 +179,14 @@ const WalletsPage = () => {
   }, []);
 
   const filteredWallets = useMemo(() => {
-    return wallets.filter(wallet => {
-      const searchMatch = searchTerm === '' ||
+    return wallets.filter((wallet) => {
+      const searchMatch =
+        searchTerm === "" ||
         wallet.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         wallet.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         wallet.type.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const typeMatch = filterType === 'all' || wallet.type === filterType;
+      const typeMatch = filterType === "all" || wallet.type === filterType;
 
       return searchMatch && typeMatch;
     });
@@ -177,21 +196,22 @@ const WalletsPage = () => {
     return [...filteredWallets].sort((a, b) => {
       let comparison = 0;
 
-      if (sortField === 'balance') {
+      if (sortField === "balance") {
         comparison = a.balance - b.balance;
-      } else if (sortField === 'user') {
+      } else if (sortField === "user") {
         comparison = a.user.name.localeCompare(b.user.name);
-      } else if (sortField === 'status') {
+      } else if (sortField === "status") {
         comparison = a.status.localeCompare(b.status);
-      } else if (sortField === 'type') {
+      } else if (sortField === "type") {
         comparison = a.type.localeCompare(b.type);
-      } else if (sortField === 'created') {
-        comparison = new Date(a.created).getTime() - new Date(b.created).getTime();
+      } else if (sortField === "created") {
+        comparison =
+          new Date(a.created).getTime() - new Date(b.created).getTime();
       } else {
         comparison = String(a[sortField]).localeCompare(String(b[sortField]));
       }
 
-      return sortDirection === 'asc' ? comparison : -comparison;
+      return sortDirection === "asc" ? comparison : -comparison;
     });
   }, [filteredWallets, sortField, sortDirection]);
 
@@ -203,12 +223,26 @@ const WalletsPage = () => {
   const totalPages = Math.ceil(sortedWallets.length / itemsPerPage);
 
   const summaryStats = useMemo(() => {
-    const totalBalance = wallets.reduce((sum, wallet) => sum + wallet.balance, 0);
-    const totalTransactions = wallets.reduce((sum, wallet) => sum + (wallet.debit + wallet.credit), 0);
-    const activeWallets = wallets.filter(wallet => wallet.status === 'Active').length;
-    const systemWallets = wallets.filter(wallet => wallet.type === 'system').length;
-    const userWallets = wallets.filter(wallet => wallet.type === 'user').length;
-    const groupWallets = wallets.filter(wallet => wallet.type === 'group').length;
+    const totalBalance = wallets.reduce(
+      (sum, wallet) => sum + wallet.balance,
+      0
+    );
+    const totalTransactions = wallets.reduce(
+      (sum, wallet) => sum + (wallet.debit + wallet.credit),
+      0
+    );
+    const activeWallets = wallets.filter(
+      (wallet) => wallet.status === "Active"
+    ).length;
+    const systemWallets = wallets.filter(
+      (wallet) => wallet.type === "system"
+    ).length;
+    const userWallets = wallets.filter(
+      (wallet) => wallet.type === "user"
+    ).length;
+    const groupWallets = wallets.filter(
+      (wallet) => wallet.type === "group"
+    ).length;
 
     return {
       totalBalance,
@@ -217,50 +251,93 @@ const WalletsPage = () => {
       systemWallets,
       userWallets,
       groupWallets,
-      currency: wallets[0]?.currency || 'KES'
+      currency: wallets[0]?.currency || "KES",
     };
   }, [wallets]);
 
-  const handleSort = (field: any) => {
+  const handleSort = (field) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortDirection('desc');
+      setSortDirection("desc");
     }
   };
 
-  const handlePageChange = (page: any) => {
+  const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const handleFilterTypeChange = (type: any) => {
+  const handleFilterTypeChange = (type) => {
     setFilterType(type);
     setCurrentPage(1);
   };
 
-  const handleSearchChange = (e: any) => {
+  const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
 
-  const handleItemsPerPageChange = (e: any) => {
+  const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
 
-  const handleViewWallet = (walletId: string) => {
+  const handleViewWallet = (walletId) => {
     const stateToSave = {
       currentPage,
       itemsPerPage,
       searchTerm,
       filterType,
       sortField,
-      sortDirection
+      sortDirection,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
 
     navigate(`/admin/finance/user-wallets/${walletId}`);
+  };
+
+  // Handle export functionality
+  const handleExport = async (format) => {
+    if (isLoading || wallets.length === 0) {
+      toast.error("No wallet data to export");
+      return;
+    }
+
+    setIsExporting(true);
+    const toastId = toast.loading(
+      `Preparing ${format.toUpperCase()} export...`
+    );
+
+    try {
+      // Get original data for export
+      const exportData = filteredWallets.map((wallet) => wallet.originalData);
+
+      // Use the exportWalletData function to export
+      const success = exportWalletData(exportData, format, "wallet_export");
+
+      if (success) {
+        toast.success(
+          `Successfully exported ${
+            exportData.length
+          } wallets to ${format.toUpperCase()}`,
+          {
+            id: toastId,
+          }
+        );
+      } else {
+        toast.error(`Failed to export wallets`, {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error(`Export failed: ${error.message}`, {
+        id: toastId,
+      });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const renderSkeleton = () => (
@@ -279,7 +356,10 @@ const WalletsPage = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="h-12 bg-gray-100 flex items-center px-6"></div>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="border-t border-gray-100 h-16 px-6 flex items-center">
+          <div
+            key={i}
+            className="border-t border-gray-100 h-16 px-6 flex items-center"
+          >
             <div className="h-8 bg-gray-200 rounded-full w-8 mr-3"></div>
             <div className="h-4 bg-gray-200 rounded w-1/4"></div>
             <div className="ml-auto h-4 bg-gray-200 rounded w-20"></div>
@@ -294,13 +374,16 @@ const WalletsPage = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">User Wallets</h1>
-          <p className="text-gray-500 mt-1">Manage balances and wallet security settings</p>
+          <p className="text-gray-500 mt-1">
+            Manage balances and wallet security settings
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button className="flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl text-sm shadow-sm hover:from-indigo-700 hover:to-blue-700 transition-colors">
-            <Download size={16} className="mr-2" strokeWidth={1.8} />
-            Export
-          </button>
+          {/* Replace the static export button with the ExportDropdown component */}
+          <ExportDropdown
+            wallets={filteredWallets.map((wallet) => wallet.originalData)}
+            isLoading={isLoading || isExporting}
+          />
         </div>
       </div>
 
@@ -313,11 +396,12 @@ const WalletsPage = () => {
             </div>
             <h3 className="text-indigo-100 font-medium">Total Balance</h3>
             <p className="text-2xl font-bold mt-1">
-              {new Intl.NumberFormat('en-US', {
-                style: 'decimal',
+              {new Intl.NumberFormat("en-US", {
+                style: "decimal",
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              }).format(summaryStats.totalBalance)} {summaryStats.currency}
+                maximumFractionDigits: 2,
+              }).format(summaryStats.totalBalance)}{" "}
+              {summaryStats.currency}
             </p>
             <div className="flex items-center mt-2 text-xs text-indigo-100">
               <span>Across {wallets.length} wallets</span>
@@ -329,15 +413,24 @@ const WalletsPage = () => {
               <Users size={20} className="text-emerald-500" />
             </div>
             <h3 className="text-gray-500 font-medium">User Wallets</h3>
-            <p className="text-2xl font-bold text-gray-800 mt-1">{summaryStats.userWallets}</p>
+            <p className="text-2xl font-bold text-gray-800 mt-1">
+              {summaryStats.userWallets}
+            </p>
             <div className="w-full h-1.5 bg-gray-100 rounded-full mt-4">
               <div
                 className="h-1.5 bg-emerald-500 rounded-full"
-                style={{ width: `${(summaryStats.userWallets / wallets.length) * 100}%` }}
+                style={{
+                  width: `${
+                    (summaryStats.userWallets / wallets.length) * 100
+                  }%`,
+                }}
               ></div>
             </div>
             <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-              <span>{Math.round((summaryStats.userWallets / wallets.length) * 100)}% of total</span>
+              <span>
+                {Math.round((summaryStats.userWallets / wallets.length) * 100)}%
+                of total
+              </span>
               <span className="text-emerald-500 flex items-center">
                 <ArrowUpRight size={12} className="mr-0.5" />
                 Active
@@ -350,15 +443,24 @@ const WalletsPage = () => {
               <Building2 size={20} className="text-blue-500" />
             </div>
             <h3 className="text-gray-500 font-medium">Group Wallets</h3>
-            <p className="text-2xl font-bold text-gray-800 mt-1">{summaryStats.groupWallets}</p>
+            <p className="text-2xl font-bold text-gray-800 mt-1">
+              {summaryStats.groupWallets}
+            </p>
             <div className="w-full h-1.5 bg-gray-100 rounded-full mt-4">
               <div
                 className="h-1.5 bg-blue-500 rounded-full"
-                style={{ width: `${(summaryStats.groupWallets / wallets.length) * 100}%` }}
+                style={{
+                  width: `${
+                    (summaryStats.groupWallets / wallets.length) * 100
+                  }%`,
+                }}
               ></div>
             </div>
             <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-              <span>{Math.round((summaryStats.groupWallets / wallets.length) * 100)}% of total</span>
+              <span>
+                {Math.round((summaryStats.groupWallets / wallets.length) * 100)}
+                % of total
+              </span>
               <span className="text-blue-500 flex items-center">
                 <ArrowUpRight size={12} className="mr-0.5" />
                 Groups
@@ -371,15 +473,26 @@ const WalletsPage = () => {
               <Wallet size={20} className="text-amber-500" />
             </div>
             <h3 className="text-gray-500 font-medium">System Wallets</h3>
-            <p className="text-2xl font-bold text-gray-800 mt-1">{summaryStats.systemWallets}</p>
+            <p className="text-2xl font-bold text-gray-800 mt-1">
+              {summaryStats.systemWallets}
+            </p>
             <div className="w-full h-1.5 bg-gray-100 rounded-full mt-4">
               <div
                 className="h-1.5 bg-amber-500 rounded-full"
-                style={{ width: `${(summaryStats.systemWallets / wallets.length) * 100}%` }}
+                style={{
+                  width: `${
+                    (summaryStats.systemWallets / wallets.length) * 100
+                  }%`,
+                }}
               ></div>
             </div>
             <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-              <span>{Math.round((summaryStats.systemWallets / wallets.length) * 100)}% of total</span>
+              <span>
+                {Math.round(
+                  (summaryStats.systemWallets / wallets.length) * 100
+                )}
+                % of total
+              </span>
               <span className="text-amber-500 flex items-center">
                 <ArrowUpRight size={12} className="mr-0.5" />
                 System
@@ -405,38 +518,42 @@ const WalletsPage = () => {
 
         <div className="flex gap-2">
           <button
-            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${filterType === 'all'
-              ? 'bg-indigo-100 text-indigo-700'
-              : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-              }`}
-            onClick={() => handleFilterTypeChange('all')}
+            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              filterType === "all"
+                ? "bg-indigo-100 text-indigo-700"
+                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleFilterTypeChange("all")}
           >
             All
           </button>
           <button
-            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${filterType === 'user'
-              ? 'bg-indigo-100 text-indigo-700'
-              : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-              }`}
-            onClick={() => handleFilterTypeChange('user')}
+            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              filterType === "user"
+                ? "bg-indigo-100 text-indigo-700"
+                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleFilterTypeChange("user")}
           >
             Users
           </button>
           <button
-            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${filterType === 'group'
-              ? 'bg-indigo-100 text-indigo-700'
-              : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-              }`}
-            onClick={() => handleFilterTypeChange('group')}
+            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              filterType === "group"
+                ? "bg-indigo-100 text-indigo-700"
+                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleFilterTypeChange("group")}
           >
             Groups
           </button>
           <button
-            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${filterType === 'system'
-              ? 'bg-indigo-100 text-indigo-700'
-              : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-              }`}
-            onClick={() => handleFilterTypeChange('system')}
+            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              filterType === "system"
+                ? "bg-indigo-100 text-indigo-700"
+                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+            }`}
+            onClick={() => handleFilterTypeChange("system")}
           >
             System
           </button>
@@ -453,7 +570,9 @@ const WalletsPage = () => {
       {showFilters && (
         <div className="mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
             <select className="w-full p-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-colors text-sm shadow-sm">
               <option value="">All Statuses</option>
               <option value="active">Active</option>
@@ -463,7 +582,9 @@ const WalletsPage = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Balance Range</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Balance Range
+            </label>
             <div className="flex gap-2">
               <input
                 type="number"
@@ -478,7 +599,9 @@ const WalletsPage = () => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Created Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Created Date
+            </label>
             <input
               type="date"
               className="w-full p-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition-colors text-sm shadow-sm"
@@ -500,7 +623,10 @@ const WalletsPage = () => {
           {/* Table Header with dynamic rendering of results */}
           <div className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 py-4 px-6 flex justify-between items-center">
             <div className="text-sm text-gray-500">
-              <span className="font-medium text-gray-800">{sortedWallets.length}</span> {filterType !== 'all' ? filterType : ''} wallets found
+              <span className="font-medium text-gray-800">
+                {sortedWallets.length}
+              </span>{" "}
+              {filterType !== "all" ? filterType : ""} wallets found
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">Show</span>
@@ -531,67 +657,102 @@ const WalletsPage = () => {
                   </th>
                   <th
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => handleSort('user')}
+                    onClick={() => handleSort("user")}
                   >
                     <div className="flex items-center">
                       <span>Owner</span>
-                      {sortField === 'user' && (
-                        sortDirection === 'asc' ?
-                          <ChevronUp size={14} className="ml-1 text-indigo-500" /> :
-                          <ChevronDown size={14} className="ml-1 text-indigo-500" />
-                      )}
+                      {sortField === "user" &&
+                        (sortDirection === "asc" ? (
+                          <ChevronUp
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ) : (
+                          <ChevronDown
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ))}
                     </div>
                   </th>
                   <th
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => handleSort('balance')}
+                    onClick={() => handleSort("balance")}
                   >
                     <div className="flex items-center">
                       <span>Balance</span>
-                      {sortField === 'balance' && (
-                        sortDirection === 'asc' ?
-                          <ChevronUp size={14} className="ml-1 text-indigo-500" /> :
-                          <ChevronDown size={14} className="ml-1 text-indigo-500" />
-                      )}
+                      {sortField === "balance" &&
+                        (sortDirection === "asc" ? (
+                          <ChevronUp
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ) : (
+                          <ChevronDown
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ))}
                     </div>
                   </th>
                   <th
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => handleSort('status')}
+                    onClick={() => handleSort("status")}
                   >
                     <div className="flex items-center">
                       <span>Status</span>
-                      {sortField === 'status' && (
-                        sortDirection === 'asc' ?
-                          <ChevronUp size={14} className="ml-1 text-indigo-500" /> :
-                          <ChevronDown size={14} className="ml-1 text-indigo-500" />
-                      )}
+                      {sortField === "status" &&
+                        (sortDirection === "asc" ? (
+                          <ChevronUp
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ) : (
+                          <ChevronDown
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ))}
                     </div>
                   </th>
                   <th
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => handleSort('activity')}
+                    onClick={() => handleSort("activity")}
                   >
                     <div className="flex items-center">
                       <span>Activity</span>
-                      {sortField === 'activity' && (
-                        sortDirection === 'asc' ?
-                          <ChevronUp size={14} className="ml-1 text-indigo-500" /> :
-                          <ChevronDown size={14} className="ml-1 text-indigo-500" />
-                      )}
+                      {sortField === "activity" &&
+                        (sortDirection === "asc" ? (
+                          <ChevronUp
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ) : (
+                          <ChevronDown
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ))}
                     </div>
                   </th>
                   <th
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
-                    onClick={() => handleSort('lastUpdated')}
+                    onClick={() => handleSort("lastUpdated")}
                   >
                     <div className="flex items-center">
                       <span>Last Updated</span>
-                      {sortField === 'lastUpdated' && (
-                        sortDirection === 'asc' ?
-                          <ChevronUp size={14} className="ml-1 text-indigo-500" /> :
-                          <ChevronDown size={14} className="ml-1 text-indigo-500" />
-                      )}
+                      {sortField === "lastUpdated" &&
+                        (sortDirection === "asc" ? (
+                          <ChevronUp
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ) : (
+                          <ChevronDown
+                            size={14}
+                            className="ml-1 text-indigo-500"
+                          />
+                        ))}
                     </div>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -603,7 +764,8 @@ const WalletsPage = () => {
                 {paginatedWallets.length > 0 ? (
                   paginatedWallets.map((wallet, index) => {
                     // Calculate row number based on current page and position
-                    const rowNumber = (currentPage - 1) * itemsPerPage + index + 1;
+                    const rowNumber =
+                      (currentPage - 1) * itemsPerPage + index + 1;
 
                     return (
                       <tr
@@ -612,34 +774,45 @@ const WalletsPage = () => {
                       >
                         {/* Row Number Column */}
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="text-sm font-medium text-gray-500">{rowNumber}</span>
+                          <span className="text-sm font-medium text-gray-500">
+                            {rowNumber}
+                          </span>
                         </td>
                         {/* Owner Column */}
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-medium text-sm mr-3 shadow-sm ${wallet.type === 'user'
-                              ? 'bg-gradient-to-br from-indigo-500 to-blue-600 text-white'
-                              : wallet.type === 'group'
-                                ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
-                                : 'bg-gradient-to-br from-amber-500 to-orange-600 text-white'
-                              }`}>
-                              {wallet.type === 'user' && <Users size={16} className="text-white" />}
-                              {wallet.type === 'group' && <Building2 size={16} className="text-white" />}
-                              {wallet.type === 'system' && <Wallet size={16} className="text-white" />}
+                            <div
+                              className={`w-10 h-10 rounded-xl flex items-center justify-center font-medium text-sm mr-3 shadow-sm ${
+                                wallet.type === "user"
+                                  ? "bg-gradient-to-br from-indigo-500 to-blue-600 text-white"
+                                  : wallet.type === "group"
+                                  ? "bg-gradient-to-br from-emerald-500 to-teal-600 text-white"
+                                  : "bg-gradient-to-br from-amber-500 to-orange-600 text-white"
+                              }`}
+                            >
+                              {wallet.type === "user" && (
+                                <Users size={16} className="text-white" />
+                              )}
+                              {wallet.type === "group" && (
+                                <Building2 size={16} className="text-white" />
+                              )}
+                              {wallet.type === "system" && (
+                                <Wallet size={16} className="text-white" />
+                              )}
                             </div>
                             <div>
                               <p className="font-medium text-gray-800 flex items-center">
                                 {wallet.user.name}
                                 {wallet.purpose && (
                                   <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs">
-                                    {wallet.purpose.replace(/_/g, ' ')}
+                                    {wallet.purpose.replace(/_/g, " ")}
                                   </span>
                                 )}
                               </p>
                               <p className="text-xs text-gray-500 mt-0.5">
-                                {wallet.type === 'user' && 'User Wallet'}
-                                {wallet.type === 'group' && 'Group Wallet'}
-                                {wallet.type === 'system' && 'System Wallet'}
+                                {wallet.type === "user" && "User Wallet"}
+                                {wallet.type === "group" && "Group Wallet"}
+                                {wallet.type === "system" && "System Wallet"}
                               </p>
                             </div>
                           </div>
@@ -648,28 +821,41 @@ const WalletsPage = () => {
                         {/* Balance Column */}
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <div className={`w-1 h-8 rounded-full mr-2 ${wallet.balance > 0
-                              ? 'bg-emerald-500'
-                              : wallet.balance < 0
-                                ? 'bg-red-500'
-                                : 'bg-gray-300'
-                              }`}></div>
+                            <div
+                              className={`w-1 h-8 rounded-full mr-2 ${
+                                wallet.balance > 0
+                                  ? "bg-emerald-500"
+                                  : wallet.balance < 0
+                                  ? "bg-red-500"
+                                  : "bg-gray-300"
+                              }`}
+                            ></div>
                             <div>
                               <div className="font-semibold text-gray-900 flex items-center">
-                                {new Intl.NumberFormat('en-US', {
-                                  style: 'decimal',
+                                {new Intl.NumberFormat("en-US", {
+                                  style: "decimal",
                                   minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2
+                                  maximumFractionDigits: 2,
                                 }).format(wallet.balance)}
-                                <span className="text-xs text-gray-500 ml-1">{wallet.currency}</span>
+                                <span className="text-xs text-gray-500 ml-1">
+                                  {wallet.currency}
+                                </span>
                               </div>
-                              <div className={`text-xs flex items-center mt-0.5 ${wallet.trend === 'up'
-                                ? 'text-emerald-600'
-                                : 'text-red-600'
-                                }`}>
-                                {wallet.trend === 'up'
-                                  ? <ArrowUpRight size={12} className="mr-0.5" />
-                                  : <ArrowDownRight size={12} className="mr-0.5" />}
+                              <div
+                                className={`text-xs flex items-center mt-0.5 ${
+                                  wallet.trend === "up"
+                                    ? "text-emerald-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                {wallet.trend === "up" ? (
+                                  <ArrowUpRight size={12} className="mr-0.5" />
+                                ) : (
+                                  <ArrowDownRight
+                                    size={12}
+                                    className="mr-0.5"
+                                  />
+                                )}
                                 {wallet.trendPercentage}%
                               </div>
                             </div>
@@ -680,19 +866,49 @@ const WalletsPage = () => {
                         <td className="px-6 py-4">
                           {(() => {
                             const statusConfig = {
-                              'Active': { color: 'emerald', icon: true, pulse: true },
-                              'Inactive': { color: 'gray', icon: false, pulse: false },
-                              'Pending': { color: 'amber', icon: true, pulse: true },
-                              'Frozen': { color: 'blue', icon: true, pulse: false },
-                              'Suspended': { color: 'red', icon: true, pulse: false },
+                              Active: {
+                                color: "emerald",
+                                icon: true,
+                                pulse: true,
+                              },
+                              Inactive: {
+                                color: "gray",
+                                icon: false,
+                                pulse: false,
+                              },
+                              Pending: {
+                                color: "amber",
+                                icon: true,
+                                pulse: true,
+                              },
+                              Frozen: {
+                                color: "blue",
+                                icon: true,
+                                pulse: false,
+                              },
+                              Suspended: {
+                                color: "red",
+                                icon: true,
+                                pulse: false,
+                              },
                             };
 
-                            const config = statusConfig[wallet.status] || statusConfig['Active'];
+                            const config =
+                              statusConfig[wallet.status] ||
+                              statusConfig["Active"];
 
                             return (
-                              <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-${config.color}-100 text-${config.color}-700`}>
+                              <div
+                                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-${config.color}-100 text-${config.color}-700`}
+                              >
                                 {config.pulse && (
-                                  <span className={`w-1.5 h-1.5 rounded-full bg-${config.color}-500 mr-1.5 ${config.pulse ? 'animate-pulse' : ''}`}></span>
+                                  <span
+                                    className={`w-1.5 h-1.5 rounded-full bg-${
+                                      config.color
+                                    }-500 mr-1.5 ${
+                                      config.pulse ? "animate-pulse" : ""
+                                    }`}
+                                  ></span>
                                 )}
                                 {wallet.status}
                               </div>
@@ -704,12 +920,13 @@ const WalletsPage = () => {
                         <td className="px-6 py-4">
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
-                              className={`h-2 rounded-full ${wallet.activity > 75
-                                ? 'bg-gradient-to-r from-green-500 to-emerald-500'
-                                : wallet.activity > 40
-                                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500'
-                                  : 'bg-gradient-to-r from-gray-400 to-gray-500'
-                                }`}
+                              className={`h-2 rounded-full ${
+                                wallet.activity > 75
+                                  ? "bg-gradient-to-r from-green-500 to-emerald-500"
+                                  : wallet.activity > 40
+                                  ? "bg-gradient-to-r from-blue-500 to-indigo-500"
+                                  : "bg-gradient-to-r from-gray-400 to-gray-500"
+                              }`}
                               style={{ width: `${wallet.activity}%` }}
                             ></div>
                           </div>
@@ -717,11 +934,16 @@ const WalletsPage = () => {
 
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <Clock size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-                            <span className="text-sm text-gray-600">{wallet.lastUpdated}</span>
+                            <Clock
+                              size={14}
+                              className="text-gray-400 mr-1.5"
+                              strokeWidth={1.8}
+                            />
+                            <span className="text-sm text-gray-600">
+                              {wallet.lastUpdated}
+                            </span>
                           </div>
                         </td>
-
 
                         <td className="px-6 py-4">
                           <div className="flex items-center space-x-1">
@@ -734,7 +956,9 @@ const WalletsPage = () => {
                             </button>
                             <button
                               className="p-1.5 rounded-lg text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
-                              onClick={() => alert(`Refresh wallet ${wallet.id}`)}
+                              onClick={() =>
+                                alert(`Refresh wallet ${wallet.id}`)
+                              }
                               title="Refresh Balance"
                             >
                               <RefreshCw size={18} strokeWidth={1.8} />
@@ -758,8 +982,12 @@ const WalletsPage = () => {
                         <div className="bg-gray-50 p-4 rounded-full">
                           <AlertTriangle size={24} className="text-gray-400" />
                         </div>
-                        <h3 className="mt-2 text-sm font-medium text-gray-900">No wallets found</h3>
-                        <p className="mt-1 text-sm text-gray-500">Try adjusting your filters or search terms</p>
+                        <h3 className="mt-2 text-sm font-medium text-gray-900">
+                          No wallets found
+                        </h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                          Try adjusting your filters or search terms
+                        </p>
                       </div>
                     </td>
                   </tr>
@@ -772,16 +1000,19 @@ const WalletsPage = () => {
           {paginatedWallets.length > 0 && (
             <div className="border-t border-gray-100 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="text-sm text-gray-500">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, sortedWallets.length)} of {sortedWallets.length} wallets
+                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                {Math.min(currentPage * itemsPerPage, sortedWallets.length)} of{" "}
+                {sortedWallets.length} wallets
               </div>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handlePageChange(1)}
                   disabled={currentPage === 1}
-                  className={`p-2 rounded-lg ${currentPage === 1
-                    ? 'text-gray-300 cursor-not-allowed'
-                    : 'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
-                    } transition-colors`}
+                  className={`p-2 rounded-lg ${
+                    currentPage === 1
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"
+                  } transition-colors`}
                 >
                   <ChevronLeft size={16} />
                 </button>
@@ -797,10 +1028,11 @@ const WalletsPage = () => {
                       <button
                         key={page}
                         onClick={() => handlePageChange(page)}
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${currentPage === page
-                          ? 'bg-indigo-600 text-white'
-                          : 'text-gray-600 hover:bg-indigo-50 hover:text-indigo-600'
-                          } transition-colors`}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${
+                          currentPage === page
+                            ? "bg-indigo-600 text-white"
+                            : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
+                        } transition-colors`}
                       >
                         {page}
                       </button>
@@ -809,17 +1041,22 @@ const WalletsPage = () => {
                     (page === 2 && currentPage > 3) ||
                     (page === totalPages - 1 && currentPage < totalPages - 2)
                   ) {
-                    return <span key={page} className="text-gray-500">...</span>;
+                    return (
+                      <span key={page} className="text-gray-500">
+                        ...
+                      </span>
+                    );
                   }
                   return null;
                 })}
                 <button
                   onClick={() => handlePageChange(totalPages)}
                   disabled={currentPage === totalPages}
-                  className={`p-2 rounded-lg ${currentPage === totalPages
-                    ? 'text-gray-300 cursor-not-allowed'
-                    : 'text-gray-500 hover:bg-indigo-50 hover:text-indigo-600'
-                    } transition-colors`}
+                  className={`p-2 rounded-lg ${
+                    currentPage === totalPages
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"
+                  } transition-colors`}
                 >
                   <ChevronRight size={16} />
                 </button>
