@@ -7,7 +7,6 @@ import {
   AlertCircle, BarChart3,
   Shield, Wallet
 } from 'lucide-react';
-import Cookies from 'js-cookie';
 import routes from '../../constants/routes';
 import logo from '../../assets/images/logo-wasaa.png';
 import { getUserPermissions, routePermissionsMap } from '../../utils/permissions';

@@ -37,16 +37,19 @@ export type ModalType =
 
 
 export interface Transaction {
-    id: string;
-    walletId: string;
-    walletName: string;
-    type: 'credit' | 'debit';
-    amount: number;
-    reference: string;
-    description: string;
-    status: 'completed' | 'pending' | 'failed' | 'reversed';
-    timestamp: string;
-    relatedEntity?: string;
+  id: string;
+  walletId: string;
+  walletName: string;
+  type: "credit" | "debit";
+  amount: number;
+  reference: string;
+  description: string;
+  status: string;
+  timestamp: string;
+  relatedEntity?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  wallet?: any;
 }
 
 export interface ReversalRequest {
