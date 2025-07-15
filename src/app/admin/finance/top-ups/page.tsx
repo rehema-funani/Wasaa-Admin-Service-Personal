@@ -357,26 +357,25 @@ const TopUpsPage = () => {
         transition={{ duration: 0.3 }}
       >
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Deposit History</h1>
-          <p className="text-gray-500 mt-1">Track and manage wallet funding transactions</p>
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Deposit History
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Track and manage wallet funding transactions
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <motion.button
-            className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-            whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
+            whileHover={{
+              y: -2,
+              backgroundColor: "#4f46e5",
+              boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)",
+            }}
             whileTap={{ y: 0 }}
-            onClick={handleExport}
           >
             <Download size={16} className="mr-2" strokeWidth={1.8} />
             Export
-          </motion.button>
-          <motion.button
-            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
-            whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
-            whileTap={{ y: 0 }}
-          >
-            <Plus size={16} className="mr-2" strokeWidth={1.8} />
-            New Deposit
           </motion.button>
         </div>
       </motion.div>
@@ -388,7 +387,10 @@ const TopUpsPage = () => {
         transition={{ duration: 0.3, delay: 0.1 }}
       >
         <div className="relative flex-1 min-w-[240px]">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          />
           <input
             type="text"
             value={searchQuery}
@@ -438,8 +440,12 @@ const TopUpsPage = () => {
             <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertTriangle size={24} className="text-red-500" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">{error}</h3>
-            <p className="text-gray-500 mb-6">We couldn't load your deposit data. Please try again.</p>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              {error}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              We couldn't load your deposit data. Please try again.
+            </p>
             <button
               onClick={fetchTopUps}
               className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors inline-flex items-center"
@@ -460,11 +466,13 @@ const TopUpsPage = () => {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <FileText size={24} className="text-gray-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">No deposits found</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                  No deposits found
+                </h3>
                 <p className="text-gray-500 max-w-md">
-                  {searchQuery ?
-                    `We couldn't find any deposits matching "${searchQuery}". Try adjusting your search terms.` :
-                    "There are no deposits in the system yet."}
+                  {searchQuery
+                    ? `We couldn't find any deposits matching "${searchQuery}". Try adjusting your search terms.`
+                    : "There are no deposits in the system yet."}
                 </p>
               </div>
             ) : (
@@ -473,15 +481,13 @@ const TopUpsPage = () => {
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b border-gray-200">
                       <tr>
-                        <th className="px-4 py-3 text-left font-light">
-                          #
-                        </th>
+                        <th className="px-4 py-3 text-left font-light">#</th>
                         <th className="px-4 py-3 text-left">
                           <button
                             className="flex items-center text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 focus:outline-none"
-                            onClick={() => handleSort('id')}
+                            onClick={() => handleSort("id")}
                           >
-                            ID {renderSortIcon('id')}
+                            ID {renderSortIcon("id")}
                           </button>
                         </th>
                         <th className="px-4 py-3 text-left">
@@ -492,17 +498,17 @@ const TopUpsPage = () => {
                         <th className="px-4 py-3 text-left">
                           <button
                             className="flex items-center text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 focus:outline-none"
-                            onClick={() => handleSort('paymentMethod.name')}
+                            onClick={() => handleSort("paymentMethod.name")}
                           >
-                            Method {renderSortIcon('paymentMethod.name')}
+                            Method {renderSortIcon("paymentMethod.name")}
                           </button>
                         </th>
                         <th className="px-4 py-3 text-left">
                           <button
                             className="flex items-center text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 focus:outline-none"
-                            onClick={() => handleSort('amount')}
+                            onClick={() => handleSort("amount")}
                           >
-                            Amount {renderSortIcon('amount')}
+                            Amount {renderSortIcon("amount")}
                           </button>
                         </th>
                         <th className="px-4 py-3 text-left">
@@ -513,17 +519,17 @@ const TopUpsPage = () => {
                         <th className="px-4 py-3 text-left">
                           <button
                             className="flex items-center text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 focus:outline-none"
-                            onClick={() => handleSort('status')}
+                            onClick={() => handleSort("status")}
                           >
-                            Status {renderSortIcon('status')}
+                            Status {renderSortIcon("status")}
                           </button>
                         </th>
                         <th className="px-4 py-3 text-left">
                           <button
                             className="flex items-center text-xs font-medium text-gray-500 uppercase tracking-wider hover:text-gray-700 focus:outline-none"
-                            onClick={() => handleSort('createdAt')}
+                            onClick={() => handleSort("createdAt")}
                           >
-                            Date {renderSortIcon('createdAt')}
+                            Date {renderSortIcon("createdAt")}
                           </button>
                         </th>
                         <th className="px-4 py-3 text-right">
@@ -542,57 +548,93 @@ const TopUpsPage = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2, delay: index * 0.03 }}
-                            className={`hover:bg-gray-50 transition-colors ${selectedRows.includes(topUp.id) ? 'bg-primary-50' : ''
-                              }`}
+                            className={`hover:bg-gray-50 transition-colors ${
+                              selectedRows.includes(topUp.id)
+                                ? "bg-primary-50"
+                                : ""
+                            }`}
                           >
                             <td className="px-4 py-4 font-light">
                               {index + 1}
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex items-center">
-                                <Hash size={14} className="text-gray-400 mr-1.5" strokeWidth={1.8} />
-                                <span className="text-sm font-medium text-gray-800">{topUp.id.substring(0, 8)}...</span>
+                                <Hash
+                                  size={14}
+                                  className="text-gray-400 mr-1.5"
+                                  strokeWidth={1.8}
+                                />
+                                <span className="text-sm font-medium text-gray-800">
+                                  {topUp.id.substring(0, 8)}...
+                                </span>
                               </div>
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex items-center">
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center font-medium text-sm mr-2">
-                                  {(topUp.user?.username?.charAt(0) || 'U').toUpperCase()}
+                                  {(
+                                    topUp.user?.username?.charAt(0) || "U"
+                                  ).toUpperCase()}
                                 </div>
                                 <div>
-                                  <p className="text-sm font-medium text-gray-800">{topUp.user?.username || 'Unknown User'}</p>
-                                  <p className="text-xs text-gray-500">{formatPhoneNumber(topUp.user?.phone_number || topUp.phone)}</p>
+                                  <p className="text-sm font-medium text-gray-800">
+                                    {topUp.user?.username || "Unknown User"}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {formatPhoneNumber(
+                                      topUp.user?.phone_number || topUp.phone
+                                    )}
+                                  </p>
                                 </div>
                               </div>
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex items-center">
                                 <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center mr-2">
-                                  {getPaymentMethodIcon(topUp.paymentMethod?.name)}
+                                  {getPaymentMethodIcon(
+                                    topUp.paymentMethod?.name
+                                  )}
                                 </div>
-                                <span className="text-sm text-gray-800">{topUp.paymentMethod?.name || 'Unknown'}</span>
+                                <span className="text-sm text-gray-800">
+                                  {topUp.paymentMethod?.name || "Unknown"}
+                                </span>
                               </div>
                             </td>
                             <td className="px-4 py-4">
                               <div className="text-sm font-medium text-gray-800">
-                                {topUp.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                <span className="text-xs text-gray-500 ml-1">{topUp.currency}</span>
+                                {topUp.amount.toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}
+                                <span className="text-xs text-gray-500 ml-1">
+                                  {topUp.currency}
+                                </span>
                               </div>
                             </td>
                             <td className="px-4 py-4">
                               <div className="max-w-[200px] truncate text-sm text-gray-800">
-                                {topUp.description || <span className="text-gray-400 italic">No description</span>}
+                                {topUp.description || (
+                                  <span className="text-gray-400 italic">
+                                    No description
+                                  </span>
+                                )}
                               </div>
                               {topUp.transactionCode && (
-                                <div className="text-xs text-gray-500 mt-1">{topUp.transactionCode}</div>
+                                <div className="text-xs text-gray-500 mt-1">
+                                  {topUp.transactionCode}
+                                </div>
                               )}
                             </td>
                             <td className="px-4 py-4">
                               {renderStatusBadge(topUp.status)}
                             </td>
                             <td className="px-4 py-4">
-                              <div className="text-sm text-gray-800">{topUp.formattedDate}</div>
-                              <div className="text-xs text-gray-500">{topUp.formattedTime}</div>
+                              <div className="text-sm text-gray-800">
+                                {topUp.formattedDate}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {topUp.formattedTime}
+                              </div>
                             </td>
                             <td className="px-4 py-4 text-right">
                               <button className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
@@ -610,7 +652,22 @@ const TopUpsPage = () => {
                 <div className="border-t border-gray-200 px-4 py-4 sm:px-6 flex items-center justify-between">
                   <div className="flex items-center text-sm text-gray-500">
                     <span>
-                      Showing <span className="font-medium text-gray-700">{Math.min(1 + (currentPage - 1) * itemsPerPage, totalItems)}</span> to <span className="font-medium text-gray-700">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of <span className="font-medium text-gray-700">{totalItems}</span> deposits
+                      Showing{" "}
+                      <span className="font-medium text-gray-700">
+                        {Math.min(
+                          1 + (currentPage - 1) * itemsPerPage,
+                          totalItems
+                        )}
+                      </span>{" "}
+                      to{" "}
+                      <span className="font-medium text-gray-700">
+                        {Math.min(currentPage * itemsPerPage, totalItems)}
+                      </span>{" "}
+                      of{" "}
+                      <span className="font-medium text-gray-700">
+                        {totalItems}
+                      </span>{" "}
+                      deposits
                     </span>
 
                     <div className="ml-4 md:ml-6">
@@ -644,31 +701,35 @@ const TopUpsPage = () => {
                     </button>
 
                     <div className="flex items-center gap-1">
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        // Display pages around the current page
-                        let pageToShow = i + 1;
-                        if (totalPages > 5) {
-                          if (currentPage > 3) {
-                            pageToShow = currentPage - 2 + i;
+                      {Array.from(
+                        { length: Math.min(5, totalPages) },
+                        (_, i) => {
+                          // Display pages around the current page
+                          let pageToShow = i + 1;
+                          if (totalPages > 5) {
+                            if (currentPage > 3) {
+                              pageToShow = currentPage - 2 + i;
+                            }
+                            if (pageToShow > totalPages) {
+                              pageToShow = totalPages - (4 - i);
+                            }
                           }
-                          if (pageToShow > totalPages) {
-                            pageToShow = totalPages - (4 - i);
-                          }
-                        }
 
-                        return (
-                          <button
-                            key={i}
-                            onClick={() => handlePageChange(pageToShow)}
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${currentPage === pageToShow
-                              ? 'bg-primary-50 text-primary-600 font-medium border border-primary-200'
-                              : 'text-gray-500 hover:bg-gray-50 border border-gray-200'
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => handlePageChange(pageToShow)}
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${
+                                currentPage === pageToShow
+                                  ? "bg-primary-50 text-primary-600 font-medium border border-primary-200"
+                                  : "text-gray-500 hover:bg-gray-50 border border-gray-200"
                               }`}
-                          >
-                            {pageToShow}
-                          </button>
-                        );
-                      })}
+                            >
+                              {pageToShow}
+                            </button>
+                          );
+                        }
+                      )}
                     </div>
 
                     <button
