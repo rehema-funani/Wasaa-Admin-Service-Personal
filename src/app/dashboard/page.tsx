@@ -101,7 +101,7 @@ const Dashboard = () => {
     },
     {
       title: 'Transaction Volume',
-      value: '$934,128',
+      value: 'Ksh 934,128',
       change: '+23.1%',
       isPositive: true,
       icon: <TrendingUp size={20} className="text-white" strokeWidth={1.8} />,
@@ -110,7 +110,7 @@ const Dashboard = () => {
     },
     {
       title: 'Revenue',
-      value: '$87,291',
+      value: 'Ksh 87,291',
       change: '-2.4%',
       isPositive: false,
       icon: <DollarSign size={20} className="text-white" strokeWidth={1.8} />,
@@ -154,64 +154,6 @@ const Dashboard = () => {
         <div>
           <h1 className="text-[28px] font-bold text-gray-800">Dashboard</h1>
           <p className="text-gray-500 mt-1 text-[14px]">Welcome back, see the latest updates</p>
-        </div>
-        <div className="mt-4 sm:mt-0 flex items-center gap-4">
-          <div className="relative">
-            <motion.button
-              className="w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center"
-              whileHover={{ scale: 1.05, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.05)' }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Bell size={18} className="text-gray-600" strokeWidth={1.8} />
-              {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs font-medium rounded-full flex items-center justify-center">
-                  {notificationCount}
-                </span>
-              )}
-            </motion.button>
-          </div>
-
-          <motion.div
-            className="flex items-center py-1 px-1.5 bg-white backdrop-blur-md rounded-full shadow-sm border border-gray-100/60"
-            whileHover={{ scale: 1.02, boxShadow: '0 4px 10px rgba(0, 0, 0, 0.05)' }}
-          >
-            <button
-              onClick={() => handleTimeframeChange('day')}
-              className={`px-4 py-2 text-xs rounded-full transition-all ${activeTimeframe === 'day'
-                ? 'bg-blue-500 text-white shadow-sm'
-                : 'text-gray-600 hover:bg-gray-50'
-                }`}
-            >
-              Day
-            </button>
-            <button
-              onClick={() => handleTimeframeChange('week')}
-              className={`px-4 py-2 text-xs rounded-full transition-all ${activeTimeframe === 'week'
-                ? 'bg-blue-500 text-white shadow-sm'
-                : 'text-gray-600 hover:bg-gray-50'
-                }`}
-            >
-              Week
-            </button>
-            <button
-              onClick={() => handleTimeframeChange('month')}
-              className={`px-4 py-2 text-xs rounded-full transition-all ${activeTimeframe === 'month'
-                ? 'bg-blue-500 text-white shadow-sm'
-                : 'text-gray-600 hover:bg-gray-50'
-                }`}
-            >
-              Month
-            </button>
-            <button
-              onClick={() => handleTimeframeChange('year')}
-              className={`px-4 py-2 text-xs rounded-full transition-all ${activeTimeframe === 'year'
-                ? 'bg-blue-500 text-white shadow-sm'
-                : 'text-gray-600 hover:bg-gray-50'
-                }`}
-            >
-              Year
-            </button>
-          </motion.div>
         </div>
       </motion.div>
 
@@ -259,7 +201,6 @@ const Dashboard = () => {
         ))}
       </motion.div>
 
-      {/* User Activity and Login Devices */}
       <motion.div
         className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
         variants={itemVariants}

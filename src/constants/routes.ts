@@ -163,11 +163,11 @@ const routes: Route[] = [
           icon: CreditCardIcon,
           key: 'payments',
           items: [
-            {
-              type: 'link',
-              path: '/admin/finance/banks',
-              title: 'Banking Partners',
-            },
+            // {
+            //   type: 'link',
+            //   path: '/admin/finance/banks',
+            //   title: 'Banking Partners',
+            // },
             {
               type: 'link',
               path: '/admin/finance/fee-rules',

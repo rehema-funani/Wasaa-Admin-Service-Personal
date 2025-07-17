@@ -34,7 +34,7 @@ const WalletMetrics = () => {
     },
     {
       title: 'Total Withdrawals',
-      value: '$86,240',
+      value: 'Ksh 86,240',
       change: '+8%',
       isPositive: true,
       icon: <CreditCard size={16} className="text-white" />,
@@ -42,7 +42,7 @@ const WalletMetrics = () => {
     },
     {
       title: 'Net Flow',
-      value: '$76,240',
+      value: 'Ksh 76,240',
       change: '-5%',
       isPositive: false,
       icon: <DollarSign size={16} className="text-white" />,
