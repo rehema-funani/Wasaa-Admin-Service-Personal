@@ -205,6 +205,15 @@ class FinanceService {
     }
   }
 
+  async getTransactionStats(): Promise < any > {
+    try {
+      const response = await finance.get('/transactions/stats');
+      return response.data;
+    } catch (error) {
+      this.handleError(error, 'Failed to get transaction stats');
+    }
+  }
+
   // ======== WITHDRAWAL REQUEST ENDPOINTS ========
   async getAllWithdrawalRequests(filters: FilterOptions = {}): Promise<WithdrawalRequest[]> {
     try {

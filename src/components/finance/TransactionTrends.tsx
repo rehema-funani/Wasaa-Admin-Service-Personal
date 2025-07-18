@@ -20,6 +20,7 @@ const TransactionTrends = () => {
     setIsLoading(true);
     try {
       const res = await financeService.getMonthylyTransactionTrends();
+      const view = await financeService.getTransactionStats();
       if (res.data && Array.isArray(res.data)) {
         const transformedData = transformApiData(res.data);
         setTransactionsData(transformedData);
