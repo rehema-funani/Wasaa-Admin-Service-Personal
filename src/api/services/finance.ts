@@ -196,6 +196,15 @@ class FinanceService {
     }
   }
 
+  async getMonthylyTransactionTrends(): Promise<any> {
+    try {
+      const response = await finance.get('/transactions/monthly-trends');
+      return response.data;
+    } catch (error) {
+      this.handleError(error, 'Failed to get monthly transaction trends');
+    }
+  }
+
   // ======== WITHDRAWAL REQUEST ENDPOINTS ========
   async getAllWithdrawalRequests(filters: FilterOptions = {}): Promise<WithdrawalRequest[]> {
     try {

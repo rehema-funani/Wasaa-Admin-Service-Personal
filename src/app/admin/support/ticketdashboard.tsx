@@ -66,14 +66,6 @@ interface Statistics {
   avgResolutionTime: AvgResolutionTime;
 }
 
-interface TicketStatsResponse {
-  success: boolean;
-  data: {
-    statistics: Statistics;
-  };
-}
-
-// Additional interfaces for transformed data
 interface StatusData {
   status: string;
   count: number;
@@ -93,7 +85,6 @@ interface CategoryData {
   color: string;
 }
 
-// Map category IDs to names - in a real app, this would come from an API
 const categoryMap: Record<string, { name: string, color: string }> = {
   "ea930140-6d54-430d-9563-3bfb2447e8c8": { name: "Wallet & Payments", color: "#4ECDC4" },
   "b3d14152-a343-4ef9-9c01-4fbf4a31dc37": { name: "Livestream Issues", color: "#45B7D1" },
@@ -102,21 +93,19 @@ const categoryMap: Record<string, { name: string, color: string }> = {
 
 // Status colors
 const statusColors: Record<string, string> = {
-  "OPEN": "#3b82f6", // blue
-  "IN_PROGRESS": "#f59e0b", // amber
-  "RESOLVED": "#10b981", // green
-  "CLOSED": "#6b7280" // gray
+  "OPEN": "#3b82f6",
+  "IN_PROGRESS": "#f59e0b",
+  "RESOLVED": "#10b981",
+  "CLOSED": "#6b7280"
 };
 
-// Priority colors
 const priorityColors: Record<string, string> = {
-  "LOW": "#10b981", // green
-  "MEDIUM": "#f59e0b", // amber
-  "HIGH": "#f97316", // orange
-  "CRITICAL": "#ef4444" // red
+  "LOW": "#10b981",
+  "MEDIUM": "#f59e0b",
+  "HIGH": "#f97316",
+  "CRITICAL": "#ef4444"
 };
 
-// Mock trend data (since it's not in the API response)
 const generateMockTrendData = () => {
   const data = [];
   const today = new Date();
@@ -293,7 +282,7 @@ export default function TicketDashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Support Dashboard</h1>

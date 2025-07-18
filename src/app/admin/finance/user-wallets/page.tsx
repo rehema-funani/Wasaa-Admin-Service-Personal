@@ -125,7 +125,7 @@ const WalletsPage = () => {
       const response = await financeService.getAllWallets();
 
       // The API now returns data in a specific structure
-      let walletsData = response.data || [];
+      const walletsData = response.data || [];
 
       // Format the wallets for the UI
       const formattedWallets = walletsData.map((wallet) => ({

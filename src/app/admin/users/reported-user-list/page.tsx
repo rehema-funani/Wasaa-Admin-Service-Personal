@@ -535,7 +535,7 @@ const ReportedUsersPage = () => {
       await userService.updateReportStatus(id, 'under_review');
 
       const updatedReports = reportedUsers.map(report =>
-        report.id === id ? { ...report, status: 'under_review' as 'under_review' } : report
+        report.id === id ? { ...report, status: 'under_review' as const } : report
       );
 
       setReportedUsers(updatedReports);
@@ -560,7 +560,7 @@ const ReportedUsersPage = () => {
       await userService.resolveReport(id);
 
       const updatedReports = reportedUsers.map(report =>
-        report.id === id ? { ...report, status: 'resolved' as 'resolved', resolution: 'warning_issued' } : report
+        report.id === id ? { ...report, status: 'resolved' as const, resolution: 'warning_issued' } : report
       );
 
       setReportedUsers(updatedReports);
@@ -585,7 +585,7 @@ const ReportedUsersPage = () => {
       await userService.dismissReport(id);
 
       const updatedReports = reportedUsers.map(report =>
-        report.id === id ? { ...report, status: 'dismissed' as 'dismissed' } : report
+        report.id === id ? { ...report, status: 'dismissed' as const } : report
       );
 
       setReportedUsers(updatedReports);
@@ -610,7 +610,7 @@ const ReportedUsersPage = () => {
       await userService.reopenReport(id);
 
       const updatedReports = reportedUsers.map(report =>
-        report.id === id ? { ...report, status: 'under_review' as 'under_review', resolution: undefined } : report
+        report.id === id ? { ...report, status: 'under_review' as const, resolution: undefined } : report
       );
 
       setReportedUsers(updatedReports);

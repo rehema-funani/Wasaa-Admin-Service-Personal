@@ -1,0 +1,142 @@
+name: CI - Developer
+
+on:
+  push:
+    branches:
+      - developer
+  pull_request:
+    branches:
+      - developer
+
+env:
+  ENV: developer
+  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+  REPO_NAME: wasaa-service
+  NODE_ENV: test
+
+jobs:
+  build-test-analyze:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Cache node modules
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint code
+      run: npm run lint
+
+    - name: Run unit tests
+      run: npm run test:unit
+
+    - name: Run integration tests
+      run: npm run test:integration
+
+    - name: Run end-to-end tests
+      run: npm run test:e2e
+
+    - name: Code coverage report
+      run: npm run test:coverage
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: SonarQube analysis
+      uses: sonarsource/sonarqube-scan-action@v1
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      with:
+        args: >
+          -Dsonar.projectKey=wasaa
+          -Dsonar.sources=src/
+          -Dsonar.tests=tests/
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+    - name: Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --all-projects --severity-threshold=high
+
+    - name: CodeClimate analysis
+      uses: codeclimate/codeclimate-action@v1
+      env:
+        CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
+
+    - name: CodeFactor analysis
+      uses: codefactor-io/codefactor-action@v1
+      env:
+        CODEFACTOR_TOKEN: ${{ secrets.CODEFACTOR_TOKEN }}
+
+    - name: DeepSource analysis
+      uses: deepsourcecom/action@v1
+      env:
+        DEEPSOURCE_API_KEY: ${{ secrets.DEEPSOURCE_API_KEY }}
+
+    - name: OWASP Dependency Check (optional)
+      uses: dependency-check/Dependency-Check_Action@v1.0.0
+      with:
+        project: WasaaProject
+        path: ./
+
+    - name: Audit for outdated dependencies
+      run: npm outdated || true
+
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: coverage/
+
+  build-and-push:
+    needs: build-test-analyze
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials via OIDC
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Extract version details
+      run: |
+        echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "VERSION_TAG=${GITHUB_REF##*/}-$(date +%Y%m%d%H%M)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Build Docker image
+      run: |
+        docker build -t $ECR_REGISTRY/$REPO_NAME:${VERSION_TAG} .
+        docker tag $ECR_REGISTRY/$REPO_NAME:${VERSION_TAG} $ECR_REGISTRY/$REPO_NAME:latest-${BRANCH_NAME}
+
+    - name: Push Docker image to ECR
+      run: |
+        docker push $ECR_REGISTRY/$REPO_NAME:${VERSION_TAG}
+        docker push $ECR_REGISTRY/$REPO_NAME:latest-${BRANCH_NAME}

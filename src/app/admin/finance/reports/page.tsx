@@ -35,6 +35,7 @@ import {
   AreaChart,
   Area
 } from 'recharts';
+import TransactionTrends from '../../../../components/finance/TransactionTrends';
 
 const page: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
@@ -518,72 +519,7 @@ const page: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Transaction Trends */}
-        <motion.div
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.5 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">Transaction Trends</h3>
-              <p className="text-gray-500 text-sm">Daily transaction volume and amount</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
-                <span className="text-xs text-gray-600">Count</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                <span className="text-xs text-gray-600">Amount</span>
-              </div>
-            </div>
-          </div>
-          <div className="h-72">
-            {isLoading ? (
-              <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={transactionsData}
-                  margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" />
-                  <YAxis yAxisId="left" orientation="left" stroke="#6366f1" />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    stroke="#10b981"
-                    tickFormatter={(value) => formatCurrency(value)}
-                  />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#6366f1"
-                    activeDot={{ r: 8 }}
-                    name="Transaction Count"
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="amount"
-                    stroke="#10b981"
-                    name="Transaction Amount"
-                    dot={{ r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </motion.div>
+        <TransactionTrends />
       </div>
 
       {/* Additional Charts and Tables Grid */}

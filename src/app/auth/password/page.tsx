@@ -423,7 +423,6 @@ const PasswordSetupPage = () => {
                     </p>
                   )}
 
-                  {/* Password strength indicator */}
                   {password && (
                     <div className="mt-1.5">
                       <div className="flex justify-between items-center mb-1">
@@ -453,7 +452,6 @@ const PasswordSetupPage = () => {
                   )}
                 </div>
 
-                {/* Confirm Password field */}
                 <div>
                   <div className="relative">
                     <input

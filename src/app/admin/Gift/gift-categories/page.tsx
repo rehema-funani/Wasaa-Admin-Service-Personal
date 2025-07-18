@@ -286,8 +286,8 @@ const page = () => {
     setSortDirection(newDirection);
 
     const sortedCategories = [...filteredCategories].sort((a, b) => {
-      let aValue = a[field as keyof typeof a];
-      let bValue = b[field as keyof typeof b];
+      const aValue = a[field as keyof typeof a];
+      const bValue = b[field as keyof typeof b];
 
       if (typeof aValue === 'string') {
         const comparison = String(aValue).localeCompare(String(bValue));

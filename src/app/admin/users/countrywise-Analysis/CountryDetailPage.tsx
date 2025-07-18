@@ -108,7 +108,7 @@ const CountryDetailPage = () => {
 
     // Generate mock growth data
     const generateGrowthData = (period: string) => {
-        let data = [];
+        const data = [];
         let points = 0;
 
         switch (period) {

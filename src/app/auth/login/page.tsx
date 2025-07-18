@@ -36,12 +36,9 @@ const Page = () => {
 
   return (
     <div className="flex h-screen w-full bg-white">
-      {/* Decorative left panel */}
       <div className="hidden lg:block lg:w-2/5 bg-zinc-50 relative overflow-hidden">
-        {/* Gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-teal-500/10" />
 
-        {/* Animated shapes */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
