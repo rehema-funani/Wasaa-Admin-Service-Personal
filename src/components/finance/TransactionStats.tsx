@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import financeService from "../../api/services/finance";
 
-const TransactionStats = () => {
+const TransactionStats: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [statsData, setStatsData] = useState([]);
 
@@ -29,58 +29,46 @@ const TransactionStats = () => {
     }
   };
 
-  // Enhanced formatting for extremely large numbers in Kenyan Shillings
   const formatCurrency = (value) => {
-    // Handle null or undefined values
     if (value === null || value === undefined) return "KES 0.00";
-
-    // Convert strings to numbers if needed
     const numValue = typeof value === "string" ? parseFloat(value) : value;
 
-    // Handle scientific notation for extremely large numbers
     if (numValue >= 1e24) {
-      // For extremely large numbers, use scientific notation with 2 significant digits
       const exponent = Math.floor(Math.log10(numValue));
       const mantissa = numValue / Math.pow(10, exponent);
       return `KES ${mantissa.toFixed(2)}e+${exponent}`;
     }
 
-    // Standard suffixes for more human-readable formats
-    if (numValue >= 1e21) return `KES ${(numValue / 1e21).toFixed(2)}S`; // Sextillion
-    if (numValue >= 1e18) return `KES ${(numValue / 1e18).toFixed(2)}Q`; // Quintillion
-    if (numValue >= 1e15) return `KES ${(numValue / 1e15).toFixed(2)}P`; // Quadrillion
-    if (numValue >= 1e12) return `KES ${(numValue / 1e12).toFixed(2)}T`; // Trillion
-    if (numValue >= 1e9) return `KES ${(numValue / 1e9).toFixed(2)}B`; // Billion
-    if (numValue >= 1e6) return `KES ${(numValue / 1e6).toFixed(2)}M`; // Million
-    if (numValue >= 1e3) return `KES ${(numValue / 1e3).toFixed(2)}K`; // Thousand
+    if (numValue >= 1e21) return `KES ${(numValue / 1e21).toFixed(2)}S`;
+    if (numValue >= 1e18) return `KES ${(numValue / 1e18).toFixed(2)}Q`;
+    if (numValue >= 1e15) return `KES ${(numValue / 1e15).toFixed(2)}P`;
+    if (numValue >= 1e12) return `KES ${(numValue / 1e12).toFixed(2)}T`; 
+    if (numValue >= 1e9) return `KES ${(numValue / 1e9).toFixed(2)}B`;
+    if (numValue >= 1e6) return `KES ${(numValue / 1e6).toFixed(2)}M`;
+    if (numValue >= 1e3) return `KES ${(numValue / 1e3).toFixed(2)}K`; 
 
     return `KES ${numValue.toFixed(2)}`;
   };
 
-  // Enhanced formatting for percentage changes
   const formatChange = (value) => {
-    // Handle null or undefined values
     if (value === null || value === undefined) return "0%";
 
-    // Convert strings to numbers if needed
     const numValue = typeof value === "string" ? parseFloat(value) : value;
     const absValue = Math.abs(numValue);
 
-    // Handle scientific notation for extremely large percentage changes
     if (absValue >= 1e24) {
       const exponent = Math.floor(Math.log10(absValue));
       const mantissa = absValue / Math.pow(10, exponent);
       return `${mantissa.toFixed(2)}e+${exponent}%`;
     }
 
-    // More human-readable formats for large percentages
-    if (absValue >= 1e21) return `${(absValue / 1e21).toFixed(2)}S%`; // Sextillion
-    if (absValue >= 1e18) return `${(absValue / 1e18).toFixed(2)}Q%`; // Quintillion
-    if (absValue >= 1e15) return `${(absValue / 1e15).toFixed(2)}P%`; // Quadrillion
-    if (absValue >= 1e12) return `${(absValue / 1e12).toFixed(2)}T%`; // Trillion
-    if (absValue >= 1e9) return `${(absValue / 1e9).toFixed(2)}B%`; // Billion
-    if (absValue >= 1e6) return `${(absValue / 1e6).toFixed(2)}M%`; // Million
-    if (absValue >= 1e3) return `${(absValue / 1e3).toFixed(2)}K%`; // Thousand
+    if (absValue >= 1e21) return `${(absValue / 1e21).toFixed(2)}S%`;
+    if (absValue >= 1e18) return `${(absValue / 1e18).toFixed(2)}Q%`;
+    if (absValue >= 1e15) return `${(absValue / 1e15).toFixed(2)}P%`;
+    if (absValue >= 1e12) return `${(absValue / 1e12).toFixed(2)}T%`;
+    if (absValue >= 1e9) return `${(absValue / 1e9).toFixed(2)}B%`;
+    if (absValue >= 1e6) return `${(absValue / 1e6).toFixed(2)}M%`;
+    if (absValue >= 1e3) return `${(absValue / 1e3).toFixed(2)}K%`;
 
     return `${absValue.toFixed(2)}%`;
   };
