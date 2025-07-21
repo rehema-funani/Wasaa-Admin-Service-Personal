@@ -2,10 +2,10 @@ name: CI - Developer
 on:
   push:
     branches:
-      - main
+      - developer
   pull_request:
     branches:
-      - main
+      - developer
 env:
   ENV: developer
   ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
