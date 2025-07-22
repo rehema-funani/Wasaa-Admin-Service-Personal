@@ -45,6 +45,8 @@ jobs:
           else
             echo "No test script found. Skipping tests..."
           fi
+      - name: Verify Vite is installed
+        run: npx vite --version
       - name: Build Vite production bundle
         run: npm run build
       - name: Upload build artifacts
