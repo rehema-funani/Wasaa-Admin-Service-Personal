@@ -39,11 +39,7 @@ jobs:
 
       - name: Install dependencies (with devDependencies)
         run: |
-          if [ -f package-lock.json ]; then
-            NODE_ENV= npm ci
-          else
-            NODE_ENV= npm install --legacy-peer-deps
-          fi
+          npm install --legacy-peer-deps
 
       - name: Run tests (if any)
         run: |
