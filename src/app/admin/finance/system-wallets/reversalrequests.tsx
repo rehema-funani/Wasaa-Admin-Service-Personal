@@ -70,12 +70,12 @@ const ReversalRequestsPage: React.FC = () => {
                     let userName = "Client";
                     if (refund.OriginalTransaction.description) {
                         // Check for "to" pattern
-                        let toMatch = refund.OriginalTransaction.description.match(/to\s+(.+)$/);
+                        const toMatch = refund.OriginalTransaction.description.match(/to\s+(.+)$/);
                         if (toMatch && toMatch[1]) {
                             userName = toMatch[1].trim();
                         } else {
                             // Check for "from" pattern
-                            let fromMatch = refund.OriginalTransaction.description.match(/from\s+(.+)$/);
+                            const fromMatch = refund.OriginalTransaction.description.match(/from\s+(.+)$/);
                             if (fromMatch && fromMatch[1]) {
                                 userName = fromMatch[1].trim();
                             }
@@ -84,7 +84,7 @@ const ReversalRequestsPage: React.FC = () => {
 
                     // Determine transaction type and amount
                     const isDebit = refund.OriginalTransaction.debit < 0 || parseFloat(refund.OriginalTransaction.debit.toString()) < 0;
-                    let transactionAmount = isDebit
+                    const transactionAmount = isDebit
                         ? Math.abs(parseFloat(refund.OriginalTransaction.debit.toString()))
                         : parseFloat(refund.OriginalTransaction.credit.toString());
 

@@ -120,7 +120,7 @@ export default function CannedResponsesListPage() {
 
   // Filter and sort responses
   const filteredResponses = useMemo(() => {
-    let filtered = responses.filter(response => {
+    const filtered = responses.filter(response => {
       const matchesSearch =
         response.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         response.content.toLowerCase().includes(searchTerm.toLowerCase()) ||

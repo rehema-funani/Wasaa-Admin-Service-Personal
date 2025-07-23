@@ -35,6 +35,8 @@ import {
   AreaChart,
   Area
 } from 'recharts';
+import TransactionTrends from '../../../../components/finance/TransactionTrends';
+import TransactionStats from '../../../../components/finance/TransactionStats';
 
 const page: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
@@ -317,53 +319,9 @@ const page: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Statistics Cards */}
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        {statsData.map((stat, index) => (
-          <motion.div
-            key={index}
-            className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
-            whileHover={{ y: -4, boxShadow: '0 10px 20px rgba(0, 0, 0, 0.05)' }}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-gray-500 text-sm mb-1">{stat.title}</p>
-                <h3 className="text-2xl font-bold text-gray-800">{stat.value}</h3>
-                <div className="flex items-center mt-2">
-                  {stat.trend === 'up' ? (
-                    <TrendingUp size={16} className="text-green-500 mr-1" />
-                  ) : (
-                    <TrendingDown size={16} className="text-red-500 mr-1" />
-                  )}
-                  <span className={`text-sm font-medium ${stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                    {stat.change}
-                  </span>
-                  <span className="text-gray-500 text-xs ml-1">{stat.period}</span>
-                </div>
-              </div>
-              <div className={`
-                p-3 rounded-lg
-                ${stat.color === 'primary' ? 'bg-primary-100 text-primary-600' :
-                  stat.color === 'green' ? 'bg-green-100 text-green-600' :
-                    stat.color === 'purple' ? 'bg-purple-100 text-purple-600' :
-                      'bg-orange-100 text-orange-600'}
-              `}>
-                {stat.icon}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+      <TransactionStats />
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Revenue Chart */}
         <motion.div
           className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 lg:col-span-2"
           initial={{ opacity: 0, y: -10 }}
@@ -518,77 +476,10 @@ const page: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Transaction Trends */}
-        <motion.div
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.5 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">Transaction Trends</h3>
-              <p className="text-gray-500 text-sm">Daily transaction volume and amount</p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
-                <span className="text-xs text-gray-600">Count</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                <span className="text-xs text-gray-600">Amount</span>
-              </div>
-            </div>
-          </div>
-          <div className="h-72">
-            {isLoading ? (
-              <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={transactionsData}
-                  margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" />
-                  <YAxis yAxisId="left" orientation="left" stroke="#6366f1" />
-                  <YAxis
-                    yAxisId="right"
-                    orientation="right"
-                    stroke="#10b981"
-                    tickFormatter={(value) => formatCurrency(value)}
-                  />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#6366f1"
-                    activeDot={{ r: 8 }}
-                    name="Transaction Count"
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="amount"
-                    stroke="#10b981"
-                    name="Transaction Amount"
-                    dot={{ r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </motion.div>
+        <TransactionTrends />
       </div>
 
-      {/* Additional Charts and Tables Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Revenue Sources */}
         <motion.div
           className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
           initial={{ opacity: 0, y: -10 }}

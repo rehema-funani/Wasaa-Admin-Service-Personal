@@ -306,6 +306,8 @@ const Header: React.FC<HeaderProps> = ({
     }
   ];
 
+  // test
+
   const markAllAsRead = () => {
     setUnreadNotifications(0);
   };

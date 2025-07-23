@@ -685,7 +685,7 @@ const ReportedGroupsPage = () => {
       await groupService.updateReportStatus(id, 'under_review');
 
       const updatedReports = reportedGroups.map(report =>
-        report.id === id ? { ...report, status: 'under_review' as 'under_review' } : report
+        report.id === id ? { ...report, status: 'under_review' as const } : report
       );
 
       setReportedGroups(updatedReports);
@@ -710,7 +710,7 @@ const ReportedGroupsPage = () => {
       await groupService.resolveReport(id);
 
       const updatedReports = reportedGroups.map(report =>
-        report.id === id ? { ...report, status: 'resolved' as 'resolved', resolution: 'group_warned' } : report
+        report.id === id ? { ...report, status: 'resolved' as const, resolution: 'group_warned' } : report
       );
 
       setReportedGroups(updatedReports);
@@ -735,7 +735,7 @@ const ReportedGroupsPage = () => {
       await groupService.dismissReport(id);
 
       const updatedReports = reportedGroups.map(report =>
-        report.id === id ? { ...report, status: 'dismissed' as 'dismissed' } : report
+        report.id === id ? { ...report, status: 'dismissed' as const } : report
       );
 
       setReportedGroups(updatedReports);
@@ -760,7 +760,7 @@ const ReportedGroupsPage = () => {
       await groupService.reopenReport(id);
 
       const updatedReports = reportedGroups.map(report =>
-        report.id === id ? { ...report, status: 'under_review' as 'under_review', resolution: undefined } : report
+        report.id === id ? { ...report, status: 'under_review' as const, resolution: undefined } : report
       );
 
       setReportedGroups(updatedReports);

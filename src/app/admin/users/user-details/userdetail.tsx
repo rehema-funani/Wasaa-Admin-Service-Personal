@@ -34,8 +34,10 @@ import {
   HelpCircle,
   X,
   ArrowLeft,
+  IdCardIcon,
 } from "lucide-react";
 import userService from "../../../../api/services/users";
+import { useParams } from "react-router-dom";
 
 export default function ResponsiveUserProfile() {
   const [userData, setUserData] = useState(null);
@@ -48,18 +50,17 @@ export default function ResponsiveUserProfile() {
     social: true,
     security: true,
   });
-  // We'll use a prop instead of useParams
-  const userId = "e8c7507f-2d69-4401-ab07-6a24325fb66b"; // Default example ID
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-        if (!userId) {
+        if (!id) {
           throw new Error("User ID is missing");
         }
 
-        const userData = await userService.getUserById(userId);
+        const userData = await userService.getUserById(id);
         setUserData(userData);
         setLoading(false);
       } catch (error) {
@@ -69,10 +70,10 @@ export default function ResponsiveUserProfile() {
       }
     };
 
-    if (userId) {
+    if (id) {
       fetchUserData();
     }
-  }, [userId]);
+  }, [id]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "Not set";

@@ -51,7 +51,7 @@ const ReversalDetailPage: React.FC = () => {
                     const isDebit = response.refund.OriginalTransaction.debit < 0 ||
                         parseFloat(response.refund.OriginalTransaction.debit.toString()) < 0;
 
-                    let transactionAmount = isDebit
+                    const transactionAmount = isDebit
                         ? Math.abs(parseFloat(response.refund.OriginalTransaction.debit.toString()))
                         : parseFloat(response.refund.OriginalTransaction.credit.toString());
 
@@ -62,11 +62,11 @@ const ReversalDetailPage: React.FC = () => {
 
                     let userName = "Client";
                     if (response.refund.OriginalTransaction.description) {
-                        let toMatch = response.refund.OriginalTransaction.description.match(/to\s+(.+)$/);
+                        const toMatch = response.refund.OriginalTransaction.description.match(/to\s+(.+)$/);
                         if (toMatch && toMatch[1]) {
                             userName = toMatch[1].trim();
                         } else {
-                            let fromMatch = response.refund.OriginalTransaction.description.match(/from\s+(.+)$/);
+                            const fromMatch = response.refund.OriginalTransaction.description.match(/from\s+(.+)$/);
                             if (fromMatch && fromMatch[1]) {
                                 userName = fromMatch[1].trim();
                             }

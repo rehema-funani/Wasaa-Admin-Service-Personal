@@ -52,17 +52,6 @@ const RoleModule = {
   AdminUserDetails: lazy(() => import('./app/admin/roles/userdetail')),
 };
 
-// const LivestreamModule = {
-//   AllLivestreams: lazy(() => import('./app/admin/livestreams/all-livestreams/page')),
-//   ScheduledStreams: lazy(() => import('./app/admin/livestreams/scheduled/page')),
-//   // StreamSettings: lazy(() => import('./app/admin/livestreams/settings/page')),
-//   StreamCategories: lazy(() => import('./app/admin/livestreams/categories/page')),
-//   FeaturedStreams: lazy(() => import('./app/admin/livestreams/featured/page')),
-//   StreamAnalytics: lazy(() => import('./app/admin/livestreams/analytics/page')),
-//   StreamModeration: lazy(() => import('./app/admin/livestreams/moderation/page')),
-//   ReportedStreams: lazy(() => import('./app/admin/livestreams/reported/page')),
-// };
-
 const ForexModule = {
   ForexDashboard: lazy(() => import('./app/admin/finance/forex/dashboard')),
   Currencies: lazy(() => import('./app/admin/finance/forex/currency-management')),
@@ -373,7 +362,6 @@ const protectedRoutes = [
   ...userRoutes,
   ...groupRoutes,
   ...roleRoutes,
-  // ...livestreamRoutes,
   ...forexRoutes,
   ...financeRoutes,
   ...mediaRoutes,

@@ -25,9 +25,9 @@ const UserActivityChart = ({ timeframe, dataType }) => {
   }, [timeframe, dataType]);
 
   const generateChartData = (timeframe, dataType) => {
-    let data = [];
-    let baseValue = dataType === 'users' ? 2500 : dataType === 'groups' ? 500 : 30000;
-    let fluctuation = dataType === 'users' ? 800 : dataType === 'groups' ? 200 : 15000;
+    const data = [];
+    const baseValue = dataType === 'users' ? 2500 : dataType === 'groups' ? 500 : 30000;
+    const fluctuation = dataType === 'users' ? 800 : dataType === 'groups' ? 200 : 15000;
     let pointCount = 0;
     let format = '';
 
