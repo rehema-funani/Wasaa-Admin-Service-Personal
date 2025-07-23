@@ -16,6 +16,3 @@ export const giftService = {
     return response.data;
   },
 };
-
-
-// nkbh
