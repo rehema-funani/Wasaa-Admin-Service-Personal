@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import {
+  Bell,
   Check,
-  X,
-  Settings,
-  Sliders,
+  ChevronRight,
   Globe,
-  Users,
   Link as LinkIcon,
   PaintBucket,
-  ChevronRight,
+  Settings,
   Shield,
-  Bell
+  Sliders,
+  Users,
+  X
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
+import SettingsTabs from "../Settings/SettingsTab";
 import { settingsService } from "../../../api/services/settings";
-import SettingsTabs from "./SettingsTab";
 
 const fadeIn = {
   hidden: { opacity: 0 },

@@ -1,7 +1,7 @@
-version: '3.8'
 
 services:
   wasaa-admin:
+    container_name: wasaa-admin-service
     build:
       context: .
       dockerfile: Dockerfile

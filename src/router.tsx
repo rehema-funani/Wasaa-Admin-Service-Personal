@@ -1,11 +1,11 @@
-import React, { lazy, Suspense, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
 
 import AdminLayout from './components/layout/AdminLayout';
+import Cookies from 'js-cookie';
+import { PATHS } from './constants/paths';
 import { PermissionMap } from './utils/permissions';
 import PermissionRouteGuard from './components/PermissionGuard';
-import { PATHS } from './constants/paths';
 
 type RouteConfig = {
   path: string;
