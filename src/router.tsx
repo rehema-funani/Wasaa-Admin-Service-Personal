@@ -92,8 +92,8 @@ const MediaModule = {
   AvatarList: lazy(() => import('./app/admin/Avatar/list-all-avatar/page')),
   AddAvatar: lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page')),
 
-  GeneralSettings: lazy(() => import('./app/admin/settings/page')),
-  Emoji: lazy(() => import('./app/admin/settings/emoji')),
+  GeneralSettings: lazy(() => import('./app/admin/Settings/page')),
+  Emoji: lazy(() => import('./app/admin/Settings/emoji')),
   Languages: lazy(() => import('./app/admin/languages/all-languages/page')),
   Translations: lazy(() => import('./app/admin/languages/all-languages/details')),
 
