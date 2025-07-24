@@ -95,7 +95,7 @@ const AuditLogsPage: React.FC = () => {
   const [activeSort, setActiveSort] = useState("newest");
   const [hoveredLog, setHoveredLog] = useState<string | null>(null);
 
-  const [securityMetrics, setSecurityMetrics] = useState<SecurityMetrics>({
+  const [securityMetrics] = useState<SecurityMetrics>({
     failedLogins: 5,
     suspiciousActivities: 2,
     dataModifications: 23,
