@@ -100,7 +100,7 @@ const TransactionsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(savedState?.searchQuery || "");
   const [currentPage, setCurrentPage] = useState(savedState?.currentPage || 1);
   const [itemsPerPage, setItemsPerPage] = useState(
-    savedState?.itemsPerPage || 10
+    savedState?.itemsPerPage || 50
   );
   const [filterStatus, setFilterStatus] = useState(
     savedState?.filterStatus || "all"
@@ -118,7 +118,6 @@ const TransactionsPage: React.FC = () => {
     pages: 1,
   });
 
-  // Export functionality states
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [exportPasscode, setExportPasscode] = useState("");
