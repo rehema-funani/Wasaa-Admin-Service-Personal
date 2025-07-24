@@ -109,7 +109,7 @@ const AuditLogsPage: React.FC = () => {
 
   const [itemsPerPage, setItemsPerPage] = useState(() => {
     const limitParam = searchParams.get("pageSize");
-    return limitParam ? parseInt(limitParam) : 10;
+    return limitParam ? parseInt(limitParam) : 50;
   });
 
   const [totalLogs, setTotalLogs] = useState(0);
