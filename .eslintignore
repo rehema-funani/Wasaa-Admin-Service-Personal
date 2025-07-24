@@ -1,5 +1,19 @@
-# .eslintignore
 dist/
 node_modules/
 build/
 *.config.js
+**.min.js
+coverage/
+.vscode/
+.env
+.DS_Store
+*.log
+*.tmp
+*.cache
+*.bak
+*.swp
+*.swo
+*.orig
+*.tgz
+*.zip
+*.tar.gz
