@@ -11,14 +11,11 @@ import {
   Users,
   Tag,
   MessageSquare,
-  UserCheck,
   Award,
   Calendar,
-  AlertTriangle
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
 
-// Define agent type
 interface Agent {
   id: string;
   userId: string;
@@ -41,16 +38,15 @@ interface Agent {
   updatedAt: string;
 }
 
-// Define agent statistics type
 interface AgentStatistics {
   lastActive?: string;
   resolvedToday: number;
   resolvedThisWeek: number;
   resolvedThisMonth: number;
   ticketsInProgress: number;
-  averageHandlingTime: number; // in minutes
-  satisfactionScore: number; // percentage
-  responseTimePerformance: number; // percentage within SLA
+  averageHandlingTime: number;
+  satisfactionScore: number;
+  responseTimePerformance: number;
   ticketsByStatus: {
     status: string;
     count: number;
@@ -310,9 +306,7 @@ export default function AgentDetailsPage() {
           </div>
         </div>
 
-        {/* Right columns - Statistics & Activity */}
         <div className="col-span-1 lg:col-span-2">
-          {/* Statistics Summary */}
           <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
             <div className="px-6 py-4 border-b">
               <h2 className="text-lg font-medium text-gray-800">Performance Overview</h2>
