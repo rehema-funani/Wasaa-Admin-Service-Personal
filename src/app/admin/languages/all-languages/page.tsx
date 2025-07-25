@@ -15,61 +15,27 @@ import {
   XCircle,
   Filter,
   ArrowUpDown,
-  ChevronDown,
   ArrowRight,
 } from "lucide-react";
-
-// Mock data for demo purposes
-const mockLanguages = [
-  {
-    id: "1",
-    name: "English",
-    code: "en-US",
-    country: "United States",
-    is_rtl: false,
-    is_default: true,
-    is_active: true,
-  },
-  {
-    id: "2",
-    name: "Spanish",
-    code: "es-ES",
-    country: "Spain",
-    is_rtl: false,
-    is_default: false,
-    is_active: true,
-  },
-  {
-    id: "3",
-    name: "French",
-    code: "fr-FR",
-    country: "France",
-    is_rtl: false,
-    is_default: false,
-    is_active: true,
-  },
-  {
-    id: "4",
-    name: "Arabic",
-    code: "ar-SA",
-    country: "Saudi Arabia",
-    is_rtl: true,
-    is_default: false,
-    is_active: true,
-  },
-  {
-    id: "5",
-    name: "German",
-    code: "de-DE",
-    country: "Germany",
-    is_rtl: false,
-    is_default: false,
-    is_active: false,
-  },
-];
+import { languageService } from "../../../../api/services/language";
+import { useNavigate } from "react-router-dom";
 
 const LanguageManager = () => {
-  const [languages, setLanguages] = useState(mockLanguages);
+  const [languages, setLanguages] = useState([]);
+
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const response = await languageService.getLanguages();
+        setLanguages(response);
+      } catch (error) {
+        console.error("Failed to fetch languages:", error);
+      }
+    };
+
+    fetchLanguages();
+  }, []);
+
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -80,9 +46,9 @@ const LanguageManager = () => {
   const [sortDirection, setSortDirection] = useState("asc");
   const [activeFilter, setActiveFilter] = useState("all");
   const [refreshing, setRefreshing] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate fetching languages
     fetchLanguages();
   }, []);
 
@@ -91,11 +57,7 @@ const LanguageManager = () => {
       setIsLoading(true);
       setRefreshing(true);
 
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      // In a real app, you'd fetch from an API
-      setLanguages(mockLanguages);
+      await languageService.getLanguages();
     } catch (error) {
       console.error("Failed to fetch languages:", error);
     } finally {
@@ -164,8 +126,7 @@ const LanguageManager = () => {
   };
 
   const handleViewTranslations = (id) => {
-    // Simulate navigation
-    console.log("Viewing translations for language:", id);
+    navigate(`/admin/languages/${id}/translations`);
   };
 
   // Sorting logic
@@ -181,12 +142,12 @@ const LanguageManager = () => {
   };
 
   // Apply filtering
-  let filteredLanguages = languages.filter(
+  let filteredLanguages = languages?.filter(
     (language) =>
       (searchQuery === "" ||
-        language.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        language.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        language.country.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        language.name.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        language.code.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+        language.country.toLowerCase()?.includes(searchQuery?.toLowerCase())) &&
       (activeFilter === "all" ||
         (activeFilter === "active" && language.is_active) ||
         (activeFilter === "inactive" && !language.is_active))
