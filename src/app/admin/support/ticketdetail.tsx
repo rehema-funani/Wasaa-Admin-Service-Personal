@@ -20,8 +20,8 @@ import {
   ExternalLink
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
+import toast from 'react-hot-toast';
 
-// Define interfaces based on the API response
 interface User {
   id: string;
   externalUserId: string;
@@ -176,7 +176,6 @@ interface TicketResponse {
   };
 }
 
-// Define types for modals
 interface AssignModalData {
   userId: string;
 }
@@ -187,7 +186,7 @@ interface EscalateModalData {
 }
 
 interface ResolveModalData {
-  notes: string;
+  resolutionNotes: string;
 }
 
 export default function TicketDetailPage() {
@@ -195,21 +194,21 @@ export default function TicketDetailPage() {
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // State
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(true);
   const [messageLoading, setMessageLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [isInternal, setIsInternal] = useState(false);
-  const [showActions, setShowActions] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showEscalateModal, setShowEscalateModal] = useState(false);
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
   const [assignData, setAssignData] = useState<AssignModalData>({ userId: '' });
   const [escalateData, setEscalateData] = useState<EscalateModalData>({ reason: '', escalateToUserId: '' });
-  const [resolveData, setResolveData] = useState<ResolveModalData>({ notes: '' });
+  const [resolveData, setResolveData] = useState<ResolveModalData>({
+    resolutionNotes: "",
+  });
 
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loadingAgents, setLoadingAgents] = useState(false);
@@ -346,6 +345,7 @@ export default function TicketDetailPage() {
       await supportService.closeTicket(id);
 
       const updatedTicket = await supportService.getTicketById(id);
+      toast.success('Ticket closed successfully');
       if (updatedTicket.success) {
         setTicket(updatedTicket.data.ticket);
       }
@@ -601,10 +601,16 @@ export default function TicketDetailPage() {
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                       <div className="flex items-center">
-                        <h1 className="text-xl font-semibold text-gray-900 mr-3">{ticket.subject}</h1>
-                        <span className="text-sm text-gray-500">#{ticket.ticketNumber}</span>
+                        <h1 className="text-xl font-semibold text-gray-900 mr-3">
+                          {ticket.subject}
+                        </h1>
+                        <span className="text-sm text-gray-500">
+                          #{ticket.ticketNumber}
+                        </span>
                       </div>
-                      <p className="mt-1 text-sm text-gray-600 line-clamp-2">{ticket.description}</p>
+                      <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                        {ticket.description}
+                      </p>
                     </div>
                     <div className="flex flex-shrink-0 space-x-2">
                       {getStatusBadge(ticket.status)}
@@ -617,7 +623,9 @@ export default function TicketDetailPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <div className="text-gray-500 mb-1">Customer</div>
-                    <div className="font-medium">{getFullName(ticket.user.firstName, ticket.user.lastName)}</div>
+                    <div className="font-medium">
+                      {getFullName(ticket.user.firstName, ticket.user.lastName)}
+                    </div>
                   </div>
                   <div>
                     <div className="text-gray-500 mb-1">Category</div>
@@ -627,13 +635,21 @@ export default function TicketDetailPage() {
                   </div>
                   <div>
                     <div className="text-gray-500 mb-1">Created</div>
-                    <div className="font-medium">{formatRelativeTime(ticket.createdAt)}</div>
+                    <div className="font-medium">
+                      {formatRelativeTime(ticket.createdAt)}
+                    </div>
                   </div>
                   <div>
                     <div className="text-gray-500 mb-1">Assigned To</div>
                     <div className="font-medium">
-                      {ticket.agent ? getFullName(ticket.agent.user.firstName, ticket.agent.user.lastName) :
-                        <span className="text-yellow-600">Unassigned</span>}
+                      {ticket.agent ? (
+                        getFullName(
+                          ticket.agent.user.firstName,
+                          ticket.agent.user.lastName
+                        )
+                      ) : (
+                        <span className="text-yellow-600">Unassigned</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -642,12 +658,14 @@ export default function TicketDetailPage() {
 
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                <h2 className="text-lg font-medium text-gray-900">Conversation</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                  Conversation
+                </h2>
                 <div className="flex items-center">
                   {getSlaStatusBadge(ticket.slaStatus)}
                   <span className="ml-2 text-sm text-gray-500">
-                    {ticket.status === 'RESOLVED' || ticket.status === 'CLOSED'
-                      ? 'Completed'
+                    {ticket.status === "RESOLVED" || ticket.status === "CLOSED"
+                      ? "Completed"
                       : getTimeRemaining(ticket.resolutionDue)}
                   </span>
                 </div>
@@ -657,23 +675,32 @@ export default function TicketDetailPage() {
                 {ticket.messages.length === 0 ? (
                   <div className="text-center py-8">
                     <MessageSquare className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No messages</h3>
-                    <p className="mt-1 text-sm text-gray-500">Get started by sending a message.</p>
+                    <h3 className="mt-2 text-sm font-medium text-gray-900">
+                      No messages
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Get started by sending a message.
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-6">
                     {ticket.messages.map((message) => (
                       <div
                         key={message.id}
-                        className={`flex ${message.senderType === 'AGENT' ? 'justify-end' : 'justify-start'}`}
+                        className={`flex ${
+                          message.senderType === "AGENT"
+                            ? "justify-end"
+                            : "justify-start"
+                        }`}
                       >
                         <div
-                          className={`max-w-[80%] rounded-lg p-4 ${message.isInternal
-                            ? 'bg-yellow-50 border border-yellow-100'
-                            : message.senderType === 'USER'
-                              ? 'bg-white border border-gray-200'
-                              : 'bg-indigo-50 border border-indigo-100'
-                            }`}
+                          className={`max-w-[80%] rounded-lg p-4 ${
+                            message.isInternal
+                              ? "bg-yellow-50 border border-yellow-100"
+                              : message.senderType === "USER"
+                              ? "bg-white border border-gray-200"
+                              : "bg-indigo-50 border border-indigo-100"
+                          }`}
                         >
                           <div className="flex justify-between items-start mb-2">
                             <div className="font-medium text-gray-900 text-sm">
@@ -693,7 +720,9 @@ export default function TicketDetailPage() {
                           </div>
                           {message.attachments.length > 0 && (
                             <div className="mt-3 border-t border-gray-100 pt-3">
-                              <div className="text-xs font-medium text-gray-500 mb-2">Attachments</div>
+                              <div className="text-xs font-medium text-gray-500 mb-2">
+                                Attachments
+                              </div>
                               <div className="space-y-2">
                                 {message.attachments.map((attachment) => (
                                   <a
@@ -704,7 +733,9 @@ export default function TicketDetailPage() {
                                     className="flex items-center p-2 bg-white rounded border border-gray-200 hover:bg-gray-50 text-sm text-gray-700"
                                   >
                                     <Paperclip className="w-4 h-4 text-gray-400 mr-2" />
-                                    <span className="truncate flex-1">{attachment.fileName}</span>
+                                    <span className="truncate flex-1">
+                                      {attachment.fileName}
+                                    </span>
                                     <ExternalLink className="w-3 h-3 text-gray-400 ml-1" />
                                   </a>
                                 ))}
@@ -738,7 +769,9 @@ export default function TicketDetailPage() {
                         onChange={() => setIsInternal(!isInternal)}
                         className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                       />
-                      <span className="ml-2">Internal note (not visible to customer)</span>
+                      <span className="ml-2">
+                        Internal note (not visible to customer)
+                      </span>
                     </label>
                     <div className="flex space-x-2">
                       <button
@@ -751,10 +784,11 @@ export default function TicketDetailPage() {
                       <button
                         type="submit"
                         disabled={messageLoading || !newMessage.trim()}
-                        className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${messageLoading || !newMessage.trim()
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-                          }`}
+                        className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${
+                          messageLoading || !newMessage.trim()
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : "bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        }`}
                       >
                         {messageLoading ? (
                           <>
@@ -786,15 +820,17 @@ export default function TicketDetailPage() {
                 <button
                   onClick={() => setShowAssignModal(true)}
                   className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  disabled={ticket.status === 'CLOSED'}
+                  disabled={ticket.status === "CLOSED"}
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
-                  {ticket.agent ? 'Reassign Ticket' : 'Assign Ticket'}
+                  {ticket.agent ? "Reassign Ticket" : "Assign Ticket"}
                 </button>
                 <button
                   onClick={() => setShowEscalateModal(true)}
                   className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  disabled={ticket.status === 'CLOSED' || ticket.status === 'RESOLVED'}
+                  disabled={
+                    ticket.status === "CLOSED" || ticket.status === "RESOLVED"
+                  }
                 >
                   <AlertCircle className="w-4 h-4 mr-2" />
                   Escalate
@@ -802,7 +838,9 @@ export default function TicketDetailPage() {
                 <button
                   onClick={() => setShowResolveModal(true)}
                   className="w-full flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                  disabled={ticket.status === 'CLOSED' || ticket.status === 'RESOLVED'}
+                  disabled={
+                    ticket.status === "CLOSED" || ticket.status === "RESOLVED"
+                  }
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Resolve Ticket
@@ -810,7 +848,7 @@ export default function TicketDetailPage() {
                 <button
                   onClick={handleCloseTicket}
                   className="w-full flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                  disabled={ticket.status === 'CLOSED'}
+                  disabled={ticket.status === "CLOSED"}
                 >
                   <X className="w-4 h-4 mr-2" />
                   Close Ticket
@@ -821,35 +859,46 @@ export default function TicketDetailPage() {
             {/* SLA Info Card */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900">SLA Information</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                  SLA Information
+                </h2>
               </div>
               <div className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">First Response</div>
+                    <div className="text-sm text-gray-500 mb-1">
+                      First Response
+                    </div>
                     <div className="flex justify-between items-center">
                       <div className="font-medium">
-                        {ticket.firstResponseAt ? 'Completed' : 'Pending'}
+                        {ticket.firstResponseAt ? "Completed" : "Pending"}
                       </div>
-                      <div className={`text-sm ${new Date(ticket.firstResponseDue) < new Date() && !ticket.firstResponseAt
-                        ? 'text-red-600'
-                        : 'text-gray-500'
-                        }`}>
+                      <div
+                        className={`text-sm ${
+                          new Date(ticket.firstResponseDue) < new Date() &&
+                          !ticket.firstResponseAt
+                            ? "text-red-600"
+                            : "text-gray-500"
+                        }`}
+                      >
                         {ticket.firstResponseAt
                           ? formatRelativeTime(ticket.firstResponseAt)
-                          : `Due ${formatRelativeTime(ticket.firstResponseDue)}`}
+                          : `Due ${formatRelativeTime(
+                              ticket.firstResponseDue
+                            )}`}
                       </div>
                     </div>
                     <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className={`h-full ${ticket.firstResponseAt
-                          ? 'bg-green-500'
-                          : new Date(ticket.firstResponseDue) < new Date()
-                            ? 'bg-red-500'
-                            : 'bg-blue-500'
-                          }`}
+                        className={`h-full ${
+                          ticket.firstResponseAt
+                            ? "bg-green-500"
+                            : new Date(ticket.firstResponseDue) < new Date()
+                            ? "bg-red-500"
+                            : "bg-blue-500"
+                        }`}
                         style={{
-                          width: ticket.firstResponseAt ? '100%' : '50%'
+                          width: ticket.firstResponseAt ? "100%" : "50%",
                         }}
                       ></div>
                     </div>
@@ -859,12 +908,16 @@ export default function TicketDetailPage() {
                     <div className="text-sm text-gray-500 mb-1">Resolution</div>
                     <div className="flex justify-between items-center">
                       <div className="font-medium">
-                        {ticket.resolvedAt ? 'Completed' : 'Pending'}
+                        {ticket.resolvedAt ? "Completed" : "Pending"}
                       </div>
-                      <div className={`text-sm ${new Date(ticket.resolutionDue) < new Date() && !ticket.resolvedAt
-                        ? 'text-red-600'
-                        : 'text-gray-500'
-                        }`}>
+                      <div
+                        className={`text-sm ${
+                          new Date(ticket.resolutionDue) < new Date() &&
+                          !ticket.resolvedAt
+                            ? "text-red-600"
+                            : "text-gray-500"
+                        }`}
+                      >
                         {ticket.resolvedAt
                           ? formatRelativeTime(ticket.resolvedAt)
                           : `Due ${formatRelativeTime(ticket.resolutionDue)}`}
@@ -872,14 +925,15 @@ export default function TicketDetailPage() {
                     </div>
                     <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className={`h-full ${ticket.resolvedAt
-                          ? 'bg-green-500'
-                          : new Date(ticket.resolutionDue) < new Date()
-                            ? 'bg-red-500'
-                            : 'bg-blue-500'
-                          }`}
+                        className={`h-full ${
+                          ticket.resolvedAt
+                            ? "bg-green-500"
+                            : new Date(ticket.resolutionDue) < new Date()
+                            ? "bg-red-500"
+                            : "bg-blue-500"
+                        }`}
                         style={{
-                          width: ticket.resolvedAt ? '100%' : '50%'
+                          width: ticket.resolvedAt ? "100%" : "50%",
                         }}
                       ></div>
                     </div>
@@ -901,9 +955,13 @@ export default function TicketDetailPage() {
                 className="px-6 py-4 border-b border-gray-200 flex items-center justify-between cursor-pointer"
                 onClick={() => setShowActivities(!showActivities)}
               >
-                <h2 className="text-lg font-medium text-gray-900">Activity Log</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                  Activity Log
+                </h2>
                 <ChevronRight
-                  className={`w-5 h-5 text-gray-500 transition-transform ${showActivities ? 'transform rotate-90' : ''}`}
+                  className={`w-5 h-5 text-gray-500 transition-transform ${
+                    showActivities ? "transform rotate-90" : ""
+                  }`}
                 />
               </div>
 
@@ -911,7 +969,9 @@ export default function TicketDetailPage() {
                 <div className="p-6">
                   <div className="space-y-4">
                     {ticket.activities.length === 0 ? (
-                      <p className="text-sm text-gray-500">No activities recorded</p>
+                      <p className="text-sm text-gray-500">
+                        No activities recorded
+                      </p>
                     ) : (
                       <div className="space-y-4">
                         {ticket.activities.map((activity) => (
@@ -928,16 +988,23 @@ export default function TicketDetailPage() {
                               <div className="mt-0.5 text-xs text-gray-500">
                                 {formatDate(activity.createdAt)}
                               </div>
-                              {(activity.previousValue || activity.newValue) && (
+                              {(activity.previousValue ||
+                                activity.newValue) && (
                                 <div className="mt-2 text-sm">
                                   {activity.previousValue && (
                                     <div className="text-gray-500">
-                                      From: <span className="font-medium">{activity.previousValue}</span>
+                                      From:{" "}
+                                      <span className="font-medium">
+                                        {activity.previousValue}
+                                      </span>
                                     </div>
                                   )}
                                   {activity.newValue && (
                                     <div className="text-gray-500">
-                                      To: <span className="font-medium">{activity.newValue}</span>
+                                      To:{" "}
+                                      <span className="font-medium">
+                                        {activity.newValue}
+                                      </span>
                                     </div>
                                   )}
                                 </div>
@@ -955,27 +1022,38 @@ export default function TicketDetailPage() {
             {/* Customer Information */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900">Customer Information</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                  Customer Information
+                </h2>
               </div>
               <div className="p-6">
                 <div className="flex items-center mb-4">
                   <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium text-lg mr-4">
-                    {ticket.user.firstName.charAt(0)}{ticket.user.lastName.charAt(0)}
+                    {ticket.user.firstName.charAt(0)}
+                    {ticket.user.lastName.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">{getFullName(ticket.user.firstName, ticket.user.lastName)}</div>
-                    <div className="text-sm text-gray-500">{ticket.user.email}</div>
+                    <div className="font-medium text-gray-900">
+                      {getFullName(ticket.user.firstName, ticket.user.lastName)}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {ticket.user.email}
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <div className="text-gray-500">Language</div>
-                    <div className="font-medium text-gray-900">{ticket.user.language.toUpperCase()}</div>
+                    <div className="font-medium text-gray-900">
+                      {ticket.user.language.toUpperCase()}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="text-gray-500">Timezone</div>
-                    <div className="font-medium text-gray-900">{ticket.user.timezone}</div>
+                    <div className="font-medium text-gray-900">
+                      {ticket.user.timezone}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <div className="text-gray-500">Account Status</div>
@@ -989,7 +1067,10 @@ export default function TicketDetailPage() {
                   </div>
                   <div className="flex justify-between">
                     <div className="text-gray-500">User ID</div>
-                    <div className="font-medium text-gray-900 truncate max-w-[150px]" title={ticket.user.id}>
+                    <div
+                      className="font-medium text-gray-900 truncate max-w-[150px]"
+                      title={ticket.user.id}
+                    >
                       {ticket.user.externalUserId}
                     </div>
                   </div>
@@ -1005,7 +1086,9 @@ export default function TicketDetailPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Assign Ticket</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Assign Ticket
+              </h2>
               <button
                 onClick={() => setShowAssignModal(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -1023,13 +1106,16 @@ export default function TicketDetailPage() {
               ) : (
                 <select
                   value={assignData.userId}
-                  onChange={(e) => setAssignData({ ...assignData, userId: e.target.value })}
+                  onChange={(e) =>
+                    setAssignData({ ...assignData, userId: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
                 >
                   <option value="">Select an agent</option>
                   {agents.map((agent) => (
                     <option key={agent.id} value={agent.userId}>
-                      {getFullName(agent.user.firstName, agent.user.lastName)} ({agent.department})
+                      {getFullName(agent.user.firstName, agent.user.lastName)} (
+                      {agent.department})
                     </option>
                   ))}
                 </select>
@@ -1046,10 +1132,11 @@ export default function TicketDetailPage() {
               <button
                 onClick={handleAssignTicket}
                 disabled={!assignData.userId}
-                className={`px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${!assignData.userId
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                  }`}
+                className={`px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                  !assignData.userId
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700"
+                }`}
               >
                 Assign
               </button>
@@ -1063,7 +1150,9 @@ export default function TicketDetailPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Escalate Ticket</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Escalate Ticket
+              </h2>
               <button
                 onClick={() => setShowEscalateModal(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -1081,15 +1170,24 @@ export default function TicketDetailPage() {
               ) : (
                 <select
                   value={escalateData.escalateToUserId}
-                  onChange={(e) => setEscalateData({ ...escalateData, escalateToUserId: e.target.value })}
+                  onChange={(e) =>
+                    setEscalateData({
+                      ...escalateData,
+                      escalateToUserId: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
                 >
                   <option value="">Select an agent</option>
                   {agents
-                    .filter(agent => agent.role === 'supervisor' || agent.role === 'admin')
+                    .filter(
+                      (agent) =>
+                        agent.role === "supervisor" || agent.role === "admin"
+                    )
                     .map((agent) => (
                       <option key={agent.id} value={agent.userId}>
-                        {getFullName(agent.user.firstName, agent.user.lastName)} ({agent.role})
+                        {getFullName(agent.user.firstName, agent.user.lastName)}{" "}
+                        ({agent.role})
                       </option>
                     ))}
                 </select>
@@ -1102,7 +1200,9 @@ export default function TicketDetailPage() {
               </label>
               <textarea
                 value={escalateData.reason}
-                onChange={(e) => setEscalateData({ ...escalateData, reason: e.target.value })}
+                onChange={(e) =>
+                  setEscalateData({ ...escalateData, reason: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
                 rows={3}
                 placeholder="Explain why this ticket needs to be escalated..."
@@ -1118,11 +1218,14 @@ export default function TicketDetailPage() {
               </button>
               <button
                 onClick={handleEscalateTicket}
-                disabled={!escalateData.escalateToUserId || !escalateData.reason}
-                className={`px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${!escalateData.escalateToUserId || !escalateData.reason
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                  }`}
+                disabled={
+                  !escalateData.escalateToUserId || !escalateData.reason
+                }
+                className={`px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                  !escalateData.escalateToUserId || !escalateData.reason
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700"
+                }`}
               >
                 Escalate
               </button>
@@ -1136,7 +1239,9 @@ export default function TicketDetailPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Resolve Ticket</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Resolve Ticket
+              </h2>
               <button
                 onClick={() => setShowResolveModal(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -1150,8 +1255,13 @@ export default function TicketDetailPage() {
                 Resolution notes
               </label>
               <textarea
-                value={resolveData.notes}
-                onChange={(e) => setResolveData({ ...resolveData, notes: e.target.value })}
+                value={resolveData.resolutionNotes}
+                onChange={(e) =>
+                  setResolveData({
+                    ...resolveData,
+                    resolutionNotes: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
                 rows={3}
                 placeholder="Provide details about how this issue was resolved..."

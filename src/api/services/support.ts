@@ -73,7 +73,7 @@ const supportService = {
   },
 
   closeTicket: async (id: string) => {
-    const response = await supportaxios.patch(`/tickets/${id}/close`);
+    const response = await supportaxios.post(`/tickets/${id}/close`);
     return response.data;
   },
 
