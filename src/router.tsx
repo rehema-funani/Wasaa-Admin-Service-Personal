@@ -121,6 +121,8 @@ const SupportAuditModule = {
   CannedResponses: lazy(() => import('./app/admin/support/cannedresponse')),
   CreateCannedResponse: lazy(() => import('./app/admin/support/cannedresponseaddedit')),
   ResponseDetail: lazy(() => import('./app/admin/support/cannedresponsedetail')),
+  Agents: lazy(() => import('./app/admin/support/agents')),
+  CreateAgent: lazy(() => import('./app/admin/support/createagent')),
   FAQs: lazy(() => import('./app/admin/support/faq')),
   FAQCreate: lazy(() => import('./app/admin/support/faqcreate')),
   FAQDetail: lazy(() => import('./app/admin/support/faqdetail')),
@@ -576,6 +578,14 @@ const supportAuditRoutes = [
   {
     path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_DETAIL,
     element: SupportAuditModule.ResponseDetail,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.AGENTS,
+    element: SupportAuditModule.Agents,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.AGENT_CREATE,
+    element: SupportAuditModule.CreateAgent,
   },
   { path: PATHS.ADMIN.SUPPORT.FAQS, element: SupportAuditModule.FAQs },
   {
