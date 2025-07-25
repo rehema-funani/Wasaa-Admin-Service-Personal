@@ -283,13 +283,13 @@ const routes: Route[] = [
           icon: UsersIcon,
           description: 'Service Level Agreements'
         },
-        {
-          type: 'link',
-          path: '/admin/support/agents',
-          title: 'Agents',
-          icon: UsersIcon,
-          description: 'Support agent management & team'
-        },
+        // {
+        //   type: 'link',
+        //   path: '/admin/support/agents',
+        //   title: 'Agents',
+        //   icon: UsersIcon,
+        //   description: 'Support agent management & team'
+        // },
         {
           type: 'link',
           path: '/admin/support/categories',
