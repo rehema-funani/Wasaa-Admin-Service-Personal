@@ -32,7 +32,6 @@ export default function CategoriesListPage() {
   const [sortField, setSortField] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
 
-  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       setLoading(true);
@@ -266,7 +265,6 @@ export default function CategoriesListPage() {
               </div>
             </div>
 
-            {/* Actions menu */}
             <div className="relative ml-2">
               <button
                 onClick={() => setActiveMenu(activeMenu === category.id ? null : category.id)}
@@ -279,25 +277,11 @@ export default function CategoriesListPage() {
                 <div className="absolute right-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                   <div className="py-1" role="menu">
                     <button
-                      onClick={() => console.log('View', category.id)}
-                      className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      <Eye className="mr-3 h-4 w-4 text-gray-500" />
-                      View Details
-                    </button>
-                    <button
                       onClick={() => console.log('Edit', category.id)}
                       className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     >
                       <Edit className="mr-3 h-4 w-4 text-gray-500" />
                       Edit
-                    </button>
-                    <button
-                      onClick={() => console.log('Add Subcategory', category.id)}
-                      className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      <FolderPlus className="mr-3 h-4 w-4 text-gray-500" />
-                      Add Subcategory
                     </button>
                     <button
                       onClick={() => handleDeleteCategory(category.id)}
@@ -313,7 +297,6 @@ export default function CategoriesListPage() {
           </div>
         </div>
 
-        {/* Render children recursively */}
         {hasChildren && isExpanded && (
           <div>
             {category.children.map(child => renderCategoryRow(child, depth + 1))}
@@ -419,7 +402,6 @@ export default function CategoriesListPage() {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            {/* Table Header */}
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 flex items-center text-sm font-medium text-gray-500 uppercase tracking-wider">
               <div className="flex-grow flex items-center">
                 <button
