@@ -329,7 +329,7 @@ const UserProfile = () => {
                   {userData.account_status.charAt(0).toUpperCase() +
                     userData.account_status.slice(1)}
                 </span>{" "}
-                • Last updated {getTimeSince(userData.updatedAt)}
+                • Online
               </p>
             </div>
           </div>
