@@ -175,7 +175,7 @@ getTicketStats: async (params?: {
   },
 
   updateCategory: async (id: string, categoryData: any) => {
-    const response = await supportaxios.put(`/categories/${id}`, categoryData);
+    const response = await supportaxios.patch(`/categories/${id}`, categoryData);
     return response.data;
   },
 

@@ -7,10 +7,8 @@ import {
   AlertTriangle,
   Smartphone,
   Folder,
-  FolderPlus,
   Filter,
   RefreshCw,
-  Eye,
   Edit,
   Trash2,
   Clock,
@@ -19,20 +17,11 @@ import {
   ChevronDown,
   ArrowUp,
   ArrowDown,
-  Check,
   X,
   Shield,
-  AlertCircle,
-  FileText,
-  Calendar,
   HelpCircle,
-  Save,
-  CheckCircle2,
   Info,
-  Lock,
   Tag,
-  Copy,
-  PanelLeft,
   BookOpen,
   Settings,
   BarChart3,
@@ -58,13 +47,11 @@ interface Category {
 }
 
 export default function CategoriesListPage() {
-  // State for categories and UI
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showInactive, setShowInactive] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<
     Record<string, boolean>
   >({});
@@ -73,9 +60,10 @@ export default function CategoriesListPage() {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Edit modal state
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [editFormData, setEditFormData] = useState({
     name: "",
     description: "",
@@ -90,7 +78,6 @@ export default function CategoriesListPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  // Analytics data
   const [analytics, setAnalytics] = useState({
     totalCategories: 0,
     activeCategories: 0,
@@ -98,12 +85,10 @@ export default function CategoriesListPage() {
     avgResolutionTime: 0,
   });
 
-  // Fetch categories on component mount
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  // Calculate analytics when categories change
   useEffect(() => {
     if (categories.length) {
       const active = categories.filter((cat) => cat.isActive).length;
@@ -125,7 +110,6 @@ export default function CategoriesListPage() {
     }
   }, [categories]);
 
-  // Fetch categories from API
   const fetchCategories = async () => {
     setLoading(true);
     setIsRefreshing(true);
@@ -138,18 +122,15 @@ export default function CategoriesListPage() {
       console.error(err);
     } finally {
       setLoading(false);
-      // Add a slight delay to show the refreshing state
       setTimeout(() => setIsRefreshing(false), 500);
     }
   };
 
-  // Reset all filters
   const resetFilters = () => {
     setSearchTerm("");
     setShowInactive(false);
     setSortField("name");
     setSortDirection("asc");
-    // Expand all top-level categories
     const newExpanded: Record<string, boolean> = {};
     organizedCategories.forEach((cat) => {
       newExpanded[cat.id] = true;
@@ -157,7 +138,6 @@ export default function CategoriesListPage() {
     setExpandedCategories(newExpanded);
   };
 
-  // Organize categories into a tree structure
   const organizedCategories = useMemo(() => {
     const categoryMap = new Map<string, Category>();
 
@@ -196,7 +176,6 @@ export default function CategoriesListPage() {
         return 0;
       });
 
-      // Recursively sort children
       cats.forEach((cat) => {
         if (cat.children && cat.children.length > 0) {
           sortCategories(cat.children);
@@ -209,7 +188,6 @@ export default function CategoriesListPage() {
     return sortCategories([...rootCategories]);
   }, [categories, sortField, sortDirection]);
 
-  // Filter categories based on search and active status
   const filteredCategories = useMemo(() => {
     const matchesSearch = (category: Category): boolean => {
       const lowerSearchTerm = searchTerm.toLowerCase();
@@ -229,7 +207,6 @@ export default function CategoriesListPage() {
     );
   }, [organizedCategories, searchTerm, showInactive]);
 
-  // Change sort field or direction
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -239,9 +216,7 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Handle deleting a category
   const handleDeleteCategory = async (id: string) => {
-    // No window.confirm - we'll use a more sophisticated confirmation UI in a production app
     try {
       await supportService.deleteCategory(id);
       setCategories((prevCategories) =>
@@ -268,7 +243,6 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Open edit modal
   const handleEditClick = (category: Category) => {
     setEditingCategory(category);
     setEditFormData({
@@ -285,7 +259,6 @@ export default function CategoriesListPage() {
     setActiveMenu(null);
   };
 
-  // Handle edit form field changes
   const handleEditFormChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -360,13 +333,11 @@ export default function CategoriesListPage() {
     return Object.keys(errors).length === 0;
   };
 
-  // Validate the entire form
   const validateForm = () => {
     let isValid = true;
     let newErrors: Record<string, string> = {};
     let allTouched: Record<string, boolean> = {};
 
-    // Validate name
     if (!editFormData.name.trim()) {
       newErrors.name = "Name is required";
       isValid = false;
@@ -375,19 +346,16 @@ export default function CategoriesListPage() {
       isValid = false;
     }
 
-    // Validate description
     if (!editFormData.description.trim()) {
       newErrors.description = "Description is required";
       isValid = false;
     }
 
-    // Validate response time
     if (editFormData.firstResponseSla <= 0) {
       newErrors.firstResponseSla = "Response time must be greater than 0";
       isValid = false;
     }
 
-    // Validate resolution time
     if (editFormData.resolutionSla <= 0) {
       newErrors.resolutionSla = "Resolution time must be greater than 0";
       isValid = false;
@@ -397,7 +365,6 @@ export default function CategoriesListPage() {
       isValid = false;
     }
 
-    // Mark all fields as touched
     Object.keys(editFormData).forEach((key) => {
       allTouched[key] = true;
     });
@@ -408,7 +375,6 @@ export default function CategoriesListPage() {
     return isValid;
   };
 
-  // Submit the edit form
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -423,10 +389,8 @@ export default function CategoriesListPage() {
     setIsSubmitting(true);
 
     try {
-      // Assuming the API service has an updateCategory method
       await supportService.updateCategory(editingCategory.id, editFormData);
 
-      // Update the categories state with the edited category
       setCategories((prevCategories) =>
         prevCategories.map((cat) =>
           cat.id === editingCategory.id ? { ...cat, ...editFormData } : cat
@@ -518,7 +482,6 @@ export default function CategoriesListPage() {
     );
   };
 
-  // Get category icon
   const getCategoryIcon = (iconName: string) => {
     switch (iconName) {
       case "smartphone":
@@ -536,7 +499,6 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Toggle category expansion
   const toggleExpand = (categoryId: string) => {
     setExpandedCategories((prev) => ({
       ...prev,
@@ -544,7 +506,6 @@ export default function CategoriesListPage() {
     }));
   };
 
-  // Expand all categories
   const expandAll = () => {
     const expanded: Record<string, boolean> = {};
 
@@ -559,12 +520,10 @@ export default function CategoriesListPage() {
     setExpandedCategories(expanded);
   };
 
-  // Collapse all categories
   const collapseAll = () => {
     setExpandedCategories({});
   };
 
-  // Render a category row (and its children recursively)
   const renderCategoryRow = (category: Category, depth = 0) => {
     const hasChildren = category.children && category.children.length > 0;
     const isExpanded = expandedCategories[category.id];
@@ -587,7 +546,6 @@ export default function CategoriesListPage() {
           onMouseLeave={() => setHoveredCategory(null)}
         >
           <div className="flex items-center py-3 px-4">
-            {/* Expand/Collapse for parent categories */}
             {hasChildren && (
               <button
                 onClick={() => toggleExpand(category.id)}
@@ -601,7 +559,6 @@ export default function CategoriesListPage() {
               </button>
             )}
 
-            {/* Icon with color indicator */}
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0 transition-all duration-200 shadow-sm"
               style={{
@@ -615,7 +572,6 @@ export default function CategoriesListPage() {
               </div>
             </div>
 
-            {/* Category details */}
             <div className="flex-grow min-w-0">
               <div className="flex items-center">
                 <h3 className="text-sm font-medium text-slate-900 mr-2 truncate">
@@ -632,7 +588,6 @@ export default function CategoriesListPage() {
               </p>
             </div>
 
-            {/* SLA Info */}
             <div className="hidden md:flex items-center space-x-6 text-sm mr-4">
               <div className="text-right">
                 <p className="text-slate-500 text-xs">Response</p>
@@ -660,38 +615,58 @@ export default function CategoriesListPage() {
 
             <div className="relative ml-2">
               <button
-                onClick={() =>
-                  setActiveMenu(activeMenu === category.id ? null : category.id)
-                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setMenuPosition({
+                    top: rect.bottom + window.scrollY,
+                    left: rect.right - 150 + window.scrollX,
+                  });
+                  setActiveMenu(
+                    activeMenu === category.id ? null : category.id
+                  );
+                }}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
               >
                 <MoreHorizontal className="h-5 w-5" />
               </button>
 
               {activeMenu === category.id && (
-                <div className="absolute right-0 mt-1 w-48 rounded-lg shadow-lg bg-white ring-1 ring-slate-200 z-10">
-                  <div className="py-1" role="menu">
-                    <button
-                      onClick={() => handleEditClick(category)}
-                      className="flex w-full items-center px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-                    >
-                      <Edit className="mr-3 h-4 w-4 text-slate-500" />
-                      Edit Category
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCategory(category.id)}
-                      className="flex w-full items-center px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
-                    >
-                      <Trash2 className="mr-3 h-4 w-4 text-rose-500" />
-                      Delete Category
-                    </button>
+                <div
+                  className="fixed inset-0 z-[100]"
+                  onClick={() => setActiveMenu(null)}
+                >
+                  <div
+                    className="absolute rounded-lg shadow-lg bg-white ring-1 ring-slate-200 z-[100] w-48"
+                    style={{
+                      position: "fixed",
+                      top: `${menuPosition.top}px`,
+                      left: `${menuPosition.left}px`,
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="py-1" role="menu">
+                      <button
+                        onClick={() => handleEditClick(category)}
+                        className="flex w-full items-center px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                      >
+                        <Edit className="mr-3 h-4 w-4 text-slate-500" />
+                        Edit Category
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCategory(category.id)}
+                        className="flex w-full items-center px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
+                      >
+                        <Trash2 className="mr-3 h-4 w-4 text-rose-500" />
+                        Delete Category
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Hover animation effect */}
           {isHovered && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/20 to-transparent -translate-x-full animate-shimmer-slow"></div>
@@ -699,7 +674,6 @@ export default function CategoriesListPage() {
           )}
         </motion.div>
 
-        {/* Render children recursively */}
         {hasChildren && isExpanded && (
           <div>
             {category.children?.map((child) =>
@@ -743,7 +717,6 @@ export default function CategoriesListPage() {
           </motion.button>
         </div>
 
-        {/* Analytics Section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg border border-slate-200/80 shadow-sm p-4 relative overflow-hidden">
             <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-indigo-100/50"></div>
@@ -837,7 +810,6 @@ export default function CategoriesListPage() {
           </div>
         </div>
 
-        {/* Search and Filter */}
         <div className="mb-6 flex flex-col md:flex-row gap-2 items-center">
           <div className="w-full md:w-1/3 relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -1095,7 +1067,6 @@ export default function CategoriesListPage() {
               </div>
             </div>
 
-            {/* Table Body */}
             <div>
               {filteredCategories.map((category) =>
                 renderCategoryRow(category)
