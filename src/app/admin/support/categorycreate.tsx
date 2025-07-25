@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
 
-// Interface for Category
 interface Category {
   id: string;
   name: string;
@@ -41,7 +40,6 @@ interface Category {
   updatedAt: string;
 }
 
-// Form data interface
 interface CategoryFormData {
   name: string;
   description: string;
