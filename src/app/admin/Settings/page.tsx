@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-import SettingsTabs from "../Settings/SettingsTab";
+import SettingsTabs from "./SettingsTab";
 import { settingsService } from "../../../api/services/settings";
 
 const fadeIn = {

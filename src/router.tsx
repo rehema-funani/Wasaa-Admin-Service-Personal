@@ -97,27 +97,14 @@ const MediaModule = {
   Languages: lazy(() => import('./app/admin/languages/all-languages/page')),
   Translations: lazy(() => import('./app/admin/languages/all-languages/details')),
 
-  // ModeratorDashboard: lazy(() => import('./app/admin/chat/page')),
 
   AddGift: lazy(() => import('./app/admin/Gift/add-new-gift/page')),
   GiftList: lazy(() => import('./app/admin/Gift/gift-list/page')),
   GiftCategories: lazy(() => import('./app/admin/Gift/gift-categories/page')),
-
-  // MediaDashboard: lazy(() => import('./app/admin/media/index')),
-  // VideoModeration: lazy(() => import('./app/admin/media/moderation')),
-  // ReportsPage: lazy(() => import('./app/admin/media/reports')),
-  // CommentsPage: lazy(() => import('./app/admin/media/comments')),
-  // HashtagsPage: lazy(() => import('./app/admin/media/hashtags')),
-  // CreatorsPage: lazy(() => import('./app/admin/media/creators')),
-  // CreatorDetail: lazy(() => import('./app/admin/media/creatordetail')),
-  // PromotionPage: lazy(() => import('./app/admin/media/promotion')),
-  // AnalyticsPage: lazy(() => import('./app/admin/media/analytics')),
   NotificationsPage: lazy(() => import('./app/admin/notification/notifications')),
   Broadcasts: lazy(() => import('./app/admin/notification/broadcast')),
   AddBroadcast: lazy(() => import('./app/admin/notification/addbroadcast')),
   EditBroadcast: lazy(() => import('./app/admin/notification/editbroadcast')),
-  // NotificationsDetail: lazy(() => import('./app/admin/media/viewtemplate')),
-  // ShortsSettings: lazy(() => import('./app/admin/media/settings')),
 };
 
 const SupportAuditModule = {
@@ -130,6 +117,7 @@ const SupportAuditModule = {
   SLAEdit: lazy(() => import('./app/admin/support/slaedit')),
   SLACreate: lazy(() => import('./app/admin/support/slacreate')),
   Categories: lazy(() => import('./app/admin/support/categories')),
+  CategoryCreate: lazy(() => import('./app/admin/support/categorycreate')),
   CannedResponses: lazy(() => import('./app/admin/support/cannedresponse')),
   CreateCannedResponse: lazy(() => import('./app/admin/support/cannedresponseaddedit')),
   ResponseDetail: lazy(() => import('./app/admin/support/cannedresponsedetail')),
@@ -233,107 +221,386 @@ const authRoutes = [
 
 const userRoutes = [
   { path: PATHS.ADMIN.PROFILE, element: CoreModule.UserProfile },
-  { path: PATHS.ADMIN.USERS.DETAILS, element: UserModule.UserDetails, permissions: PermissionMap.Users.view },
-  { path: PATHS.ADMIN.USERS.DETAIL, element: UserModule.Userdetail, permissions: PermissionMap.Users.view },
-  { path: PATHS.ADMIN.USERS.COUNTRY_ANALYSIS, element: UserModule.CountrywiseUsers, permissions: PermissionMap.Users.view },
-  { path: PATHS.ADMIN.USERS.COUNTRY_DETAIL, element: UserModule.CountryDetailPage, permissions: PermissionMap.Users.view },
-  { path: PATHS.ADMIN.USERS.REPORTED, element: UserModule.ReportedUsers, permissions: PermissionMap.ViewReported },
+  {
+    path: PATHS.ADMIN.USERS.DETAILS,
+    element: UserModule.UserDetails,
+    permissions: PermissionMap.Users.view,
+  },
+  {
+    path: PATHS.ADMIN.USERS.DETAIL,
+    element: UserModule.Userdetail,
+    permissions: PermissionMap.Users.view,
+  },
+  {
+    path: PATHS.ADMIN.USERS.COUNTRY_ANALYSIS,
+    element: UserModule.CountrywiseUsers,
+    permissions: PermissionMap.Users.view,
+  },
+  {
+    path: PATHS.ADMIN.USERS.COUNTRY_DETAIL,
+    element: UserModule.CountryDetailPage,
+    permissions: PermissionMap.Users.view,
+  },
+  {
+    path: PATHS.ADMIN.USERS.REPORTED,
+    element: UserModule.ReportedUsers,
+    permissions: PermissionMap.ViewReported,
+  },
 ];
 
 const groupRoutes = [
-  { path: PATHS.ADMIN.GROUPS.LIST, element: GroupModule.GroupList, permissions: PermissionMap.Groups.view },
-  { path: PATHS.ADMIN.GROUPS.DETAIL, element: GroupModule.GroupDetailPage, permissions: PermissionMap.Groups.view },
-  { path: PATHS.ADMIN.GROUPS.REPORTED, element: GroupModule.ReportedGroups, permissions: PermissionMap.ViewReported },
+  {
+    path: PATHS.ADMIN.GROUPS.LIST,
+    element: GroupModule.GroupList,
+    permissions: PermissionMap.Groups.view,
+  },
+  {
+    path: PATHS.ADMIN.GROUPS.DETAIL,
+    element: GroupModule.GroupDetailPage,
+    permissions: PermissionMap.Groups.view,
+  },
+  {
+    path: PATHS.ADMIN.GROUPS.REPORTED,
+    element: GroupModule.ReportedGroups,
+    permissions: PermissionMap.ViewReported,
+  },
 ];
 
 const roleRoutes = [
-  { path: PATHS.ADMIN.SYSTEM.ROLES.LIST, element: RoleModule.RolesPage, permissions: PermissionMap.Roles.view },
-  { path: PATHS.ADMIN.SYSTEM.ROLES.DETAIL, element: RoleModule.RoleDetail, permissions: PermissionMap.Roles.view },
-  { path: PATHS.ADMIN.SYSTEM.ROLES.CREATE, element: RoleModule.CreateRole, permissions: PermissionMap.Roles.create },
-  { path: PATHS.ADMIN.SYSTEM.ROLES.EDIT, element: RoleModule.EditRole, permissions: PermissionMap.Roles.update },
-  { path: PATHS.ADMIN.SYSTEM.USERS, element: RoleModule.SystemUsers, permissions: PermissionMap.Users.viewStaff },
-  { path: PATHS.ADMIN.USERS.STAFF_DETAIL, element: RoleModule.AdminUserDetails, permissions: PermissionMap.Users.viewStaff },
+  {
+    path: PATHS.ADMIN.SYSTEM.ROLES.LIST,
+    element: RoleModule.RolesPage,
+    permissions: PermissionMap.Roles.view,
+  },
+  {
+    path: PATHS.ADMIN.SYSTEM.ROLES.DETAIL,
+    element: RoleModule.RoleDetail,
+    permissions: PermissionMap.Roles.view,
+  },
+  {
+    path: PATHS.ADMIN.SYSTEM.ROLES.CREATE,
+    element: RoleModule.CreateRole,
+    permissions: PermissionMap.Roles.create,
+  },
+  {
+    path: PATHS.ADMIN.SYSTEM.ROLES.EDIT,
+    element: RoleModule.EditRole,
+    permissions: PermissionMap.Roles.update,
+  },
+  {
+    path: PATHS.ADMIN.SYSTEM.USERS,
+    element: RoleModule.SystemUsers,
+    permissions: PermissionMap.Users.viewStaff,
+  },
+  {
+    path: PATHS.ADMIN.USERS.STAFF_DETAIL,
+    element: RoleModule.AdminUserDetails,
+    permissions: PermissionMap.Users.viewStaff,
+  },
 ];
 
 const forexRoutes = [
-  { path: PATHS.ADMIN.FINANCE.FOREX.DASHBOARD, element: ForexModule.ForexDashboard, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.FOREX.CURRENCIES, element: ForexModule.Currencies, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.FOREX.CURRENCY_PAIRS, element: ForexModule.CurrencyPairs, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.FOREX.EXCHANGE_RATES, element: ForexModule.ExchangeRates, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.FOREX.ALERTS, element: ForexModule.UserAlerts, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.FOREX.SETTINGS, element: ForexModule.ForexSettings, permissions: PermissionMap.Transactions.view },
+  {
+    path: PATHS.ADMIN.FINANCE.FOREX.DASHBOARD,
+    element: ForexModule.ForexDashboard,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.FOREX.CURRENCIES,
+    element: ForexModule.Currencies,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.FOREX.CURRENCY_PAIRS,
+    element: ForexModule.CurrencyPairs,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.FOREX.EXCHANGE_RATES,
+    element: ForexModule.ExchangeRates,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.FOREX.ALERTS,
+    element: ForexModule.UserAlerts,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.FOREX.SETTINGS,
+    element: ForexModule.ForexSettings,
+    permissions: PermissionMap.Transactions.view,
+  },
 ];
 
 const financeRoutes = [
-  { path: PATHS.ADMIN.FINANCE.TRANSACTIONS.LIST, element: FinanceModule.Transactions, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.TRANSACTIONS.RECEIPT, element: FinanceModule.Receipt, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.FEE_RULES.LIST, element: FinanceModule.Tarrifs, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.FEE_RULES.EDIT, element: FinanceModule.EditTariff, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.FEE_RULES.ADD, element: FinanceModule.AddTarrif, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.LIMITS.LIST, element: FinanceModule.Limits, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.LIMITS.ADD, element: FinanceModule.AddLimit, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.LIMITS.EDIT, element: FinanceModule.EditLimit, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.COMPLIANCE.LIST, element: FinanceModule.Compliance, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.COMPLIANCE.RULE, element: FinanceModule.ViewRule, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.LIMITS.VERIFICATION, element: FinanceModule.Verification, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.WALLETS.SYSTEM, element: FinanceModule.Wallets, permissions: PermissionMap.Wallets.view },
-  { path: PATHS.ADMIN.FINANCE.WALLETS.REVERSAL_REQUESTS, element: FinanceModule.ReversalRequests, permissions: PermissionMap.Wallets.view },
-  { path: PATHS.ADMIN.FINANCE.WALLETS.REVERSAL_DETAIL, element: FinanceModule.ReversalRequestDetails, permissions: PermissionMap.Wallets.view },
-  { path: PATHS.ADMIN.FINANCE.BANKS, element: FinanceModule.Banks, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.WALLETS.USER, element: FinanceModule.UserWallets, permissions: PermissionMap.Wallets.view },
-  { path: PATHS.ADMIN.FINANCE.WALLETS.USER_DETAIL, element: FinanceModule.WalletDetail, permissions: PermissionMap.Wallets.view },
-  { path: PATHS.ADMIN.FINANCE.WITHDRAWALS, element: FinanceModule.Withdrawals, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.TOP_UPS, element: FinanceModule.TopUps, permissions: PermissionMap.Transactions.view },
-  { path: PATHS.ADMIN.FINANCE.PAYMENT_METHODS, element: FinanceModule.PaymentMethods, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.FINANCE.REPORTS, element: FinanceModule.FinancialReports, permissions: PermissionMap.Finance },
-  { path: PATHS.ADMIN.FINANCE.GIFT_HISTORY, element: FinanceModule.GiftHistory, permissions: PermissionMap.Transactions.view },
+  {
+    path: PATHS.ADMIN.FINANCE.TRANSACTIONS.LIST,
+    element: FinanceModule.Transactions,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.TRANSACTIONS.RECEIPT,
+    element: FinanceModule.Receipt,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.FEE_RULES.LIST,
+    element: FinanceModule.Tarrifs,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.FEE_RULES.EDIT,
+    element: FinanceModule.EditTariff,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.FEE_RULES.ADD,
+    element: FinanceModule.AddTarrif,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.LIMITS.LIST,
+    element: FinanceModule.Limits,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.LIMITS.ADD,
+    element: FinanceModule.AddLimit,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.LIMITS.EDIT,
+    element: FinanceModule.EditLimit,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.COMPLIANCE.LIST,
+    element: FinanceModule.Compliance,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.COMPLIANCE.RULE,
+    element: FinanceModule.ViewRule,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.LIMITS.VERIFICATION,
+    element: FinanceModule.Verification,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.WALLETS.SYSTEM,
+    element: FinanceModule.Wallets,
+    permissions: PermissionMap.Wallets.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.WALLETS.REVERSAL_REQUESTS,
+    element: FinanceModule.ReversalRequests,
+    permissions: PermissionMap.Wallets.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.WALLETS.REVERSAL_DETAIL,
+    element: FinanceModule.ReversalRequestDetails,
+    permissions: PermissionMap.Wallets.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.BANKS,
+    element: FinanceModule.Banks,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.WALLETS.USER,
+    element: FinanceModule.UserWallets,
+    permissions: PermissionMap.Wallets.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.WALLETS.USER_DETAIL,
+    element: FinanceModule.WalletDetail,
+    permissions: PermissionMap.Wallets.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.WITHDRAWALS,
+    element: FinanceModule.Withdrawals,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.TOP_UPS,
+    element: FinanceModule.TopUps,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.PAYMENT_METHODS,
+    element: FinanceModule.PaymentMethods,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.REPORTS,
+    element: FinanceModule.FinancialReports,
+    permissions: PermissionMap.Finance,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.GIFT_HISTORY,
+    element: FinanceModule.GiftHistory,
+    permissions: PermissionMap.Transactions.view,
+  },
 ];
 
 const mediaRoutes = [
-  { path: PATHS.ADMIN.WALLPAPER.LIST, element: MediaModule.WallpaperList, permissions: PermissionMap.Media.view },
-  { path: PATHS.ADMIN.WALLPAPER.ADD, element: MediaModule.AddWallpaper, permissions: PermissionMap.Media.create },
+  {
+    path: PATHS.ADMIN.WALLPAPER.LIST,
+    element: MediaModule.WallpaperList,
+    permissions: PermissionMap.Media.view,
+  },
+  {
+    path: PATHS.ADMIN.WALLPAPER.ADD,
+    element: MediaModule.AddWallpaper,
+    permissions: PermissionMap.Media.create,
+  },
 
-  { path: PATHS.ADMIN.AVATAR.LIST, element: MediaModule.AvatarList, permissions: PermissionMap.Media.view },
-  { path: PATHS.ADMIN.AVATAR.ADD, element: MediaModule.AddAvatar, permissions: PermissionMap.Media.create },
+  {
+    path: PATHS.ADMIN.AVATAR.LIST,
+    element: MediaModule.AvatarList,
+    permissions: PermissionMap.Media.view,
+  },
+  {
+    path: PATHS.ADMIN.AVATAR.ADD,
+    element: MediaModule.AddAvatar,
+    permissions: PermissionMap.Media.create,
+  },
 
-  { path: PATHS.ADMIN.SETTINGS.GENERAL, element: MediaModule.GeneralSettings, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.SETTINGS.EMOJI, element: MediaModule.Emoji, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.SETTINGS.LANGUAGES.LIST, element: MediaModule.Languages, permissions: PermissionMap.Languages.view },
-  { path: PATHS.ADMIN.SETTINGS.LANGUAGES.TRANSLATIONS, element: MediaModule.Translations, permissions: PermissionMap.Languages.view },
+  {
+    path: PATHS.ADMIN.SETTINGS.GENERAL,
+    element: MediaModule.GeneralSettings,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.SETTINGS.EMOJI,
+    element: MediaModule.Emoji,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.SETTINGS.LANGUAGES.LIST,
+    element: MediaModule.Languages,
+    permissions: PermissionMap.Languages.view,
+  },
+  {
+    path: PATHS.ADMIN.SETTINGS.LANGUAGES.TRANSLATIONS,
+    element: MediaModule.Translations,
+    permissions: PermissionMap.Languages.view,
+  },
 
+  {
+    path: PATHS.ADMIN.GIFTS.LIST,
+    element: MediaModule.GiftList,
+    permissions: PermissionMap.Media.view,
+  },
+  {
+    path: PATHS.ADMIN.GIFTS.ADD,
+    element: MediaModule.AddGift,
+    permissions: PermissionMap.Media.create,
+  },
+  {
+    path: PATHS.ADMIN.GIFTS.CATEGORIES,
+    element: MediaModule.GiftCategories,
+    permissions: PermissionMap.Media.view,
+  },
 
-  { path: PATHS.ADMIN.GIFTS.LIST, element: MediaModule.GiftList, permissions: PermissionMap.Media.view },
-  { path: PATHS.ADMIN.GIFTS.ADD, element: MediaModule.AddGift, permissions: PermissionMap.Media.create },
-  { path: PATHS.ADMIN.GIFTS.CATEGORIES, element: MediaModule.GiftCategories, permissions: PermissionMap.Media.view },
+  {
+    path: PATHS.ADMIN.MEDIA.SHORTS.NOTIFICATIONS,
+    element: MediaModule.NotificationsPage,
+    permissions: PermissionMap.Media.view,
+  },
+  {
+    path: PATHS.ADMIN.MEDIA.SHORTS.NOTIFICATIONS_TEMPLATES,
+    element: MediaModule.NotificationsPage,
+    permissions: PermissionMap.Media.view,
+  },
 
-  { path: PATHS.ADMIN.MEDIA.SHORTS.NOTIFICATIONS, element: MediaModule.NotificationsPage, permissions: PermissionMap.Media.view },
-  { path: PATHS.ADMIN.MEDIA.SHORTS.NOTIFICATIONS_TEMPLATES, element: MediaModule.NotificationsPage, permissions: PermissionMap.Media.view },
-
-  { path: PATHS.ADMIN.SYSTEM.NOTIFICATIONS.BROADCASTS, element: MediaModule.Broadcasts, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.COMMUNICATION.BROADCASTS.ADD, element: MediaModule.AddBroadcast, permissions: PermissionMap.Settings.view },
-  { path: PATHS.ADMIN.COMMUNICATION.BROADCASTS.EDIT, element: MediaModule.EditBroadcast, permissions: PermissionMap.Settings.view },
+  {
+    path: PATHS.ADMIN.SYSTEM.NOTIFICATIONS.BROADCASTS,
+    element: MediaModule.Broadcasts,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.COMMUNICATION.BROADCASTS.ADD,
+    element: MediaModule.AddBroadcast,
+    permissions: PermissionMap.Settings.view,
+  },
+  {
+    path: PATHS.ADMIN.COMMUNICATION.BROADCASTS.EDIT,
+    element: MediaModule.EditBroadcast,
+    permissions: PermissionMap.Settings.view,
+  },
 ];
 
 const supportAuditRoutes = [
-  { path: PATHS.ADMIN.SUPPORT.DASHBOARD, element: SupportAuditModule.TicketDashboard },
+  {
+    path: PATHS.ADMIN.SUPPORT.DASHBOARD,
+    element: SupportAuditModule.TicketDashboard,
+  },
   { path: PATHS.ADMIN.SUPPORT.TICKETS, element: SupportAuditModule.Tickets },
-  { path: PATHS.ADMIN.SUPPORT.NEW_TICKET, element: SupportAuditModule.NewTicket },
-  { path: PATHS.ADMIN.SUPPORT.TICKET_DETAIL, element: SupportAuditModule.TicketDetail },
+  {
+    path: PATHS.ADMIN.SUPPORT.NEW_TICKET,
+    element: SupportAuditModule.NewTicket,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.TICKET_DETAIL,
+    element: SupportAuditModule.TicketDetail,
+  },
   { path: PATHS.ADMIN.SUPPORT.SLA_LIST, element: SupportAuditModule.SLAList },
-  { path: PATHS.ADMIN.SUPPORT.SLA_DETAIL, element: SupportAuditModule.SLADetail },
+  {
+    path: PATHS.ADMIN.SUPPORT.SLA_DETAIL,
+    element: SupportAuditModule.SLADetail,
+  },
   { path: PATHS.ADMIN.SUPPORT.SLA_EDIT, element: SupportAuditModule.SLAEdit },
-  { path: PATHS.ADMIN.SUPPORT.SLA_CREATE, element: SupportAuditModule.SLACreate },
-  { path: PATHS.ADMIN.SUPPORT.CATEGORIES, element: SupportAuditModule.Categories },
-  { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSES, element: SupportAuditModule.CannedResponses },
-  { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_CREATE, element: SupportAuditModule.CreateCannedResponse },
-  { path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_DETAIL, element: SupportAuditModule.ResponseDetail },
+  {
+    path: PATHS.ADMIN.SUPPORT.SLA_CREATE,
+    element: SupportAuditModule.SLACreate,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.CATEGORIES,
+    element: SupportAuditModule.Categories,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.CATEGORY_CREATE,
+    element: SupportAuditModule.CategoryCreate,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSES,
+    element: SupportAuditModule.CannedResponses,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_CREATE,
+    element: SupportAuditModule.CreateCannedResponse,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.CANNED_RESPONSE_DETAIL,
+    element: SupportAuditModule.ResponseDetail,
+  },
   { path: PATHS.ADMIN.SUPPORT.FAQS, element: SupportAuditModule.FAQs },
-  { path: PATHS.ADMIN.SUPPORT.FAQ_CREATE, element: SupportAuditModule.FAQCreate },
-  { path: PATHS.ADMIN.SUPPORT.FAQ_DETAIL, element: SupportAuditModule.FAQDetail },
+  {
+    path: PATHS.ADMIN.SUPPORT.FAQ_CREATE,
+    element: SupportAuditModule.FAQCreate,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.FAQ_DETAIL,
+    element: SupportAuditModule.FAQDetail,
+  },
   { path: PATHS.ADMIN.SUPPORT.FAQ_EDIT, element: SupportAuditModule.FAQCreate },
-  { path: PATHS.ADMIN.SUPPORT.REPORTS, element: SupportAuditModule.SupportReports },
-  { path: PATHS.ADMIN.AUDITS.LOGS, element: SupportAuditModule.Logs, permissions: PermissionMap.Admin },
-  { path: PATHS.ADMIN.AUDITS.DETAILS, element: SupportAuditModule.AuditDetails, permissions: PermissionMap.Admin },
+  {
+    path: PATHS.ADMIN.SUPPORT.REPORTS,
+    element: SupportAuditModule.SupportReports,
+  },
+  {
+    path: PATHS.ADMIN.AUDITS.LOGS,
+    element: SupportAuditModule.Logs,
+    permissions: PermissionMap.Admin,
+  },
+  {
+    path: PATHS.ADMIN.AUDITS.DETAILS,
+    element: SupportAuditModule.AuditDetails,
+    permissions: PermissionMap.Admin,
+  },
 ];
 
 const protectedRoutes = [

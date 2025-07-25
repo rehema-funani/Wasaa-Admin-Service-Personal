@@ -712,7 +712,7 @@ export default function CategoriesListPage() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => navigate(PATHS.ADMIN.SUPPORT.CATEGORY_CREATE)}
+            onClick={() => navigate(`/${PATHS.ADMIN.SUPPORT.CATEGORY_CREATE}`)}
             className="inline-flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20"
           >
             <Plus className="w-4 h-4 mr-2" />
