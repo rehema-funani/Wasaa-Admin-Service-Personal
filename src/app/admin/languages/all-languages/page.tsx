@@ -408,7 +408,6 @@ const page: React.FC = () => {
                                         <motion.tr
                                             key={language.id}
                                             className="border-t border-gray-100 hover:bg-primary-50/30"
-                                            variants={itemVariants}
                                             initial="hidden"
                                             animate="visible"
                                             exit={{ opacity: 0, y: -10 }}
