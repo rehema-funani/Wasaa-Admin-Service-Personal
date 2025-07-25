@@ -5,11 +5,8 @@ import {
   Save,
   X,
   Clock,
-  Tag,
   AlertTriangle,
   Folder,
-  FolderPlus,
-  Users,
   Plus,
   Smartphone,
   Briefcase,
@@ -23,7 +20,6 @@ import {
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
 
-// Interface for Category
 interface Category {
   id: string;
   name: string;
@@ -41,7 +37,6 @@ interface Category {
   updatedAt: string;
 }
 
-// Form data interface
 interface CategoryFormData {
   name: string;
   description: string;
@@ -131,12 +126,11 @@ export default function CategoryCreatePage() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [newSkill, setNewSkill] = useState('');
 
-  // Fetch categories for parent selection
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await supportService.getCategories();
-        setCategories(response.data);
+        setCategories(response.data.categories);
       } catch (err) {
         console.error('Failed to fetch categories', err);
       } finally {
@@ -147,27 +141,22 @@ export default function CategoryCreatePage() {
     fetchCategories();
   }, []);
 
-  // Handle form field changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
-    // Handle number values
     if (name === 'firstResponseSla' || name === 'resolutionSla') {
       setFormData({ ...formData, [name]: parseInt(value) || 0 });
     } else if (name === 'parentId' && value === '') {
-      // Handle empty parent selection
       setFormData({ ...formData, parentId: null });
     } else {
       setFormData({ ...formData, [name]: value });
     }
 
-    // Mark field as touched
     setTouched({ ...touched, [name]: true });
   };
 
-  // Handle checkbox changes
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setFormData({ ...formData, [name]: checked });
@@ -472,7 +461,6 @@ export default function CategoryCreatePage() {
                 </div>
               </div>
 
-              {/* Appearance */}
               <div>
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Appearance</h2>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

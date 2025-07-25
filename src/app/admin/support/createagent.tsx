@@ -15,24 +15,18 @@ export default function AgentCreatePage() {
   // Form state
   const [formData, setFormData] = useState({
     userId: '',
-    role: 'support_agent', // Default role
-    department: 'Customer Support', // Default department
+    role: 'support_agent',
+    department: 'Customer Support',
     specializations: [] as string[],
-    maxConcurrentChats: 5 // Default value
+    maxConcurrentChats: 5
   });
 
-  // Users for dropdown
   const [users, setUsers] = useState<User[]>([]);
-
-  // New specialization input
   const [newSpecialization, setNewSpecialization] = useState('');
-
-  // Loading and error states
   const [loading, setLoading] = useState(false);
   const [usersLoading, setUsersLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch users for dropdown
   useEffect(() => {
     const fetchUsers = async () => {
       try {

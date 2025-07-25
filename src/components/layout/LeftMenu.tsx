@@ -307,13 +307,11 @@ const SlimSidebar: React.FC = () => {
                 {formatTime()}
               </span>
 
-              {/* Decorative time background pulse */}
               <div className="absolute -right-6 -top-6 w-12 h-12 rounded-full bg-indigo-500/5 animate-pulse-slow"></div>
             </div>
           </div>
         )}
 
-        {/* Navigation Section */}
         <div className="flex-1 space-y-1 py-1">
           {(isExpanded || expandedByPin) && (
             <div className="mb-2">
@@ -326,7 +324,6 @@ const SlimSidebar: React.FC = () => {
             </div>
           )}
 
-          {/* Dashboard Link */}
           <Link
             to="/"
             className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
@@ -344,7 +341,6 @@ const SlimSidebar: React.FC = () => {
             >
               <DollarSign size={20} strokeWidth={isActive("/") ? 2.5 : 1.5} />
 
-              {/* Active indicator animation */}
               {isActive("/") && (
                 <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping-slow opacity-75"></span>
               )}
@@ -363,13 +359,11 @@ const SlimSidebar: React.FC = () => {
               </div>
             )}
 
-            {/* Animated hover effect */}
             {activeSection === "dashboard" && !isActive("/") && (
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
             )}
           </Link>
 
-          {/* Activity Link */}
           <Link
             to="/admin/logs"
             className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
@@ -392,7 +386,6 @@ const SlimSidebar: React.FC = () => {
                 strokeWidth={isActive("/admin/logs") ? 2.5 : 1.5}
               />
 
-              {/* Risk alerts badge */}
               {riskAlerts > 0 && (
                 <div className="absolute -top-1.5 -right-1.5 flex">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -418,13 +411,11 @@ const SlimSidebar: React.FC = () => {
               </div>
             )}
 
-            {/* Animated hover effect */}
             {activeSection === "activity" && !isActive("/admin/logs") && (
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
             )}
           </Link>
 
-          {/* Analytics Link */}
           <Link
             to="/admin/finance/reports"
             className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
@@ -447,7 +438,6 @@ const SlimSidebar: React.FC = () => {
                 strokeWidth={isActive("/admin/finance/reports") ? 2.5 : 1.5}
               />
 
-              {/* Active indicator animation */}
               {isActive("/admin/finance/reports") && (
                 <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping-slow opacity-75"></span>
               )}
@@ -468,14 +458,12 @@ const SlimSidebar: React.FC = () => {
               </div>
             )}
 
-            {/* Animated hover effect */}
             {activeSection === "analytics" &&
               !isActive("/admin/finance/reports") && (
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
               )}
           </Link>
 
-          {/* Account Section Divider */}
           {isExpanded || expandedByPin ? (
             <div className="pt-4 pb-2 mt-3">
               <div className="flex items-center">

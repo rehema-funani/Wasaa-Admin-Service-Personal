@@ -5,19 +5,15 @@ import {
   Edit,
   Trash2,
   Clock,
-  Tag,
   AlertTriangle,
-  AlertCircle,
   CheckCircle,
   Info,
-  User,
   Folder,
   Calendar,
   BarChart2
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
 
-// Interface for SLA rule
 interface SLARule {
   id: string;
   name: string;
@@ -36,7 +32,6 @@ interface SLARule {
   }[];
 }
 
-// Interface for SLA metrics
 interface SLAMetrics {
   slaId: string;
   totalTickets: number;
@@ -44,8 +39,8 @@ interface SLAMetrics {
   breachedTickets: number;
   avgResponseTime: number;
   avgResolutionTime: number;
-  responseCompliance: number; // percentage
-  resolutionCompliance: number; // percentage
+  responseCompliance: number;
+  resolutionCompliance: number;
   period: string;
 }
 
@@ -53,7 +48,6 @@ export default function SLADetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // State
   const [slaRule, setSLARule] = useState<SLARule | null>(null);
   const [metrics, setMetrics] = useState<SLAMetrics | null>(null);
   const [loading, setLoading] = useState(true);

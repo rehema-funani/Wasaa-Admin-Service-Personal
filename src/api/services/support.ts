@@ -73,7 +73,7 @@ const supportService = {
   },
 
   closeTicket: async (id: string) => {
-    const response = await supportaxios.patch(`/tickets/${id}/close`);
+    const response = await supportaxios.post(`/tickets/${id}/close`);
     return response.data;
   },
 
@@ -175,7 +175,7 @@ getTicketStats: async (params?: {
   },
 
   updateCategory: async (id: string, categoryData: any) => {
-    const response = await supportaxios.put(`/categories/${id}`, categoryData);
+    const response = await supportaxios.patch(`/categories/${id}`, categoryData);
     return response.data;
   },
 
