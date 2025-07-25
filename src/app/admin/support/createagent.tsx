@@ -59,12 +59,10 @@ export default function AgentCreatePage() {
     }
   };
 
-  // Add a new specialization
   const handleAddSpecialization = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSpecialization.trim()) return;
 
-    // Check if specialization already exists
     if (formData.specializations.includes(newSpecialization.trim())) {
       return;
     }
@@ -76,7 +74,6 @@ export default function AgentCreatePage() {
     setNewSpecialization('');
   };
 
-  // Remove a specialization
   const handleRemoveSpecialization = (specializationToRemove: string) => {
     setFormData(prev => ({
       ...prev,
@@ -86,7 +83,6 @@ export default function AgentCreatePage() {
     }));
   };
 
-  // Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -94,7 +90,7 @@ export default function AgentCreatePage() {
 
     try {
       await supportService.createAgent(formData);
-      navigate('/agents');
+      navigate(-1);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create agent');
       console.error(err);
@@ -107,7 +103,7 @@ export default function AgentCreatePage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
         <button
-          onClick={() => navigate('/agents')}
+          onClick={() => navigate(-1)}
           className="flex items-center text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />

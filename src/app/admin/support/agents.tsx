@@ -12,8 +12,8 @@ import {
   XCircle
 } from 'lucide-react';
 import supportService from '../../../api/services/support';
+import { PATHS } from '../../../constants/paths';
 
-// Define agent type
 interface Agent {
   id: string;
   name: string;
@@ -140,25 +140,19 @@ export default function AgentsListPage() {
     }
   };
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Support Agents</h1>
         <button
           className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          onClick={() => navigate('/agents/new')}
+          onClick={() => navigate(`/${PATHS.ADMIN.SUPPORT.AGENT_CREATE}`)}
         >
           <UserPlus className="w-4 h-4 mr-2" />
           Add New Agent
         </button>
       </div>
 
-      {/* Search and Filter */}
       <div className="mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <form onSubmit={handleSearch} className="flex-grow">
