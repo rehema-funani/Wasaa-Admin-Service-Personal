@@ -31,6 +31,8 @@ import {
 import supportService from "../../../api/services/support";
 import toast from "react-hot-toast";
 import EditCategory from "./EditCategory";
+import { useNavigate } from "react-router-dom";
+import { PATHS } from "../../../constants/paths";
 
 interface Category {
   id: string;
@@ -77,6 +79,7 @@ export default function CategoriesListPage() {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const navigate = useNavigate();
 
   const [analytics, setAnalytics] = useState({
     totalCategories: 0,
@@ -709,7 +712,7 @@ export default function CategoriesListPage() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => console.log("Create new category")}
+            onClick={() => navigate(PATHS.ADMIN.SUPPORT.CATEGORY_CREATE)}
             className="inline-flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20"
           >
             <Plus className="w-4 h-4 mr-2" />
