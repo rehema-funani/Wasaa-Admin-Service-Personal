@@ -586,7 +586,7 @@ const AddWallpaper: React.FC = () => {
           <span className="flex items-center justify-center">
             {isSubmitting ? (
               <>
-                <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                <div className="animate-spin h-5 w-5 border-2 border-white dark:border-gray-600 border-t-transparent rounded-full mr-2"></div>
                 <span>Creating Wallpaper...</span>
               </>
             ) : (

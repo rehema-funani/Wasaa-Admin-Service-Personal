@@ -6,8 +6,8 @@ import moment from 'moment';
 interface Avatar {
   id: string;
   name: string;
-  url: string; // Changed from imageUrl to url for consistency with mediaService
-  title?: string; // Optional title for display purposes
+  url: string;
+  title?: string;
   imageUrl: string;
   createdAt: string;
 }
@@ -170,14 +170,14 @@ const AvatarsPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Avatars</h1>
-          <p className="text-gray-500 max-w-xl">Personalize user identities with custom profile images</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-2">Avatars</h1>
+          <p className="text-gray-500 dark:text-gray-400 max-w-xl">Personalize user identities with custom profile images</p>
         </div>
 
         <div className="mt-6 md:mt-0">
           <button
             onClick={openAddModal}
-            className="inline-flex items-center px-6 py-2.5 text-[14px] bg-primary-500 text-white rounded-full hover:bg-primary-600 transition-colors text-sm font-medium shadow-sm hover:shadow"
+            className="inline-flex items-center px-6 py-2.5 text-[14px] bg-primary-500 text-white dark:bg-primary-600 dark:text-gray-200 rounded-full hover:bg-primary-600 dark:hover:bg-primary-700 transition-colors text-sm font-medium shadow-sm hover:shadow"
           >
             <Plus size={18} className="mr-2" />
             Add Avatar
@@ -187,22 +187,22 @@ const AvatarsPage: React.FC = () => {
 
       <div className="relative mb-8">
         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-          <Search size={20} className="text-gray-400" />
+          <Search size={20} className="text-gray-400 dark:text-gray-500" />
         </div>
         <input
           type="text"
           placeholder="Search avatars..."
-          className="w-full md:w-[350px] pl-14 pr-5 py-3 bg-white rounded-2xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 border border-gray-100 shadow-sm transition-all duration-200"
+          className="w-full md:w-[350px] pl-14 pr-5 py-3 bg-white dark:bg-gray-800 rounded-2xl text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 border border-gray-100 dark:border-gray-700 shadow-sm transition-all duration-200"
           value={searchQuery}
           onChange={handleSearchChange}
         />
       </div>
 
       {isLoading ? (
-        <div className="bg-gray-50 rounded-3xl py-16 px-6 text-center">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-3xl py-16 px-6 text-center">
           <div className="inline-flex items-center justify-center">
             <div className="h-8 w-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="ml-3 text-gray-500">Loading avatars...</p>
+            <p className="ml-3 text-gray-500 dark:text-gray-400">Loading avatars...</p>
           </div>
         </div>
       ) : avatars.length > 0 ? (
@@ -210,13 +210,13 @@ const AvatarsPage: React.FC = () => {
             {avatars.map((avatar, index) => (
             <div
               key={avatar.id}
-              className={`group bg-white border border-gray-100 rounded-3xl p-6 transition-all hover:border-primary-100 hover:shadow-lg ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
+              className={`group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 transition-all hover:border-primary-100 hover:shadow-lg ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
               style={{ transitionDelay: `${index * 50}ms` }}
               onClick={() => openPreviewModal(avatar)}
             >
               <div className="flex flex-col items-center">
                 <div className="relative mb-4">
-                  <div className="w-24 h-24 overflow-hidden rounded-full bg-gray-50 border-4 border-white shadow-sm">
+                  <div className="w-24 h-24 overflow-hidden rounded-full bg-gray-50 dark:bg-gray-800 border-4 border-white dark:border-gray-700 shadow-sm">
                     <img
                       src={avatar.url}
                       alt={avatar.name}
@@ -230,7 +230,7 @@ const AvatarsPage: React.FC = () => {
                         e.stopPropagation();
                         openPreviewModal(avatar);
                       }}
-                      className="p-2 rounded-full bg-white text-gray-400 border border-gray-100 shadow-sm opacity-0 group-hover:opacity-100 hover:text-primary-500 transition-all"
+                      className="p-2 rounded-full bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 border border-gray-100 dark:border-gray-700 shadow-sm opacity-0 group-hover:opacity-100 hover:text-primary-500 transition-all"
                       title="Preview avatar"
                     >
                       <Eye size={14} />
@@ -238,7 +238,7 @@ const AvatarsPage: React.FC = () => {
 
                     <button
                       onClick={(e) => handleDelete(avatar.id, e)}
-                      className="p-2 rounded-full bg-white text-gray-400 border border-gray-100 shadow-sm opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
+                      className="p-2 rounded-full bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 border border-gray-100 dark:border-gray-700 shadow-sm opacity-0 group-hover:opacity-100 hover:text-red-500 transition-all"
                       title="Delete avatar"
                     >
                       <Trash2 size={14} />
@@ -279,28 +279,27 @@ const AvatarsPage: React.FC = () => {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeAddModal}></div>
 
           <div
-            className="relative bg-white rounded-3xl max-w-lg w-full shadow-2xl"
+            className="relative bg-white dark:bg-gray-800 rounded-3xl max-w-lg w-full shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center p-6 border-b border-gray-100">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 flex items-center">
                 <User size={20} className="mr-3 text-primary-500" />
                 New Avatar
               </h2>
               <button
                 onClick={closeAddModal}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
-                <X size={20} className="text-gray-500" />
+                <X size={20} className="text-gray-500 dark:text-gray-400" />
               </button>
             </div>
 
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Left column: Avatar upload */}
                 <div className="flex flex-col items-center">
                   <div className="relative mb-6">
-                    <div className="w-36 h-36 overflow-hidden rounded-full bg-gray-50 border-4 border-white shadow-sm">
+                    <div className="w-36 h-36 overflow-hidden rounded-full bg-gray-50 dark:bg-gray-800 border-4 border-white dark:border-gray-700 shadow-sm">
                       <img
                         src={newAvatar.url}
                         alt="Avatar preview"
@@ -309,7 +308,7 @@ const AvatarsPage: React.FC = () => {
                     </div>
 
                     {uploadStatus === 'success' && (
-                      <div className="absolute -right-2 -bottom-2 bg-green-500 text-white p-2 rounded-full shadow-lg">
+                      <div className="absolute -right-2 -bottom-2 bg-green-500 text-white dark:bg-green-600 p-2 rounded-full shadow-lg">
                         <Check size={16} />
                       </div>
                     )}
@@ -326,10 +325,10 @@ const AvatarsPage: React.FC = () => {
                     <label
                       htmlFor="avatarUpload"
                       className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium ${uploadStatus === 'uploading'
-                          ? 'bg-primary-50 text-primary-500 border-2 border-primary-100'
+                          ? 'bg-primary-50 dark:bg-primary-500 text-primary-500 border-2 border-primary-100'
                           : uploadStatus === 'success'
-                            ? 'bg-green-50 text-green-500 border-2 border-green-100'
-                            : 'bg-gray-50 text-gray-700 border-2 border-gray-100 hover:bg-gray-100'
+                            ? 'bg-green-50 dark:bg-green-600 text-green-500 border-2 border-green-100'
+                            : 'bg-gray-50 dark:bg-gray-800 text-gray-700 border-2 border-gray-100 hover:bg-gray-100'
                         } transition-all cursor-pointer`}
                     >
                       {uploadStatus === 'uploading' ? (
@@ -340,12 +339,12 @@ const AvatarsPage: React.FC = () => {
                       ) : uploadStatus === 'success' ? (
                         <>
                           <Edit size={16} />
-                          <span>Change Image</span>
+                          <span className='text-gray-600 dark:text-gray-200'>Change Image</span>
                         </>
                       ) : (
                         <>
                           <Camera size={16} />
-                          <span>Choose Image</span>
+                          <span className='text-gray-600 dark:text-gray-200'>Choose Image</span>
                         </>
                       )}
                     </label>
@@ -359,7 +358,7 @@ const AvatarsPage: React.FC = () => {
                 {/* Right column: Avatar details */}
                 <div>
                   <div className="mb-6">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-500 mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
                       Avatar Name
                     </label>
                     <input
@@ -368,19 +367,19 @@ const AvatarsPage: React.FC = () => {
                       name="name"
                       value={newAvatar.name}
                       onChange={handleNewAvatarChange}
-                      className="w-full px-4 py-3 bg-white rounded-xl text-gray-800 focus:outline-none border-2 border-gray-100 focus:border-primary-500 transition-all"
+                      className="w-full px-4 py-3 bg-white dark:bg-gray-800 rounded-xl text-gray-800 dark:text-gray-200 focus:outline-none border-2 border-gray-100 focus:border-primary-500 transition-all"
                       placeholder="Enter avatar name"
                       required
                     />
                   </div>
 
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-500 mb-2">
+                    <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
                       Preview
                     </label>
-                    <div className="bg-gray-50 p-4 rounded-xl">
+                    <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 overflow-hidden rounded-full bg-gray-50 border-2 border-white">
+                        <div className="w-10 h-10 overflow-hidden rounded-full bg-gray-50 dark:bg-gray-800 border-2 border-white dark:border-gray-700">
                           <img
                             src={newAvatar.url}
                             alt="Avatar preview"
@@ -405,9 +404,9 @@ const AvatarsPage: React.FC = () => {
               <button
                 onClick={handleAddAvatar}
                 disabled={!newAvatar.name || !selectedFile}
-                className={`w-full py-3 rounded-xl text-white font-medium transition-colors ${newAvatar.name && selectedFile
-                    ? 'bg-primary-500 hover:bg-primary-600 shadow-sm'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                className={`w-full py-3 rounded-xl text-white dark:text-gray-200 font-medium transition-colors ${newAvatar.name && selectedFile
+                    ? 'bg-primary-500 hover:bg-primary-600 shadow-sm dark:bg-primary-600 dark:hover:bg-primary-700'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600'
                   }`}
               >
                 Save Avatar
