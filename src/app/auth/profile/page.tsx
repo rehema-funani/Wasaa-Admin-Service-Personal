@@ -295,7 +295,6 @@ const UserProfile = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="relative overflow-hidden">
-        {/* Geometric background patterns */}
         <div className="absolute inset-0 overflow-hidden z-0 opacity-5">
           <div className="absolute -right-40 -top-40 w-80 h-80 rounded-full bg-blue-400"></div>
           <div className="absolute left-1/3 top-1/4 w-96 h-96 rounded-full bg-blue-300"></div>
@@ -303,7 +302,6 @@ const UserProfile = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
-          {/* Header */}
           <div className="flex flex-col mb-8">
             <h1 className="text-3xl font-light text-slate-800 tracking-tight">
               My Profile
@@ -334,14 +332,10 @@ const UserProfile = () => {
             </div>
           </div>
 
-          {/* Main content */}
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left sidebar */}
             <div className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-6">
-              {/* Profile card */}
               <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100">
                 <div className="bg-gradient-to-r from-blue-600 to-blue-500 pt-6 pb-10 px-6 relative">
-                  {/* Geometric patterns */}
                   <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-0 left-0 w-full h-full">
                       <svg
