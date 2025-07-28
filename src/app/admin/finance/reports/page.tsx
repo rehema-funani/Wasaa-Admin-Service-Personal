@@ -257,60 +257,68 @@ const page: React.FC = () => {
         transition={{ duration: 0.3 }}
       >
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Financial Reports</h1>
-          <p className="text-gray-500 mt-1">Track revenue, transactions, and financial metrics</p>
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+            Financial Reports
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            Track revenue, transactions, and financial metrics
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <div className="bg-white border border-gray-200 rounded-xl p-1 flex items-center shadow-sm">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-1 flex items-center shadow-sm">
             <button
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${selectedPeriod === 'weekly'
-                ? 'bg-primary-100 text-primary-700'
-                : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              onClick={() => handlePeriodChange('weekly')}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                selectedPeriod === "weekly"
+                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => handlePeriodChange("weekly")}
             >
               Weekly
             </button>
             <button
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${selectedPeriod === 'monthly'
-                ? 'bg-primary-100 text-primary-700'
-                : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              onClick={() => handlePeriodChange('monthly')}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                selectedPeriod === "monthly"
+                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => handlePeriodChange("monthly")}
             >
               Monthly
             </button>
             <button
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${selectedPeriod === 'quarterly'
-                ? 'bg-primary-100 text-primary-700'
-                : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              onClick={() => handlePeriodChange('quarterly')}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                selectedPeriod === "quarterly"
+                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => handlePeriodChange("quarterly")}
             >
               Quarterly
             </button>
           </div>
           <motion.button
-            className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-            whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
           >
             <Calendar size={16} className="mr-2" strokeWidth={1.8} />
-            {selectedPeriod === 'monthly' && `April ${selectedYear}`}
-            {selectedPeriod === 'quarterly' && `Q${selectedQuarter} ${selectedYear}`}
-            {selectedPeriod === 'weekly' && `April Week 4, ${selectedYear}`}
+            {selectedPeriod === "monthly" && `April ${selectedYear}`}
+            {selectedPeriod === "quarterly" &&
+              `Q${selectedQuarter} ${selectedYear}`}
+            {selectedPeriod === "weekly" && `April Week 4, ${selectedYear}`}
           </motion.button>
           <motion.button
-            className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-            whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
           >
             <Filter size={16} className="mr-2" strokeWidth={1.8} />
             Filters
           </motion.button>
           <motion.button
-            className="flex items-center px-3 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 text-sm shadow-sm"
-            whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
           >
             <Download size={16} className="mr-2" strokeWidth={1.8} />
@@ -323,28 +331,32 @@ const page: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <motion.div
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 lg:col-span-2"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-2"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         >
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">Revenue Overview</h3>
-              <p className="text-gray-500 text-sm">Revenue, expenses, and profit trends</p>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                Revenue Overview
+              </h3>
+              <p className="text-gray-500 dark:text-gray-300 text-sm">
+                Revenue, expenses, and profit trends
+              </p>
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
-                <span className="text-xs text-gray-600">Revenue</span>
+                <div className="w-3 h-3 rounded-full bg-primary-500 dark:bg-primary-700 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Revenue</span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-red-400 mr-1"></div>
-                <span className="text-xs text-gray-600">Expenses</span>
+                <div className="w-3 h-3 rounded-full bg-red-400 dark:bg-red-500 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Expenses</span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                <span className="text-xs text-gray-600">Profit</span>
+                <div className="w-3 h-3 rounded-full bg-green-500 dark:bg-green-700 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Profit</span>
               </div>
             </div>
           </div>
@@ -372,7 +384,11 @@ const page: React.FC = () => {
                   />
                   <Legend />
                   <Bar dataKey="revenue" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="expenses" fill="#f87171" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="expenses"
+                    fill="#f87171"
+                    radius={[4, 4, 0, 0]}
+                  />
                   <Bar dataKey="profit" fill="#10b981" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -380,21 +396,24 @@ const page: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Payment Methods Distribution */}
         <motion.div
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Payment Methods</h3>
-            <p className="text-gray-500 text-sm">Distribution by payment type</p>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Payment Methods
+            </h3>
+            <p className="text-gray-500 dark:text-gray-300 text-sm">
+              Distribution by payment type
+            </p>
           </div>
           <div className="h-72">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
@@ -407,10 +426,15 @@ const page: React.FC = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) =>
+                      `${name}: ${(percent * 100).toFixed(0)}%`
+                    }
                   >
                     {paymentDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => `${value}%`} />
@@ -422,32 +446,34 @@ const page: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* User Growth and Transaction Trends */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* User Growth Chart */}
         <motion.div
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
         >
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">User Growth</h3>
-              <p className="text-gray-500 text-sm">Total, new and active users</p>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                User Growth
+              </h3>
+              <p className="text-gray-500 dark:text-gray-300 text-sm">
+                Total, new and active users
+              </p>
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center">
                 <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
-                <span className="text-xs text-gray-600">Total</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Total</span>
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                <span className="text-xs text-gray-600">Active</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">Active</span>
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 rounded-full bg-purple-500 mr-1"></div>
-                <span className="text-xs text-gray-600">New</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">New</span>
               </div>
             </div>
           </div>
@@ -467,9 +493,27 @@ const page: React.FC = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Area type="monotone" dataKey="total" stackId="1" stroke="#3b82f6" fill="#93c5fd" />
-                  <Area type="monotone" dataKey="active" stackId="2" stroke="#10b981" fill="#6ee7b7" />
-                  <Area type="monotone" dataKey="new" stackId="3" stroke="#8b5cf6" fill="#c4b5fd" />
+                  <Area
+                    type="monotone"
+                    dataKey="total"
+                    stackId="1"
+                    stroke="#3b82f6"
+                    fill="#93c5fd"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="active"
+                    stackId="2"
+                    stroke="#10b981"
+                    fill="#6ee7b7"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="new"
+                    stackId="3"
+                    stroke="#8b5cf6"
+                    fill="#c4b5fd"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             )}
@@ -481,19 +525,21 @@ const page: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <motion.div
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.6 }}
         >
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Revenue Sources</h3>
-            <p className="text-gray-500 text-sm">Breakdown by source</p>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Revenue Sources
+            </h3>
+            <p className="text-gray-500 dark:text-gray-300 text-sm">Breakdown by source</p>
           </div>
           <div className="h-60">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
@@ -505,10 +551,15 @@ const page: React.FC = () => {
                     outerRadius={60}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) =>
+                      `${name}: ${(percent * 100).toFixed(0)}%`
+                    }
                   >
                     {topRevenueSourcesData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => `${value}%`} />
@@ -520,19 +571,21 @@ const page: React.FC = () => {
 
         {/* Geographic Distribution */}
         <motion.div
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.7 }}
         >
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Geographic Distribution</h3>
-            <p className="text-gray-500 text-sm">Revenue by region</p>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Geographic Distribution
+            </h3>
+            <p className="text-gray-500 dark:text-gray-300 text-sm">Revenue by region</p>
           </div>
           <div className="h-60">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
@@ -541,13 +594,24 @@ const page: React.FC = () => {
                   layout="vertical"
                   margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                  <XAxis type="number" domain={[0, 'dataMax']} tickFormatter={(value) => `${value}%`} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    horizontal={true}
+                    vertical={false}
+                  />
+                  <XAxis
+                    type="number"
+                    domain={[0, "dataMax"]}
+                    tickFormatter={(value) => `${value}%`}
+                  />
                   <YAxis dataKey="name" type="category" width={100} />
                   <Tooltip formatter={(value) => `${value}%`} />
                   <Bar dataKey="value" fill="#8884d8" radius={[0, 4, 4, 0]}>
                     {geographicData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
                     ))}
                   </Bar>
                 </BarChart>
@@ -558,29 +622,40 @@ const page: React.FC = () => {
 
         {/* Financial KPIs Summary */}
         <motion.div
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.8 }}
         >
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Financial KPIs</h3>
-            <p className="text-gray-500 text-sm">Key performance indicators</p>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Financial KPIs
+            </h3>
+            <p className="text-gray-500 dark:text-gray-300 text-sm">Key performance indicators</p>
           </div>
           <div className="h-60 overflow-y-auto">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
-              <table className="min-w-full divide-y divide-gray-200">
-                <tbody className="divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {kpiTableData.map((kpi, index) => (
                     <tr key={index}>
-                      <td className="py-2 text-sm font-medium text-gray-800">{kpi.metric}</td>
-                      <td className="py-2 text-sm text-gray-800 text-right">{kpi.value}</td>
-                      <td className={`py-2 text-sm text-right font-medium ${kpi.change.startsWith('+') ? 'text-green-600' : 'text-red-600'
-                        }`}>
+                      <td className="py-2 text-sm font-medium text-gray-800 dark:text-gray-100">
+                        {kpi.metric}
+                      </td>
+                      <td className="py-2 text-sm text-gray-800 dark:text-gray-100 text-right">
+                        {kpi.value}
+                      </td>
+                      <td
+                        className={`py-2 text-sm text-right font-medium ${
+                          kpi.change.startsWith("+")
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
                         {kpi.change}
                       </td>
                     </tr>
@@ -592,57 +667,90 @@ const page: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Report Generation */}
       <motion.div
-        className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-6"
+        className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.9 }}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-semibold text-gray-800">Generate Reports</h3>
-            <p className="text-gray-500 text-sm">Create customized financial reports</p>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Generate Reports
+            </h3>
+            <p className="text-gray-500 dark:text-gray-300 text-sm">
+              Create customized financial reports
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <motion.button
-              className="flex items-center px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-700 text-sm shadow-sm"
-              whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-100 text-sm shadow-sm"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
               whileTap={{ y: 0 }}
             >
-              <FileText size={16} className="mr-2 text-gray-600" strokeWidth={1.8} />
+              <FileText
+                size={16}
+                className="mr-2 text-gray-600"
+                strokeWidth={1.8}
+              />
               PDF Report
             </motion.button>
             <motion.button
-              className="flex items-center px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-700 text-sm shadow-sm"
-              whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-100 text-sm shadow-sm"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
               whileTap={{ y: 0 }}
             >
-              <FileText size={16} className="mr-2 text-green-600" strokeWidth={1.8} />
+              <FileText
+                size={16}
+                className="mr-2 text-green-600"
+                strokeWidth={1.8}
+              />
               Excel Export
             </motion.button>
             <motion.button
-              className="flex items-center px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-700 text-sm shadow-sm"
-              whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-100 text-sm shadow-sm"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
               whileTap={{ y: 0 }}
             >
-              <Mail size={16} className="mr-2 text-primary-600" strokeWidth={1.8} />
+              <Mail
+                size={16}
+                className="mr-2 text-primary-600"
+                strokeWidth={1.8}
+              />
               Email Report
             </motion.button>
             <motion.button
-              className="flex items-center px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-700 text-sm shadow-sm"
-              whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-100 text-sm shadow-sm"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
               whileTap={{ y: 0 }}
             >
-              <Printer size={16} className="mr-2 text-gray-600" strokeWidth={1.8} />
+              <Printer
+                size={16}
+                className="mr-2 text-gray-600"
+                strokeWidth={1.8}
+              />
               Print Report
             </motion.button>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Report Type</label>
-            <select className="block w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 text-sm">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Report Type
+            </label>
+            <select className="block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-100 text-sm">
               <option>Revenue Report</option>
               <option>Transaction Report</option>
               <option>User Activity Report</option>
@@ -651,8 +759,10 @@ const page: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Time Period</label>
-            <select className="block w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 text-sm">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Time Period
+            </label>
+            <select className="block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-100 text-sm">
               <option>Current Month</option>
               <option>Previous Month</option>
               <option>Current Quarter</option>
@@ -661,8 +771,10 @@ const page: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Comparison</label>
-            <select className="block w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 text-sm">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Comparison
+            </label>
+            <select className="block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-100 text-sm">
               <option>Previous Period</option>
               <option>Same Period Last Year</option>
               <option>Year Over Year</option>
@@ -670,8 +782,10 @@ const page: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Format</label>
-            <select className="block w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 text-sm">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Format
+            </label>
+            <select className="block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-100 text-sm">
               <option>Detailed Report</option>
               <option>Summary Report</option>
               <option>Charts & Graphs</option>
@@ -681,8 +795,12 @@ const page: React.FC = () => {
         </div>
         <div className="mt-4 flex justify-end">
           <motion.button
-            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
-            whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
+            className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 rounded-xl text-sm shadow-sm"
+            whileHover={{
+              y: -2,
+              backgroundColor: "#4f46e5",
+              boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)",
+            }}
             whileTap={{ y: 0 }}
           >
             Generate Report
@@ -698,12 +816,12 @@ const page: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 1.0 }}
       >
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center">
-          <div className="mr-4 p-3 bg-primary-100 text-primary-600 rounded-lg">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center">
+          <div className="mr-4 p-3 bg-primary-100 dark:bg-primary-200 text-primary-600 rounded-lg">
             <BarChart3 size={24} strokeWidth={1.8} />
           </div>
           <div>
-            <h4 className="font-medium text-gray-800">Revenue Report</h4>
+            <h4 className="font-medium text-gray-800 dark:text-gray-100">Revenue Report</h4>
             <p className="text-gray-500 text-sm">Detailed revenue breakdown</p>
           </div>
           <div className="ml-auto">
@@ -716,17 +834,19 @@ const page: React.FC = () => {
             </motion.button>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center">
-          <div className="mr-4 p-3 bg-purple-100 text-purple-600 rounded-lg">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center">
+          <div className="mr-4 p-3 bg-purple-100  dark:bg-purple-200 text-purple-600 rounded-lg">
             <PieChart size={24} strokeWidth={1.8} />
           </div>
           <div>
-            <h4 className="font-medium text-gray-800">Transaction Analysis</h4>
-            <p className="text-gray-500 text-sm">Transaction patterns and trends</p>
+            <h4 className="font-medium text-gray-800 dark:text-gray-100">Transaction Analysis</h4>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Transaction patterns and trends
+            </p>
           </div>
           <div className="ml-auto">
             <motion.button
-              className="text-purple-600 hover:text-purple-800"
+              className="text-purple-600 hover:text-purple-800 dark:text-purple-300 dark:hover:text-purple-100"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -734,17 +854,19 @@ const page: React.FC = () => {
             </motion.button>
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center">
-          <div className="mr-4 p-3 bg-green-100 text-green-600 rounded-lg">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center">
+          <div className="mr-4 p-3 bg-green-100 dark:bg-green-200 text-green-600 rounded-lg">
             <LineChartIcon size={24} strokeWidth={1.8} />
           </div>
           <div>
-            <h4 className="font-medium text-gray-800">Growth Metrics</h4>
-            <p className="text-gray-500 text-sm">User and revenue growth trends</p>
+            <h4 className="font-medium text-gray-800 dark:text-gray-100">Growth Metrics</h4>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              User and revenue growth trends
+            </p>
           </div>
           <div className="ml-auto">
             <motion.button
-              className="text-green-600 hover:text-green-800"
+              className="text-green-600 hover:text-green-800 dark:text-green-300 dark:hover:text-green-100"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

@@ -18,11 +18,9 @@ const AddWallpaper: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  // Preview settings
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
 
-  // Mock chat messages for the preview
   const mockMessages = [
     { id: 1, sender: 'AI Assistant', content: 'Hello! How can I help you with your finances today?', time: '10:02 AM' },
     { id: 2, sender: 'User', content: 'I need to check my account balance', time: '10:03 AM' },
@@ -162,18 +160,17 @@ const AddWallpaper: React.FC = () => {
       <div className="flex items-center mb-12">
         <button
           onClick={handleBack}
-          className="mr-6 p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+          className="mr-6 p-3 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
-          <ArrowLeft size={20} className="text-gray-700" />
+          <ArrowLeft size={20} className="text-gray-700 dark:text-gray-300" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">New Wallpaper</h1>
-          <p className="mt-1 text-gray-500">Create a custom background for your chat</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">New Wallpaper</h1>
+          <p className="mt-1 text-gray-500 dark:text-gray-400">Create a custom background for your chat</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-10">
-        {/* API Error message */}
         {apiError && (
           <div className="flex items-center p-4 text-red-800 bg-red-50 rounded-xl">
             <AlertCircle size={20} className="mr-2 flex-shrink-0" />
@@ -181,14 +178,11 @@ const AddWallpaper: React.FC = () => {
           </div>
         )}
 
-        {/* Main content grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Left column: Form fields */}
           <div className="space-y-8">
-            {/* Upload section */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                <Upload size={20} className="mr-3 text-primary-500" />
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6 flex items-center">
+                <Upload size={20} className="mr-3 text-primary-500 dark:text-primary-400" />
                 Upload Image
               </h2>
 
@@ -203,22 +197,22 @@ const AddWallpaper: React.FC = () => {
                 <div className="flex flex-col gap-4">
                   <label
                     htmlFor="imageUpload"
-                    className={`group flex-grow flex flex-col items-center justify-center gap-3 py-8 px-6 rounded-2xl text-gray-700 border-2 border-dashed ${uploadStatus === 'uploading'
-                        ? 'bg-primary-50 border-primary-200'
+                    className={`group flex-grow flex flex-col items-center justify-center gap-3 py-8 px-6 rounded-2xl text-gray-700 dark:text-gray-400 border-2 border-gray-200 dark:border-gray-700 border-dashed ${uploadStatus === 'uploading'
+                        ? 'bg-primary-50 border-primary-200 dark:bg-primary-900 dark:border-primary-700'
                         : uploadStatus === 'success'
-                          ? 'bg-green-50 border-green-200'
+                          ? 'bg-green-50 border-green-200 dark:bg-green-900 dark:border-green-700'
                           : uploadStatus === 'error'
-                            ? 'bg-red-50 border-red-200'
-                            : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                            ? 'bg-red-50 border-red-200 dark:bg-red-900 dark:border-red-700'
+                            : 'bg-gray-50 border-gray-200 dark:bg-gray-900 dark:border-gray-700 hover:bg-gray-100'
                       } transition-colors cursor-pointer`}
                   >
                     <div className={`p-4 rounded-full ${uploadStatus === 'uploading'
-                        ? 'bg-primary-100'
+                        ? 'bg-primary-100 dark:bg-primary-900'
                         : uploadStatus === 'success'
-                          ? 'bg-green-100'
+                          ? 'bg-green-100 dark:bg-green-900'
                           : uploadStatus === 'error'
-                            ? 'bg-red-100'
-                            : 'bg-gray-100 group-hover:bg-gray-200'
+                            ? 'bg-red-100 dark:bg-red-900'
+                            : 'bg-gray-100 dark:bg-gray-900 group-hover:bg-gray-200'
                       } transition-colors`}>
                       <Upload
                         size={24}
@@ -253,17 +247,16 @@ const AddWallpaper: React.FC = () => {
               </div>
             </div>
 
-            {/* Wallpaper Details */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                <Image size={20} className="mr-3 text-primary-500" />
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center">
+                <Image size={20} className="mr-3 text-primary-500 dark:text-primary-400" />
                 Wallpaper Details
               </h2>
 
               <div className="space-y-6">
                 {/* Name */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-500 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-500  mb-2">
                     Name
                   </label>
                   <input
@@ -272,7 +265,7 @@ const AddWallpaper: React.FC = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-5 py-4 bg-white rounded-xl text-gray-800 focus:outline-none border-2 border-gray-100 focus:border-primary-500 transition-all"
+                    className="w-full px-5 py-4 bg-white dark:bg-gray-800 rounded-xl text-gray-800 dark:text-gray-200 focus:outline-none border-2 border-gray-100 dark:border-gray-700 focus:border-primary-500 transition-all"
                     placeholder="Enter a descriptive name"
                     required
                   />
@@ -280,7 +273,7 @@ const AddWallpaper: React.FC = () => {
 
                 {/* Category */}
                 <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-500 mb-2">
+                  <label htmlFor="category" className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
                     Category
                   </label>
                   <div className="relative">
@@ -289,7 +282,7 @@ const AddWallpaper: React.FC = () => {
                       name="category"
                       value={formData.category}
                       onChange={handleInputChange}
-                      className="w-full px-5 py-4 bg-white rounded-xl text-gray-800 focus:outline-none border-2 border-gray-100 focus:border-primary-500 transition-all appearance-none"
+                      className="w-full px-5 py-4 bg-white dark:bg-gray-800 rounded-xl text-gray-800 dark:text-gray-200 focus:outline-none border-2 border-gray-100 dark:border-gray-700 focus:border-primary-500 transition-all appearance-none"
                       required
                     >
                       <option value="" disabled>Select a category</option>
@@ -298,17 +291,16 @@ const AddWallpaper: React.FC = () => {
                       ))}
                     </select>
                     <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <svg className="h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                       </svg>
                     </div>
                   </div>
                 </div>
 
-                {/* Show category badge preview if category is selected */}
                 {formData.category && (
                   <div className="mt-2">
-                    <label className="block text-sm font-medium text-gray-500 mb-2">
+                    <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
                       Category Preview
                     </label>
                     <span className={`inline-block px-4 py-1 rounded-full text-xs font-medium ${getCategoryColor(formData.category)}`}>
@@ -320,11 +312,10 @@ const AddWallpaper: React.FC = () => {
             </div>
           </div>
 
-          {/* Right column: Live Preview */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 flex items-center">
-                <Image size={20} className="mr-3 text-primary-500" />
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 flex items-center">
+                <Image size={20} className="mr-3 text-primary-500 dark:text-primary-400" />
                 Live Preview
               </h2>
 
@@ -333,7 +324,7 @@ const AddWallpaper: React.FC = () => {
                 <button
                   type="button"
                   onClick={togglePreviewDevice}
-                  className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                  className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors dark:hover:bg-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   title={`Switch to ${previewDevice === 'desktop' ? 'mobile' : 'desktop'} view`}
                 >
                   {previewDevice === 'desktop' ? <Smartphone size={20} /> : <Monitor size={20} />}
@@ -565,7 +556,6 @@ const AddWallpaper: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Home indicator */}
                       <div className="relative z-10 flex justify-center py-2">
                         <div className={`w-24 h-1 rounded-full ${previewMode === 'dark' ? 'bg-gray-700' : 'bg-gray-300'}`}></div>
                       </div>
@@ -575,7 +565,6 @@ const AddWallpaper: React.FC = () => {
               </div>
             </div>
 
-            {/* Preview caption */}
             <div className="mt-4 text-sm text-center text-gray-500 flex items-center justify-center">
               <svg className="mr-1.5" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M11 17H13V11H11V17ZM12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM11 9H13V7H11V9Z" fill="currentColor" />
@@ -586,13 +575,12 @@ const AddWallpaper: React.FC = () => {
           </div>
         </div>
 
-        {/* Submit Button - Fintech inspired minimalist */}
         <button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className={`relative w-full py-5 rounded-2xl text-white font-medium text-lg transition-all shadow-sm ${isValid && !isSubmitting
-              ? 'bg-primary-500 hover:bg-primary-600 hover:shadow'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          className={`relative w-full py-5 rounded-2xl text-white dark:text-gray-200 font-medium text-lg transition-all shadow-sm ${isValid && !isSubmitting
+              ? 'bg-primary-500 hover:bg-primary-600 hover:shadow dark:bg-primary-600 dark:hover:bg-primary-700'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed'
             }`}
         >
           <span className="flex items-center justify-center">

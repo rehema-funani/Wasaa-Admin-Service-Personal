@@ -78,12 +78,12 @@ const page = () => {
       sortable: true,
       cell: (value: string, row: any) => (
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-500 dark:bg-gradient-to-br dark:from-primary-500 dark:to-primary-500 text-white dark:text-gray-800 flex items-center justify-center font-medium text-sm mr-3">
             {value ? value.split(' ').map(n => n[0]).join('') : '??'}
           </div>
           <div>
-            <p className="font-medium text-gray-800">{value || 'Unnamed User'}</p>
-            <p className="text-xs text-gray-500">{row.email}</p>
+            <p className="font-medium text-gray-800 dark:text-gray-300">{value || 'Unnamed User'}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{row.email}</p>
           </div>
         </div>
       )
@@ -265,7 +265,7 @@ const page = () => {
   };
 
   return (
-    <div className="w-full mx-auto">
+    <div className="max-w-8xl mx-auto">
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -273,12 +273,12 @@ const page = () => {
         transition={{ duration: 0.3 }}
       >
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Users</h1>
-          <p className="text-gray-500 mt-1">Manage user accounts</p>
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">Users</h1>
+          <p className="text-gray-500 mt-1 dark:text-gray-400">Manage user accounts</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <motion.button
-            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 dark:bg-primary-700 text-white dark:text-gray-200 rounded-xl text-sm shadow-sm"
             whileHover={{ y: -2, backgroundColor: '#4f46e5', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
             whileTap={{ y: 0 }}
             onClick={handleExport}
@@ -289,22 +289,13 @@ const page = () => {
         </div>
       </motion.div>
 
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        <div className="md:col-span-2">
-          <SearchBox
-            placeholder="Search users by name, email, role or location..."
-            onSearch={handleSearch}
-            suggestions={users.map(user => user.name).slice(0, 5)}
-            recentSearches={recentSearches}
-            showRecentByDefault={true}
-          />
-        </div>
-      </motion.div>
+      <input
+        type="text"
+        placeholder="Search users..."
+        value={searchQuery}
+        onChange={(e) => handleSearch(e.target.value)}
+        className='mb-4 w-full bg-inherit md:w-1/3 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400'
+      />
 
       {error && (
         <motion.div

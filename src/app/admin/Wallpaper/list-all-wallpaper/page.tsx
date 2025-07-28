@@ -145,14 +145,14 @@ const ListWallpaper: React.FC = () => {
       <div className="max-w-7xl mx-auto px-8 py-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-4">
           <div className="md:col-span-2">
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Wallpapers</h1>
-            <p className="text-gray-500 text-sm">Customizable backgrounds for your chat experience</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-2">Wallpapers</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Customizable backgrounds for your chat experience</p>
           </div>
         </div>
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center">
             <div className="h-10 w-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-500">Loading wallpapers...</p>
+            <p className="text-gray-500 dark:text-gray-400">Loading wallpapers...</p>
           </div>
         </div>
       </div>
@@ -162,14 +162,14 @@ const ListWallpaper: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {successMessage && (
-        <div className="mb-6 flex items-center p-4 bg-green-50 text-green-700 rounded-xl">
+        <div className="mb-6 flex items-center p-4 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-xl">
           <Check size={20} className="mr-2 flex-shrink-0" />
           <span>{successMessage}</span>
         </div>
       )}
 
       {error && (
-        <div className="mb-6 flex items-center p-4 bg-red-50 text-red-700 rounded-xl">
+        <div className="mb-6 flex items-center p-4 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-xl">
           <AlertCircle size={20} className="mr-2 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -177,14 +177,14 @@ const ListWallpaper: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         <div className="md:col-span-2">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Wallpapers</h1>
-          <p className="text-gray-500">Customizable backgrounds for your chat experience</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight mb-2">Wallpapers</h1>
+          <p className="text-gray-500 dark:text-gray-400">Customizable backgrounds for your chat experience</p>
         </div>
 
         <div className="flex items-center justify-end">
           <button
             onClick={navigateToAdd}
-            className="group px-6 py-2.5 text-[14px] bg-primary-500 text-white rounded-full flex items-center gap-2 hover:bg-primary-600 transition-colors shadow-sm hover:shadow"
+            className="group px-6 py-2.5 text-[14px] bg-primary-500 text-white dark:bg-primary-600 dark:text-gray-100 rounded-full flex items-center gap-2 hover:bg-primary-600 transition-colors shadow-sm hover:shadow"
           >
             <Plus size={18} className="transition-transform group-hover:rotate-90 duration-300" />
             <span>New Wallpaper</span>
@@ -195,25 +195,24 @@ const ListWallpaper: React.FC = () => {
       <div className="mb-8">
         <div className="relative">
           <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-            <Search size={20} className="text-gray-400" />
+            <Search size={20} className="text-gray-400 dark:text-gray-500" />
           </div>
           <input
             type="text"
             placeholder="Search wallpapers..."
-            className="w-full md:w-[350px] pl-14 pr-5 py-3 bg-white rounded-2xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 border border-gray-100 shadow-sm transition-all duration-200"
+            className="w-full md:w-[350px] pl-14 pr-5 py-3 bg-white rounded-2xl text-gray-800 dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 border border-gray-100 dark:border-gray-700 shadow-sm transition-all duration-200"
             value={searchQuery}
             onChange={handleSearchChange}
           />
         </div>
       </div>
 
-      {/* Wallpaper Grid */}
       {filteredWallpapers.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
           {filteredWallpapers.map(wallpaper => (
             <div
               key={wallpaper.id}
-              className="group relative bg-white border border-gray-100 rounded-3xl overflow-hidden transition-all hover:border-primary-100 hover:shadow-lg"
+              className="group relative bg-white border border-gray-100 rounded-3xl overflow-hidden transition-all hover:border-primary-100 hover:shadow-lg dark:bg-gray-800 dark:border-gray-700"
             >
               <div
                 className="aspect-video overflow-hidden cursor-pointer"
@@ -224,7 +223,7 @@ const ListWallpaper: React.FC = () => {
                   alt={wallpaper.name}
                   className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent dark:from-black/70 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
               <div className="p-6">
@@ -235,22 +234,22 @@ const ListWallpaper: React.FC = () => {
 
                   <button
                     onClick={() => handleDelete(wallpaper.id)}
-                    className="p-2 rounded-full bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                    className="p-2 rounded-full bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors duration-200 group-hover:bg-red-100 group-hover:text-red-600 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-red-600 dark:hover:text-red-500"
                   >
                     <Trash2 size={16} />
                   </button>
                 </div>
 
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{wallpaper.name}</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">{wallpaper.name}</h3>
 
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Added {wallpaper.createdAt}
                 </p>
               </div>
 
               <button
                 onClick={() => openPreview(wallpaper)}
-                className="absolute bottom-6 right-6 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 bg-primary-500 hover:bg-primary-600 text-white p-3 rounded-full shadow-lg"
+                className="absolute bottom-6 right-6 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 bg-primary-500 hover:bg-primary-600 text-white p-3 rounded-full shadow-lg dark:bg-primary-600 dark:hover:bg-primary-700"
               >
                 <ArrowRight size={20} />
               </button>
@@ -258,17 +257,17 @@ const ListWallpaper: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 px-6 bg-gray-50 rounded-3xl">
-          <div className="bg-white p-6 rounded-full mb-6 shadow-md">
-            <Search size={32} className="text-gray-300" />
+        <div className="flex flex-col items-center justify-center py-20 px-6 bg-gray-50 dark:bg-gray-800 rounded-3xl">
+          <div className="bg-white dark:bg-gray-700 p-6 rounded-full mb-6 shadow-md">
+            <Search size={32} className="text-gray-300 dark:text-gray-400" />
           </div>
-          <p className="text-xl text-gray-500 font-medium text-center">No wallpapers found</p>
-          <p className="text-gray-400 mt-2 text-center mb-6">
+          <p className="text-xl text-gray-500 dark:text-gray-400 font-medium text-center">No wallpapers found</p>
+          <p className="text-gray-400 dark:text-gray-500 mt-2 text-center mb-6">
             {searchQuery ? 'Try a different search term' : 'Add a new wallpaper to get started'}
           </p>
           <button
             onClick={navigateToAdd}
-            className="px-6 py-3 bg-primary-500 text-white rounded-full flex items-center gap-2 hover:bg-primary-600 transition-colors shadow-md"
+            className="px-6 py-3 bg-primary-500 text-white rounded-full flex items-center gap-2 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 transition-colors shadow-md"
           >
             <Plus size={18} />
             <span>Add Wallpaper</span>
@@ -277,7 +276,7 @@ const ListWallpaper: React.FC = () => {
       )}
 
       {showPreview && previewWallpaper && (
-        <div className="fixed inset-0 bg-black/70 z-999 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-black/70 dark z-999 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className={`${previewMode === 'dark' ? 'bg-gray-900' : 'bg-white'} z-99 rounded-3xl w-full max-w-6xl max-h-[85vh] mt-12 overflow-y-auto flex flex-col transition-colors duration-300 shadow-2xl`}>
             <div className={`flex items-center justify-between p-6 border-b ${previewMode === 'dark' ? 'border-gray-800' : 'border-gray-100'}`}>
               <div className="flex items-center space-x-4">

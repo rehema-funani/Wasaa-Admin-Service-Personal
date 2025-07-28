@@ -129,12 +129,12 @@ const TransactionStats: React.FC = () => {
         {[...Array(4)].map((_, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+            className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           >
             <div className="animate-pulse">
-              <div className="h-4 bg-gray-200 rounded-md w-1/2 mb-2"></div>
-              <div className="h-8 bg-gray-200 rounded-md w-3/4 mb-3"></div>
-              <div className="h-4 bg-gray-200 rounded-md w-1/3"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md w-1/2 mb-2"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-md w-3/4 mb-3"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-md w-1/3"></div>
             </div>
           </div>
         ))}
@@ -152,27 +152,27 @@ const TransactionStats: React.FC = () => {
       {statsData.map((stat, index) => (
         <motion.div
           key={index}
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           whileHover={{ y: -4, boxShadow: "0 10px 20px rgba(0, 0, 0, 0.05)" }}
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">{stat.title}</p>
-              <h3 className="text-2xl font-bold text-gray-800">{stat.value}</h3>
+              <p className="text-gray-500 dark:text-gray-300 text-sm mb-1">{stat.title}</p>
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{stat.value}</h3>
               <div className="flex items-center mt-2">
                 {stat.trend === "up" ? (
-                  <TrendingUp size={16} className="text-green-500 mr-1" />
+                  <TrendingUp size={16} className="text-green-500 dark:text-green-400 mr-1" />
                 ) : (
-                  <TrendingDown size={16} className="text-red-500 mr-1" />
+                  <TrendingDown size={16} className="text-red-500 dark:text-red-400 mr-1" />
                 )}
                 <span
                   className={`text-sm font-medium ${
-                    stat.trend === "up" ? "text-green-600" : "text-red-600"
+                    stat.trend === "up" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
                   }`}
                 >
                   {stat.change}
                 </span>
-                <span className="text-gray-500 text-xs ml-1">
+                <span className="text-gray-500 dark:text-gray-400 text-xs ml-1">
                   {stat.period}
                 </span>
               </div>
@@ -182,12 +182,12 @@ const TransactionStats: React.FC = () => {
                 p-3 rounded-lg
                 ${
                   stat.color === "primary"
-                    ? "bg-primary-100 text-primary-600"
+                    ? "bg-primary-100 text-primary-600 dark:bg-primary-700 dark:text-primary-400"
                     : stat.color === "green"
-                    ? "bg-green-100 text-green-600"
+                    ? "bg-green-100 text-green-600 dark:bg-green-700 dark:text-green-400"
                     : stat.color === "purple"
-                    ? "bg-purple-100 text-purple-600"
-                    : "bg-orange-100 text-orange-600"
+                    ? "bg-purple-100 text-purple-600 dark:bg-purple-700 dark:text-purple-400"
+                    : "bg-orange-100 text-orange-600 dark:bg-orange-700 dark:text-orange-400"
                 }
               `}
             >
