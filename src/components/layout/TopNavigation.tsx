@@ -19,6 +19,8 @@ import {
   TrendingUp,
   Eye,
   Lock,
+  Sun,
+  Moon,
 } from "lucide-react";
 import routes from "../../constants/routes";
 import logo from "../../assets/images/logo-wasaa.png";
@@ -27,6 +29,7 @@ import {
   routePermissionsMap,
 } from "../../utils/permissions";
 import { notificationService } from "../../api/services/notification";
+import { useTheme } from "../../context/ThemeContext";
 
 const getRequiredPermissionsForRoute = (path: string) => {
   if (!routePermissionsMap[path]) {
@@ -97,6 +100,7 @@ const TopNavigation = () => {
   const navRef = useRef(null);
   const timeoutRef = useRef(null);
   const navigate = useNavigate();
+  const { isDarkMode, toggleMode } = useTheme();
 
   const user = localStorage.getItem("userData")
     ? JSON.parse(localStorage.getItem("userData"))
@@ -981,103 +985,12 @@ const TopNavigation = () => {
               )}
             </div>
 
-            <div className="relative" ref={notificationsRef}>
-              <button
-                onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className="p-2.5 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 dark:text-gray-400/70 hover:text-indigo-600 dark:hover:text-indigo-400 relative"
-              >
-                <Bell size={18} className="transition-colors duration-500" />
-                {unreadNotifications > 0 && (
-                  <div className="absolute top-1.5 right-1.5 flex items-center justify-center">
-                    <span className="absolute w-2 h-2 bg-indigo-500 dark:bg-indigo-400 rounded-full shadow-sm shadow-indigo-500/50 dark:shadow-indigo-400/50 animate-ping opacity-75"></span>
-                    <span className="relative w-2 h-2 bg-indigo-600 dark:bg-indigo-500 rounded-full"></span>
-                  </div>
-                )}
-
-                <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 dark:group-hover:bg-indigo-500/10 transition-colors duration-500 -z-10"></div>
-                <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 dark:bg-indigo-500/5 blur-sm transition-transform duration-500 -z-10"></div>
-              </button>
-
-              {notificationsOpen && (
-                <div className="absolute right-0 mt-3 w-80 bg-white/70 dark:bg-gray-800/70 backdrop-blur-2xl rounded-2xl border border-white/70 dark:border-gray-700/70 shadow-2xl shadow-indigo-900/10 dark:shadow-gray-900/30 z-50 overflow-hidden animate-fadeInDown">
-                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
-                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 dark:bg-sky-500/5 rounded-full blur-3xl"></div>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 dark:from-indigo-600/5 via-violet-500/5 dark:via-violet-600/5 to-sky-500/5 dark:to-sky-600/5 rounded-full blur-3xl"></div>
-
-                  <div className="px-4 py-3 border-b border-white/50 dark:border-gray-700/50 flex justify-between items-center relative">
-                    <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
-                      <Bell
-                        size={14}
-                        className="mr-2 text-indigo-500 dark:text-indigo-400"
-                      />
-                      Notifications
-                      {unreadNotifications > 0 && (
-                        <span className="ml-2 text-xs font-medium px-1.5 py-0.5 bg-indigo-100/80 dark:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 rounded-full">
-                          {unreadNotifications} new
-                        </span>
-                      )}
-                    </h3>
-                    {unreadNotifications > 0 && (
-                      <button
-                        onClick={markAllAsRead}
-                        className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors duration-200"
-                      >
-                        Mark all as read
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="max-h-80 overflow-y-auto custom-scrollbar">
-                    {notifications.map((notification) => (
-                      <div
-                        key={notification.id}
-                        className={`
-                          relative px-4 py-3 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/50 cursor-pointer transition-all duration-500
-                          ${
-                            !notification.read
-                              ? "bg-indigo-50/30 dark:bg-indigo-900/30"
-                              : ""
-                          }
-                        `}
-                      >
-                        <div className="flex items-start">
-                          <div className="mt-0.5 mr-3">
-                            {getNotificationIcon(notification.type)}
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                              {notification.title}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                              {notification.description}
-                            </p>
-                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 flex items-center">
-                              <Eye
-                                size={10}
-                                className="mr-1 text-gray-400 dark:text-gray-500"
-                              />
-                              {notification.time}
-                            </p>
-                          </div>
-                          {!notification.read && (
-                            <div className="absolute top-3 right-3 w-2 h-2 bg-indigo-500 dark:bg-indigo-400 rounded-full"></div>
-                          )}
-                        </div>
-
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-gray-600/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="px-4 py-2 border-t border-white/50 dark:border-gray-700/50 relative">
-                    <button className="w-full text-xs text-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium py-1 transition-colors duration-200 flex items-center justify-center">
-                      <span>View all notifications</span>
-                      <ArrowRight size={12} className="ml-1.5" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <button
+              className="p-1 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+              onClick={toggleMode}
+            >
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
 
             <div className="relative ml-2" ref={userMenuRef}>
               <button

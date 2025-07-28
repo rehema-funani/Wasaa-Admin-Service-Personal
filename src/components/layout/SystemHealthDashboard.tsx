@@ -7,29 +7,27 @@ import {
   Users,
   GlassWater,
   Database,
-  ArrowUpCircle,
   Clock,
   AlertTriangle,
-  XCircle,
   ChevronRight,
   ChevronDown,
   RefreshCw,
   Zap,
   Timer,
   Cpu,
-  BarChart4,
-  Gauge,
-  PieChart,
   HeartPulse,
+  Sun,
+  Moon,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function SystemHealthDashboard() {
+  const { isDarkMode, toggleMode } = useTheme();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [expandedService, setExpandedService] = useState(null);
   const [refreshAnimation, setRefreshAnimation] = useState(false);
 
-  // Update time every second
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
@@ -37,49 +35,61 @@ export default function SystemHealthDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  // Helper function for status color styling
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "operational":
-        return "text-emerald-500";
+        return isDarkMode ? "text-emerald-400" : "text-emerald-500";
       case "degraded":
-        return "text-amber-500";
+        return isDarkMode ? "text-amber-400" : "text-amber-500";
       case "down":
-        return "text-red-500";
+        return isDarkMode ? "text-red-400" : "text-red-500";
       default:
-        return "text-gray-500";
+        return isDarkMode ? "text-gray-400" : "text-gray-500";
     }
   };
 
-  // Helper function for status background styling
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = (status: string) => {
     switch (status) {
       case "operational":
-        return "bg-emerald-50 text-emerald-700";
+        return isDarkMode
+          ? "bg-emerald-800 text-emerald-200"
+          : "bg-emerald-50 text-emerald-700";
       case "degraded":
-        return "bg-amber-50 text-amber-700";
+        return isDarkMode
+          ? "bg-amber-800 text-amber-200"
+          : "bg-amber-50 text-amber-700";
       case "down":
-        return "bg-red-50 text-red-700";
+        return isDarkMode
+          ? "bg-red-800 text-red-200"
+          : "bg-red-50 text-red-700";
       default:
-        return "bg-gray-50 text-gray-700";
+        return isDarkMode
+          ? "bg-gray-800 text-gray-200"
+          : "bg-gray-50 text-gray-700";
     }
   };
 
-  // Helper function for status gradient styling
-  const getStatusGradient = (status) => {
+  const getStatusGradient = (status: string) => {
     switch (status) {
       case "operational":
-        return "from-emerald-50 to-emerald-100";
+        return isDarkMode
+          ? "from-emerald-800 to-emerald-900"
+          : "from-emerald-50 to-emerald-100";
       case "degraded":
-        return "from-amber-50 to-amber-100";
+        return isDarkMode
+          ? "from-amber-800 to-amber-900"
+          : "from-amber-50 to-amber-100";
       case "down":
-        return "from-red-50 to-red-100";
+        return isDarkMode
+          ? "from-red-800 to-red-900"
+          : "from-red-50 to-red-100";
       default:
-        return "from-gray-50 to-gray-100";
+        return isDarkMode
+          ? "from-gray-800 to-gray-900"
+          : "from-gray-50 to-gray-100";
     }
   };
 
-  // Define service icons
   const serviceIcons = {
     Auth: Shield,
     Wallets: Database,
@@ -91,7 +101,6 @@ export default function SystemHealthDashboard() {
     Kafka: Server,
   };
 
-  // Define detailed metrics for each service
   const systemHealthMetrics = [
     {
       name: "Auth",
@@ -230,19 +239,6 @@ export default function SystemHealthDashboard() {
     },
   ];
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "operational":
-        return <ArrowUpCircle size={12} className="text-emerald-500" />;
-      case "degraded":
-        return <AlertTriangle size={12} className="text-amber-500" />;
-      case "down":
-        return <XCircle size={12} className="text-red-500" />;
-      default:
-        return null;
-    }
-  };
-
   const getTotalStatus = () => {
     if (systemHealthMetrics.some((metric) => metric.status === "down")) {
       return "down";
@@ -268,50 +264,62 @@ export default function SystemHealthDashboard() {
     setTimeout(() => setRefreshAnimation(false), 1000);
   };
 
-  // Helper to get response time indicator color
   const getResponseTimeColor = (time) => {
     const ms = parseInt(time.replace("ms", ""));
-    if (ms < 100) return "text-emerald-500";
-    if (ms < 300) return "text-amber-500";
-    return "text-red-500";
+    if (ms < 100) return isDarkMode ? "text-emerald-400" : "text-emerald-500";
+    if (ms < 300) return isDarkMode ? "text-amber-400" : "text-amber-500";
+    return isDarkMode ? "text-red-400" : "text-red-500";
   };
 
-  // Helper to get CPU usage indicator color
   const getCpuColor = (cpu) => {
     const percentage = parseInt(cpu.replace("%", ""));
-    if (percentage < 50) return "text-emerald-500";
-    if (percentage < 80) return "text-amber-500";
-    return "text-red-500";
+    if (percentage < 50)
+      return isDarkMode ? "text-emerald-400" : "text-emerald-500";
+    if (percentage < 80)
+      return isDarkMode ? "text-amber-400" : "text-amber-500";
+    return isDarkMode ? "text-red-400" : "text-red-500";
   };
 
   return (
     <div
-      className="h-full overflow-y-auto bg-gray-50"
+      className={`h-full overflow-y-auto ${
+        isDarkMode ? "dark" : ""
+      } bg-gray-50 dark:bg-gray-900 p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700`}
       style={{ maxWidth: "256px" }}
     >
       <div className="p-2">
-        {/* Header with refresh button */}
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center">
-            <HeartPulse size={14} className="text-indigo-500 mr-1" />
+            <HeartPulse
+              size={14}
+              className="text-indigo-500 dark:text-indigo-400 mr-1"
+            />
             <h2 className="text-sm font-bold bg-gradient-to-r from-indigo-500 to-purple-500 text-transparent bg-clip-text">
               System Health
             </h2>
           </div>
-          <div className="flex items-center text-xs text-gray-500">
+          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
             <button
-              className={`p-1 rounded-full hover:bg-gray-200 transition-all ${
+              className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+              onClick={toggleMode}
+            >
+              {isDarkMode ? <Sun size={12} /> : <Moon size={12} />}
+            </button>
+            <button
+              className={`p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all ${
                 refreshAnimation ? "animate-spin" : ""
               }`}
               onClick={handleRefresh}
             >
-              <RefreshCw size={12} className="text-indigo-400" />
+              <RefreshCw
+                size={12}
+                className="text-indigo-400 dark:text-indigo-300"
+              />
             </button>
           </div>
         </div>
-
         {/* Status Summary */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 mb-3 bg-gradient-to-r from-gray-50 to-gray-100">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-2 mb-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
           <div className="flex items-center justify-between mb-1">
             <div
               className={`px-2 py-0.5 text-xs font-medium rounded-full ${getStatusBgColor(
@@ -325,25 +333,25 @@ export default function SystemHealthDashboard() {
                 : "System Outage"}
             </div>
             <div className="text-xs flex space-x-1">
-              <span className="px-1 bg-emerald-100 rounded text-emerald-700 font-medium">
+              <span className="px-1 bg-emerald-100 dark:bg-emerald-900 rounded text-emerald-700 dark:text-emerald-200 font-medium">
                 {
                   systemHealthMetrics.filter((m) => m.status === "operational")
                     .length
                 }
               </span>
-              <span className="px-1 bg-amber-100 rounded text-amber-700 font-medium">
+              <span className="px-1 bg-amber-100 dark:bg-amber-900 rounded text-amber-700 dark:text-amber-200 font-medium">
                 {
                   systemHealthMetrics.filter((m) => m.status === "degraded")
                     .length
                 }
               </span>
-              <span className="px-1 bg-red-100 rounded text-red-700 font-medium">
+              <span className="px-1 bg-red-100 dark:bg-red-900 rounded text-red-700 dark:text-red-200 font-medium">
                 {systemHealthMetrics.filter((m) => m.status === "down").length}
               </span>
             </div>
           </div>
           <div className="flex justify-between items-center text-xs">
-            <div className="text-gray-500 flex items-center">
+            <div className="text-gray-500 dark:text-gray-400 flex items-center">
               <Clock size={10} className="mr-1" />
               {currentTime.toLocaleTimeString([], {
                 hour: "2-digit",
@@ -355,23 +363,20 @@ export default function SystemHealthDashboard() {
             </div>
           </div>
         </div>
-
-        {/* Services List */}
         <div className="space-y-1.5">
           {systemHealthMetrics.map((service, index) => (
             <div
               key={index}
-              className={`bg-white rounded-lg border overflow-hidden transition-all duration-200 ${
+              className={`bg-white dark:bg-gray-800 rounded-lg border overflow-hidden transition-all duration-200 ${
                 expandedService === index
-                  ? "border-indigo-200 shadow-md"
-                  : "border-gray-100 shadow-sm hover:border-indigo-100"
+                  ? "border-indigo-200 shadow-md hover:border-indigo-300 dark:border-indigo-800 dark:hover:border-indigo-700"
+                  : "border-gray-100 dark:border-gray-700 shadow-sm hover:border-indigo-100 dark:hover:border-indigo-900"
               }`}
             >
-              {/* Service Header - Always visible */}
               <div
                 className={`p-2 flex items-center justify-between cursor-pointer bg-gradient-to-r ${
                   expandedService === index
-                    ? "from-indigo-50 to-indigo-100"
+                    ? "from-indigo-50 to-indigo-100 dark:from-indigo-900 dark:to-indigo-800"
                     : getStatusGradient(service.status)
                 }`}
                 onClick={() => toggleServiceExpansion(index)}
@@ -380,35 +385,33 @@ export default function SystemHealthDashboard() {
                   <div
                     className={`w-2 h-2 rounded-full ${
                       service.status === "operational"
-                        ? "bg-emerald-500"
+                        ? "bg-emerald-500 dark:bg-emerald-400"
                         : service.status === "degraded"
-                        ? "bg-amber-500"
-                        : "bg-red-500"
+                        ? "bg-amber-500 dark:bg-amber-400"
+                        : "bg-red-500 dark:bg-red-400"
                     } ${
                       service.status !== "operational" ? "animate-pulse" : ""
                     } shadow-sm`}
                   ></div>
-
                   <div className="flex items-center">
                     {React.createElement(serviceIcons[service.name], {
                       size: 12,
                       className:
                         expandedService === index
-                          ? "text-indigo-500"
+                          ? "text-indigo-500 dark:text-indigo-300"
                           : getStatusColor(service.status),
                     })}
                     <span
                       className={`ml-1 text-xs font-medium ${
                         expandedService === index
-                          ? "text-indigo-700"
-                          : "text-gray-700"
+                          ? "text-indigo-700 dark:text-indigo-200"
+                          : "text-gray-700 dark:text-gray-200"
                       }`}
                     >
                       {service.name}
                     </span>
                   </div>
                 </div>
-
                 <div className="flex items-center space-x-2">
                   <div className="text-[10px] font-medium text-right">
                     <span
@@ -418,17 +421,20 @@ export default function SystemHealthDashboard() {
                     </span>
                   </div>
                   {expandedService === index ? (
-                    <ChevronDown size={12} className="text-indigo-400" />
+                    <ChevronDown
+                      size={12}
+                      className="text-indigo-400 dark:text-indigo-300"
+                    />
                   ) : (
-                    <ChevronRight size={12} className="text-gray-400" />
+                    <ChevronRight
+                      size={12}
+                      className="text-gray-400 dark:text-gray-300"
+                    />
                   )}
                 </div>
               </div>
-
-              {/* Expanded Service Details */}
               {expandedService === index && (
-                <div className="p-2 pt-0 border-t border-gray-100 text-xs">
-                  {/* Service Status Badge */}
+                <div className="p-2 pt-0 border-t border-gray-100 dark:border-gray-700 text-xs">
                   <div className="flex justify-end -mt-1 -mr-1 mb-1">
                     <div
                       className={`px-2 py-0.5 text-[10px] font-medium rounded-bl-lg ${getStatusBgColor(
@@ -438,11 +444,9 @@ export default function SystemHealthDashboard() {
                       {service.status.toUpperCase()}
                     </div>
                   </div>
-
-                  {/* Metrics Grid */}
                   <div className="grid grid-cols-2 gap-1 mb-2">
-                    <div className="bg-gray-50 p-1.5 rounded">
-                      <div className="flex items-center text-gray-500 text-[10px] mb-0.5">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-1.5 rounded">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-[10px] mb-0.5">
                         <Timer size={8} className="mr-1" />
                         Response
                       </div>
@@ -454,8 +458,8 @@ export default function SystemHealthDashboard() {
                         {service.responseTime}
                       </div>
                     </div>
-                    <div className="bg-gray-50 p-1.5 rounded">
-                      <div className="flex items-center text-gray-500 text-[10px] mb-0.5">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-1.5 rounded">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-[10px] mb-0.5">
                         <Cpu size={8} className="mr-1" />
                         CPU
                       </div>
@@ -465,8 +469,8 @@ export default function SystemHealthDashboard() {
                         {service.cpu}
                       </div>
                     </div>
-                    <div className="bg-gray-50 p-1.5 rounded">
-                      <div className="flex items-center text-gray-500 text-[10px] mb-0.5">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-1.5 rounded">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-[10px] mb-0.5">
                         <Zap size={8} className="mr-1" />
                         Req/s
                       </div>
@@ -474,43 +478,39 @@ export default function SystemHealthDashboard() {
                         {service.requestsPerSec}
                       </div>
                     </div>
-                    <div className="bg-gray-50 p-1.5 rounded">
-                      <div className="flex items-center text-gray-500 text-[10px] mb-0.5">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-1.5 rounded">
+                      <div className="flex items-center text-gray-500 dark:text-gray-400 text-[10px] mb-0.5">
                         <AlertTriangle size={8} className="mr-1" />
                         Error Rate
                       </div>
                       <div
                         className={`font-medium ${
                           parseFloat(service.errorRate) > 1
-                            ? "text-red-500"
+                            ? "text-red-500 dark:text-red-400"
                             : parseFloat(service.errorRate) > 0.1
-                            ? "text-amber-500"
-                            : "text-emerald-500"
+                            ? "text-amber-500 dark:text-amber-400"
+                            : "text-emerald-500 dark:text-emerald-400"
                         }`}
                       >
                         {service.errorRate}
                       </div>
                     </div>
                   </div>
-
-                  {/* Additional Metrics */}
-                  <div className="flex justify-between mb-2 px-1 text-[10px] text-gray-500">
+                  <div className="flex justify-between mb-2 px-1 text-[10px] text-gray-500 dark:text-gray-400">
                     <div>
-                      <span className="font-medium text-indigo-500">
+                      <span className="font-medium text-indigo-500 dark:text-indigo-400">
                         Uptime:
                       </span>{" "}
                       {service.uptime}
                     </div>
                     <div>
-                      <span className="font-medium text-indigo-500">
+                      <span className="font-medium text-indigo-500 dark:text-indigo-400">
                         Latency:
                       </span>{" "}
                       {service.latency}
                     </div>
                   </div>
-
-                  {/* Node Status */}
-                  <div className="text-[10px] text-gray-500 uppercase font-semibold mb-1 flex items-center">
+                  <div className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-semibold mb-1 flex items-center">
                     <Server size={8} className="mr-1" />
                     Nodes
                   </div>
@@ -520,19 +520,19 @@ export default function SystemHealthDashboard() {
                         key={node.id}
                         className={`px-1.5 py-0.5 rounded-sm flex items-center text-[10px] ${
                           node.status === "operational"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                            ? "bg-emerald-50 dark:bg-emerald-800 text-emerald-700 dark:text-emerald-200 border border-emerald-100 dark:border-emerald-900"
                             : node.status === "degraded"
-                            ? "bg-amber-50 text-amber-700 border border-amber-100"
-                            : "bg-red-50 text-red-700 border border-red-100"
+                            ? "bg-amber-50 dark:bg-amber-800 text-amber-700 dark:text-amber-200 border border-amber-100 dark:border-amber-900"
+                            : "bg-red-50 dark:bg-red-800 text-red-700 dark:text-red-200 border border-red-100 dark:border-red-900"
                         }`}
                       >
                         <div
                           className={`w-1.5 h-1.5 rounded-full mr-1 ${
                             node.status === "operational"
-                              ? "bg-emerald-500"
+                              ? "bg-emerald-500 dark:bg-emerald-400"
                               : node.status === "degraded"
-                              ? "bg-amber-500"
-                              : "bg-red-500"
+                              ? "bg-amber-500 dark:bg-amber-400"
+                              : "bg-red-500 dark:bg-red-400"
                           } ${
                             node.status !== "operational" ? "animate-pulse" : ""
                           }`}
@@ -541,16 +541,14 @@ export default function SystemHealthDashboard() {
                       </div>
                     ))}
                   </div>
-
-                  {/* Last Incident */}
-                  <div className="mt-2 pt-1 border-t border-gray-100 text-[10px] text-gray-500">
-                    <span className="font-medium text-indigo-500">
+                  <div className="mt-2 pt-1 border-t border-gray-100 dark:border-gray-700 text-[10px] text-gray-500 dark:text-gray-400">
+                    <span className="font-medium text-indigo-500 dark:text-indigo-400">
                       Last incident:
                     </span>
                     <span
                       className={
                         service.status === "down"
-                          ? "text-red-500 font-medium"
+                          ? "text-red-500 dark:text-red-400 font-medium"
                           : ""
                       }
                     >
