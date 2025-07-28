@@ -4,13 +4,13 @@ import './index.css'
 import './styles/animation.css';
 import App from './App.tsx'
 import { Toaster } from 'react-hot-toast'
+import { ThemeProvider } from './context/ThemeContext.tsx';
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-    <Toaster
-      position="top-center"
-      reverseOrder={false}
-    />
-  </StrictMode>,
-)
+    <ThemeProvider>
+      <App />
+      <Toaster position="top-center" reverseOrder={false} />
+    </ThemeProvider>
+  </StrictMode>
+);
