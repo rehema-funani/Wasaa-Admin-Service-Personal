@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   ArrowLeft,
   Calendar,
@@ -17,19 +17,23 @@ import {
   Tag,
   Info,
   Wallet,
-  CircleDollarSign
-} from 'lucide-react';
-import financeService from '../../../../api/services/finance';
-import { useNavigate, useParams } from 'react-router-dom';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+  CircleDollarSign,
+} from "lucide-react";
+import financeService from "../../../../api/services/finance";
+import { useNavigate, useParams } from "react-router-dom";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const TransactionReceiptPage = () => {
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
+  const [notification, setNotification] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
   const { id } = useParams();
   const navigate = useNavigate();
   const receiptRef = useRef(null);
@@ -37,7 +41,7 @@ const TransactionReceiptPage = () => {
   useEffect(() => {
     const fetchTransaction = async () => {
       if (!id) {
-        setError('No transaction ID provided');
+        setError("No transaction ID provided");
         setLoading(false);
         return;
       }
@@ -47,11 +51,11 @@ const TransactionReceiptPage = () => {
         if (response.status && response.transaction) {
           setTransaction(response.transaction);
         } else {
-          setError('Failed to load transaction details');
+          setError("Failed to load transaction details");
         }
       } catch (err) {
-        setError('An error occurred while fetching transaction data');
-        console.error('Error fetching transaction:', err);
+        setError("An error occurred while fetching transaction data");
+        console.error("Error fetching transaction:", err);
       } finally {
         setLoading(false);
       }
@@ -65,9 +69,12 @@ const TransactionReceiptPage = () => {
   };
 
   // Show notification
-  const showNotification = (message, type = 'success') => {
+  const showNotification = (message, type = "success") => {
     setNotification({ show: true, message, type });
-    setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
+    setTimeout(
+      () => setNotification({ show: false, message: "", type: "" }),
+      3000
+    );
   };
 
   // Copy to clipboard function
@@ -81,24 +88,26 @@ const TransactionReceiptPage = () => {
   const shareTransaction = async () => {
     const shareData = {
       title: `Transaction Receipt: ${transaction.reference}`,
-      text: `Transaction of ${formatCurrency(transaction.amount)} on ${formatDate(transaction.createdAt)}`,
-      url: window.location.href
+      text: `Transaction of ${formatCurrency(
+        transaction.amount
+      )} on ${formatDate(transaction.createdAt)}`,
+      url: window.location.href,
     };
 
     try {
       if (navigator.share && navigator.canShare(shareData)) {
         await navigator.share(shareData);
-        showNotification('Transaction shared successfully');
+        showNotification("Transaction shared successfully");
       } else {
         // Fallback to copying URL to clipboard
         copyToClipboard(window.location.href);
-        showNotification('Transaction URL copied to clipboard');
+        showNotification("Transaction URL copied to clipboard");
       }
     } catch (error) {
-      console.error('Error sharing transaction:', error);
+      console.error("Error sharing transaction:", error);
       // Fallback to copying URL
       copyToClipboard(window.location.href);
-      showNotification('Transaction URL copied to clipboard');
+      showNotification("Transaction URL copied to clipboard");
     }
   };
 
@@ -110,114 +119,128 @@ const TransactionReceiptPage = () => {
   // Download functionality
   const downloadReceipt = async () => {
     if (!receiptRef.current) {
-      showNotification('Could not generate receipt', 'error');
+      showNotification("Could not generate receipt", "error");
       return;
     }
 
     try {
-      setNotification({ show: true, message: 'Generating PDF...', type: 'info' });
+      setNotification({
+        show: true,
+        message: "Generating PDF...",
+        type: "info",
+      });
 
       const element = receiptRef.current;
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff'
+        backgroundColor: "#ffffff",
       });
 
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL("image/png");
 
       // A4 dimensions: 210 × 297 mm
       const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
       });
 
       const imgWidth = 210 - 40; // A4 width with margins
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
-      pdf.save(`Transaction_${transaction.reference}_${formatDateForFilename(transaction.createdAt)}.pdf`);
+      pdf.addImage(imgData, "PNG", 20, 20, imgWidth, imgHeight);
+      pdf.save(
+        `Transaction_${transaction.reference}_${formatDateForFilename(
+          transaction.createdAt
+        )}.pdf`
+      );
 
-      showNotification('Receipt downloaded successfully');
+      showNotification("Receipt downloaded successfully");
     } catch (error) {
-      console.error('Error downloading receipt:', error);
-      showNotification('Failed to download receipt', 'error');
+      console.error("Error downloading receipt:", error);
+      showNotification("Failed to download receipt", "error");
     }
   };
 
   const formatDateForFilename = (dateString) => {
     try {
       const date = new Date(dateString);
-      return date.toISOString().split('T')[0];
+      return date.toISOString().split("T")[0];
     } catch (error) {
-      return 'unknown-date';
+      return "unknown-date";
     }
   };
 
   const formatCurrency = (amount) => {
     const numAmount = parseFloat(amount) || 0;
-    return new Intl.NumberFormat('en-KE', {
-      style: 'currency',
-      currency: 'KES',
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(numAmount);
   };
 
   const formatDate = (dateString) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     } catch (error) {
-      return 'Invalid Date';
+      return "Invalid Date";
     }
   };
 
   const formatTime = (dateString) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
+      return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
       });
     } catch (error) {
-      return '--:--';
+      return "--:--";
     }
   };
 
   const getTransactionIcon = (type) => {
     switch (type) {
-      case 'RECEIVE':
-        return <ArrowDownToLine className="text-emerald-500" />;
-      case 'SEND':
-        return <ArrowUpFromLine className="text-indigo-500" />;
-      case 'TRANSFER':
-        return <ArrowLeftRight className="text-blue-500" />;
+      case "RECEIVE":
+        return (
+          <ArrowDownToLine className="text-emerald-500 dark:text-emerald-400" />
+        );
+      case "SEND":
+        return (
+          <ArrowUpFromLine className="text-indigo-500 dark:text-indigo-400" />
+        );
+      case "TRANSFER":
+        return <ArrowLeftRight className="text-blue-500 dark:text-blue-400" />;
       default:
-        return <CircleDollarSign className="text-blue-500" />;
+        return (
+          <CircleDollarSign className="text-blue-500 dark:text-blue-400" />
+        );
     }
   };
 
   const getTransactionTypeLabel = (type) => {
     switch (type) {
-      case 'RECEIVE':
-        return 'Money Received';
-      case 'SEND':
-        return 'Money Sent';
-      case 'TRANSFER':
-        return 'Transfer';
-      case 'DEPOSIT':
-        return 'Deposit';
-      case 'WITHDRAW':
-        return 'Withdrawal';
+      case "RECEIVE":
+        return "Money Received";
+      case "SEND":
+        return "Money Sent";
+      case "TRANSFER":
+        return "Transfer";
+      case "DEPOSIT":
+        return "Deposit";
+      case "WITHDRAW":
+        return "Withdrawal";
       default:
         return type;
     }
@@ -225,43 +248,48 @@ const TransactionReceiptPage = () => {
 
   const getTransactionColor = (type) => {
     switch (type) {
-      case 'RECEIVE':
-        return 'emerald';
-      case 'SEND':
-        return 'indigo';
-      case 'TRANSFER':
-        return 'blue';
-      case 'DEPOSIT':
-        return 'green';
-      case 'WITHDRAW':
-        return 'amber';
+      case "RECEIVE":
+        return "emerald";
+      case "SEND":
+        return "indigo";
+      case "TRANSFER":
+        return "blue";
+      case "DEPOSIT":
+        return "green";
+      case "WITHDRAW":
+        return "amber";
       default:
-        return 'gray';
+        return "gray";
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'COMPLETED':
-        return 'bg-emerald-50 text-emerald-700';
-      case 'PENDING':
-        return 'bg-amber-50 text-amber-700';
-      case 'FAILED':
-        return 'bg-red-50 text-red-700';
+      case "COMPLETED":
+        return "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300";
+      case "PENDING":
+        return "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300";
+      case "FAILED":
+        return "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300";
       default:
-        return 'bg-gray-50 text-gray-700';
+        return "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 dark:from-gray-900 to-blue-50 dark:to-gray-800 flex items-center justify-center">
         <div className="flex flex-col items-center">
           <div className="w-16 h-16 relative">
-            <div className="w-16 h-16 rounded-full border-[3px] border-blue-100 border-t-blue-500 animate-spin absolute"></div>
-            <div className="w-16 h-16 rounded-full border-[3px] border-transparent border-b-blue-300 animate-spin absolute" style={{ animationDuration: '1.5s' }}></div>
+            <div className="w-16 h-16 rounded-full border-[3px] border-blue-100 dark:border-blue-800 border-t-blue-500 dark:border-t-blue-400 animate-spin absolute"></div>
+            <div
+              className="w-16 h-16 rounded-full border-[3px] border-transparent border-b-blue-300 dark:border-b-blue-600 animate-spin absolute"
+              style={{ animationDuration: "1.5s" }}
+            ></div>
           </div>
-          <p className="mt-6 text-gray-600 font-medium">Loading transaction...</p>
+          <p className="mt-6 text-gray-600 dark:text-gray-400 font-medium">
+            Loading transaction...
+          </p>
         </div>
       </div>
     );
@@ -269,16 +297,20 @@ const TransactionReceiptPage = () => {
 
   if (error || !transaction) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
-        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-xl text-center max-w-md mx-auto">
-          <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 dark:from-gray-900 to-blue-50 dark:to-gray-800 flex items-center justify-center p-6">
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-slate-100 dark:border-gray-700 shadow-xl text-center max-w-md mx-auto">
+          <div className="w-20 h-20 bg-red-50 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
             <FileText size={32} className="text-red-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">Transaction Not Found</h2>
-          <p className="text-gray-600 mb-8">{error || "We couldn't locate the requested transaction record."}</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+            Transaction Not Found
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
+            {error || "We couldn't locate the requested transaction record."}
+          </p>
           <button
-            onClick={() => navigate('/admin/finance/transactions')}
-            className="px-8 py-3 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-600 transition-colors shadow-lg shadow-blue-100"
+            onClick={() => navigate("/admin/finance/transactions")}
+            className="px-8 py-3 bg-blue-500 dark:bg-blue-600 text-white rounded-full font-medium hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-blue-900/20"
           >
             Return to Transactions
           </button>
@@ -287,7 +319,8 @@ const TransactionReceiptPage = () => {
     );
   }
 
-  const isCredit = transaction.type === 'RECEIVE' || transaction.type === 'DEPOSIT';
+  const isCredit =
+    transaction.type === "RECEIVE" || transaction.type === "DEPOSIT";
   const transactionDate = formatDate(transaction.createdAt);
   const transactionTime = formatTime(transaction.createdAt);
 
@@ -298,13 +331,13 @@ const TransactionReceiptPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm print:hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 dark:from-gray-900 to-blue-50 dark:to-gray-800">
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-slate-100 dark:border-gray-700 shadow-sm print:hidden">
         <div className="max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={navigateBack}
-              className="flex items-center space-x-2 text-slate-600 hover:text-slate-900 transition"
+              className="flex items-center space-x-2 text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 transition"
             >
               <ArrowLeft size={18} />
               <span className="font-medium">Back</span>
@@ -313,21 +346,21 @@ const TransactionReceiptPage = () => {
             <div className="flex items-center space-x-3">
               <button
                 onClick={shareTransaction}
-                className="flex items-center px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition"
+                className="flex items-center px-4 py-2 text-sm text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-full transition"
               >
                 <Share size={16} className="mr-2" />
                 Share
               </button>
               <button
                 onClick={printReceipt}
-                className="flex items-center px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition"
+                className="flex items-center px-4 py-2 text-sm text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-full transition"
               >
                 <Printer size={16} className="mr-2" />
                 Print
               </button>
               <button
                 onClick={downloadReceipt}
-                className="flex items-center px-5 py-2 text-sm bg-blue-500 text-white rounded-full hover:bg-blue-600 transition shadow-md shadow-blue-100"
+                className="flex items-center px-5 py-2 text-sm bg-blue-500 dark:bg-blue-600 text-white rounded-full hover:bg-blue-600 dark:hover:bg-blue-700 transition shadow-md shadow-blue-100 dark:shadow-blue-900/20"
               >
                 <Download size={16} className="mr-2" />
                 Download
@@ -339,30 +372,39 @@ const TransactionReceiptPage = () => {
 
       <div className="max-w-5xl mx-auto pb-20 pt-8">
         <div className="mb-10 text-center">
-          <h1 className="text-blue-500 text-xl font-medium mb-1">
+          <h1 className="text-blue-500 dark:text-blue-400 text-xl font-medium mb-1">
             Transaction Receipt
           </h1>
-          <h2 className="text-3xl font-bold text-slate-800 mb-1">
+          <h2 className="text-3xl font-bold text-slate-800 dark:text-gray-100 mb-1">
             {getTransactionTypeLabel(transaction.type)}
           </h2>
-          <div className={`inline-flex items-center px-3 py-1 ${getStatusColor(transaction.status)} text-xs font-medium rounded-full`}>
+          <div
+            className={`inline-flex items-center px-3 py-1 ${getStatusColor(
+              transaction.status
+            )} text-xs font-medium rounded-full`}
+          >
             {transaction.status}
           </div>
         </div>
 
         {/* Main Receipt Card - Add ref for PDF generation */}
         <div className="mx-auto px-6 mb-8">
-          <div ref={receiptRef} className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          <div
+            ref={receiptRef}
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
+          >
             {/* Amount Section */}
-            <div className="px-8 py-10 bg-blue-50 border-b border-blue-100">
+            <div className="px-8 py-10 bg-blue-50 dark:bg-blue-900/30 border-b border-blue-100 dark:border-blue-800">
               <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center text-blue-500">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                <div className="flex items-center text-blue-500 dark:text-blue-400">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mr-3">
                     {getTransactionIcon(transaction.type)}
                   </div>
-                  <span className="text-xl font-semibold">{getTransactionTypeLabel(transaction.type)}</span>
+                  <span className="text-xl font-semibold">
+                    {getTransactionTypeLabel(transaction.type)}
+                  </span>
                 </div>
-                <div className="flex items-center space-x-2 text-slate-500 text-sm">
+                <div className="flex items-center space-x-2 text-slate-500 dark:text-gray-400 text-sm">
                   <Calendar size={16} />
                   <span>{transactionDate}</span>
                   <span className="mx-1">•</span>
@@ -372,8 +414,15 @@ const TransactionReceiptPage = () => {
               </div>
 
               <div className="text-center">
-                <div className={`text-5xl font-bold mb-3 ${isCredit ? 'text-emerald-500' : 'text-indigo-500'}`}>
-                  {isCredit ? '+' : '-'}{formatCurrency(transaction.amount)}
+                <div
+                  className={`text-5xl font-bold mb-3 ${
+                    isCredit
+                      ? "text-emerald-500 dark:text-emerald-400"
+                      : "text-indigo-500 dark:text-indigo-400"
+                  }`}
+                >
+                  {isCredit ? "+" : "-"}
+                  {formatCurrency(transaction.amount)}
                 </div>
               </div>
             </div>
@@ -382,7 +431,7 @@ const TransactionReceiptPage = () => {
             <div className="px-8 py-8">
               {/* Transaction Identifiers */}
               <div className="mb-10">
-                <h3 className="text-slate-400 uppercase text-xs font-semibold tracking-wider mb-4">
+                <h3 className="text-slate-400 dark:text-gray-500 uppercase text-xs font-semibold tracking-wider mb-4">
                   Transaction Details
                 </h3>
 
@@ -392,14 +441,24 @@ const TransactionReceiptPage = () => {
                     className="group flex items-start space-x-4 cursor-pointer"
                     onClick={() => copyToClipboard(transaction.id)}
                   >
-                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
-                      <Hash size={18} className="text-blue-500" />
+                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                      <Hash
+                        size={18}
+                        className="text-blue-500 dark:text-blue-400"
+                      />
                     </div>
                     <div className="flex-grow">
-                      <p className="text-slate-500 text-sm mb-1">Transaction ID</p>
+                      <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                        Transaction ID
+                      </p>
                       <div className="flex items-center">
-                        <p className="text-slate-800 font-mono text-sm truncate">{transaction.id}</p>
-                        <Copy size={14} className="ml-2 text-slate-400 opacity-0 group-hover:opacity-100 transition" />
+                        <p className="text-slate-800 dark:text-gray-200 font-mono text-sm truncate">
+                          {transaction.id}
+                        </p>
+                        <Copy
+                          size={14}
+                          className="ml-2 text-slate-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition"
+                        />
                       </div>
                     </div>
                   </div>
@@ -409,14 +468,24 @@ const TransactionReceiptPage = () => {
                     className="group flex items-start space-x-4 cursor-pointer"
                     onClick={() => copyToClipboard(transaction.reference)}
                   >
-                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
-                      <Tag size={18} className="text-blue-500" />
+                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                      <Tag
+                        size={18}
+                        className="text-blue-500 dark:text-blue-400"
+                      />
                     </div>
                     <div className="flex-grow">
-                      <p className="text-slate-500 text-sm mb-1">Reference</p>
+                      <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                        Reference
+                      </p>
                       <div className="flex items-center">
-                        <p className="text-slate-800 font-medium">{transaction.reference}</p>
-                        <Copy size={14} className="ml-2 text-slate-400 opacity-0 group-hover:opacity-100 transition" />
+                        <p className="text-slate-800 dark:text-gray-200 font-medium">
+                          {transaction.reference}
+                        </p>
+                        <Copy
+                          size={14}
+                          className="ml-2 text-slate-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition"
+                        />
                       </div>
                     </div>
                   </div>
@@ -425,52 +494,85 @@ const TransactionReceiptPage = () => {
 
               {/* Amount & Wallet Details */}
               <div className="mb-10">
-                <h3 className="text-slate-400 uppercase text-xs font-semibold tracking-wider mb-4">
+                <h3 className="text-slate-400 dark:text-gray-500 uppercase text-xs font-semibold tracking-wider mb-4">
                   Amount & Wallet Details
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Amount Details */}
-                  <div className="bg-slate-50 rounded-2xl p-6">
+                  <div className="bg-slate-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-600">
                     <div className="mb-6">
-                      <p className="text-slate-500 text-sm mb-1">Transaction Amount</p>
-                      <p className={`text-2xl font-bold ${isCredit ? 'text-emerald-500' : 'text-indigo-500'}`}>
+                      <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                        Transaction Amount
+                      </p>
+                      <p
+                        className={`text-2xl font-bold ${
+                          isCredit
+                            ? "text-emerald-500 dark:text-emerald-400"
+                            : "text-indigo-500 dark:text-indigo-400"
+                        }`}
+                      >
                         {formatCurrency(transaction.amount)}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-slate-500 text-sm mb-1">Debit</p>
-                        <p className="text-slate-800 font-mono">{formatCurrency(transaction.debit)}</p>
+                        <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                          Debit
+                        </p>
+                        <p className="text-slate-800 dark:text-gray-200 font-mono">
+                          {formatCurrency(transaction.debit)}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-slate-500 text-sm mb-1">Credit</p>
-                        <p className="text-slate-800 font-mono">{formatCurrency(transaction.credit)}</p>
+                        <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                          Credit
+                        </p>
+                        <p className="text-slate-800 dark:text-gray-200 font-mono">
+                          {formatCurrency(transaction.credit)}
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   {/* Wallet Information */}
-                  <div className="bg-slate-50 rounded-2xl p-6">
+                  <div className="bg-slate-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-600">
                     <div className="flex items-center mb-4">
-                      <Wallet size={16} className="text-slate-500 mr-2" />
-                      <p className="text-slate-800 font-semibold">Wallet Information</p>
+                      <Wallet
+                        size={16}
+                        className="text-slate-500 dark:text-gray-400 mr-2"
+                      />
+                      <p className="text-slate-800 dark:text-gray-200 font-semibold">
+                        Wallet Information
+                      </p>
                     </div>
 
                     <div className="mb-4">
-                      <p className="text-slate-500 text-sm mb-1">Available Balance</p>
-                      <p className="text-emerald-500 text-2xl font-bold">
+                      <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                        Available Balance
+                      </p>
+                      <p className="text-emerald-500 dark:text-emerald-400 text-2xl font-bold">
                         {formattedBalance}
                       </p>
                     </div>
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-slate-500 text-xs">Wallet Type</p>
-                        <p className="text-slate-800 capitalize">{transaction.wallet.type}</p>
+                        <p className="text-slate-500 dark:text-gray-400 text-xs">
+                          Wallet Type
+                        </p>
+                        <p className="text-slate-800 dark:text-gray-200 capitalize">
+                          {transaction.wallet.type}
+                        </p>
                       </div>
-                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${transaction.wallet.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+                      <div
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          transaction.wallet.status === "Active"
+                            ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
+                            : "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300"
+                        }`}
+                      >
                         {transaction.wallet.status}
                       </div>
                     </div>
@@ -480,18 +582,24 @@ const TransactionReceiptPage = () => {
 
               {/* Description & Additional Details */}
               <div>
-                <h3 className="text-slate-400 uppercase text-xs font-semibold tracking-wider mb-4">
+                <h3 className="text-slate-400 dark:text-gray-500 uppercase text-xs font-semibold tracking-wider mb-4">
                   Additional Information
                 </h3>
 
-                <div className="bg-slate-50 rounded-2xl p-6">
+                <div className="bg-slate-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-600">
                   <div className="mb-6">
                     <div className="flex items-start">
-                      <Info size={16} className="text-slate-500 mr-3 mt-0.5" />
+                      <Info
+                        size={16}
+                        className="text-slate-500 dark:text-gray-400 mr-3 mt-0.5"
+                      />
                       <div>
-                        <p className="text-slate-700 font-medium mb-1">Description</p>
-                        <p className="text-slate-600">
-                          {transaction.description || 'No description provided for this transaction'}
+                        <p className="text-slate-700 dark:text-gray-300 font-medium mb-1">
+                          Description
+                        </p>
+                        <p className="text-slate-600 dark:text-gray-400">
+                          {transaction.description ||
+                            "No description provided for this transaction"}
                         </p>
                       </div>
                     </div>
@@ -500,10 +608,17 @@ const TransactionReceiptPage = () => {
                   {transaction.counterpartyId && (
                     <div>
                       <div className="flex items-start">
-                        <ArrowLeftRight size={16} className="text-slate-500 mr-3 mt-0.5" />
+                        <ArrowLeftRight
+                          size={16}
+                          className="text-slate-500 dark:text-gray-400 mr-3 mt-0.5"
+                        />
                         <div>
-                          <p className="text-slate-700 font-medium mb-1">Counterparty</p>
-                          <p className="text-slate-600 font-mono text-sm">{transaction.counterpartyId}</p>
+                          <p className="text-slate-700 dark:text-gray-300 font-medium mb-1">
+                            Counterparty
+                          </p>
+                          <p className="text-slate-600 dark:text-gray-400 font-mono text-sm">
+                            {transaction.counterpartyId}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -513,16 +628,19 @@ const TransactionReceiptPage = () => {
             </div>
 
             {/* Verification Footer */}
-            <div className="px-8 py-5 bg-slate-50 border-t border-slate-100">
+            <div className="px-8 py-5 bg-slate-50 dark:bg-gray-700/50 border-t border-slate-100 dark:border-gray-600">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <Shield size={16} className="text-blue-500 mr-2" />
-                  <p className="text-sm text-slate-600">
+                  <Shield
+                    size={16}
+                    className="text-blue-500 dark:text-blue-400 mr-2"
+                  />
+                  <p className="text-sm text-slate-600 dark:text-gray-400">
                     This is an official transaction record
                   </p>
                 </div>
 
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-gray-400">
                   {transactionDate} • {transactionTime}
                 </p>
               </div>
@@ -532,8 +650,8 @@ const TransactionReceiptPage = () => {
 
         <div className="text-center print:hidden">
           <button
-            onClick={() => navigate('/admin/finance/transactions')}
-            className="px-6 py-2.5 text-blue-500 hover:text-blue-600 font-medium transition-colors"
+            onClick={() => navigate("/admin/finance/transactions")}
+            className="px-6 py-2.5 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium transition-colors"
           >
             Return to Transaction Registry
           </button>
@@ -541,14 +659,22 @@ const TransactionReceiptPage = () => {
       </div>
 
       {copied && (
-        <div className="fixed bottom-6 right-6 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center print:hidden">
+        <div className="fixed bottom-6 right-6 bg-slate-800 dark:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center print:hidden border border-gray-600">
           <CheckCircle size={16} className="mr-2 text-emerald-400" />
           <span>Copied to clipboard</span>
         </div>
       )}
 
       {notification.show && (
-        <div className={`fixed bottom-6 right-6 ${notification.type === 'error' ? 'bg-red-600' : notification.type === 'info' ? 'bg-blue-600' : 'bg-slate-800'} text-white px-4 py-2 rounded-lg shadow-lg flex items-center print:hidden`}>
+        <div
+          className={`fixed bottom-6 right-6 ${
+            notification.type === "error"
+              ? "bg-red-600"
+              : notification.type === "info"
+              ? "bg-blue-600"
+              : "bg-slate-800 dark:bg-gray-700"
+          } text-white px-4 py-2 rounded-lg shadow-lg flex items-center print:hidden border border-gray-600`}
+        >
           <CheckCircle size={16} className="mr-2 text-white" />
           <span>{notification.message}</span>
         </div>
