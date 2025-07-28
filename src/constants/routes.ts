@@ -79,11 +79,6 @@ const routes: Route[] = [
               path: '/admin/finance/user-wallets',
               title: 'Client Accounts',
             },
-            // {
-            //   type: 'link',
-            //   path: '/admin/finance/withdrawals',
-            //   title: 'Withdrawal Requests',
-            // },
             {
               type: 'link',
               path: '/admin/finance/top-ups',
@@ -283,13 +278,6 @@ const routes: Route[] = [
           icon: UsersIcon,
           description: 'Service Level Agreements'
         },
-        // {
-        //   type: 'link',
-        //   path: '/admin/support/agents',
-        //   title: 'Agents',
-        //   icon: UsersIcon,
-        //   description: 'Support agent management & team'
-        // },
         {
           type: 'link',
           path: '/admin/support/categories',
