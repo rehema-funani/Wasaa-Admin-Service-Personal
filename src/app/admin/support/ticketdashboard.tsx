@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -12,8 +12,8 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
-} from 'recharts';
+  Cell,
+} from "recharts";
 import {
   Clock,
   Filter,
@@ -28,9 +28,9 @@ import {
   ArrowUp,
   ArrowDown,
   BarChart2,
-  Users
-} from 'lucide-react';
-import supportService from '../../../api/services/support';
+  Users,
+} from "lucide-react";
+import supportService from "../../../api/services/support";
 
 // Interfaces based on the actual API response
 interface StatusCount {
@@ -85,25 +85,34 @@ interface CategoryData {
   color: string;
 }
 
-const categoryMap: Record<string, { name: string, color: string }> = {
-  "ea930140-6d54-430d-9563-3bfb2447e8c8": { name: "Wallet & Payments", color: "#4ECDC4" },
-  "b3d14152-a343-4ef9-9c01-4fbf4a31dc37": { name: "Livestream Issues", color: "#45B7D1" },
-  "06361ce4-4e0a-4371-a740-838bfaebbe60": { name: "Account Issues", color: "#FF6B6B" }
+const categoryMap: Record<string, { name: string; color: string }> = {
+  "ea930140-6d54-430d-9563-3bfb2447e8c8": {
+    name: "Wallet & Payments",
+    color: "#4ECDC4",
+  },
+  "b3d14152-a343-4ef9-9c01-4fbf4a31dc37": {
+    name: "Livestream Issues",
+    color: "#45B7D1",
+  },
+  "06361ce4-4e0a-4371-a740-838bfaebbe60": {
+    name: "Account Issues",
+    color: "#FF6B6B",
+  },
 };
 
 // Status colors
 const statusColors: Record<string, string> = {
-  "OPEN": "#3b82f6",
-  "IN_PROGRESS": "#f59e0b",
-  "RESOLVED": "#10b981",
-  "CLOSED": "#6b7280"
+  OPEN: "#3b82f6",
+  IN_PROGRESS: "#f59e0b",
+  RESOLVED: "#10b981",
+  CLOSED: "#6b7280",
 };
 
 const priorityColors: Record<string, string> = {
-  "LOW": "#10b981",
-  "MEDIUM": "#f59e0b",
-  "HIGH": "#f97316",
-  "CRITICAL": "#ef4444"
+  LOW: "#10b981",
+  MEDIUM: "#f59e0b",
+  HIGH: "#f97316",
+  CRITICAL: "#ef4444",
 };
 
 const generateMockTrendData = () => {
@@ -113,12 +122,15 @@ const generateMockTrendData = () => {
   for (let i = 6; i >= 0; i--) {
     const date = new Date();
     date.setDate(today.getDate() - i);
-    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const dateStr = date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
 
     data.push({
       date: dateStr,
       created: Math.floor(Math.random() * 10) + 1,
-      resolved: Math.floor(Math.random() * 8) + 1
+      resolved: Math.floor(Math.random() * 8) + 1,
     });
   }
 
@@ -131,8 +143,10 @@ export default function TicketDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState({
-    dateFrom: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
-    dateTo: new Date().toISOString().split('T')[0]
+    dateFrom: new Date(new Date().setDate(new Date().getDate() - 30))
+      .toISOString()
+      .split("T")[0],
+    dateTo: new Date().toISOString().split("T")[0],
   });
   const [filterOpen, setFilterOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -144,16 +158,16 @@ export default function TicketDashboardPage() {
       try {
         const response = await supportService.getTicketStats({
           dateFrom: dateRange.dateFrom,
-          dateTo: dateRange.dateTo
+          dateTo: dateRange.dateTo,
         });
 
         if (response.success) {
           setStats(response.data.statistics);
         } else {
-          setError('Failed to fetch ticket statistics');
+          setError("Failed to fetch ticket statistics");
         }
       } catch (err) {
-        setError('Failed to fetch ticket statistics');
+        setError("Failed to fetch ticket statistics");
         console.error(err);
       } finally {
         setLoading(false);
@@ -168,33 +182,36 @@ export default function TicketDashboardPage() {
     if (!stats) return null;
 
     // Transform status data
-    const statusData: StatusData[] = stats.byStatus.map(item => ({
+    const statusData: StatusData[] = stats.byStatus.map((item) => ({
       status: item.status,
       count: item._count,
-      color: statusColors[item.status] || '#6b7280'
+      color: statusColors[item.status] || "#6b7280",
     }));
 
     // Get counts by status
     const getStatusCount = (status: string): number => {
-      const item = stats.byStatus.find(s => s.status === status);
+      const item = stats.byStatus.find((s) => s.status === status);
       return item ? item._count : 0;
     };
 
     // Transform priority data
-    const priorityData: PriorityData[] = stats.byPriority.map(item => ({
+    const priorityData: PriorityData[] = stats.byPriority.map((item) => ({
       priority: item.priority,
       count: item._count,
-      color: priorityColors[item.priority] || '#6b7280'
+      color: priorityColors[item.priority] || "#6b7280",
     }));
 
     // Transform category data
-    const categoryData: CategoryData[] = stats.byCategory.map(item => {
-      const category = categoryMap[item.categoryId] || { name: `Category ${item.categoryId.slice(0, 6)}`, color: "#6b7280" };
+    const categoryData: CategoryData[] = stats.byCategory.map((item) => {
+      const category = categoryMap[item.categoryId] || {
+        name: `Category ${item.categoryId.slice(0, 6)}`,
+        color: "#6b7280",
+      };
       return {
         categoryId: item.categoryId,
         categoryName: category.name,
         count: item._count,
-        color: category.color
+        color: category.color,
       };
     });
 
@@ -203,21 +220,21 @@ export default function TicketDashboardPage() {
 
     return {
       totalTickets: stats.total,
-      openTickets: getStatusCount('OPEN'),
-      inProgressTickets: getStatusCount('IN_PROGRESS'),
-      resolvedTickets: getStatusCount('RESOLVED'),
-      closedTickets: getStatusCount('CLOSED'),
+      openTickets: getStatusCount("OPEN"),
+      inProgressTickets: getStatusCount("IN_PROGRESS"),
+      resolvedTickets: getStatusCount("RESOLVED"),
+      closedTickets: getStatusCount("CLOSED"),
       averageResolutionTime: 120, // Mock value since it's not in the response
       statusData,
       priorityData,
       categoryData,
-      trendData
+      trendData,
     };
   }, [stats]);
 
   // Refresh data
   const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   // Format time
@@ -227,7 +244,9 @@ export default function TicketDashboardPage() {
     } else if (minutes < 1440) {
       return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
     } else {
-      return `${Math.floor(minutes / 1440)}d ${Math.floor((minutes % 1440) / 60)}h`;
+      return `${Math.floor(minutes / 1440)}d ${Math.floor(
+        (minutes % 1440) / 60
+      )}h`;
     }
   };
 
@@ -235,10 +254,16 @@ export default function TicketDashboardPage() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-3 border border-gray-200 shadow-md rounded-md">
-          <p className="text-sm font-medium">{label}</p>
+        <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 shadow-md rounded-md">
+          <p className="text-sm font-medium text-gray-900 dark:text-white">
+            {label}
+          </p>
           {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-sm" style={{ color: entry.color || entry.fill }}>
+            <p
+              key={index}
+              className="text-sm"
+              style={{ color: entry.color || entry.fill }}
+            >
               {entry.name}: {entry.value}
             </p>
           ))}
@@ -250,10 +275,12 @@ export default function TicketDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center items-center">
         <div className="text-center">
           <div className="inline-block animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
-          <p className="mt-2 text-gray-500">Loading dashboard data...</p>
+          <p className="mt-2 text-gray-500 dark:text-gray-400">
+            Loading dashboard data...
+          </p>
         </div>
       </div>
     );
@@ -261,16 +288,21 @@ export default function TicketDashboardPage() {
 
   if (error || !stats || !transformedData) {
     return (
-      <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center text-red-600 mb-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
+        <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center text-red-600 dark:text-red-400 mb-4">
             <AlertTriangle className="w-6 h-6 mr-2" />
-            <h2 className="text-xl font-semibold">{error || 'Failed to load statistics'}</h2>
+            <h2 className="text-xl font-semibold">
+              {error || "Failed to load statistics"}
+            </h2>
           </div>
-          <p className="text-gray-600 mb-4">We couldn't load the dashboard statistics. Please try again later or contact support.</p>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            We couldn't load the dashboard statistics. Please try again later or
+            contact support.
+          </p>
           <button
             onClick={handleRefresh}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Retry
@@ -281,12 +313,14 @@ export default function TicketDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Support Dashboard</h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Support Dashboard
+            </h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Overview of support ticket metrics and performance
             </p>
           </div>
@@ -295,7 +329,7 @@ export default function TicketDashboardPage() {
             <div className="relative">
               <button
                 onClick={() => setFilterOpen(!filterOpen)}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
               >
                 <Filter className="w-4 h-4 mr-2" />
                 Date Range
@@ -303,34 +337,50 @@ export default function TicketDashboardPage() {
               </button>
 
               {filterOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg z-10 border border-gray-200">
+                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg z-10 border border-gray-200 dark:border-gray-700">
                   <div className="p-4">
-                    <h3 className="text-sm font-medium text-gray-900 mb-3">Filter by date range</h3>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+                      Filter by date range
+                    </h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          From
+                        </label>
                         <input
                           type="date"
                           value={dateRange.dateFrom}
-                          onChange={(e) => setDateRange({ ...dateRange, dateFrom: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                          onChange={(e) =>
+                            setDateRange({
+                              ...dateRange,
+                              dateFrom: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          To
+                        </label>
                         <input
                           type="date"
                           value={dateRange.dateTo}
-                          onChange={(e) => setDateRange({ ...dateRange, dateTo: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                          onChange={(e) =>
+                            setDateRange({
+                              ...dateRange,
+                              dateTo: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
 
                       <div className="flex justify-end pt-2">
                         <button
                           onClick={() => setFilterOpen(false)}
-                          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                         >
                           Apply Filter
                         </button>
@@ -343,7 +393,7 @@ export default function TicketDashboardPage() {
 
             <button
               onClick={handleRefresh}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh
@@ -351,27 +401,29 @@ export default function TicketDashboardPage() {
           </div>
         </div>
 
-        {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Total Tickets */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center">
-                <div className="p-3 rounded-lg bg-indigo-50">
-                  <MessageCircle className="h-6 w-6 text-indigo-500" />
+                <div className="p-3 rounded-lg bg-indigo-50 dark:bg-indigo-900/30">
+                  <MessageCircle className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-sm font-medium text-gray-500">Total Tickets</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Total Tickets
+                  </h3>
                   <div className="flex items-baseline">
-                    <p className="text-2xl font-semibold text-gray-900">{transformedData.totalTickets}</p>
+                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                      {transformedData.totalTickets}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="px-6 py-2 bg-gray-50">
-              <div className="text-xs text-gray-500 flex justify-between items-center">
+            <div className="px-6 py-2 bg-gray-50 dark:bg-gray-700/50">
+              <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center">
                 <span>Overall volume</span>
-                <span className="flex items-center text-indigo-600">
+                <span className="flex items-center text-indigo-600 dark:text-indigo-400">
                   View all tickets
                   <ChevronDown className="h-3 w-3 ml-1 transform rotate-270" />
                 </span>
@@ -379,28 +431,37 @@ export default function TicketDashboardPage() {
             </div>
           </div>
 
-          {/* Open Tickets */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center">
-                <div className="p-3 rounded-lg bg-blue-50">
-                  <AlertTriangle className="h-6 w-6 text-blue-500" />
+                <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30">
+                  <AlertTriangle className="h-6 w-6 text-blue-500 dark:text-blue-400" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-sm font-medium text-gray-500">Open Tickets</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Open Tickets
+                  </h3>
                   <div className="flex items-baseline">
-                    <p className="text-2xl font-semibold text-gray-900">{transformedData.openTickets}</p>
-                    <p className="ml-2 text-sm text-gray-500">
-                      ({Math.round((transformedData.openTickets / transformedData.totalTickets) * 100)}%)
+                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                      {transformedData.openTickets}
+                    </p>
+                    <p className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                      (
+                      {Math.round(
+                        (transformedData.openTickets /
+                          transformedData.totalTickets) *
+                          100
+                      )}
+                      %)
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="px-6 py-2 bg-gray-50">
-              <div className="text-xs text-gray-500 flex justify-between items-center">
+            <div className="px-6 py-2 bg-gray-50 dark:bg-gray-700/50">
+              <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center">
                 <span>Needs attention</span>
-                <span className="flex items-center text-indigo-600">
+                <span className="flex items-center text-indigo-600 dark:text-indigo-400">
                   View open tickets
                   <ChevronDown className="h-3 w-3 ml-1 transform rotate-270" />
                 </span>
@@ -408,28 +469,37 @@ export default function TicketDashboardPage() {
             </div>
           </div>
 
-          {/* In Progress Tickets */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center">
-                <div className="p-3 rounded-lg bg-amber-50">
-                  <Clock className="h-6 w-6 text-amber-500" />
+                <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30">
+                  <Clock className="h-6 w-6 text-amber-500 dark:text-amber-400" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-sm font-medium text-gray-500">In Progress</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    In Progress
+                  </h3>
                   <div className="flex items-baseline">
-                    <p className="text-2xl font-semibold text-gray-900">{transformedData.inProgressTickets}</p>
-                    <p className="ml-2 text-sm text-gray-500">
-                      ({Math.round((transformedData.inProgressTickets / transformedData.totalTickets) * 100)}%)
+                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                      {transformedData.inProgressTickets}
+                    </p>
+                    <p className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                      (
+                      {Math.round(
+                        (transformedData.inProgressTickets /
+                          transformedData.totalTickets) *
+                          100
+                      )}
+                      %)
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="px-6 py-2 bg-gray-50">
-              <div className="text-xs text-gray-500 flex justify-between items-center">
+            <div className="px-6 py-2 bg-gray-50 dark:bg-gray-700/50">
+              <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center">
                 <span>Being worked on</span>
-                <span className="flex items-center text-indigo-600">
+                <span className="flex items-center text-indigo-600 dark:text-indigo-400">
                   View active tickets
                   <ChevronDown className="h-3 w-3 ml-1 transform rotate-270" />
                 </span>
@@ -437,28 +507,37 @@ export default function TicketDashboardPage() {
             </div>
           </div>
 
-          {/* Resolved Tickets */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center">
-                <div className="p-3 rounded-lg bg-green-50">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
+                <div className="p-3 rounded-lg bg-green-50 dark:bg-green-900/30">
+                  <CheckCircle className="h-6 w-6 text-green-500 dark:text-green-400" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-sm font-medium text-gray-500">Resolved</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Resolved
+                  </h3>
                   <div className="flex items-baseline">
-                    <p className="text-2xl font-semibold text-gray-900">{transformedData.resolvedTickets}</p>
-                    <p className="ml-2 text-sm text-gray-500">
-                      ({Math.round((transformedData.resolvedTickets / transformedData.totalTickets) * 100)}%)
+                    <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                      {transformedData.resolvedTickets}
+                    </p>
+                    <p className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                      (
+                      {Math.round(
+                        (transformedData.resolvedTickets /
+                          transformedData.totalTickets) *
+                          100
+                      )}
+                      %)
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="px-6 py-2 bg-gray-50">
-              <div className="text-xs text-gray-500 flex justify-between items-center">
+            <div className="px-6 py-2 bg-gray-50 dark:bg-gray-700/50">
+              <div className="text-xs text-gray-500 dark:text-gray-400 flex justify-between items-center">
                 <span>Successfully handled</span>
-                <span className="flex items-center text-indigo-600">
+                <span className="flex items-center text-indigo-600 dark:text-indigo-400">
                   View resolved tickets
                   <ChevronDown className="h-3 w-3 ml-1 transform rotate-270" />
                 </span>
@@ -467,16 +546,16 @@ export default function TicketDashboardPage() {
           </div>
         </div>
 
-        {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Tickets by Status */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900">Tickets by Status</h2>
-                <div className="flex items-center text-xs text-gray-500">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                  Tickets by Status
+                </h2>
+                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                   <span className="mr-2">Last 30 days</span>
-                  <PieChartIcon className="h-4 w-4 text-gray-400" />
+                  <PieChartIcon className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                 </div>
               </div>
             </div>
@@ -493,28 +572,35 @@ export default function TicketDashboardPage() {
                       fill="#8884d8"
                       dataKey="count"
                       nameKey="status"
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }) =>
+                        `${name}: ${(percent * 100).toFixed(0)}%`
+                      }
                     >
                       {transformedData.statusData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+                    <Legend
+                      layout="horizontal"
+                      verticalAlign="bottom"
+                      align="center"
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
             </div>
           </div>
 
-          {/* Tickets by Priority */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900">Tickets by Priority</h2>
-                <div className="flex items-center text-xs text-gray-500">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                  Tickets by Priority
+                </h2>
+                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                   <span className="mr-2">Last 30 days</span>
-                  <BarChart2 className="h-4 w-4 text-gray-400" />
+                  <BarChart2 className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                 </div>
               </div>
             </div>
@@ -525,9 +611,9 @@ export default function TicketDashboardPage() {
                     data={transformedData.priorityData}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="priority" />
-                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="priority" stroke="#9CA3AF" />
+                    <YAxis stroke="#9CA3AF" />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="count" name="Tickets">
                       {transformedData.priorityData.map((entry, index) => (
@@ -542,14 +628,15 @@ export default function TicketDashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Tickets by Category */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900">Tickets by Category</h2>
-                <div className="flex items-center text-xs text-gray-500">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                  Tickets by Category
+                </h2>
+                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                   <span className="mr-2">Last 30 days</span>
-                  <ChartBar className="h-4 w-4 text-gray-400" />
+                  <ChartBar className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                 </div>
               </div>
             </div>
@@ -561,9 +648,14 @@ export default function TicketDashboardPage() {
                     layout="vertical"
                     margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis type="category" dataKey="categoryName" width={100} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis type="number" stroke="#9CA3AF" />
+                    <YAxis
+                      type="category"
+                      dataKey="categoryName"
+                      width={100}
+                      stroke="#9CA3AF"
+                    />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="count" name="Tickets">
                       {transformedData.categoryData.map((entry, index) => (
@@ -576,14 +668,15 @@ export default function TicketDashboardPage() {
             </div>
           </div>
 
-          {/* Ticket Trend */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900">Ticket Trend</h2>
-                <div className="flex items-center text-xs text-gray-500">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                  Ticket Trend
+                </h2>
+                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                   <span className="mr-2">Last 7 days</span>
-                  <Calendar className="h-4 w-4 text-gray-400" />
+                  <Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                 </div>
               </div>
             </div>
@@ -594,9 +687,9 @@ export default function TicketDashboardPage() {
                     data={transformedData.trendData}
                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                    <XAxis dataKey="date" stroke="#9CA3AF" />
+                    <YAxis stroke="#9CA3AF" />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend />
                     <Line
@@ -624,54 +717,71 @@ export default function TicketDashboardPage() {
           </div>
         </div>
 
-        {/* Additional Stats Section */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
-          <div className="px-6 py-5 border-b border-gray-100">
-            <h2 className="text-lg font-medium text-gray-900">Performance Metrics</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden mb-8 border border-gray-200 dark:border-gray-700">
+          <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+              Performance Metrics
+            </h2>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Average Resolution Time */}
-              <div className="p-4 border border-gray-100 rounded-lg bg-gray-50">
+              <div className="p-4 border border-gray-100 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-sm font-medium text-gray-500">Avg. Resolution Time</div>
-                  <div className="p-2 rounded-md bg-amber-50">
-                    <Clock className="h-4 w-4 text-amber-500" />
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Avg. Resolution Time
+                  </div>
+                  <div className="p-2 rounded-md bg-amber-50 dark:bg-amber-900/30">
+                    <Clock className="h-4 w-4 text-amber-500 dark:text-amber-400" />
                   </div>
                 </div>
-                <div className="text-2xl font-semibold text-gray-900">{formatTime(transformedData.averageResolutionTime)}</div>
-                <div className="mt-1 text-xs text-gray-500">Average time to resolve a ticket</div>
+                <div className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  {formatTime(transformedData.averageResolutionTime)}
+                </div>
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Average time to resolve a ticket
+                </div>
               </div>
 
-              {/* First Response Time */}
-              <div className="p-4 border border-gray-100 rounded-lg bg-gray-50">
+              <div className="p-4 border border-gray-100 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-sm font-medium text-gray-500">Avg. First Response</div>
-                  <div className="p-2 rounded-md bg-indigo-50">
-                    <MessageCircle className="h-4 w-4 text-indigo-500" />
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Avg. First Response
+                  </div>
+                  <div className="p-2 rounded-md bg-indigo-50 dark:bg-indigo-900/30">
+                    <MessageCircle className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
                   </div>
                 </div>
-                <div className="text-2xl font-semibold text-gray-900">{formatTime(45)}</div>
-                <div className="mt-1 text-xs text-gray-500">Average time for first agent response</div>
+                <div className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  {formatTime(45)}
+                </div>
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Average time for first agent response
+                </div>
               </div>
 
-              {/* Customer Satisfaction */}
-              <div className="p-4 border border-gray-100 rounded-lg bg-gray-50">
+              <div className="p-4 border border-gray-100 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700/50">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-sm font-medium text-gray-500">Customer Satisfaction</div>
-                  <div className="p-2 rounded-md bg-green-50">
-                    <Users className="h-4 w-4 text-green-500" />
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    Customer Satisfaction
+                  </div>
+                  <div className="p-2 rounded-md bg-green-50 dark:bg-green-900/30">
+                    <Users className="h-4 w-4 text-green-500 dark:text-green-400" />
                   </div>
                 </div>
-                <div className="text-2xl font-semibold text-gray-900">92%</div>
-                <div className="mt-1 text-xs text-gray-500">Based on customer feedback</div>
+                <div className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  92%
+                </div>
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Based on customer feedback
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="text-sm text-gray-500 text-center">
-          Showing data from {new Date(dateRange.dateFrom).toLocaleDateString()} to {new Date(dateRange.dateTo).toLocaleDateString()}
+        <div className="text-sm text-gray-500 dark:text-gray-400 text-center">
+          Showing data from {new Date(dateRange.dateFrom).toLocaleDateString()}{" "}
+          to {new Date(dateRange.dateTo).toLocaleDateString()}
         </div>
       </div>
     </div>

@@ -63,7 +63,11 @@ const PasswordSetupPage = () => {
   };
 
   const validateForm = () => {
-    const newErrors: { password: string; confirmPassword: string; general: string } = {
+    const newErrors: {
+      password: string;
+      confirmPassword: string;
+      general: string;
+    } = {
       password: "",
       confirmPassword: "",
       general: "",
@@ -111,25 +115,26 @@ const PasswordSetupPage = () => {
   };
 
   return (
-    <div className="flex h-screen w-full bg-white">
-      <div className="hidden lg:block lg:w-2/5 bg-zinc-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-teal-500/10" />
+    <div className="flex h-screen w-full bg-white dark:bg-gray-900">
+      {/* Left Sidebar - Desktop Only */}
+      <div className="hidden lg:block lg:w-2/5 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-blue-500/10 dark:from-teal-600/20 dark:to-blue-600/20" />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.5 }}
-          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-teal-500/10"
+          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-teal-500/10 dark:bg-teal-400/10"
         />
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.5, delay: 0.2 }}
-          className="absolute bottom-1/4 right-1/4 w-32 h-32 rounded-full bg-primary-500/10"
+          className="absolute bottom-1/4 right-1/4 w-32 h-32 rounded-full bg-blue-500/10 dark:bg-blue-400/10"
         />
 
-        <div className="absolute top-20 left-10 w-24 h-24 rounded-full bg-teal-500/5" />
-        <div className="absolute bottom-20 right-10 w-36 h-36 rounded-full bg-primary-500/5" />
+        <div className="absolute top-20 left-10 w-24 h-24 rounded-full bg-teal-500/5 dark:bg-teal-400/5" />
+        <div className="absolute bottom-20 right-10 w-36 h-36 rounded-full bg-blue-500/5 dark:bg-blue-400/5" />
 
         <div className="absolute top-8 left-8 z-10">
           <img src="/chat-icon.ico" className="w-8 h-8" alt="Logo" />
@@ -144,10 +149,10 @@ const PasswordSetupPage = () => {
           >
             <div className="relative z-10">
               <div className="mb-12 text-center">
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                   Wasaachat
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Secure communication platform
                 </p>
               </div>
@@ -156,10 +161,10 @@ const PasswordSetupPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="bg-white/90 backdrop-blur-md shadow-lg rounded-2xl p-5 mb-6 border border-gray-100"
+                className="bg-white/90 dark:bg-gray-700/90 backdrop-blur-md shadow-lg rounded-2xl p-5 mb-6 border border-gray-100 dark:border-gray-600"
               >
                 <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center text-teal-500 mr-3">
+                  <div className="w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center text-teal-500 dark:text-teal-400 mr-3">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -176,10 +181,10 @@ const PasswordSetupPage = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-800">
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
                       Security First
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       Your data is always protected
                     </p>
                   </div>
@@ -192,7 +197,7 @@ const PasswordSetupPage = () => {
                       initial={{ width: "0%" }}
                       animate={{ width: "100%" }}
                       transition={{ delay: 0.5 + i * 0.2, duration: 1 }}
-                      className="h-1 bg-gradient-to-r from-teal-500 to-primary-500 rounded-full"
+                      className="h-1 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full"
                     />
                   ))}
                 </div>
@@ -202,10 +207,10 @@ const PasswordSetupPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
-                className="bg-white/90 backdrop-blur-md shadow-lg rounded-2xl p-5 border border-gray-100"
+                className="bg-white/90 dark:bg-gray-700/90 backdrop-blur-md shadow-lg rounded-2xl p-5 border border-gray-100 dark:border-gray-600"
               >
                 <div className="flex items-center mb-3">
-                  <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-500 mr-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 dark:text-blue-400 mr-3">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -222,10 +227,10 @@ const PasswordSetupPage = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-800">
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
                       Password Protection
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       Create a strong, unique password
                     </p>
                   </div>
@@ -233,22 +238,24 @@ const PasswordSetupPage = () => {
               </motion.div>
             </div>
 
-            <div className="absolute bottom-0 right-0 -mb-10 -mr-10 w-24 h-24 rounded-full bg-gradient-to-br from-primary-100/20 to-teal-100/20 backdrop-blur-md"></div>
+            <div className="absolute bottom-0 right-0 -mb-10 -mr-10 w-24 h-24 rounded-full bg-gradient-to-br from-blue-100/20 to-teal-100/20 dark:from-blue-600/10 dark:to-teal-600/10 backdrop-blur-md"></div>
           </motion.div>
         </div>
 
-        <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-white/10 to-transparent"></div>
+        <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-white/10 dark:from-gray-800/20 to-transparent"></div>
       </div>
 
-      <div className="w-full lg:w-3/5 flex items-center justify-center p-8">
+      {/* Right Panel - Password Setup Form */}
+      <div className="w-full lg:w-3/5 flex items-center justify-center p-8 bg-white dark:bg-gray-900">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           className="w-full max-w-md"
         >
+          {/* Mobile Logo */}
           <div className="flex items-center gap-2 mb-12 lg:hidden">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-teal-500 to-primary-500 flex items-center justify-center shadow-lg">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center shadow-lg">
               <svg
                 className="w-5 h-5 text-white"
                 viewBox="0 0 24 24"
@@ -271,30 +278,32 @@ const PasswordSetupPage = () => {
                 />
               </svg>
             </div>
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
               Wasaachat
             </span>
           </div>
 
+          {/* Header */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
               Set your password
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Create a secure password for your account
             </p>
           </div>
 
+          {/* Success Message */}
           {success ? (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-5 rounded-xl bg-teal-50 border border-teal-100"
+              className="mb-6 p-5 rounded-xl bg-teal-50 dark:bg-teal-900/30 border border-teal-100 dark:border-teal-600"
             >
               <div className="flex items-center">
-                <div className="flex-shrink-0 bg-teal-100 rounded-full p-2">
+                <div className="flex-shrink-0 bg-teal-100 dark:bg-teal-800/50 rounded-full p-2">
                   <svg
-                    className="w-5 h-5 text-teal-600"
+                    className="w-5 h-5 text-teal-600 dark:text-teal-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -308,10 +317,10 @@ const PasswordSetupPage = () => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-teal-800">
+                  <h3 className="text-sm font-medium text-teal-800 dark:text-teal-300">
                     Password set successfully!
                   </h3>
-                  <p className="mt-1 text-xs text-teal-700">
+                  <p className="mt-1 text-xs text-teal-700 dark:text-teal-400">
                     Redirecting you to the login page...
                   </p>
                 </div>
@@ -319,11 +328,12 @@ const PasswordSetupPage = () => {
             </motion.div>
           ) : (
             <>
+              {/* Error Message */}
               {errors.general && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-6 p-4 rounded-xl bg-red-50 border-l-4 border-red-500"
+                  className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-600"
                 >
                   <div className="flex items-start">
                     <svg
@@ -339,7 +349,7 @@ const PasswordSetupPage = () => {
                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                       />
                     </svg>
-                    <span className="text-sm text-red-700">
+                    <span className="text-sm text-red-700 dark:text-red-300">
                       {errors.general}
                     </span>
                   </div>
@@ -357,26 +367,26 @@ const PasswordSetupPage = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder=" "
                       required
-                      className={`block w-full px-4 py-3.5 text-gray-700 border ${
+                      className={`block w-full px-4 py-3.5 text-gray-700 dark:text-gray-100 border ${
                         errors.password
-                          ? "border-red-300 focus:ring-red-500"
-                          : "border-gray-200 focus:ring-teal-500"
-                      } rounded-xl bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 peer`}
+                          ? "border-red-300 dark:border-red-600 focus:ring-red-500"
+                          : "border-gray-200 dark:border-gray-600 focus:ring-teal-500"
+                      } rounded-xl bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 peer`}
                     />
                     <label
                       htmlFor="password"
                       className={`absolute text-sm ${
                         errors.password
                           ? "text-red-500"
-                          : "text-gray-500 peer-focus:text-teal-500"
-                      } duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-3`}
+                          : "text-gray-500 dark:text-gray-400 peer-focus:text-teal-500"
+                      } duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-3`}
                     >
                       New Password
                     </label>
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       {showPassword ? (
                         <svg
@@ -418,18 +428,19 @@ const PasswordSetupPage = () => {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-xs text-red-600 mt-1">
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                       {errors.password}
                     </p>
                   )}
 
+                  {/* Password Strength Indicator */}
                   {password && (
                     <div className="mt-1.5">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
                           Password strength
                         </span>
-                        <span className="text-xs font-medium">
+                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                           {passwordStrength <= 0.3 && "Weak"}
                           {passwordStrength > 0.3 &&
                             passwordStrength <= 0.6 &&
@@ -440,7 +451,7 @@ const PasswordSetupPage = () => {
                           {passwordStrength > 0.8 && "Strong"}
                         </span>
                       </div>
-                      <div className="h-1.5 w-full bg-gray-100 rounded-full">
+                      <div className="h-1.5 w-full bg-gray-100 dark:bg-gray-700 rounded-full">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${passwordStrength * 100}%` }}
@@ -452,6 +463,7 @@ const PasswordSetupPage = () => {
                   )}
                 </div>
 
+                {/* Confirm Password field */}
                 <div>
                   <div className="relative">
                     <input
@@ -461,19 +473,19 @@ const PasswordSetupPage = () => {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder=" "
                       required
-                      className={`block w-full px-4 py-3.5 text-gray-700 border ${
+                      className={`block w-full px-4 py-3.5 text-gray-700 dark:text-gray-100 border ${
                         errors.confirmPassword
-                          ? "border-red-300 focus:ring-red-500"
-                          : "border-gray-200 focus:ring-teal-500"
-                      } rounded-xl bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 peer`}
+                          ? "border-red-300 dark:border-red-600 focus:ring-red-500"
+                          : "border-gray-200 dark:border-gray-600 focus:ring-teal-500"
+                      } rounded-xl bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 peer`}
                     />
                     <label
                       htmlFor="confirm-password"
                       className={`absolute text-sm ${
                         errors.confirmPassword
                           ? "text-red-500"
-                          : "text-gray-500 peer-focus:text-teal-500"
-                      } duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-3`}
+                          : "text-gray-500 dark:text-gray-400 peer-focus:text-teal-500"
+                      } duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-800 px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-3`}
                     >
                       Confirm Password
                     </label>
@@ -482,7 +494,7 @@ const PasswordSetupPage = () => {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                     >
                       {showConfirmPassword ? (
                         <svg
@@ -524,14 +536,15 @@ const PasswordSetupPage = () => {
                     </button>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="text-xs text-red-600 mt-1">
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                       {errors.confirmPassword}
                     </p>
                   )}
                 </div>
 
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
+                {/* Password Requirements */}
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Password requirements:
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -540,8 +553,8 @@ const PasswordSetupPage = () => {
                         <div
                           className={`flex-shrink-0 w-4 h-4 rounded-full ${
                             req.met
-                              ? "bg-teal-100 text-teal-500"
-                              : "bg-gray-100 text-gray-400"
+                              ? "bg-teal-100 dark:bg-teal-900/30 text-teal-500 dark:text-teal-400"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500"
                           } flex items-center justify-center mr-2`}
                         >
                           {req.met && (
@@ -562,7 +575,9 @@ const PasswordSetupPage = () => {
                         </div>
                         <span
                           className={`text-xs ${
-                            req.met ? "text-gray-700" : "text-gray-500"
+                            req.met
+                              ? "text-gray-700 dark:text-gray-300"
+                              : "text-gray-500 dark:text-gray-400"
                           }`}
                         >
                           {req.label}
@@ -572,6 +587,7 @@ const PasswordSetupPage = () => {
                   </div>
                 </div>
 
+                {/* Submit Button */}
                 <motion.button
                   type="submit"
                   whileHover={{
@@ -580,7 +596,7 @@ const PasswordSetupPage = () => {
                       "0 10px 15px -3px rgba(45, 212, 191, 0.1), 0 4px 6px -2px rgba(45, 212, 191, 0.05)",
                   }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full flex justify-center items-center py-3.5 px-4 mt-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-primary-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200"
+                  className="w-full flex justify-center items-center py-3.5 px-4 mt-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 dark:focus:ring-offset-gray-900 transition-all duration-200"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -612,21 +628,23 @@ const PasswordSetupPage = () => {
             </>
           )}
 
+          {/* Sign In Link */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Already have an account?{" "}
               <a
                 href="/auth/login"
-                className="font-medium text-teal-500 hover:text-teal-600 transition-colors"
+                className="font-medium text-teal-500 dark:text-teal-400 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
               >
                 Sign in
               </a>
             </p>
           </div>
 
-          <div className="mt-10 pt-5 border-t border-gray-100">
+          {/* Footer */}
+          <div className="mt-10 pt-5 border-t border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-center">
-              <div className="flex items-center space-x-1 text-xs text-gray-400">
+              <div className="flex items-center space-x-1 text-xs text-gray-400 dark:text-gray-500">
                 <svg
                   className="w-3.5 h-3.5"
                   fill="none"
