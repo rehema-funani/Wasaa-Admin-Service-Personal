@@ -1199,7 +1199,6 @@ const FeeRulesPage: React.FC = () => {
                             </div>
                           </td>
 
-                          {/* Hover animation effect */}
                           {hoveredRow === rule.id && (
                             <td className="absolute inset-0 pointer-events-none overflow-hidden">
                               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/20 dark:via-indigo-900/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>

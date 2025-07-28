@@ -339,23 +339,6 @@ const SystemWalletsPage = () => {
               Manage liquidity pools, commissions, and operational funds
             </p>
           </div>
-
-          {/* <div className="flex items-center gap-2">
-            <button
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-xs shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-750 transition-all"
-              disabled={isLoading}
-            >
-              <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
-              <span>{isLoading ? "Syncing..." : "Sync Balances"}</span>
-            </button>
-
-            <button
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs shadow-sm transition-all"
-            >
-              <Plus size={14} />
-              <span>New Wallet</span>
-            </button>
-          </div> */}
         </div>
 
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center mb-5">
@@ -403,7 +386,7 @@ const SystemWalletsPage = () => {
               </button>
             </div>
 
-            <button className="p-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-750 shadow-sm">
+            <button className="p-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 shadow-sm">
               <Filter size={14} />
             </button>
           </div>
@@ -529,7 +512,7 @@ const SystemWalletsPage = () => {
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex items-center gap-2">
-                        <div className={`p-1.5 bg-neutral-50 dark:bg-neutral-750 rounded-md`}>
+                        <div className={`p-1.5 bg-neutral-50 dark:bg-neutral-800 rounded-md`}>
                           {getWalletIcon(wallet.type)}
                         </div>
                         <div>
@@ -545,7 +528,7 @@ const SystemWalletsPage = () => {
 
                       <div className="relative">
                         <button
-                          className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-750 rounded-md transition-colors text-neutral-400 dark:text-neutral-500"
+                          className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors text-neutral-400 dark:text-neutral-500"
                           onClick={(e) => {
                             e.stopPropagation();
                             setShowDropdown(showDropdown === wallet.id ? null : wallet.id);
@@ -560,7 +543,7 @@ const SystemWalletsPage = () => {
                               disabled={wallet.status === "inactive"}
                               className={`w-full text-left px-3 py-1.5 text-xs ${wallet.status === "inactive"
                                 ? "text-neutral-400 dark:text-neutral-600 cursor-not-allowed"
-                                : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-750"} flex items-center`}
+                                : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"} flex items-center`}
                               onClick={(e) => handleWalletAction(e, wallet, 'topup')}
                             >
                               <Plus size={12} className="mr-1.5" />
@@ -570,21 +553,21 @@ const SystemWalletsPage = () => {
                               disabled={wallet.status === "inactive"}
                               className={`w-full text-left px-3 py-1.5 text-xs ${wallet.status === "inactive"
                                 ? "text-neutral-400 dark:text-neutral-600 cursor-not-allowed"
-                                : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-750"} flex items-center`}
+                                : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"} flex items-center`}
                               onClick={(e) => handleWalletAction(e, wallet, 'transfer')}
                             >
                               <ArrowUpRight size={12} className="mr-1.5" />
                               Transfer
                             </button>
                             <button
-                              className="w-full text-left px-3 py-1.5 text-xs text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-750 flex items-center"
+                              className="w-full text-left px-3 py-1.5 text-xs text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 flex items-center"
                               onClick={(e) => handleWalletAction(e, wallet, 'history')}
                             >
                               <Clock size={12} className="mr-1.5" />
                               History
                             </button>
                             <button
-                              className="w-full text-left px-3 py-1.5 text-xs text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-750 flex items-center"
+                              className="w-full text-left px-3 py-1.5 text-xs text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 flex items-center"
                               onClick={(e) => handleWalletAction(e, wallet, 'settings')}
                             >
                               <Settings size={12} className="mr-1.5" />
@@ -631,17 +614,16 @@ const SystemWalletsPage = () => {
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-neutral-100 dark:divide-neutral-700">
               <thead>
-                <tr className="bg-neutral-50 dark:bg-neutral-750">
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Transaction</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Wallet</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Amount</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Date</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">Actions</th>
+                <tr className="bg-neutral-50 dark:bg-neutral-700">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Transaction</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Wallet</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Amount</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Status</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Date</th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
-                {/* If no transaction data is available, display a placeholder message */}
                 {mockTransactions.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-3 py-3 text-center text-neutral-500 dark:text-neutral-400 text-sm">
@@ -652,10 +634,10 @@ const SystemWalletsPage = () => {
                   mockTransactions.slice(0, 5).map((transaction) => {
                     const wallet = systemWallets.find(w => w.id === transaction.walletId);
                     return (
-                      <tr key={transaction.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-750">
+                      <tr key={transaction.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800">
                         <td className="px-3 py-3 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-7 w-7 rounded-md bg-neutral-100 dark:bg-neutral-750 flex items-center justify-center mr-2">
+                            <div className="flex-shrink-0 h-7 w-7 rounded-md bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mr-2">
                               {getTransactionIcon(transaction.type)}
                             </div>
                             <div>
@@ -686,7 +668,7 @@ const SystemWalletsPage = () => {
                           {formatDate(transaction.timestamp)}
                         </td>
                         <td className="px-3 py-3 whitespace-nowrap text-right">
-                          <button className="text-neutral-400 hover:text-blue-500 p-1 hover:bg-neutral-100 dark:hover:bg-neutral-750 rounded transition-colors">
+                          <button className="text-neutral-400 hover:text-blue-500 p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors">
                             <Eye size={14} />
                           </button>
                         </td>
