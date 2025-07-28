@@ -101,14 +101,14 @@ const DataTable: React.FC<DataTableProps> = ({
 
     if (isLoading) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="bg-gray-50/70">
+                            <tr className="bg-gray-50/70 dark:bg-gray-700">
                                 {selectable && (
                                     <th className="w-10 px-4 py-4">
-                                        <div className="w-5 h-5 bg-gray-200 rounded animate-pulse"></div>
+                                        <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
                                     </th>
                                 )}
                                 {columns.map(column => (
@@ -117,22 +117,22 @@ const DataTable: React.FC<DataTableProps> = ({
                                         className="px-4 py-4 text-left"
                                         style={{ width: column.width }}
                                     >
-                                        <div className="h-5 bg-gray-200 rounded animate-pulse"></div>
+                                        <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
                                     </th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {Array.from({ length: 5 }).map((_, rowIndex) => (
-                                <tr key={rowIndex} className="border-b border-gray-100 last:border-0">
+                                <tr key={rowIndex} className="border-b border-gray-100 dark:border-gray-700 last:border-0">
                                     {selectable && (
                                         <td className="px-4 py-4">
-                                            <div className="w-5 h-5 bg-gray-100 rounded animate-pulse"></div>
+                                            <div className="w-5 h-5 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"></div>
                                         </td>
                                     )}
                                     {columns.map((colIndex) => (
                                         <td key={`${rowIndex}-${colIndex}`} className="px-4 py-4">
-                                            <div className="h-5 bg-gray-100 rounded animate-pulse"></div>
+                                            <div className="h-5 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"></div>
                                         </td>
                                     ))}
                                 </tr>
@@ -146,27 +146,27 @@ const DataTable: React.FC<DataTableProps> = ({
 
     if (data.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div className="p-6 flex flex-col items-center justify-center text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                        <X size={24} className="text-gray-400" strokeWidth={1.5} />
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-3">
+                        <X size={24} className="text-gray-400 dark:text-gray-500" strokeWidth={1.5} />
                     </div>
-                    <p className="text-gray-500">{emptyMessage}</p>
+                    <p className="text-gray-500 dark:text-gray-400">{emptyMessage}</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-x-auto">
             <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead>
-                        <tr className="bg-gray-50/80 backdrop-blur-sm">
+                        <tr className="bg-gray-50/80 dark:bg-gray-800 backdrop-blur-sm">
                             {selectable && (
                                 <th className="w-10 px-4 py-3">
                                     <motion.div
-                                        className="w-5 h-5 rounded-md border border-gray-300 flex items-center justify-center cursor-pointer"
+                                        className="w-5 h-5 rounded-md border border-gray-300 dark:border-gray-600 flex items-center justify-center cursor-pointer"
                                         whileHover={{ scale: 1.1, borderColor: '#6366f1' }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={handleSelectAll}
@@ -180,7 +180,7 @@ const DataTable: React.FC<DataTableProps> = ({
                             {columns.map(column => (
                                 <th
                                     key={column.id}
-                                    className={`px-4 py-3 text-left text-xs font-medium text-gray-600 tracking-wider ${column.sortable ? 'cursor-pointer' : ''}`}
+                                    className={`px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 tracking-wider ${column.sortable ? 'cursor-pointer' : ''}`}
                                     style={{ width: column.width }}
                                     onClick={() => column.sortable && handleSort(column.id)}
                                 >
@@ -193,12 +193,12 @@ const DataTable: React.FC<DataTableProps> = ({
                                             >
                                                 {sortedColumn === column.id ? (
                                                     sortDirection === 'asc' ? (
-                                                        <SortAsc size={14} className="text-primary-600" />
+                                                        <SortAsc size={14} className="text-primary-600 dark:text-primary-400" />
                                                     ) : (
-                                                        <SortDesc size={14} className="text-primary-600" />
+                                                        <SortDesc size={14} className="text-primary-600 dark:text-primary-400" />
                                                     )
                                                 ) : (
-                                                    <SortAsc size={14} className="text-gray-400" />
+                                                    <SortAsc size={14} className="text-gray-400 dark:text-gray-500" />
                                                 )}
                                             </motion.div>
                                         )}
@@ -213,9 +213,9 @@ const DataTable: React.FC<DataTableProps> = ({
                                 <motion.tr
                                     key={row.id || index}
                                     className={`
-                    border-b border-gray-50 last:border-0 
-                    ${onRowClick ? 'cursor-pointer hover:bg-gray-50/50' : ''}
-                    ${selectedRows[row.id] ? 'bg-primary-50/50' : ''}
+                    border-b border-gray-50 last:border-0 dark:border-gray-700
+                    ${onRowClick ? 'cursor-pointer hover:bg-gray-50/50 dark:hover:bg-gray-800/50' : ''}
+                    ${selectedRows[row.id] ? 'bg-primary-50/50 dark:bg-primary-50/50' : ''}
                   `}
                                     onClick={() => onRowClick && onRowClick(row)}
                                     initial={{ opacity: 0, y: 10 }}
@@ -232,19 +232,19 @@ const DataTable: React.FC<DataTableProps> = ({
                                             <motion.div
                                                 className={`
                           w-5 h-5 rounded-md border flex items-center justify-center cursor-pointer
-                          ${selectedRows[row.id] ? 'border-primary-600 bg-primary-50' : 'border-gray-300'}
+                          ${selectedRows[row.id] ? 'border-primary-600 bg-primary-50 dark:bg-primary-50' : 'border-gray-300 dark:border-gray-600'}
                         `}
                                                 whileHover={{ scale: 1.1, borderColor: '#6366f1' }}
                                                 whileTap={{ scale: 0.95 }}
                                             >
                                                 {selectedRows[row.id] && (
-                                                    <Check size={14} className="text-primary-600" />
+                                                    <Check size={14} className="text-primary-600 dark:text-primary-400" />
                                                 )}
                                             </motion.div>
                                         </td>
                                     )}
                                     {columns.map(column => (
-                                        <td key={column.id} className="px-4 py-3.5 text-sm text-gray-700">
+                                        <td key={column.id} className="px-4 py-3.5 text-sm text-gray-700 dark:text-gray-300">
                                             {column.cell
                                                 ? column.cell(column.accessor(row), row)
                                                 : column.accessor(row)}
