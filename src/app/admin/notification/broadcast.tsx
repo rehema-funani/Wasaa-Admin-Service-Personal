@@ -8,10 +8,6 @@ import {
   MessageSquare,
   Bell,
   Calendar,
-  RefreshCw,
-  CheckCircle,
-  PauseCircle,
-  PlayCircle,
   AlertTriangle,
   ChevronDown,
   Info,
@@ -29,11 +25,9 @@ import {
 } from 'lucide-react';
 import { notificationService } from '../../../api/services/notification';
 import { useNavigate } from 'react-router-dom';
-
-const toast = {
-  success: (message: string, options?: any) => console.log('Success:', message),
-  error: (message: string, options?: any) => console.error('Error:', message)
-};
+import { StatusBadge } from '../../../elements/StatusBadge';
+import toast from 'react-hot-toast';
+import getActionButtons from '../../../elements/getActionButtons';
 
 const BroadcastsPage = () => {
   const [broadcasts, setBroadcasts] = useState<any[]>([]);
@@ -75,7 +69,6 @@ const BroadcastsPage = () => {
     }
   };
 
-  // Delete broadcast
   const handleDeleteClick = (broadcast: any) => {
     setBroadcastToDelete(broadcast);
     setShowDeleteModal(true);
@@ -126,7 +119,6 @@ const BroadcastsPage = () => {
           return;
       }
 
-      // Refresh broadcasts after action
       fetchBroadcasts();
       toast.success(`Broadcast ${actionText} successfully`);
     } catch (err) {
@@ -135,7 +127,6 @@ const BroadcastsPage = () => {
     }
   };
 
-  // UI Helper functions
   const getChannelIcon = (channel: string) => {
     switch (channel) {
       case 'email':
@@ -159,58 +150,6 @@ const BroadcastsPage = () => {
         return 'bg-violet-50 dark:bg-violet-900/20';
       default:
         return 'bg-neutral-50 dark:bg-neutral-800/50';
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'draft':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-full">
-            Draft
-          </span>
-        );
-      case 'scheduled':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 rounded-full">
-            <Calendar size={10} className="mr-1" />
-            Scheduled
-          </span>
-        );
-      case 'sending':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-300 rounded-full">
-            <RefreshCw size={10} className="mr-1 animate-spin" />
-            Sending
-          </span>
-        );
-      case 'paused':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 rounded-full">
-            <PauseCircle size={10} className="mr-1" />
-            Paused
-          </span>
-        );
-      case 'completed':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-300 rounded-full">
-            <CheckCircle size={10} className="mr-1" />
-            Completed
-          </span>
-        );
-      case 'failed':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 rounded-full">
-            <AlertTriangle size={10} className="mr-1" />
-            Failed
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded-full">
-            {status}
-          </span>
-        );
     }
   };
 
@@ -280,43 +219,7 @@ const BroadcastsPage = () => {
     );
   };
 
-  const getActionButtons = (broadcast: any) => {
-    switch (broadcast.status) {
-      case 'draft':
-      case 'scheduled':
-        return (
-          <motion.button
-            onClick={() => handleActionClick('execute', broadcast.id)}
-            className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-300 rounded-full transition-all"
-            title="Send Now"
-          >
-            <PlayCircle size={16} />
-          </motion.button>
-        );
-      case 'sending':
-        return (
-          <motion.button
-            onClick={() => handleActionClick('pause', broadcast.id)}
-            className="p-1.5 hover:bg-purple-50 dark:hover:bg-purple-900/20 text-neutral-400 hover:text-purple-600 dark:hover:text-purple-300 rounded-full transition-all"
-            title="Pause"
-          >
-            <PauseCircle size={16} />
-          </motion.button>
-        );
-      case 'paused':
-        return (
-          <motion.button
-            onClick={() => handleActionClick('resume', broadcast.id)}
-            className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-neutral-400 hover:text-emerald-600 dark:hover:text-emerald-300 rounded-full transition-all"
-            title="Resume"
-          >
-            <PlayCircle size={16} />
-          </motion.button>
-        );
-      default:
-        return null;
-    }
-  };
+  
 
   if (error) {
     return (
@@ -344,12 +247,16 @@ const BroadcastsPage = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-xl font-medium text-neutral-900 dark:text-white">Broadcast Management</h1>
-              <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-0.5">Create and manage communication campaigns</p>
+              <h1 className="text-xl font-medium text-neutral-900 dark:text-white">
+                Broadcast Management
+              </h1>
+              <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-0.5">
+                Create and manage communication campaigns
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <motion.button
-                onClick={() => navigate('/admin/communication/broadcasts/add')}
+                onClick={() => navigate("/admin/communication/broadcasts/add")}
                 className="flex items-center px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-all"
                 disabled={isLoading}
               >
@@ -361,7 +268,10 @@ const BroadcastsPage = () => {
 
           <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="relative flex-1 min-w-0">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+              />
               <input
                 type="text"
                 placeholder="Search broadcasts..."
@@ -374,38 +284,42 @@ const BroadcastsPage = () => {
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex h-9 items-center bg-neutral-100 dark:bg-neutral-700 rounded-lg p-1">
                 <button
-                  onClick={() => setStatusFilter('all')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${statusFilter === 'all'
-                    ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm'
-                    : 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white'
-                    }`}
+                  onClick={() => setStatusFilter("all")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    statusFilter === "all"
+                      ? "bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm"
+                      : "text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white"
+                  }`}
                 >
                   All
                 </button>
                 <button
-                  onClick={() => setStatusFilter('draft')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${statusFilter === 'draft'
-                    ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm'
-                    : 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white'
-                    }`}
+                  onClick={() => setStatusFilter("draft")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    statusFilter === "draft"
+                      ? "bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm"
+                      : "text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white"
+                  }`}
                 >
                   Draft
                 </button>
                 <button
-                  onClick={() => setStatusFilter('scheduled')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${statusFilter === 'scheduled'
-                    ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm'
-                    : 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white'
-                    }`}
+                  onClick={() => setStatusFilter("scheduled")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    statusFilter === "scheduled"
+                      ? "bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm"
+                      : "text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white"
+                  }`}
                 >
                   Scheduled
                 </button>
                 <button
-                  onClick={() => setStatusFilter('sending')}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${statusFilter === 'sending'
-                    ? 'bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm'
-                    : 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white'
-                    }`}
+                  onClick={() => setStatusFilter("sending")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                    statusFilter === "sending"
+                      ? "bg-white dark:bg-neutral-600 text-neutral-900 dark:text-white shadow-sm"
+                      : "text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white"
+                  }`}
                 >
                   Active
                 </button>
@@ -416,106 +330,130 @@ const BroadcastsPage = () => {
                   onClick={() => setShowFilters(!showFilters)}
                   className="h-9 px-3 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors flex items-center"
                 >
-                  <Filter size={14} className="text-neutral-600 dark:text-neutral-300 mr-1.5" />
-                  <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200">Filters</span>
-                  <ChevronDown size={14} className={`ml-1.5 text-neutral-500 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                  <Filter
+                    size={14}
+                    className="text-neutral-600 dark:text-neutral-300 mr-1.5"
+                  />
+                  <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200">
+                    Filters
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    className={`ml-1.5 text-neutral-500 transition-transform ${
+                      showFilters ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
 
                 {showFilters && (
                   <div className="absolute top-full mt-1 right-0 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 p-3 w-56 z-20">
-                    <h3 className="text-xs font-medium text-neutral-700 dark:text-neutral-200 mb-2">Channel</h3>
+                    <h3 className="text-xs font-medium text-neutral-700 dark:text-neutral-200 mb-2">
+                      Channel
+                    </h3>
                     <div className="space-y-1">
                       <button
-                        onClick={() => setChannelFilter('all')}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs ${channelFilter === 'all'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium'
-                          : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700'
-                          }`}
+                        onClick={() => setChannelFilter("all")}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs ${
+                          channelFilter === "all"
+                            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium"
+                            : "text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700"
+                        }`}
                       >
                         All Channels
                       </button>
                       <button
-                        onClick={() => setChannelFilter('email')}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center ${channelFilter === 'email'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium'
-                          : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700'
-                          }`}
+                        onClick={() => setChannelFilter("email")}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center ${
+                          channelFilter === "email"
+                            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium"
+                            : "text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700"
+                        }`}
                       >
                         <Mail size={14} className="mr-1.5" />
                         Email
                       </button>
                       <button
-                        onClick={() => setChannelFilter('sms')}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center ${channelFilter === 'sms'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium'
-                          : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700'
-                          }`}
+                        onClick={() => setChannelFilter("sms")}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center ${
+                          channelFilter === "sms"
+                            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium"
+                            : "text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700"
+                        }`}
                       >
                         <MessageSquare size={14} className="mr-1.5" />
                         SMS
                       </button>
                       <button
-                        onClick={() => setChannelFilter('push')}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center ${channelFilter === 'push'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium'
-                          : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700'
-                          }`}
+                        onClick={() => setChannelFilter("push")}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center ${
+                          channelFilter === "push"
+                            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium"
+                            : "text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700"
+                        }`}
                       >
                         <Bell size={14} className="mr-1.5" />
                         Push
                       </button>
                     </div>
 
-                    <h3 className="text-xs font-medium text-neutral-700 dark:text-neutral-200 mt-3 mb-2">Sort By</h3>
+                    <h3 className="text-xs font-medium text-neutral-700 dark:text-neutral-200 mt-3 mb-2">
+                      Sort By
+                    </h3>
                     <div className="space-y-1">
                       <button
                         onClick={() => {
-                          if (sortBy === 'scheduledAt') {
-                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                          if (sortBy === "scheduledAt") {
+                            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                           } else {
-                            setSortBy('scheduledAt');
-                            setSortOrder('desc');
+                            setSortBy("scheduledAt");
+                            setSortOrder("desc");
                           }
                         }}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center justify-between ${sortBy === 'scheduledAt'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium'
-                          : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700'
-                          }`}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center justify-between ${
+                          sortBy === "scheduledAt"
+                            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium"
+                            : "text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700"
+                        }`}
                       >
                         <div className="flex items-center">
                           <Calendar size={14} className="mr-1.5" />
                           Schedule Date
                         </div>
-                        {sortBy === 'scheduledAt' && (
+                        {sortBy === "scheduledAt" && (
                           <ChevronDown
                             size={14}
-                            className={`${sortOrder === 'asc' ? 'rotate-180' : ''}`}
+                            className={`${
+                              sortOrder === "asc" ? "rotate-180" : ""
+                            }`}
                           />
                         )}
                       </button>
 
                       <button
                         onClick={() => {
-                          if (sortBy === 'priority') {
-                            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                          if (sortBy === "priority") {
+                            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                           } else {
-                            setSortBy('priority');
-                            setSortOrder('desc');
+                            setSortBy("priority");
+                            setSortOrder("desc");
                           }
                         }}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center justify-between ${sortBy === 'priority'
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium'
-                          : 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700'
-                          }`}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs flex items-center justify-between ${
+                          sortBy === "priority"
+                            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium"
+                            : "text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700"
+                        }`}
                       >
                         <div className="flex items-center">
                           <Zap size={14} className="mr-1.5" />
                           Priority
                         </div>
-                        {sortBy === 'priority' && (
+                        {sortBy === "priority" && (
                           <ChevronDown
                             size={14}
-                            className={`${sortOrder === 'asc' ? 'rotate-180' : ''}`}
+                            className={`${
+                              sortOrder === "asc" ? "rotate-180" : ""
+                            }`}
                           />
                         )}
                       </button>
@@ -532,31 +470,34 @@ const BroadcastsPage = () => {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-64">
             <div className="w-8 h-8 border-2 border-blue-200 border-t-blue-500 rounded-full animate-spin mb-3"></div>
-            <p className="text-neutral-500 dark:text-neutral-400 text-sm">Loading broadcasts...</p>
+            <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+              Loading broadcasts...
+            </p>
           </div>
         ) : broadcasts?.length === 0 ? (
           <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm p-6">
             <div className="flex flex-col items-center justify-center text-center">
               <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-4">
-                {channelFilter === 'email' ? (
+                {channelFilter === "email" ? (
                   <Mail size={24} className="text-blue-500" />
-                ) : channelFilter === 'sms' ? (
+                ) : channelFilter === "sms" ? (
                   <MessageSquare size={24} className="text-indigo-500" />
-                ) : channelFilter === 'push' ? (
+                ) : channelFilter === "push" ? (
                   <Bell size={24} className="text-violet-500" />
                 ) : (
                   <Settings size={24} className="text-neutral-500" />
                 )}
               </div>
-              <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">No broadcasts found</h3>
+              <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">
+                No broadcasts found
+              </h3>
               <p className="text-neutral-600 dark:text-neutral-400 max-w-md mb-5 text-sm">
-                {searchQuery ?
-                  `No results found for "${searchQuery}". Try adjusting your search or filters.` :
-                  "Get started by creating your first broadcast to communicate with your users."
-                }
+                {searchQuery
+                  ? `No results found for "${searchQuery}". Try adjusting your search or filters.`
+                  : "Get started by creating your first broadcast to communicate with your users."}
               </p>
               <button
-                onClick={() => navigate('/admin/communication/broadcasts/add')}
+                onClick={() => navigate("/admin/communication/broadcasts/add")}
                 className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
               >
                 <Plus size={16} className="inline mr-1.5" />
@@ -574,14 +515,21 @@ const BroadcastsPage = () => {
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center">
-                      <div className={`flex items-center justify-center w-8 h-8 rounded-md ${getChannelBackground(broadcast.channel)}`}>
+                      <div
+                        className={`flex items-center justify-center w-8 h-8 rounded-md ${getChannelBackground(
+                          broadcast.channel
+                        )}`}
+                      >
                         {getChannelIcon(broadcast.channel)}
                       </div>
                       <div className="ml-2">
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">{broadcast.channel}</div>
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">
+                          {broadcast.channel}
+                        </div>
                         <div className="flex items-center space-x-1.5">
-                          {getStatusBadge(broadcast.status)}
-                          {broadcast.priority && getPriorityBadge(broadcast.priority)}
+                          {StatusBadge(broadcast.status)}
+                          {broadcast.priority &&
+                            getPriorityBadge(broadcast.priority)}
                         </div>
                       </div>
                     </div>
@@ -591,7 +539,11 @@ const BroadcastsPage = () => {
                         className="p-1 text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setShowBroadcastDetail(showBroadcastDetail === broadcast.id ? null : broadcast.id);
+                          setShowBroadcastDetail(
+                            showBroadcastDetail === broadcast.id
+                              ? null
+                              : broadcast.id
+                          );
                         }}
                       >
                         <MoreVertical size={16} />
@@ -600,11 +552,19 @@ const BroadcastsPage = () => {
                       {showBroadcastDetail === broadcast.id && (
                         <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-neutral-800 rounded-md shadow-lg border border-neutral-200 dark:border-neutral-700 py-1 z-10">
                           <button
-                            onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast.id}`, {
-                              state: { broadcast }
-                            })}
+                            onClick={() =>
+                              navigate(
+                                `/admin/communication/broadcasts/edit/${broadcast.id}`,
+                                {
+                                  state: { broadcast },
+                                }
+                              )
+                            }
                             className="w-full text-left px-3 py-1.5 text-xs text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 flex items-center"
-                            disabled={broadcast.status === 'sending' || broadcast.status === 'completed'}
+                            disabled={
+                              broadcast.status === "sending" ||
+                              broadcast.status === "completed"
+                            }
                           >
                             <Edit size={14} className="mr-1.5" />
                             Edit Broadcast
@@ -612,7 +572,7 @@ const BroadcastsPage = () => {
                           <button
                             onClick={() => handleDeleteClick(broadcast)}
                             className="w-full text-left px-3 py-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
-                            disabled={broadcast.status === 'sending'}
+                            disabled={broadcast.status === "sending"}
                           >
                             <Trash2 size={14} className="mr-1.5" />
                             Delete Broadcast
@@ -622,7 +582,15 @@ const BroadcastsPage = () => {
                     </div>
                   </div>
 
-                  <div onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast.id}`, { state: { broadcast } })} className="cursor-pointer">
+                  <div
+                    onClick={() =>
+                      navigate(
+                        `/admin/communication/broadcasts/edit/${broadcast.id}`,
+                        { state: { broadcast } }
+                      )
+                    }
+                    className="cursor-pointer"
+                  >
                     <div className="mb-3">
                       <h3 className="text-sm font-medium text-neutral-900 dark:text-white mb-1 line-clamp-1">
                         {broadcast.title}
@@ -636,16 +604,22 @@ const BroadcastsPage = () => {
 
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       <div className="flex flex-col">
-                        <span className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">Template</span>
+                        <span className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">
+                          Template
+                        </span>
                         <span className="text-xs font-medium text-neutral-900 dark:text-white truncate">
                           {broadcast.template_code}
                         </span>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">Scheduled For</span>
+                        <span className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">
+                          Scheduled For
+                        </span>
                         <span className="text-xs font-medium text-neutral-900 dark:text-white flex items-center">
                           <Clock size={12} className="mr-1 text-neutral-400" />
-                          <span className="font-mono">{formatDate(broadcast.scheduled_at)}</span>
+                          <span className="font-mono">
+                            {formatDate(broadcast.scheduled_at)}
+                          </span>
                         </span>
                       </div>
                     </div>
@@ -658,44 +632,66 @@ const BroadcastsPage = () => {
                       <div className="grid grid-cols-2 gap-1.5 text-xs">
                         <div className="flex items-center">
                           <User size={12} className="text-neutral-400 mr-1" />
-                          <span className="text-neutral-700 dark:text-neutral-300 truncate capitalize">{broadcast.audience.gender || 'All'}</span>
+                          <span className="text-neutral-700 dark:text-neutral-300 truncate capitalize">
+                            {broadcast.audience.gender || "All"}
+                          </span>
                         </div>
                         <div className="flex items-center">
                           <Globe size={12} className="text-neutral-400 mr-1" />
-                          <span className="text-neutral-700 dark:text-neutral-300 truncate">{broadcast.audience.country || 'Global'}</span>
+                          <span className="text-neutral-700 dark:text-neutral-300 truncate">
+                            {broadcast.audience.country || "Global"}
+                          </span>
                         </div>
                         {broadcast.audience.kyc_level && (
                           <div className="flex items-center">
-                            <Languages size={12} className="text-neutral-400 mr-1" />
-                            <span className="text-neutral-700 dark:text-neutral-300 truncate">{broadcast.audience.kyc_level}</span>
+                            <Languages
+                              size={12}
+                              className="text-neutral-400 mr-1"
+                            />
+                            <span className="text-neutral-700 dark:text-neutral-300 truncate">
+                              {broadcast.audience.kyc_level}
+                            </span>
                           </div>
                         )}
-                        {broadcast.audience.customFilters && Object.keys(broadcast.audience.customFilters).length > 0 && (
-                          <div className="flex items-center">
-                            <Sliders size={12} className="text-blue-400 mr-1" />
-                            <span className="text-blue-500 dark:text-blue-400 text-xs">Custom filters</span>
-                          </div>
-                        )}
+                        {broadcast.audience.customFilters &&
+                          Object.keys(broadcast.audience.customFilters).length >
+                            0 && (
+                            <div className="flex items-center">
+                              <Sliders
+                                size={12}
+                                className="text-blue-400 mr-1"
+                              />
+                              <span className="text-blue-500 dark:text-blue-400 text-xs">
+                                Custom filters
+                              </span>
+                            </div>
+                          )}
                       </div>
                     </div>
 
-                    {(broadcast.sentCount && broadcast.totalCount) && (
-                      <div className="mb-3">
-                        {getProgressBar(broadcast)}
-                      </div>
+                    {broadcast.sentCount && broadcast.totalCount && (
+                      <div className="mb-3">{getProgressBar(broadcast)}</div>
                     )}
                   </div>
 
                   <div className="flex items-center justify-end space-x-1">
-                    {getActionButtons(broadcast)}
+                    {getActionButtons(broadcast, handleActionClick)}
 
                     <motion.button
-                      onClick={() => navigate(`/admin/communication/broadcasts/edit/${broadcast.id}`, {
-                        state: { broadcast }
-                      })}
+                      onClick={() =>
+                        navigate(
+                          `/admin/communication/broadcasts/edit/${broadcast.id}`,
+                          {
+                            state: { broadcast },
+                          }
+                        )
+                      }
                       className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-900/20 text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 rounded-full transition-all"
                       title="Edit"
-                      disabled={broadcast.status === 'sending' || broadcast.status === 'completed'}
+                      disabled={
+                        broadcast.status === "sending" ||
+                        broadcast.status === "completed"
+                      }
                     >
                       <Edit size={16} />
                     </motion.button>
@@ -704,7 +700,7 @@ const BroadcastsPage = () => {
                       onClick={() => handleDeleteClick(broadcast)}
                       className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 text-neutral-400 hover:text-red-500 dark:hover:text-red-400 rounded-full transition-all"
                       title="Delete"
-                      disabled={isLoading || broadcast.status === 'sending'}
+                      disabled={isLoading || broadcast.status === "sending"}
                     >
                       <Trash2 size={16} />
                     </motion.button>
@@ -717,10 +713,14 @@ const BroadcastsPage = () => {
 
         <div className="mt-8 bg-white dark:bg-neutral-800 rounded-lg shadow-sm p-4 border-l-4 border-blue-500 dark:border-blue-400">
           <div className="flex items-start sm:items-center">
-            <Info size={16} className="text-blue-500 dark:text-blue-400 mt-0.5 sm:mt-0 mr-3 flex-shrink-0" />
+            <Info
+              size={16}
+              className="text-blue-500 dark:text-blue-400 mt-0.5 sm:mt-0 mr-3 flex-shrink-0"
+            />
             <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
-              Broadcasts allow you to send targeted communications to specific segments of your audience.
-              Schedule broadcasts in advance, select the appropriate channel, and track delivery progress.
+              Broadcasts allow you to send targeted communications to specific
+              segments of your audience. Schedule broadcasts in advance, select
+              the appropriate channel, and track delivery progress.
             </p>
           </div>
         </div>
@@ -749,20 +749,33 @@ const BroadcastsPage = () => {
 
             <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-md p-3 mb-4">
               <div className="flex items-center space-x-3 mb-2">
-                <div className={`w-8 h-8 ${getChannelBackground(broadcastToDelete.channel)} rounded-md flex items-center justify-center`}>
+                <div
+                  className={`w-8 h-8 ${getChannelBackground(
+                    broadcastToDelete.channel
+                  )} rounded-md flex items-center justify-center`}
+                >
                   {getChannelIcon(broadcastToDelete.channel)}
                 </div>
                 <div>
-                  <h4 className="font-medium text-neutral-900 dark:text-white text-sm">{broadcastToDelete.title}</h4>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">{broadcastToDelete.channel} broadcast</p>
+                  <h4 className="font-medium text-neutral-900 dark:text-white text-sm">
+                    {broadcastToDelete.title}
+                  </h4>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">
+                    {broadcastToDelete.channel} broadcast
+                  </p>
                 </div>
               </div>
               <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {broadcastToDelete.description}
               </p>
               <div className="mt-2 flex items-center">
-                <Calendar size={12} className="text-neutral-500 dark:text-neutral-400 mr-1.5" />
-                <span className="text-xs text-neutral-600 dark:text-neutral-300">Scheduled for {formatDate(broadcastToDelete.scheduledAt)}</span>
+                <Calendar
+                  size={12}
+                  className="text-neutral-500 dark:text-neutral-400 mr-1.5"
+                />
+                <span className="text-xs text-neutral-600 dark:text-neutral-300">
+                  Scheduled for {formatDate(broadcastToDelete.scheduledAt)}
+                </span>
               </div>
             </div>
 
@@ -775,8 +788,10 @@ const BroadcastsPage = () => {
                 <p>• This action cannot be undone</p>
                 <p>• All scheduled delivery data will be lost</p>
                 <p>• Analytics for this broadcast will be deleted</p>
-                {broadcastToDelete.status === 'scheduled' && (
-                  <p className="font-medium">• This broadcast is currently scheduled and will not be sent</p>
+                {broadcastToDelete.status === "scheduled" && (
+                  <p className="font-medium">
+                    • This broadcast is currently scheduled and will not be sent
+                  </p>
                 )}
               </div>
             </div>
