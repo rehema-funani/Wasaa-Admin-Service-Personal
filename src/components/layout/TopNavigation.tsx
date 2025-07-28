@@ -706,18 +706,15 @@ const TopNavigation = () => {
   };
 
   return (
-    <div className="fixed top-0 right-0 z-40 left-[60px] w-[calc(100%-60px)]">
-      {/* Interactive 3D mesh-like background */}
+    <div className="fixed top-0 right-0 z-50 left-[60px] w-[calc(100%-60px)]">
       <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/10 via-transparent to-sky-50/10 pointer-events-none"></div>
 
-      {/* Multi-layered gradient ribbon */}
       <div className="absolute top-0 left-0 right-0 h-1">
         <div className="absolute inset-0 bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 bg-[length:200%_100%] animate-gradient-flow"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-violet-500/20 via-indigo-500/20 to-sky-500/20 blur-sm transform translate-y-0.5"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 via-indigo-500/10 to-sky-500/10 blur-md transform translate-y-1"></div>
       </div>
 
-      {/* Advanced floating blobs with layered effects */}
       <div className="absolute -top-10 right-1/4 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl animate-blob-float opacity-50"></div>
       <div className="absolute top-5 right-1/3 w-20 h-20 bg-indigo-400/10 rounded-full blur-2xl animate-blob-float animation-delay-3000 opacity-30"></div>
       <div className="absolute -bottom-20 left-1/3 w-60 h-60 bg-sky-400/10 rounded-full blur-3xl animate-blob-float animation-delay-4000 opacity-40"></div>
@@ -730,7 +727,6 @@ const TopNavigation = () => {
             : "bg-white/50 backdrop-blur-xl"
         }`}
       >
-        {/* Premium light reflections */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-10 left-1/4 w-40 h-1 bg-white/80 blur-sm rotate-45 transform-gpu animate-shine"></div>
           <div className="absolute top-20 right-1/4 w-60 h-0.5 bg-white/60 blur-sm -rotate-45 transform-gpu animate-shine animation-delay-2000"></div>
@@ -746,7 +742,6 @@ const TopNavigation = () => {
                 className="w-[150px] h-auto cursor-pointer transition-transform duration-500 hover:scale-105"
                 onClick={() => navigate("/")}
               />
-              {/* Premium light halo effect */}
               <div className="absolute -inset-1 bg-indigo-500/5 blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"></div>
             </div>
           </div>
@@ -756,7 +751,6 @@ const TopNavigation = () => {
             ref={navRef}
           >
             <div className="flex items-center space-x-2 bg-white/30 backdrop-blur-2xl rounded-3xl p-2 shadow-2xl shadow-indigo-500/5 border border-white/80 transition-all duration-500 hover:shadow-indigo-500/10 relative">
-              {/* Show time indicator with elegant fade-in effect */}
               {showTimeIndicator && (
                 <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-xl shadow-lg border border-white/50 px-3 py-1.5 rounded-xl animate-fadeInDown">
                   <div className="flex items-center space-x-2">
@@ -803,7 +797,6 @@ const TopNavigation = () => {
                       </button>
                     </div>
 
-                    {/* Dynamic light ring */}
                     <div className="absolute inset-0 -z-10 rounded-2xl">
                       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-sky-500/10 blur-md animate-pulse-slow"></div>
                     </div>
@@ -819,19 +812,16 @@ const TopNavigation = () => {
                     className="transition-colors duration-500"
                   />
 
-                  {/* Pulse effect on hover */}
                   <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 transition-colors duration-500 -z-10"></div>
                   <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 blur-sm transition-transform duration-500 -z-10"></div>
                 </button>
               )}
 
-              {/* Search Results */}
               {showSearchResults && searchResults.length > 0 && (
                 <div
                   ref={searchResultsRef}
                   className="absolute right-0 mt-3 w-80 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown"
                 >
-                  {/* Enhanced light effects */}
                   <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
                   <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 via-violet-500/5 to-sky-500/5 rounded-full blur-3xl"></div>
@@ -933,7 +923,6 @@ const TopNavigation = () => {
                                       />
                                     </div>
 
-                                    {/* Animated highlight line */}
                                     {isSelected && (
                                       <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-indigo-400/50 to-transparent animate-shine-slow"></div>
                                     )}
@@ -981,7 +970,6 @@ const TopNavigation = () => {
                   </div>
                 )}
 
-                {/* Pulse effect on hover */}
                 <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 transition-colors duration-500 -z-10"></div>
                 <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 blur-sm transition-transform duration-500 -z-10"></div>
               </button>
@@ -1057,7 +1045,6 @@ const TopNavigation = () => {
               )}
             </div>
 
-            {/* User Menu */}
             <div className="relative ml-2" ref={userMenuRef}>
               <button
                 className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all duration-500 hover:bg-white/60 text-gray-600/90 hover:text-indigo-600 group relative"
@@ -1078,20 +1065,17 @@ const TopNavigation = () => {
                   }`}
                 />
 
-                {/* Pulse effect on hover */}
                 <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 transition-colors duration-500 -z-10"></div>
                 <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 blur-sm transition-transform duration-500 -z-10"></div>
               </button>
 
               {userMenuOpen && (
                 <div className="absolute right-0 mt-3 w-64 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown">
-                  {/* Enhanced light effects */}
                   <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
                   <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 via-violet-500/5 to-sky-500/5 rounded-full blur-3xl"></div>
 
                   <div className="relative">
-                    {/* Premium profile card */}
                     <div className="px-4 py-3 border-b border-white/50">
                       <div className="flex items-center mb-2">
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600/90 via-violet-600/80 to-sky-600/80 flex items-center justify-center mr-3 border border-white/40 shadow-md">
@@ -1110,7 +1094,6 @@ const TopNavigation = () => {
                           {user?.role?.title}
                         </span>
 
-                        {/* Account status indicator */}
                         <div className="ml-2 flex items-center">
                           <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -1149,7 +1132,6 @@ const TopNavigation = () => {
                         <span>Settings</span>
                       </NavLink>
 
-                      {/* Additional menu item with analytics/activity indicator */}
                       <div className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center transition-all duration-500 cursor-pointer">
                         <TrendingUp size={16} className="mr-3 text-gray-500" />
                         <span>Account Activity</span>
@@ -1179,7 +1161,6 @@ const TopNavigation = () => {
             >
               <Menu size={20} />
 
-              {/* Pulse effect on hover */}
               <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 transition-colors duration-500 -z-10"></div>
               <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 blur-sm transition-transform duration-500 -z-10"></div>
             </button>
@@ -1189,12 +1170,10 @@ const TopNavigation = () => {
 
       {isMobileMenuOpen && (
         <div className="xl:hidden fixed inset-0 z-50 left-[60px] w-[calc(100%-60px)] bg-white/95 backdrop-blur-2xl animate-fadeIn">
-          {/* Mobile light effects */}
           <div className="absolute top-40 left-20 w-60 h-60 bg-indigo-400/10 rounded-full blur-3xl animate-blob"></div>
           <div className="absolute bottom-40 right-10 w-80 h-80 bg-sky-400/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
           <div className="absolute top-1/4 right-20 w-40 h-40 bg-violet-400/10 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
 
-          {/* Dynamic glow effect that follows cursor */}
           <div
             className="absolute w-60 h-60 rounded-full blur-3xl bg-indigo-400/5 pointer-events-none transition-all duration-300 ease-out"
             style={{
@@ -1270,7 +1249,6 @@ const TopNavigation = () => {
                                   {subItem.title}
                                 </span>
 
-                                {/* Interactive shine effect */}
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
                               </NavLink>
                             );
@@ -1288,7 +1266,6 @@ const TopNavigation = () => {
 
             <div className="mt-8 pt-6 border-t border-indigo-200/50">
               <div className="flex items-center p-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/40 shadow-xl shadow-indigo-500/5 relative overflow-hidden group">
-                {/* Interactive shimmer effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1500 ease-in-out"></div>
 
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600/90 via-violet-600/80 to-sky-600/80 flex items-center justify-center mr-4 border border-white/40 shadow-lg">

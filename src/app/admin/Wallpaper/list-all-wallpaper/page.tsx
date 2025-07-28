@@ -15,19 +15,11 @@ const ListWallpaper: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const locationState = location.state as LocationState;
-
-  // Wallpapers state
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-
-  // Success message state from navigation
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  // Search functionality
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Preview state
   const [showPreview, setShowPreview] = useState(false);
   const [previewWallpaper, setPreviewWallpaper] = useState<Wallpaper | null>(null);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
@@ -38,25 +30,20 @@ const ListWallpaper: React.FC = () => {
     message?: string;
   }
 
-  // Mock chat messages for the preview
   const mockMessages = [
     { id: 1, sender: 'AI Assistant', content: 'Hello! How can I help you with your finances today?', time: '10:02 AM' },
     { id: 2, sender: 'User', content: 'I need to check my account balance', time: '10:03 AM' },
     { id: 3, sender: 'AI Assistant', content: 'Your current balance is $3,250.75. Would you like to see your recent transactions?', time: '10:03 AM' },
   ];
 
-  // Fetch wallpapers from API on component mount
   useEffect(() => {
     fetchWallpapers();
 
-    // Check for success message in location state
     if (locationState?.success && locationState?.message) {
       setSuccessMessage(locationState.message);
 
-      // Clear the location state
       window.history.replaceState({}, document.title);
 
-      // Auto-hide success message after 5 seconds
       const timer = setTimeout(() => {
         setSuccessMessage(null);
       }, 5000);
@@ -72,7 +59,6 @@ const ListWallpaper: React.FC = () => {
 
       const data = await mediaService.getWallpapers();
 
-      // Transform API response to match our Wallpaper interface
       const formattedWallpapers: Wallpaper[] = data.map((item: any) => ({
         id: item.id,
         name: item.title,
@@ -106,7 +92,6 @@ const ListWallpaper: React.FC = () => {
         setWallpapers(wallpapers.filter(wallpaper => wallpaper.id !== id));
         setSuccessMessage('Wallpaper deleted successfully');
 
-        // Auto-hide success message after 5 seconds
         setTimeout(() => {
           setSuccessMessage(null);
         }, 5000);
@@ -155,7 +140,6 @@ const ListWallpaper: React.FC = () => {
     return colors[category] || 'bg-primary-50 text-primary-600';
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-8 py-6">
@@ -177,7 +161,6 @@ const ListWallpaper: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* Success message */}
       {successMessage && (
         <div className="mb-6 flex items-center p-4 bg-green-50 text-green-700 rounded-xl">
           <Check size={20} className="mr-2 flex-shrink-0" />
@@ -185,7 +168,6 @@ const ListWallpaper: React.FC = () => {
         </div>
       )}
 
-      {/* Error message */}
       {error && (
         <div className="mb-6 flex items-center p-4 bg-red-50 text-red-700 rounded-xl">
           <AlertCircle size={20} className="mr-2 flex-shrink-0" />
@@ -193,7 +175,6 @@ const ListWallpaper: React.FC = () => {
         </div>
       )}
 
-      {/* Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         <div className="md:col-span-2">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">Wallpapers</h1>
@@ -211,7 +192,6 @@ const ListWallpaper: React.FC = () => {
         </div>
       </div>
 
-      {/* Search */}
       <div className="mb-8">
         <div className="relative">
           <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
@@ -296,11 +276,9 @@ const ListWallpaper: React.FC = () => {
         </div>
       )}
 
-      {/* Preview Modal */}
       {showPreview && previewWallpaper && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className={`${previewMode === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-y-auto flex flex-col transition-colors duration-300 shadow-2xl`}>
-            {/* Modal Header */}
+        <div className="fixed inset-0 bg-black/70 z-999 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className={`${previewMode === 'dark' ? 'bg-gray-900' : 'bg-white'} z-99 rounded-3xl w-full max-w-6xl max-h-[85vh] mt-12 overflow-y-auto flex flex-col transition-colors duration-300 shadow-2xl`}>
             <div className={`flex items-center justify-between p-6 border-b ${previewMode === 'dark' ? 'border-gray-800' : 'border-gray-100'}`}>
               <div className="flex items-center space-x-4">
                 <h3 className={`text-xl font-semibold ${previewMode === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -352,7 +330,7 @@ const ListWallpaper: React.FC = () => {
                         <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                       </div>
                       <div className={`flex-1 mx-2 ${previewMode === 'dark' ? 'bg-gray-700' : 'bg-white'} rounded-md px-3 py-1 text-xs ${previewMode === 'dark' ? 'text-gray-300' : 'text-gray-500'}`}>
-                        app.yourfintech.com
+                        app.wasaachat.com
                       </div>
                     </div>
 
