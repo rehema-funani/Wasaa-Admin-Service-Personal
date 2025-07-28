@@ -35,7 +35,7 @@ export default function SystemHealthDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "operational":
         return isDarkMode ? "text-emerald-400" : "text-emerald-500";
@@ -48,7 +48,7 @@ export default function SystemHealthDashboard() {
     }
   };
 
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = (status: string) => {
     switch (status) {
       case "operational":
         return isDarkMode
@@ -69,7 +69,7 @@ export default function SystemHealthDashboard() {
     }
   };
 
-  const getStatusGradient = (status) => {
+  const getStatusGradient = (status: string) => {
     switch (status) {
       case "operational":
         return isDarkMode
