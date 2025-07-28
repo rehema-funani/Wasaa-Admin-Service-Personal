@@ -402,7 +402,6 @@ const AddFeeRulePage = () => {
                 </div>
               </div>
 
-              {/* Application Details */}
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Application Details</h2>
 

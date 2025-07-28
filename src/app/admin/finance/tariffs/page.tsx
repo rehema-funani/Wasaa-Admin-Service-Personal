@@ -28,7 +28,6 @@ import {
   HelpCircle,
   ExternalLink,
   Sparkles,
-  Zap,
   AlertCircle,
 } from "lucide-react";
 import financeService from "../../../../api/services/finance";
@@ -48,7 +47,6 @@ interface FeeRule {
   created_at: string;
 }
 
-// Chart data type for analytics
 interface ChartData {
   operation: string;
   percentage: number;
@@ -78,7 +76,6 @@ const FeeRulesPage: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Analytics state
   const [analyticsData, setAnalyticsData] = useState<ChartData[]>([]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -1198,19 +1195,6 @@ const FeeRulesPage: React.FC = () => {
                                 disabled={isLoading}
                               >
                                 <Trash2 size={16} />
-                              </motion.button>
-
-                              <motion.button
-                                onClick={() =>
-                                  navigate(
-                                    `/admin/finance/fee-rules/${rule.id}`
-                                  )
-                                }
-                                className="p-2 text-slate-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                              >
-                                <ExternalLink size={16} />
                               </motion.button>
                             </div>
                           </td>
