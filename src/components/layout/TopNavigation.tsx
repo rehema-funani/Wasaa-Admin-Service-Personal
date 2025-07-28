@@ -986,7 +986,7 @@ const TopNavigation = () => {
             </div>
 
             <button
-              className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+              className="p-1 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
               onClick={toggleMode}
             >
               {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
