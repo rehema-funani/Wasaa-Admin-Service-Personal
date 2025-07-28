@@ -243,52 +243,61 @@ const FeeRulesPage: React.FC = () => {
   const getOperationIcon = (operation: string) => {
     switch (operation) {
       case "WITHDRAW":
-        return <Activity size={18} className="text-amber-600" />;
+        return (
+          <Activity size={18} className="text-amber-600 dark:text-amber-400" />
+        );
       case "DEPOSIT":
-        return <DollarSign size={18} className="text-emerald-600" />;
+        return (
+          <DollarSign
+            size={18}
+            className="text-emerald-600 dark:text-emerald-400"
+          />
+        );
       case "TRANSFER":
-        return <Users size={18} className="text-indigo-600" />;
+        return (
+          <Users size={18} className="text-indigo-600 dark:text-indigo-400" />
+        );
       default:
-        return <Tag size={18} className="text-slate-600" />;
+        return <Tag size={18} className="text-slate-600 dark:text-gray-400" />;
     }
   };
 
   const getOperationBackground = (operation: string) => {
     switch (operation) {
       case "WITHDRAW":
-        return "bg-amber-100/80 border border-amber-200/50";
+        return "bg-amber-100/80 dark:bg-amber-900/30 border border-amber-200/50 dark:border-amber-700/50";
       case "DEPOSIT":
-        return "bg-emerald-100/80 border border-emerald-200/50";
+        return "bg-emerald-100/80 dark:bg-emerald-900/30 border border-emerald-200/50 dark:border-emerald-700/50";
       case "TRANSFER":
-        return "bg-indigo-100/80 border border-indigo-200/50";
+        return "bg-indigo-100/80 dark:bg-indigo-900/30 border border-indigo-200/50 dark:border-indigo-700/50";
       default:
-        return "bg-slate-100/80 border border-slate-200/50";
+        return "bg-slate-100/80 dark:bg-gray-700 border border-slate-200/50 dark:border-gray-600";
     }
   };
 
   const getOperationGradient = (operation: string) => {
     switch (operation) {
       case "WITHDRAW":
-        return "from-amber-500/10 to-amber-300/5";
+        return "from-amber-500/10 dark:from-amber-400/10 to-amber-300/5 dark:to-amber-600/5";
       case "DEPOSIT":
-        return "from-emerald-500/10 to-emerald-300/5";
+        return "from-emerald-500/10 dark:from-emerald-400/10 to-emerald-300/5 dark:to-emerald-600/5";
       case "TRANSFER":
-        return "from-indigo-500/10 to-indigo-300/5";
+        return "from-indigo-500/10 dark:from-indigo-400/10 to-indigo-300/5 dark:to-indigo-600/5";
       default:
-        return "from-slate-500/10 to-slate-300/5";
+        return "from-slate-500/10 dark:from-gray-500/10 to-slate-300/5 dark:to-gray-600/5";
     }
   };
 
   const getOperationColor = (operation: string) => {
     switch (operation) {
       case "WITHDRAW":
-        return "text-amber-700";
+        return "text-amber-700 dark:text-amber-300";
       case "DEPOSIT":
-        return "text-emerald-700";
+        return "text-emerald-700 dark:text-emerald-300";
       case "TRANSFER":
-        return "text-indigo-700";
+        return "text-indigo-700 dark:text-indigo-300";
       default:
-        return "text-slate-700";
+        return "text-slate-700 dark:text-gray-300";
     }
   };
 
@@ -396,22 +405,25 @@ const FeeRulesPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 dark:from-gray-900 via-white dark:via-gray-800 to-slate-50/50 dark:to-gray-900/50 flex items-center justify-center p-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/80 backdrop-blur-xl p-8 rounded-2xl border border-slate-200/50 text-center max-w-md shadow-xl"
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl p-8 rounded-2xl border border-slate-200/50 dark:border-gray-700/50 text-center max-w-md shadow-xl"
         >
-          <div className="w-16 h-16 bg-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <AlertTriangle size={24} className="text-rose-600" />
+          <div className="w-16 h-16 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <AlertTriangle
+              size={24}
+              className="text-rose-600 dark:text-rose-400"
+            />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-100 mb-2">
             Something went wrong
           </h3>
-          <p className="text-slate-600 mb-6">{error}</p>
+          <p className="text-slate-600 dark:text-gray-400 mb-6">{error}</p>
           <motion.button
             onClick={fetchFeeRules}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-indigo-200/50 hover:bg-indigo-700 transition-colors"
+            className="px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-xl font-medium shadow-lg shadow-indigo-200/50 dark:shadow-indigo-900/30 hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -423,27 +435,33 @@ const FeeRulesPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 dark:from-gray-900 via-white dark:via-gray-800 to-slate-50/50 dark:to-gray-900/50">
       {/* Header */}
-      <div className="bg-white/70 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-10">
+      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border-b border-slate-100 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <div className="inline-block px-3 py-1 bg-indigo-50/80 border border-indigo-100/80 rounded-lg text-indigo-600 text-xs font-medium mb-2 backdrop-blur-sm">
+              <div className="inline-block px-3 py-1 bg-indigo-50/80 dark:bg-indigo-900/50 border border-indigo-100/80 dark:border-indigo-700/50 rounded-lg text-indigo-600 dark:text-indigo-400 text-xs font-medium mb-2 backdrop-blur-sm">
                 <div className="flex items-center">
-                  <DollarSign size={12} className="text-indigo-500 mr-1.5" />
+                  <DollarSign
+                    size={12}
+                    className="text-indigo-500 dark:text-indigo-400 mr-1.5"
+                  />
                   <span>Financial Management</span>
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-slate-900 flex items-center">
-                <Settings size={26} className="text-indigo-600 mr-3" />
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-gray-100 flex items-center">
+                <Settings
+                  size={26}
+                  className="text-indigo-600 dark:text-indigo-400 mr-3"
+                />
                 Fee Rules Management
-                <div className="ml-3 px-2 py-0.5 text-xs rounded-md bg-indigo-100 text-indigo-700 flex items-center">
+                <div className="ml-3 px-2 py-0.5 text-xs rounded-md bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 flex items-center">
                   <Shield size={10} className="mr-1" />
                   PCI-DSS
                 </div>
               </h1>
-              <p className="text-slate-600 mt-1">
+              <p className="text-slate-600 dark:text-gray-400 mt-1">
                 Configure transaction fees and pricing structure
               </p>
             </div>
@@ -452,8 +470,8 @@ const FeeRulesPage: React.FC = () => {
                 onClick={() => setIsAnalyticsOpen(!isAnalyticsOpen)}
                 className={`flex items-center px-4 py-2.5 rounded-xl font-medium transition-all ${
                   isAnalyticsOpen
-                    ? "bg-indigo-50 text-indigo-700 border border-indigo-100"
-                    : "bg-white text-slate-700 border border-slate-200 hover:border-indigo-200 hover:bg-indigo-50/50 hover:text-indigo-600"
+                    ? "bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800"
+                    : "bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400"
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -464,7 +482,7 @@ const FeeRulesPage: React.FC = () => {
 
               <motion.button
                 onClick={() => navigate("/admin/finance/fee-rules/add")}
-                className="flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all shadow-lg shadow-indigo-200/50"
+                className="flex items-center px-4 py-2.5 bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white rounded-xl font-medium transition-all shadow-lg shadow-indigo-200/50 dark:shadow-indigo-900/30"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 disabled={isLoading}
@@ -485,13 +503,16 @@ const FeeRulesPage: React.FC = () => {
                 transition={{ duration: 0.3 }}
                 className="overflow-hidden"
               >
-                <div className="mt-6 bg-white rounded-2xl shadow-lg border border-slate-200/50 p-6">
+                <div className="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-slate-200/50 dark:border-gray-700/50 p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-semibold text-slate-900 flex items-center">
-                      <Sparkles size={18} className="text-indigo-500 mr-2" />
+                    <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 flex items-center">
+                      <Sparkles
+                        size={18}
+                        className="text-indigo-500 dark:text-indigo-400 mr-2"
+                      />
                       Fee Rules Analytics
                     </h2>
-                    <div className="flex items-center text-xs text-slate-500">
+                    <div className="flex items-center text-xs text-slate-500 dark:text-gray-400">
                       <Clock size={14} className="mr-1.5 text-indigo-400" />
                       Last updated: {lastUpdated.toLocaleTimeString()}
                     </div>
@@ -499,18 +520,18 @@ const FeeRulesPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {/* Summary metrics */}
-                    <div className="bg-gradient-to-br from-indigo-50/80 to-white rounded-xl border border-indigo-100/50 p-4 relative overflow-hidden">
-                      <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-indigo-100/50"></div>
-                      <h3 className="text-xs font-medium text-indigo-500 uppercase tracking-wider mb-2">
+                    <div className="bg-gradient-to-br from-indigo-50/80 dark:from-indigo-900/30 to-white dark:to-gray-800 rounded-xl border border-indigo-100/50 dark:border-indigo-800/50 p-4 relative overflow-hidden">
+                      <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-indigo-100/50 dark:bg-indigo-800/30"></div>
+                      <h3 className="text-xs font-medium text-indigo-500 dark:text-indigo-400 uppercase tracking-wider mb-2">
                         Total Rules
                       </h3>
-                      <div className="text-3xl font-bold text-slate-900">
+                      <div className="text-3xl font-bold text-slate-900 dark:text-gray-100">
                         {feeRules.length}
                       </div>
-                      <div className="mt-2 text-sm text-slate-600 flex items-center">
+                      <div className="mt-2 text-sm text-slate-600 dark:text-gray-400 flex items-center">
                         <Activity
                           size={14}
-                          className="mr-1.5 text-indigo-500"
+                          className="mr-1.5 text-indigo-500 dark:text-indigo-400"
                         />
                         <span>
                           {totalActive} active, {totalInactive} inactive
@@ -518,21 +539,21 @@ const FeeRulesPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-emerald-50/80 to-white rounded-xl border border-emerald-100/50 p-4 relative overflow-hidden">
-                      <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-emerald-100/50"></div>
-                      <h3 className="text-xs font-medium text-emerald-500 uppercase tracking-wider mb-2">
+                    <div className="bg-gradient-to-br from-emerald-50/80 dark:from-emerald-900/30 to-white dark:to-gray-800 rounded-xl border border-emerald-100/50 dark:border-emerald-800/50 p-4 relative overflow-hidden">
+                      <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-emerald-100/50 dark:bg-emerald-800/30"></div>
+                      <h3 className="text-xs font-medium text-emerald-500 dark:text-emerald-400 uppercase tracking-wider mb-2">
                         Deposit Rules
                       </h3>
-                      <div className="text-3xl font-bold text-slate-900">
+                      <div className="text-3xl font-bold text-slate-900 dark:text-gray-100">
                         {
                           feeRules.filter((r) => r.operation === "DEPOSIT")
                             .length
                         }
                       </div>
-                      <div className="mt-2 text-sm text-slate-600 flex items-center">
+                      <div className="mt-2 text-sm text-slate-600 dark:text-gray-400 flex items-center">
                         <DollarSign
                           size={14}
-                          className="mr-1.5 text-emerald-500"
+                          className="mr-1.5 text-emerald-500 dark:text-emerald-400"
                         />
                         <span>
                           Average flat fee:{" "}
@@ -541,38 +562,44 @@ const FeeRulesPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-amber-50/80 to-white rounded-xl border border-amber-100/50 p-4 relative overflow-hidden">
-                      <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-100/50"></div>
-                      <h3 className="text-xs font-medium text-amber-500 uppercase tracking-wider mb-2">
+                    <div className="bg-gradient-to-br from-amber-50/80 dark:from-amber-900/30 to-white dark:to-gray-800 rounded-xl border border-amber-100/50 dark:border-amber-800/50 p-4 relative overflow-hidden">
+                      <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-100/50 dark:bg-amber-800/30"></div>
+                      <h3 className="text-xs font-medium text-amber-500 dark:text-amber-400 uppercase tracking-wider mb-2">
                         Withdraw Rules
                       </h3>
-                      <div className="text-3xl font-bold text-slate-900">
+                      <div className="text-3xl font-bold text-slate-900 dark:text-gray-100">
                         {
                           feeRules.filter((r) => r.operation === "WITHDRAW")
                             .length
                         }
                       </div>
-                      <div className="mt-2 text-sm text-slate-600 flex items-center">
-                        <Activity size={14} className="mr-1.5 text-amber-500" />
+                      <div className="mt-2 text-sm text-slate-600 dark:text-gray-400 flex items-center">
+                        <Activity
+                          size={14}
+                          className="mr-1.5 text-amber-500 dark:text-amber-400"
+                        />
                         <span>
                           Average percentage: {averagePercentFee.toFixed(2)}%
                         </span>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-violet-50/80 to-white rounded-xl border border-violet-100/50 p-4 relative overflow-hidden">
-                      <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-violet-100/50"></div>
-                      <h3 className="text-xs font-medium text-violet-500 uppercase tracking-wider mb-2">
+                    <div className="bg-gradient-to-br from-violet-50/80 dark:from-violet-900/30 to-white dark:to-gray-800 rounded-xl border border-violet-100/50 dark:border-violet-800/50 p-4 relative overflow-hidden">
+                      <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-violet-100/50 dark:bg-violet-800/30"></div>
+                      <h3 className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wider mb-2">
                         Transfer Rules
                       </h3>
-                      <div className="text-3xl font-bold text-slate-900">
+                      <div className="text-3xl font-bold text-slate-900 dark:text-gray-100">
                         {
                           feeRules.filter((r) => r.operation === "TRANSFER")
                             .length
                         }
                       </div>
-                      <div className="mt-2 text-sm text-slate-600 flex items-center">
-                        <Users size={14} className="mr-1.5 text-violet-500" />
+                      <div className="mt-2 text-sm text-slate-600 dark:text-gray-400 flex items-center">
+                        <Users
+                          size={14}
+                          className="mr-1.5 text-violet-500 dark:text-violet-400"
+                        />
                         <span>
                           {tiers.length} tiers, {kycLevels.length} KYC levels
                         </span>
@@ -582,8 +609,8 @@ const FeeRulesPage: React.FC = () => {
 
                   <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Operation distribution chart */}
-                    <div className="bg-white rounded-xl border border-slate-200 p-5 md:col-span-2">
-                      <h3 className="text-sm font-medium text-slate-900 mb-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 p-5 md:col-span-2">
+                      <h3 className="text-sm font-medium text-slate-900 dark:text-gray-100 mb-4">
                         Fee Rules Distribution
                       </h3>
                       <div className="h-[180px] flex items-end justify-around gap-4">
@@ -609,12 +636,12 @@ const FeeRulesPage: React.FC = () => {
                                 boxShadow: `0 4px 6px -1px ${item.color}20`,
                               }}
                             >
-                              <div className="absolute inset-0 rounded-t-lg bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                              <div className="absolute inset-0 rounded-t-lg bg-white/30 dark:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>
-                            <div className="mt-2 text-xs font-medium text-slate-700">
+                            <div className="mt-2 text-xs font-medium text-slate-700 dark:text-gray-300">
                               {item.operation}
                             </div>
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-slate-500 dark:text-gray-400">
                               {item.count} rules
                             </div>
                           </div>
@@ -623,20 +650,20 @@ const FeeRulesPage: React.FC = () => {
                     </div>
 
                     {/* Tiers and KYC levels */}
-                    <div className="bg-white rounded-xl border border-slate-200 p-5">
-                      <h3 className="text-sm font-medium text-slate-900 mb-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 p-5">
+                      <h3 className="text-sm font-medium text-slate-900 dark:text-gray-100 mb-4">
                         Tiers & KYC Levels
                       </h3>
                       <div className="space-y-3">
                         <div>
-                          <h4 className="text-xs font-medium text-slate-500 uppercase mb-2">
+                          <h4 className="text-xs font-medium text-slate-500 dark:text-gray-400 uppercase mb-2">
                             Tiers
                           </h4>
                           <div className="flex flex-wrap gap-2">
                             {tiers.map((tier, index) => (
                               <div
                                 key={index}
-                                className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-medium border border-indigo-100"
+                                className="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-medium border border-indigo-100 dark:border-indigo-800"
                               >
                                 {tier}
                               </div>
@@ -644,15 +671,15 @@ const FeeRulesPage: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="pt-3 border-t border-slate-100">
-                          <h4 className="text-xs font-medium text-slate-500 uppercase mb-2">
+                        <div className="pt-3 border-t border-slate-100 dark:border-gray-700">
+                          <h4 className="text-xs font-medium text-slate-500 dark:text-gray-400 uppercase mb-2">
                             KYC Levels
                           </h4>
                           <div className="flex flex-wrap gap-2">
                             {kycLevels.map((level, index) => (
                               <div
                                 key={index}
-                                className="px-3 py-1.5 rounded-lg bg-violet-50 text-violet-700 text-xs font-medium border border-violet-100 flex items-center"
+                                className="px-3 py-1.5 rounded-lg bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-xs font-medium border border-violet-100 dark:border-violet-800 flex items-center"
                               >
                                 <Shield size={12} className="mr-1.5" />
                                 {level}
@@ -671,7 +698,7 @@ const FeeRulesPage: React.FC = () => {
           {/* Search and Filters */}
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <div className="flex-1 min-w-[300px] relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500">
                 <Search size={20} />
               </div>
               <input
@@ -679,25 +706,25 @@ const FeeRulesPage: React.FC = () => {
                 placeholder="Search by operation, tier, KYC level or fee amount..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-400 transition-all shadow-sm"
+                className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-xl text-slate-900 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500/30 dark:focus:ring-indigo-400/30 focus:border-indigo-400 dark:focus:border-indigo-500 transition-all shadow-sm"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300"
                 >
                   <X size={16} />
                 </button>
               )}
             </div>
 
-            <div className="flex items-center bg-white rounded-xl p-1 border border-slate-200 shadow-sm">
+            <div className="flex items-center bg-white dark:bg-gray-800 rounded-xl p-1 border border-slate-200 dark:border-gray-700 shadow-sm">
               <button
                 onClick={() => setStatusFilter("all")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   statusFilter === "all"
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    ? "bg-indigo-600 dark:bg-indigo-500 text-white shadow-sm"
+                    : "text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700"
                 }`}
               >
                 All
@@ -706,8 +733,8 @@ const FeeRulesPage: React.FC = () => {
                 onClick={() => setStatusFilter("active")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   statusFilter === "active"
-                    ? "bg-emerald-600 text-white shadow-sm"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    ? "bg-emerald-600 dark:bg-emerald-500 text-white shadow-sm"
+                    : "text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700"
                 }`}
               >
                 Active
@@ -716,8 +743,8 @@ const FeeRulesPage: React.FC = () => {
                 onClick={() => setStatusFilter("inactive")}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   statusFilter === "inactive"
-                    ? "bg-slate-600 text-white shadow-sm"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    ? "bg-slate-600 dark:bg-gray-600 text-white shadow-sm"
+                    : "text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700"
                 }`}
               >
                 Inactive
@@ -729,8 +756,8 @@ const FeeRulesPage: React.FC = () => {
                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
                 className={`p-3 rounded-xl transition-colors flex items-center ${
                   isFiltersOpen || operationFilter !== "all"
-                    ? "bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-sm"
-                    : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+                    ? "bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800 shadow-sm"
+                    : "bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-gray-700"
                 }`}
               >
                 <Filter size={18} className="mr-2" />
@@ -752,7 +779,7 @@ const FeeRulesPage: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full mt-2 right-0 bg-white rounded-xl shadow-xl border border-slate-200 p-2 w-48 z-20"
+                    className="absolute top-full mt-2 right-0 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-slate-200 dark:border-gray-700 p-2 w-48 z-20"
                   >
                     {operations.map((op) => (
                       <button
@@ -763,13 +790,16 @@ const FeeRulesPage: React.FC = () => {
                         }}
                         className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center ${
                           operationFilter === op
-                            ? "bg-indigo-50 text-indigo-700 font-medium"
-                            : "text-slate-700 hover:bg-slate-50"
+                            ? "bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-medium"
+                            : "text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700"
                         }`}
                       >
                         {op === "all" ? (
                           <>
-                            <Tag size={16} className="mr-2 text-slate-400" />
+                            <Tag
+                              size={16}
+                              className="mr-2 text-slate-400 dark:text-gray-500"
+                            />
                             All Operations
                           </>
                         ) : (
@@ -782,7 +812,7 @@ const FeeRulesPage: React.FC = () => {
                         {operationFilter === op && (
                           <Check
                             size={16}
-                            className="ml-auto text-indigo-600"
+                            className="ml-auto text-indigo-600 dark:text-indigo-400"
                           />
                         )}
                       </button>
@@ -798,12 +828,14 @@ const FeeRulesPage: React.FC = () => {
                 fetchFeeRules();
               }}
               disabled={isRefreshing}
-              className="p-3 rounded-xl bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors flex items-center relative overflow-hidden"
+              className="p-3 rounded-xl bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors flex items-center relative overflow-hidden"
             >
               <RefreshCw
                 size={18}
                 className={`mr-2 ${
-                  isRefreshing ? "animate-spin text-indigo-600" : ""
+                  isRefreshing
+                    ? "animate-spin text-indigo-600 dark:text-indigo-400"
+                    : ""
                 }`}
               />
               <span className="text-sm font-medium">
@@ -817,7 +849,7 @@ const FeeRulesPage: React.FC = () => {
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
         <motion.div
-          className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xl"
+          className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 overflow-hidden shadow-xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -825,18 +857,21 @@ const FeeRulesPage: React.FC = () => {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-64">
               <div className="relative w-16 h-16 mb-6">
-                <div className="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
-                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-indigo-800"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 dark:border-t-indigo-400 animate-spin"></div>
                 <div
-                  className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-500 animate-spin opacity-70"
+                  className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-500 dark:border-t-indigo-500 animate-spin opacity-70"
                   style={{ animationDuration: "1.5s" }}
                 ></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Settings size={20} className="text-indigo-600" />
+                  <Settings
+                    size={20}
+                    className="text-indigo-600 dark:text-indigo-400"
+                  />
                 </div>
               </div>
-              <p className="text-slate-500 text-center">
-                <span className="font-medium text-slate-700 block mb-1">
+              <p className="text-slate-500 dark:text-gray-400 text-center">
+                <span className="font-medium text-slate-700 dark:text-gray-300 block mb-1">
                   Loading fee rules
                 </span>
                 <span className="text-sm">
@@ -846,13 +881,16 @@ const FeeRulesPage: React.FC = () => {
             </div>
           ) : filteredRules.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 p-6">
-              <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center mb-4">
-                <Settings size={24} className="text-slate-400" />
+              <div className="w-16 h-16 bg-slate-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mb-4">
+                <Settings
+                  size={24}
+                  className="text-slate-400 dark:text-gray-500"
+                />
               </div>
-              <p className="text-lg font-medium text-slate-900 mb-1">
+              <p className="text-lg font-medium text-slate-900 dark:text-gray-100 mb-1">
                 No fee rules found
               </p>
-              <p className="text-sm text-slate-500 mb-4 text-center max-w-md">
+              <p className="text-sm text-slate-500 dark:text-gray-400 mb-4 text-center max-w-md">
                 {searchQuery ||
                 statusFilter !== "all" ||
                 operationFilter !== "all"
@@ -869,7 +907,7 @@ const FeeRulesPage: React.FC = () => {
                     setStatusFilter("all");
                     setOperationFilter("all");
                   }}
-                  className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors flex items-center"
+                  className="px-4 py-2 bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300 rounded-lg hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors flex items-center"
                 >
                   <X size={16} className="mr-2" />
                   Clear filters
@@ -877,7 +915,7 @@ const FeeRulesPage: React.FC = () => {
               ) : (
                 <button
                   onClick={() => navigate("/admin/finance/fee-rules/add")}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200/40 flex items-center"
+                  className="px-4 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors shadow-lg shadow-indigo-200/40 dark:shadow-indigo-900/30 flex items-center"
                 >
                   <Plus size={16} className="mr-2" />
                   Create Fee Rule
@@ -889,8 +927,8 @@ const FeeRulesPage: React.FC = () => {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-slate-50/80">
-                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    <tr className="bg-slate-50/80 dark:bg-gray-700/50">
+                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         <button
                           onClick={() => handleSort("operation")}
                           className="flex items-center focus:outline-none"
@@ -906,7 +944,7 @@ const FeeRulesPage: React.FC = () => {
                           )}
                         </button>
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         <button
                           onClick={() => handleSort("fee")}
                           className="flex items-center focus:outline-none"
@@ -922,10 +960,10 @@ const FeeRulesPage: React.FC = () => {
                           )}
                         </button>
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         Amount Range
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         <button
                           onClick={() => handleSort("tier")}
                           className="flex items-center focus:outline-none"
@@ -941,10 +979,10 @@ const FeeRulesPage: React.FC = () => {
                           )}
                         </button>
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-right text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         <button
                           onClick={() => handleSort("date")}
                           className="flex items-center ml-auto focus:outline-none"
@@ -960,12 +998,12 @@ const FeeRulesPage: React.FC = () => {
                           )}
                         </button>
                       </th>
-                      <th className="px-6 py-4 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-right text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-100 dark:divide-gray-700">
                     <AnimatePresence initial={false}>
                       {filteredRules.map((rule, index) => (
                         <motion.tr
@@ -974,7 +1012,7 @@ const FeeRulesPage: React.FC = () => {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.3, delay: index * 0.03 }}
-                          className="group hover:bg-slate-50/80 transition-all duration-200 relative"
+                          className="group hover:bg-slate-50/80 dark:hover:bg-gray-700/50 transition-all duration-200 relative"
                           onMouseEnter={() => setHoveredRow(rule.id)}
                           onMouseLeave={() => setHoveredRow(null)}
                         >
@@ -996,7 +1034,7 @@ const FeeRulesPage: React.FC = () => {
                                   {rule.operation}
                                 </div>
                                 <div
-                                  className="text-xs text-slate-500 flex items-center cursor-help"
+                                  className="text-xs text-slate-500 dark:text-gray-400 flex items-center cursor-help"
                                   onMouseEnter={(e) =>
                                     showTooltipWithContent(
                                       e,
@@ -1008,7 +1046,7 @@ const FeeRulesPage: React.FC = () => {
                                 >
                                   <Info
                                     size={12}
-                                    className="mr-1 text-slate-400"
+                                    className="mr-1 text-slate-400 dark:text-gray-500"
                                   />
                                   <span>View details</span>
                                 </div>
@@ -1017,20 +1055,20 @@ const FeeRulesPage: React.FC = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex flex-col">
-                              <span className="text-sm text-slate-900 flex items-center">
+                              <span className="text-sm text-slate-900 dark:text-gray-100 flex items-center">
                                 <DollarSign
                                   size={14}
-                                  className="mr-1 text-emerald-500"
+                                  className="mr-1 text-emerald-500 dark:text-emerald-400"
                                 />
                                 Flat:{" "}
                                 <span className="font-medium ml-1">
                                   {formatCurrency(rule.flat_fee)}
                                 </span>
                               </span>
-                              <span className="text-sm text-slate-900 flex items-center mt-1">
+                              <span className="text-sm text-slate-900 dark:text-gray-100 flex items-center mt-1">
                                 <Percent
                                   size={14}
-                                  className="mr-1 text-violet-500"
+                                  className="mr-1 text-violet-500 dark:text-violet-400"
                                 />
                                 Percentage:{" "}
                                 <span className="font-medium ml-1">
@@ -1040,20 +1078,20 @@ const FeeRulesPage: React.FC = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-slate-900 font-medium">
+                            <div className="text-sm text-slate-900 dark:text-gray-100 font-medium">
                               {formatCurrency(rule.min_amount)}{" "}
-                              <span className="text-slate-400 font-normal">
+                              <span className="text-slate-400 dark:text-gray-500 font-normal">
                                 to
                               </span>{" "}
                               {rule.max_amount ? (
                                 formatCurrency(rule.max_amount)
                               ) : (
-                                <span className="text-indigo-600 font-normal">
+                                <span className="text-indigo-600 dark:text-indigo-400 font-normal">
                                   Unlimited
                                 </span>
                               )}
                             </div>
-                            <div className="mt-1 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="mt-1 w-full h-1.5 bg-slate-100 dark:bg-gray-700 rounded-full overflow-hidden">
                               <div
                                 className={`h-full bg-gradient-to-r ${getOperationGradient(
                                   rule.operation
@@ -1073,30 +1111,30 @@ const FeeRulesPage: React.FC = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex flex-col space-y-1.5">
-                              <span className="text-sm text-slate-700 flex items-center">
+                              <span className="text-sm text-slate-700 dark:text-gray-300 flex items-center">
                                 <Tag
                                   size={14}
-                                  className="mr-1.5 text-slate-400"
+                                  className="mr-1.5 text-slate-400 dark:text-gray-500"
                                 />
                                 Tier:{" "}
                                 <span className="font-medium ml-1">
                                   {rule.tier}
                                 </span>
                               </span>
-                              <span className="text-sm text-slate-700 flex items-center">
+                              <span className="text-sm text-slate-700 dark:text-gray-300 flex items-center">
                                 <Shield
                                   size={14}
-                                  className="mr-1.5 text-slate-400"
+                                  className="mr-1.5 text-slate-400 dark:text-gray-500"
                                 />
                                 KYC:{" "}
                                 <span className="font-medium ml-1">
                                   {rule.kyc_level}
                                 </span>
                               </span>
-                              <span className="text-sm text-slate-700 flex items-center">
+                              <span className="text-sm text-slate-700 dark:text-gray-300 flex items-center">
                                 <Users
                                   size={14}
-                                  className="mr-1.5 text-slate-400"
+                                  className="mr-1.5 text-slate-400 dark:text-gray-500"
                                 />
                                 Applied to:{" "}
                                 <span className="font-medium ml-1">
@@ -1109,26 +1147,26 @@ const FeeRulesPage: React.FC = () => {
                             <div
                               className={`px-3 py-1.5 inline-flex items-center rounded-full text-xs font-medium ${
                                 rule.is_active
-                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                  : "bg-slate-50 text-slate-700 border border-slate-200"
+                                  ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700"
+                                  : "bg-slate-50 dark:bg-gray-700 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-600"
                               }`}
                             >
                               {rule.is_active ? (
                                 <>
-                                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></div>
+                                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 mr-1.5 animate-pulse"></div>
                                   Active
                                 </>
                               ) : (
                                 <>
-                                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></div>
+                                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-gray-500 mr-1.5"></div>
                                   Inactive
                                 </>
                               )}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="text-xs text-slate-500">
-                              <div className="font-medium text-slate-700">
+                            <div className="text-xs text-slate-500 dark:text-gray-400">
+                              <div className="font-medium text-slate-700 dark:text-gray-300">
                                 {formatDate(rule.created_at)}
                               </div>
                               <div>{formatTimeAgo(rule.created_at)}</div>
@@ -1145,7 +1183,7 @@ const FeeRulesPage: React.FC = () => {
                                     }
                                   )
                                 }
-                                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                className="p-2 text-slate-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                               >
@@ -1154,7 +1192,7 @@ const FeeRulesPage: React.FC = () => {
 
                               <motion.button
                                 onClick={() => handleDeleteClick(rule)}
-                                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                                className="p-2 text-slate-400 dark:text-gray-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-all"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 disabled={isLoading}
@@ -1168,7 +1206,7 @@ const FeeRulesPage: React.FC = () => {
                                     `/admin/finance/fee-rules/${rule.id}`
                                   )
                                 }
-                                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                className="p-2 text-slate-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                               >
@@ -1180,7 +1218,7 @@ const FeeRulesPage: React.FC = () => {
                           {/* Hover animation effect */}
                           {hoveredRow === rule.id && (
                             <td className="absolute inset-0 pointer-events-none overflow-hidden">
-                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/20 dark:via-indigo-900/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                             </td>
                           )}
                         </motion.tr>
@@ -1190,22 +1228,25 @@ const FeeRulesPage: React.FC = () => {
                 </table>
               </div>
 
-              <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-200 flex items-center justify-between">
-                <div className="text-sm text-slate-500 flex items-center">
-                  <Eye size={16} className="mr-2 text-indigo-500" />
+              <div className="px-6 py-4 bg-slate-50/80 dark:bg-gray-700/50 border-t border-slate-200 dark:border-gray-600 flex items-center justify-between">
+                <div className="text-sm text-slate-500 dark:text-gray-400 flex items-center">
+                  <Eye
+                    size={16}
+                    className="mr-2 text-indigo-500 dark:text-indigo-400"
+                  />
                   Showing{" "}
-                  <span className="font-medium text-slate-700 px-1">
+                  <span className="font-medium text-slate-700 dark:text-gray-300 px-1">
                     {filteredRules.length}
                   </span>
                   of{" "}
-                  <span className="font-medium text-slate-700 px-1">
+                  <span className="font-medium text-slate-700 dark:text-gray-300 px-1">
                     {feeRules.length}
                   </span>{" "}
                   fee rules
                 </div>
 
                 <div className="flex items-center">
-                  <div className="text-xs text-slate-500 flex items-center mr-6">
+                  <div className="text-xs text-slate-500 dark:text-gray-400 flex items-center mr-6">
                     <Clock size={14} className="mr-1.5 text-indigo-400" />
                     <span>
                       Last updated:{" "}
@@ -1215,7 +1256,7 @@ const FeeRulesPage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => navigate("/admin/finance/fee-rules/history")}
-                    className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center"
+                    className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium flex items-center"
                   >
                     <ArrowUpRight size={14} className="mr-1" />
                     View Rule History
@@ -1227,23 +1268,26 @@ const FeeRulesPage: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="mt-6 bg-gradient-to-r from-indigo-50/80 to-white backdrop-blur-sm rounded-xl p-6 border border-indigo-100/50 shadow-md"
+          className="mt-6 bg-gradient-to-r from-indigo-50/80 dark:from-indigo-900/30 to-white dark:to-gray-800 backdrop-blur-sm rounded-xl p-6 border border-indigo-100/50 dark:border-indigo-800/50 shadow-md"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
           <div className="flex items-start space-x-4">
-            <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center shadow-sm">
-              <Info size={18} className="text-indigo-600" />
+            <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-xl flex items-center justify-center shadow-sm">
+              <Info
+                size={18}
+                className="text-indigo-600 dark:text-indigo-400"
+              />
             </div>
             <div>
-              <h3 className="font-semibold text-indigo-900 mb-2 flex items-center">
+              <h3 className="font-semibold text-indigo-900 dark:text-indigo-200 mb-2 flex items-center">
                 About Fee Rules
-                <span className="ml-2 text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+                <span className="ml-2 text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full">
                   PCI-DSS Compliant
                 </span>
               </h3>
-              <p className="text-indigo-700 text-sm leading-relaxed">
+              <p className="text-indigo-700 dark:text-indigo-300 text-sm leading-relaxed">
                 Fee rules define how transaction fees are calculated based on
                 operation type, amount range, user tier, and KYC level. Each
                 rule can have both a flat fee and a percentage component.
@@ -1252,11 +1296,11 @@ const FeeRulesPage: React.FC = () => {
               </p>
 
               <div className="mt-4 flex items-center">
-                <button className="text-xs flex items-center text-indigo-700 hover:text-indigo-800 font-medium mr-6">
+                <button className="text-xs flex items-center text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 dark:hover:text-indigo-200 font-medium mr-6">
                   <HelpCircle size={14} className="mr-1.5" />
                   View Documentation
                 </button>
-                <button className="text-xs flex items-center text-indigo-700 hover:text-indigo-800 font-medium">
+                <button className="text-xs flex items-center text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 dark:hover:text-indigo-200 font-medium">
                   <Shield size={14} className="mr-1.5" />
                   Learn about Fee Security
                 </button>
@@ -1269,7 +1313,7 @@ const FeeRulesPage: React.FC = () => {
       {/* Tooltip */}
       {showTooltip && (
         <div
-          className="fixed bg-slate-900/95 text-white p-3 rounded-lg shadow-xl text-xs z-50 backdrop-blur-sm border border-slate-700"
+          className="fixed bg-slate-900/95 dark:bg-gray-800/95 text-white p-3 rounded-lg shadow-xl text-xs z-50 backdrop-blur-sm border border-slate-700 dark:border-gray-600"
           style={{
             left: `${tooltipPosition.x}px`,
             top: `${tooltipPosition.y + 20}px`,
@@ -1278,7 +1322,7 @@ const FeeRulesPage: React.FC = () => {
           }}
         >
           <div className="font-medium mb-1">{tooltipContent.title}</div>
-          <div className="text-slate-300 whitespace-pre-line">
+          <div className="text-slate-300 dark:text-gray-300 whitespace-pre-line">
             {tooltipContent.content}
           </div>
         </div>
@@ -1290,7 +1334,7 @@ const FeeRulesPage: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-slate-900/60 dark:bg-gray-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={handleCancelDelete}
           >
             <motion.div
@@ -1298,24 +1342,27 @@ const FeeRulesPage: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="bg-white/95 backdrop-blur-xl max-h-[85vh] mt-6 overflow-y-auto rounded-2xl border border-slate-200/50 p-8 max-w-md w-full mx-4 shadow-2xl"
+              className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl max-h-[85vh] mt-6 overflow-y-auto rounded-2xl border border-slate-200/50 dark:border-gray-700/50 p-8 max-w-md w-full mx-4 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Warning Icon */}
               <div className="w-16 h-16 mx-auto mb-6 relative">
-                <div className="absolute inset-0 rounded-xl bg-rose-100 animate-pulse-slow"></div>
+                <div className="absolute inset-0 rounded-xl bg-rose-100 dark:bg-rose-900/30 animate-pulse-slow"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <AlertTriangle size={28} className="text-rose-600" />
+                  <AlertTriangle
+                    size={28}
+                    className="text-rose-600 dark:text-rose-400"
+                  />
                 </div>
               </div>
 
               {/* Title */}
-              <h3 className="text-xl font-bold text-slate-900 text-center mb-3">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-gray-100 text-center mb-3">
                 Delete Fee Rule
               </h3>
 
               {/* Rule Info */}
-              <div className="bg-slate-50/80 backdrop-blur-sm rounded-xl p-4 mb-6 border border-slate-200 shadow-sm">
+              <div className="bg-slate-50/80 dark:bg-gray-700/50 backdrop-blur-sm rounded-xl p-4 mb-6 border border-slate-200 dark:border-gray-600 shadow-sm">
                 <div className="flex items-center space-x-3 mb-2">
                   <div
                     className={`w-10 h-10 ${getOperationBackground(
@@ -1325,40 +1372,44 @@ const FeeRulesPage: React.FC = () => {
                     {getOperationIcon(ruleToDelete.operation)}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">
+                    <h4 className="font-semibold text-slate-900 dark:text-gray-100">
                       {ruleToDelete.operation}
                     </h4>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-600 dark:text-gray-400">
                       {ruleToDelete.tier} tier, {ruleToDelete.kyc_level} KYC
                     </p>
                   </div>
                   <div
                     className={`ml-auto px-2 py-1 rounded-full text-xs font-medium ${
                       ruleToDelete.is_active
-                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        : "bg-slate-50 text-slate-700 border border-slate-200"
+                        ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700"
+                        : "bg-slate-50 dark:bg-gray-700 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-600"
                     }`}
                   >
                     {ruleToDelete.is_active ? "Active" : "Inactive"}
                   </div>
                 </div>
                 <div className="mt-3 space-y-2 text-sm">
-                  <p className="text-slate-700 flex items-center">
-                    <DollarSign size={14} className="mr-1.5 text-emerald-500" />
+                  <p className="text-slate-700 dark:text-gray-300 flex items-center">
+                    <DollarSign
+                      size={14}
+                      className="mr-1.5 text-emerald-500 dark:text-emerald-400"
+                    />
                     <span className="font-medium w-24">Flat Fee:</span>{" "}
                     {formatCurrency(ruleToDelete.flat_fee)}
                   </p>
-                  <p className="text-slate-700 flex items-center">
-                    <Percent size={14} className="mr-1.5 text-violet-500" />
-                    <span className="font-medium w-24">
-                      Percentage Fee:
-                    </span>{" "}
+                  <p className="text-slate-700 dark:text-gray-300 flex items-center">
+                    <Percent
+                      size={14}
+                      className="mr-1.5 text-violet-500 dark:text-violet-400"
+                    />
+                    <span className="font-medium w-24">Percentage Fee:</span>{" "}
                     {parseFloat(ruleToDelete.percent_fee).toFixed(2)}%
                   </p>
-                  <p className="text-slate-700 flex items-center">
+                  <p className="text-slate-700 dark:text-gray-300 flex items-center">
                     <ArrowUpRight
                       size={14}
-                      className="mr-1.5 text-indigo-500"
+                      className="mr-1.5 text-indigo-500 dark:text-indigo-400"
                     />
                     <span className="font-medium w-24">Amount Range:</span>{" "}
                     {formatCurrency(ruleToDelete.min_amount)} -{" "}
@@ -1370,41 +1421,44 @@ const FeeRulesPage: React.FC = () => {
               </div>
 
               {/* Warning Message */}
-              <div className="bg-rose-50/80 backdrop-blur-sm rounded-xl p-4 mb-6 border border-rose-200 shadow-sm">
-                <h4 className="font-semibold text-rose-900 mb-2 flex items-center">
+              <div className="bg-rose-50/80 dark:bg-rose-900/30 backdrop-blur-sm rounded-xl p-4 mb-6 border border-rose-200 dark:border-rose-700 shadow-sm">
+                <h4 className="font-semibold text-rose-900 dark:text-rose-300 mb-2 flex items-center">
                   <AlertCircle size={16} className="mr-2" />
                   Permanent Action Warning
                 </h4>
-                <div className="space-y-2 text-sm text-rose-800">
+                <div className="space-y-2 text-sm text-rose-800 dark:text-rose-300">
                   <p className="flex items-start">
-                    <span className="w-4 h-4 flex-shrink-0 rounded-full bg-rose-100 flex items-center justify-center mr-2 mt-0.5">
-                      <span className="w-1 h-1 rounded-full bg-rose-500"></span>
+                    <span className="w-4 h-4 flex-shrink-0 rounded-full bg-rose-100 dark:bg-rose-800 flex items-center justify-center mr-2 mt-0.5">
+                      <span className="w-1 h-1 rounded-full bg-rose-500 dark:bg-rose-400"></span>
                     </span>
                     This action cannot be undone
                   </p>
                   <p className="flex items-start">
-                    <span className="w-4 h-4 flex-shrink-0 rounded-full bg-rose-100 flex items-center justify-center mr-2 mt-0.5">
-                      <span className="w-1 h-1 rounded-full bg-rose-500"></span>
+                    <span className="w-4 h-4 flex-shrink-0 rounded-full bg-rose-100 dark:bg-rose-800 flex items-center justify-center mr-2 mt-0.5">
+                      <span className="w-1 h-1 rounded-full bg-rose-500 dark:bg-rose-400"></span>
                     </span>
                     All historical fee calculations using this rule will lose
                     their reference
                   </p>
                   <p className="flex items-start">
-                    <span className="w-4 h-4 flex-shrink-0 rounded-full bg-rose-100 flex items-center justify-center mr-2 mt-0.5">
-                      <span className="w-1 h-1 rounded-full bg-rose-500"></span>
+                    <span className="w-4 h-4 flex-shrink-0 rounded-full bg-rose-100 dark:bg-rose-800 flex items-center justify-center mr-2 mt-0.5">
+                      <span className="w-1 h-1 rounded-full bg-rose-500 dark:bg-rose-400"></span>
                     </span>
                     Future transactions will not be able to use this pricing
                     structure
                   </p>
                   <p className="flex items-start">
-                    <span className="w-4 h-4 flex-shrink-0 rounded-full bg-rose-100 flex items-center justify-center mr-2 mt-0.5">
-                      <span className="w-1 h-1 rounded-full bg-rose-500"></span>
+                    <span className="w-4 h-4 flex-shrink-0 rounded-full bg-rose-100 dark:bg-rose-800 flex items-center justify-center mr-2 mt-0.5">
+                      <span className="w-1 h-1 rounded-full bg-rose-500 dark:bg-rose-400"></span>
                     </span>
                     Reports and analytics may be affected
                   </p>
                   {ruleToDelete.is_active && (
                     <p className="font-medium mt-3 flex items-center">
-                      <AlertTriangle size={14} className="mr-2 text-rose-600" />
+                      <AlertTriangle
+                        size={14}
+                        className="mr-2 text-rose-600 dark:text-rose-400"
+                      />
                       This fee rule is currently ACTIVE and may be in use
                     </p>
                   )}
@@ -1412,12 +1466,15 @@ const FeeRulesPage: React.FC = () => {
               </div>
 
               {/* Recommendation */}
-              <div className="bg-indigo-50/80 backdrop-blur-sm rounded-xl p-4 mb-6 border border-indigo-200 shadow-sm">
-                <h4 className="font-semibold text-indigo-900 mb-2 flex items-center">
-                  <Sparkles size={16} className="mr-2 text-indigo-500" />
+              <div className="bg-indigo-50/80 dark:bg-indigo-900/30 backdrop-blur-sm rounded-xl p-4 mb-6 border border-indigo-200 dark:border-indigo-800 shadow-sm">
+                <h4 className="font-semibold text-indigo-900 dark:text-indigo-200 mb-2 flex items-center">
+                  <Sparkles
+                    size={16}
+                    className="mr-2 text-indigo-500 dark:text-indigo-400"
+                  />
                   Recommendation
                 </h4>
-                <p className="text-sm text-indigo-800">
+                <p className="text-sm text-indigo-800 dark:text-indigo-300">
                   Consider setting the fee rule to{" "}
                   <span className="font-medium">"inactive"</span> instead of
                   deleting it. This preserves historical data while preventing
@@ -1428,7 +1485,7 @@ const FeeRulesPage: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <motion.button
                   onClick={handleCancelDelete}
-                  className="flex-1 px-6 py-3 bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-800 rounded-xl font-medium transition-all shadow-sm"
+                  className="flex-1 px-6 py-3 bg-slate-100 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 hover:bg-slate-200 dark:hover:bg-gray-600 text-slate-800 dark:text-gray-200 rounded-xl font-medium transition-all shadow-sm"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   disabled={isDeleting}
@@ -1438,7 +1495,7 @@ const FeeRulesPage: React.FC = () => {
 
                 <motion.button
                   onClick={handleConfirmDelete}
-                  className="flex-1 px-6 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-rose-200/50"
+                  className="flex-1 px-6 py-3 bg-rose-600 dark:bg-rose-500 hover:bg-rose-700 dark:hover:bg-rose-600 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-rose-200/50 dark:shadow-rose-900/30"
                   whileHover={{ scale: isDeleting ? 1 : 1.02 }}
                   whileTap={{ scale: isDeleting ? 1 : 0.98 }}
                   disabled={isDeleting}
@@ -1457,9 +1514,12 @@ const FeeRulesPage: React.FC = () => {
                 </motion.button>
               </div>
 
-              <div className="mt-4 p-3 bg-indigo-900/5 border border-indigo-100 rounded-lg">
-                <p className="text-xs text-slate-500 text-center flex items-center justify-center">
-                  <Lock size={12} className="mr-1.5 text-indigo-500" />
+              <div className="mt-4 p-3 bg-indigo-900/5 dark:bg-indigo-800/20 border border-indigo-100 dark:border-indigo-800 rounded-lg">
+                <p className="text-xs text-slate-500 dark:text-gray-400 text-center flex items-center justify-center">
+                  <Lock
+                    size={12}
+                    className="mr-1.5 text-indigo-500 dark:text-indigo-400"
+                  />
                   This action will be securely logged for compliance purposes
                 </p>
               </div>

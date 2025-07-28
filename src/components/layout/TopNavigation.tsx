@@ -320,26 +320,35 @@ const TopNavigation = () => {
     switch (type) {
       case "transaction":
         return (
-          <div className="p-2 rounded-full bg-emerald-50/80 border border-emerald-400/30 backdrop-blur-sm shadow-inner shadow-emerald-400/10">
-            <CreditCard size={16} className="text-emerald-500" />
+          <div className="p-2 rounded-full bg-emerald-50/80 dark:bg-emerald-900/50 border border-emerald-400/30 dark:border-emerald-500/30 backdrop-blur-sm shadow-inner shadow-emerald-400/10 dark:shadow-emerald-500/10">
+            <CreditCard
+              size={16}
+              className="text-emerald-500 dark:text-emerald-400"
+            />
           </div>
         );
       case "alert":
         return (
-          <div className="p-2 rounded-full bg-amber-50/80 border border-amber-400/30 backdrop-blur-sm shadow-inner shadow-amber-400/10">
-            <AlertCircle size={16} className="text-amber-500" />
+          <div className="p-2 rounded-full bg-amber-50/80 dark:bg-amber-900/50 border border-amber-400/30 dark:border-amber-500/30 backdrop-blur-sm shadow-inner shadow-amber-400/10 dark:shadow-amber-500/10">
+            <AlertCircle
+              size={16}
+              className="text-amber-500 dark:text-amber-400"
+            />
           </div>
         );
       case "system":
         return (
-          <div className="p-2 rounded-full bg-violet-50/80 border border-violet-400/30 backdrop-blur-sm shadow-inner shadow-violet-400/10">
-            <Shield size={16} className="text-violet-500" />
+          <div className="p-2 rounded-full bg-violet-50/80 dark:bg-violet-900/50 border border-violet-400/30 dark:border-violet-500/30 backdrop-blur-sm shadow-inner shadow-violet-400/10 dark:shadow-violet-500/10">
+            <Shield
+              size={16}
+              className="text-violet-500 dark:text-violet-400"
+            />
           </div>
         );
       default:
         return (
-          <div className="p-2 rounded-full bg-indigo-50/80 border border-indigo-400/30 backdrop-blur-sm shadow-inner shadow-indigo-400/10">
-            <Bell size={16} className="text-indigo-500" />
+          <div className="p-2 rounded-full bg-indigo-50/80 dark:bg-indigo-900/50 border border-indigo-400/30 dark:border-indigo-500/30 backdrop-blur-sm shadow-inner shadow-indigo-400/10 dark:shadow-indigo-500/10">
+            <Bell size={16} className="text-indigo-500 dark:text-indigo-400" />
           </div>
         );
     }
@@ -390,23 +399,23 @@ const TopNavigation = () => {
           onMouseLeave={() => setHoverState({ section: null, item: null })}
           className={`w-full flex items-center p-4 rounded-2xl transition-all duration-500 ${
             isActive
-              ? "bg-gradient-to-r from-indigo-100/90 via-violet-100/80 to-sky-100/90 text-indigo-700 shadow-xl shadow-indigo-500/10"
-              : "hover:bg-gradient-to-r hover:from-indigo-50/60 hover:via-violet-50/50 hover:to-sky-50/60"
+              ? "bg-gradient-to-r from-indigo-100/90 dark:from-indigo-900/90 via-violet-100/80 dark:via-violet-900/80 to-sky-100/90 dark:to-sky-900/90 text-indigo-700 dark:text-indigo-300 shadow-xl shadow-indigo-500/10 dark:shadow-indigo-500/20"
+              : "hover:bg-gradient-to-r hover:from-indigo-50/60 dark:hover:from-indigo-900/60 hover:via-violet-50/50 dark:hover:via-violet-900/50 hover:to-sky-50/60 dark:hover:to-sky-900/60"
           }`}
         >
           <div
             className={`flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-500 mr-4 shadow-lg ${
               isActive
-                ? "bg-gradient-to-br from-indigo-200/90 via-violet-200/80 to-sky-200/90 scale-105"
-                : "bg-gradient-to-br from-white/90 to-slate-50/90 group-hover:from-indigo-100/90 group-hover:to-sky-100/90"
+                ? "bg-gradient-to-br from-indigo-200/90 dark:from-indigo-800/90 via-violet-200/80 dark:via-violet-800/80 to-sky-200/90 dark:to-sky-800/90 scale-105"
+                : "bg-gradient-to-br from-white/90 dark:from-gray-800/90 to-slate-50/90 dark:to-gray-700/90 group-hover:from-indigo-100/90 dark:group-hover:from-indigo-900/90 group-hover:to-sky-100/90 dark:group-hover:to-sky-900/90"
             }`}
           >
             <dropdown.icon
               size={20}
               className={`transition-colors duration-500 ${
                 isActive
-                  ? "text-indigo-700"
-                  : "text-slate-600 group-hover:text-indigo-600"
+                  ? "text-indigo-700 dark:text-indigo-300"
+                  : "text-slate-600 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
               }`}
             />
           </div>
@@ -414,8 +423,8 @@ const TopNavigation = () => {
             <span
               className={`text-sm font-semibold transition-colors duration-500 ${
                 isActive
-                  ? "text-indigo-700"
-                  : "text-slate-700 group-hover:text-indigo-700"
+                  ? "text-indigo-700 dark:text-indigo-300"
+                  : "text-slate-700 dark:text-gray-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-300"
               }`}
             >
               {dropdown.title}
@@ -425,14 +434,14 @@ const TopNavigation = () => {
             size={16}
             className={`transition-all duration-500 ${
               isActive
-                ? "rotate-180 text-indigo-600"
-                : "text-slate-400 group-hover:text-indigo-500"
+                ? "rotate-180 text-indigo-600 dark:text-indigo-400"
+                : "text-slate-400 dark:text-gray-500 group-hover:text-indigo-500 dark:group-hover:text-indigo-400"
             }`}
           />
         </button>
 
         {isActive && (
-          <div className="mt-2 p-2 rounded-2xl bg-white/90 backdrop-blur-xl shadow-2xl shadow-indigo-500/10 border border-white/80 animate-dropDown overflow-hidden">
+          <div className="mt-2 p-2 rounded-2xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl shadow-2xl shadow-indigo-500/10 dark:shadow-gray-900/30 border border-white/80 dark:border-gray-700/80 animate-dropDown overflow-hidden">
             {filteredItems.map((subItem, subIdx) => (
               <NavLink
                 key={subIdx}
@@ -445,17 +454,21 @@ const TopNavigation = () => {
                   setHoverState({ section: dropdown.key, item: null })
                 }
                 className={({ isActive }) => `
-                  group flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50/60 hover:via-violet-50/50 hover:to-sky-50/60 transition-all duration-500 transform hover:translate-x-1
-                  ${isActive ? "bg-white/80 shadow-sm shadow-indigo-500/5" : ""}
+                  group flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50/60 dark:hover:from-indigo-900/60 hover:via-violet-50/50 dark:hover:via-violet-900/50 hover:to-sky-50/60 dark:hover:to-sky-900/60 transition-all duration-500 transform hover:translate-x-1
+                  ${
+                    isActive
+                      ? "bg-white/80 dark:bg-gray-700/80 shadow-sm shadow-indigo-500/5 dark:shadow-gray-900/20"
+                      : ""
+                  }
                 `}
               >
-                <div className="w-3 h-3 rounded-full bg-slate-300 group-hover:bg-indigo-400 transition-colors duration-500 mr-4 flex-shrink-0"></div>
-                <span className="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors duration-500">
+                <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-gray-600 group-hover:bg-indigo-400 dark:group-hover:bg-indigo-400 transition-colors duration-500 mr-4 flex-shrink-0"></div>
+                <span className="text-sm text-slate-600 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-500">
                   {subItem.title}
                 </span>
                 <ArrowRight
                   size={14}
-                  className="text-slate-300 group-hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-1 ml-auto"
+                  className="text-slate-300 dark:text-gray-600 group-hover:text-indigo-400 dark:group-hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-1 ml-auto"
                 />
 
                 {hoverState.section === dropdown.key &&
@@ -476,14 +489,14 @@ const TopNavigation = () => {
     if (filteredItems.length === 0) return null;
 
     return (
-      <div className="absolute top-full left-0 mt-3 bg-white/90 rounded-3xl shadow-2xl shadow-indigo-900/10 border border-white/40 overflow-hidden z-50 animate-fadeInDown min-w-[400px] max-w-[500px]">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/20 via-violet-50/20 to-white/10 -z-10"></div>
-        <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/30 rounded-full blur-3xl animate-blob"></div>
-        <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/20 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+      <div className="absolute top-full left-0 mt-3 bg-white/90 dark:bg-gray-800/90 rounded-3xl shadow-2xl shadow-indigo-900/10 dark:shadow-gray-900/30 border border-white/40 dark:border-gray-700/40 overflow-hidden z-50 animate-fadeInDown min-w-[400px] max-w-[500px]">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/20 dark:from-indigo-900/20 via-violet-50/20 dark:via-violet-900/20 to-white/10 dark:to-gray-800/10 -z-10"></div>
+        <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/30 dark:bg-indigo-500/20 rounded-full blur-3xl animate-blob"></div>
+        <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/20 dark:bg-sky-500/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
 
         {/* Dynamic glow effect that follows cursor */}
         <div
-          className="absolute w-40 h-40 rounded-full blur-3xl bg-indigo-400/10 pointer-events-none transition-all duration-300 ease-out"
+          className="absolute w-40 h-40 rounded-full blur-3xl bg-indigo-400/10 dark:bg-indigo-500/5 pointer-events-none transition-all duration-300 ease-out"
           style={{
             left: mousePosition.x - 350,
             top: mousePosition.y - 200,
@@ -494,7 +507,7 @@ const TopNavigation = () => {
 
         <div className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar relative">
           <div className="mb-6">
-            <h3 className="text-xs font-bold text-indigo-500 uppercase tracking-[0.15em] mb-1">
+            <h3 className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-[0.15em] mb-1">
               {section.title}
             </h3>
             <div className="w-12 h-0.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-sky-500 rounded-full"></div>
@@ -517,36 +530,36 @@ const TopNavigation = () => {
                       group flex items-center p-4 rounded-2xl transition-all duration-500 transform hover:translate-x-1 relative overflow-hidden
                       ${
                         isActive
-                          ? "bg-white/70 shadow-sm shadow-indigo-500/10"
-                          : "hover:bg-gradient-to-r hover:from-indigo-50/60 hover:via-violet-50/50 hover:to-sky-50/60"
+                          ? "bg-white/70 dark:bg-gray-700/70 shadow-sm shadow-indigo-500/10 dark:shadow-gray-900/20"
+                          : "hover:bg-gradient-to-r hover:from-indigo-50/60 dark:hover:from-indigo-900/60 hover:via-violet-50/50 dark:hover:via-violet-900/50 hover:to-sky-50/60 dark:hover:to-sky-900/60"
                       }
                     `}
                   >
-                    <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-white/90 to-slate-50/90 group-hover:from-indigo-100/90 group-hover:via-violet-100/80 group-hover:to-sky-100/90 transition-all duration-500 mr-4 shadow-lg group-hover:shadow-xl group-hover:scale-105">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-white/90 dark:from-gray-700/90 to-slate-50/90 dark:to-gray-600/90 group-hover:from-indigo-100/90 dark:group-hover:from-indigo-900/90 group-hover:via-violet-100/80 dark:group-hover:via-violet-900/80 group-hover:to-sky-100/90 dark:group-hover:to-sky-900/90 transition-all duration-500 mr-4 shadow-lg group-hover:shadow-xl group-hover:scale-105">
                       <item.icon
                         size={20}
-                        className="text-slate-600 group-hover:text-indigo-600 transition-colors duration-500"
+                        className="text-slate-600 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-500"
                       />
                     </div>
                     <div className="flex-1">
-                      <span className="text-sm font-semibold text-slate-700 group-hover:text-indigo-700 transition-colors duration-500 block">
+                      <span className="text-sm font-semibold text-slate-700 dark:text-gray-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors duration-500 block">
                         {item.title}
                       </span>
                       {item.description && (
-                        <span className="text-xs text-slate-500 group-hover:text-indigo-500 transition-colors duration-500 mt-1 block">
+                        <span className="text-xs text-slate-500 dark:text-gray-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-500 mt-1 block">
                           {item.description}
                         </span>
                       )}
                     </div>
                     <ArrowRight
                       size={16}
-                      className="text-slate-400 group-hover:text-indigo-500 opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-1"
+                      className="text-slate-400 dark:text-gray-500 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-x-1"
                     />
 
                     {/* Interactive shine effect */}
                     {hoverState.section === section.title &&
                       hoverState.item === idx && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-gray-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
                       )}
                   </NavLink>
                 );
@@ -588,8 +601,8 @@ const TopNavigation = () => {
             group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-500 transform hover:scale-105 relative
             ${
               isActive
-                ? "text-indigo-700 bg-gradient-to-r from-indigo-50/80 via-violet-50/70 to-sky-50/80 shadow-lg shadow-indigo-500/10"
-                : "text-slate-600 hover:text-indigo-700 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:via-violet-50/40 hover:to-sky-50/50"
+                ? "text-indigo-700 dark:text-indigo-300 bg-gradient-to-r from-indigo-50/80 dark:from-indigo-900/80 via-violet-50/70 dark:via-violet-900/70 to-sky-50/80 dark:to-sky-900/80 shadow-lg shadow-indigo-500/10 dark:shadow-indigo-500/20"
+                : "text-slate-600 dark:text-gray-300 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-gradient-to-r hover:from-indigo-50/50 dark:hover:from-indigo-900/50 hover:via-violet-50/40 dark:hover:via-violet-900/40 hover:to-sky-50/50 dark:hover:to-sky-900/50"
             }
           `}
         >
@@ -602,9 +615,9 @@ const TopNavigation = () => {
           {/* Add subtle particle effect on hover */}
           {hoverState.section === item.title && (
             <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-              <div className="absolute -top-1 left-1/2 w-1 h-1 rounded-full bg-indigo-300/40 animate-float-slow"></div>
-              <div className="absolute -bottom-1 left-1/3 w-1 h-1 rounded-full bg-sky-300/40 animate-float-slow animation-delay-300"></div>
-              <div className="absolute top-1/2 right-2 w-1.5 h-1.5 rounded-full bg-violet-300/40 animate-float-slow animation-delay-700"></div>
+              <div className="absolute -top-1 left-1/2 w-1 h-1 rounded-full bg-indigo-300/40 dark:bg-indigo-400/40 animate-float-slow"></div>
+              <div className="absolute -bottom-1 left-1/3 w-1 h-1 rounded-full bg-sky-300/40 dark:bg-sky-400/40 animate-float-slow animation-delay-300"></div>
+              <div className="absolute top-1/2 right-2 w-1.5 h-1.5 rounded-full bg-violet-300/40 dark:bg-violet-400/40 animate-float-slow animation-delay-700"></div>
             </div>
           )}
         </NavLink>
@@ -645,8 +658,8 @@ const TopNavigation = () => {
             }}
             className={`group flex items-center px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-500 transform hover:scale-105 relative ${
               activeDropdown === item.title
-                ? "text-indigo-700 bg-gradient-to-r from-indigo-50/80 via-violet-50/70 to-sky-50/80 shadow-lg shadow-indigo-500/10"
-                : "text-slate-600 hover:text-indigo-700 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:via-violet-50/40 hover:to-sky-50/50"
+                ? "text-indigo-700 dark:text-indigo-300 bg-gradient-to-r from-indigo-50/80 dark:from-indigo-900/80 via-violet-50/70 dark:via-violet-900/70 to-sky-50/80 dark:to-sky-900/80 shadow-lg shadow-indigo-500/10 dark:shadow-indigo-500/20"
+                : "text-slate-600 dark:text-gray-300 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-gradient-to-r hover:from-indigo-50/50 dark:hover:from-indigo-900/50 hover:via-violet-50/40 dark:hover:via-violet-900/40 hover:to-sky-50/50 dark:hover:to-sky-900/50"
             }`}
           >
             <span>{item.title}</span>
@@ -654,17 +667,17 @@ const TopNavigation = () => {
               size={16}
               className={`ml-2 transition-all duration-500 ${
                 activeDropdown === item.title
-                  ? "rotate-180 text-indigo-600"
-                  : "text-slate-400 group-hover:text-indigo-500"
+                  ? "rotate-180 text-indigo-600 dark:text-indigo-400"
+                  : "text-slate-400 dark:text-gray-500 group-hover:text-indigo-500 dark:group-hover:text-indigo-400"
               }`}
             />
 
             {/* Add subtle particle effect on hover */}
             {hoverState.section === item.title && (
               <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-                <div className="absolute -top-1 left-1/2 w-1 h-1 rounded-full bg-indigo-300/40 animate-float-slow"></div>
-                <div className="absolute -bottom-1 left-1/3 w-1 h-1 rounded-full bg-sky-300/40 animate-float-slow animation-delay-300"></div>
-                <div className="absolute top-1/2 right-2 w-1.5 h-1.5 rounded-full bg-violet-300/40 animate-float-slow animation-delay-700"></div>
+                <div className="absolute -top-1 left-1/2 w-1 h-1 rounded-full bg-indigo-300/40 dark:bg-indigo-400/40 animate-float-slow"></div>
+                <div className="absolute -bottom-1 left-1/3 w-1 h-1 rounded-full bg-sky-300/40 dark:bg-sky-400/40 animate-float-slow animation-delay-300"></div>
+                <div className="absolute top-1/2 right-2 w-1.5 h-1.5 rounded-full bg-violet-300/40 dark:bg-violet-400/40 animate-float-slow animation-delay-700"></div>
               </div>
             )}
           </button>
@@ -706,8 +719,8 @@ const TopNavigation = () => {
   };
 
   return (
-    <div className="fixed top-0 right-0 z-50 left-[60px] w-[calc(100%-60px)]">
-      <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/10 via-transparent to-sky-50/10 pointer-events-none"></div>
+    <div className="fixed top-0 right-0 z-30 left-[60px] w-[calc(100%-60px)]">
+      <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/10 dark:from-indigo-900/10 via-transparent to-sky-50/10 dark:to-sky-900/10 pointer-events-none"></div>
 
       <div className="absolute top-0 left-0 right-0 h-1">
         <div className="absolute inset-0 bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 bg-[length:200%_100%] animate-gradient-flow"></div>
@@ -715,22 +728,22 @@ const TopNavigation = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 via-indigo-500/10 to-sky-500/10 blur-md transform translate-y-1"></div>
       </div>
 
-      <div className="absolute -top-10 right-1/4 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl animate-blob-float opacity-50"></div>
-      <div className="absolute top-5 right-1/3 w-20 h-20 bg-indigo-400/10 rounded-full blur-2xl animate-blob-float animation-delay-3000 opacity-30"></div>
-      <div className="absolute -bottom-20 left-1/3 w-60 h-60 bg-sky-400/10 rounded-full blur-3xl animate-blob-float animation-delay-4000 opacity-40"></div>
-      <div className="absolute bottom-5 left-1/4 w-20 h-20 bg-violet-400/10 rounded-full blur-2xl animate-blob-float animation-delay-5000 opacity-30"></div>
+      <div className="absolute -top-10 right-1/4 w-40 h-40 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl animate-blob-float opacity-50"></div>
+      <div className="absolute top-5 right-1/3 w-20 h-20 bg-indigo-400/10 dark:bg-indigo-500/5 rounded-full blur-2xl animate-blob-float animation-delay-3000 opacity-30"></div>
+      <div className="absolute -bottom-20 left-1/3 w-60 h-60 bg-sky-400/10 dark:bg-sky-500/5 rounded-full blur-3xl animate-blob-float animation-delay-4000 opacity-40"></div>
+      <div className="absolute bottom-5 left-1/4 w-20 h-20 bg-violet-400/10 dark:bg-violet-500/5 rounded-full blur-2xl animate-blob-float animation-delay-5000 opacity-30"></div>
 
       <div
         className={`relative transition-all duration-500 ${
           scrolled
-            ? "bg-white/60 backdrop-blur-2xl shadow-xl shadow-indigo-900/5 border-b border-white/40"
-            : "bg-white/50 backdrop-blur-xl"
+            ? "bg-white/60 dark:bg-gray-800/60 backdrop-blur-2xl shadow-xl shadow-indigo-900/5 dark:shadow-gray-900/20 border-b border-white/40 dark:border-gray-700/40"
+            : "bg-white/50 dark:bg-gray-800/50 backdrop-blur-xl"
         }`}
       >
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-10 left-1/4 w-40 h-1 bg-white/80 blur-sm rotate-45 transform-gpu animate-shine"></div>
-          <div className="absolute top-20 right-1/4 w-60 h-0.5 bg-white/60 blur-sm -rotate-45 transform-gpu animate-shine animation-delay-2000"></div>
-          <div className="absolute bottom-0 left-1/3 w-30 h-0.5 bg-white/70 blur-sm rotate-45 transform-gpu animate-shine animation-delay-4000"></div>
+          <div className="absolute -top-10 left-1/4 w-40 h-1 bg-white/80 dark:bg-gray-700/60 blur-sm rotate-45 transform-gpu animate-shine"></div>
+          <div className="absolute top-20 right-1/4 w-60 h-0.5 bg-white/60 dark:bg-gray-700/40 blur-sm -rotate-45 transform-gpu animate-shine animation-delay-2000"></div>
+          <div className="absolute bottom-0 left-1/3 w-30 h-0.5 bg-white/70 dark:bg-gray-700/50 blur-sm rotate-45 transform-gpu animate-shine animation-delay-4000"></div>
         </div>
 
         <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between relative">
@@ -742,7 +755,7 @@ const TopNavigation = () => {
                 className="w-[150px] h-auto cursor-pointer transition-transform duration-500 hover:scale-105"
                 onClick={() => navigate("/")}
               />
-              <div className="absolute -inset-1 bg-indigo-500/5 blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"></div>
+              <div className="absolute -inset-1 bg-indigo-500/5 dark:bg-indigo-400/5 blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"></div>
             </div>
           </div>
 
@@ -750,11 +763,14 @@ const TopNavigation = () => {
             className="hidden xl:flex items-center flex-1 justify-center"
             ref={navRef}
           >
-            <div className="flex items-center space-x-2 bg-white/30 backdrop-blur-2xl rounded-3xl p-2 shadow-2xl shadow-indigo-500/5 border border-white/80 transition-all duration-500 hover:shadow-indigo-500/10 relative">
+            <div className="flex items-center space-x-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-2xl rounded-3xl p-2 shadow-2xl shadow-indigo-500/5 dark:shadow-gray-900/20 border border-white/80 dark:border-gray-700/80 transition-all duration-500 hover:shadow-indigo-500/10 dark:hover:shadow-gray-900/30 relative">
               {showTimeIndicator && (
-                <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-xl shadow-lg border border-white/50 px-3 py-1.5 rounded-xl animate-fadeInDown">
+                <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl shadow-lg border border-white/50 dark:border-gray-700/50 px-3 py-1.5 rounded-xl animate-fadeInDown">
                   <div className="flex items-center space-x-2">
-                    <Lock size={12} className="text-indigo-400" />
+                    <Lock
+                      size={12}
+                      className="text-indigo-400 dark:text-indigo-400"
+                    />
                     <span className="text-xs font-medium bg-gradient-to-r from-indigo-600 to-violet-600 text-transparent bg-clip-text">
                       {currentTime}
                     </span>
@@ -779,13 +795,16 @@ const TopNavigation = () => {
                       onChange={handleSearchChange}
                       onKeyDown={handleSearchKeyDown}
                       placeholder="Search anything..."
-                      className="w-56 md:w-80 pl-12 pr-12 py-3 rounded-2xl border border-white/70 focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-300/20 transition-all duration-500 text-sm font-medium bg-white/30 backdrop-blur-2xl shadow-xl text-gray-800 placeholder-indigo-400/70"
+                      className="w-56 md:w-80 pl-12 pr-12 py-3 rounded-2xl border border-white/70 dark:border-gray-700/70 focus:border-indigo-400/60 dark:focus:border-indigo-500/60 focus:outline-none focus:ring-4 focus:ring-indigo-300/20 dark:focus:ring-indigo-500/20 transition-all duration-500 text-sm font-medium bg-white/30 dark:bg-gray-800/30 backdrop-blur-2xl shadow-xl text-gray-800 dark:text-gray-200 placeholder-indigo-400/70 dark:placeholder-indigo-400/70"
                       autoFocus
                     />
                     <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                      <Search size={16} className="text-indigo-400" />
+                      <Search
+                        size={16}
+                        className="text-indigo-400 dark:text-indigo-400"
+                      />
                     </div>
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-xl hover:bg-indigo-700/20 transition-all duration-300 text-indigo-400">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-xl hover:bg-indigo-700/20 dark:hover:bg-indigo-600/20 transition-all duration-300 text-indigo-400 dark:text-indigo-400">
                       <button
                         onClick={() => {
                           setIsSearchOpen(false);
@@ -805,30 +824,33 @@ const TopNavigation = () => {
               ) : (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="p-2.5 rounded-xl hover:bg-white/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 hover:text-indigo-600 relative"
+                  className="p-2.5 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 dark:text-gray-400/70 hover:text-indigo-600 dark:hover:text-indigo-400 relative"
                 >
                   <Search
                     size={18}
                     className="transition-colors duration-500"
                   />
 
-                  <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 transition-colors duration-500 -z-10"></div>
-                  <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 blur-sm transition-transform duration-500 -z-10"></div>
+                  <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 dark:group-hover:bg-indigo-500/10 transition-colors duration-500 -z-10"></div>
+                  <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 dark:bg-indigo-500/5 blur-sm transition-transform duration-500 -z-10"></div>
                 </button>
               )}
 
               {showSearchResults && searchResults.length > 0 && (
                 <div
                   ref={searchResultsRef}
-                  className="absolute right-0 mt-3 w-80 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown"
+                  className="absolute right-0 mt-3 w-80 bg-white/70 dark:bg-gray-800/70 backdrop-blur-2xl rounded-2xl border border-white/70 dark:border-gray-700/70 shadow-2xl shadow-indigo-900/10 dark:shadow-gray-900/30 z-50 overflow-hidden animate-fadeInDown"
                 >
-                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
-                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 via-violet-500/5 to-sky-500/5 rounded-full blur-3xl"></div>
+                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 dark:bg-sky-500/5 rounded-full blur-3xl"></div>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 dark:from-indigo-600/5 via-violet-500/5 dark:via-violet-600/5 to-sky-500/5 dark:to-sky-600/5 rounded-full blur-3xl"></div>
 
                   <div className="p-4 relative">
-                    <div className="text-xs text-gray-500 mb-3 flex items-center">
-                      <Sparkles size={12} className="mr-1.5 text-indigo-400" />
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-3 flex items-center">
+                      <Sparkles
+                        size={12}
+                        className="mr-1.5 text-indigo-400 dark:text-indigo-400"
+                      />
                       <span>
                         {searchResults.length} results found for "{searchValue}"
                       </span>
@@ -838,10 +860,11 @@ const TopNavigation = () => {
                       {Object.entries(groupedResults).map(
                         ([category, results]) => (
                           <div key={category}>
-                            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center">
+                            <div className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5 flex items-center">
                               {React.createElement(getCategoryIcon(category), {
                                 size: 14,
-                                className: "inline mr-1 text-gray-400",
+                                className:
+                                  "inline mr-1 text-gray-400 dark:text-gray-500",
                               })}
                               {category}
                             </div>
@@ -867,8 +890,8 @@ const TopNavigation = () => {
                                     cursor-pointer p-2 rounded-xl transition-all duration-500 flex items-center relative overflow-hidden
                                     ${
                                       isSelected
-                                        ? "bg-gradient-to-r from-indigo-50/80 via-violet-50/70 to-sky-50/80 text-indigo-700 shadow-lg shadow-indigo-500/5"
-                                        : "hover:bg-white/60"
+                                        ? "bg-gradient-to-r from-indigo-50/80 dark:from-indigo-900/80 via-violet-50/70 dark:via-violet-900/70 to-sky-50/80 dark:to-sky-900/80 text-indigo-700 dark:text-indigo-300 shadow-lg shadow-indigo-500/5 dark:shadow-indigo-500/10"
+                                        : "hover:bg-white/60 dark:hover:bg-gray-700/60"
                                     }
                                   `}
                                   >
@@ -877,31 +900,32 @@ const TopNavigation = () => {
                                     p-1.5 rounded-xl mr-2 transition-all duration-300
                                     ${
                                       isSelected
-                                        ? "bg-white/70 shadow-sm shadow-indigo-500/10"
-                                        : "bg-white/50"
+                                        ? "bg-white/70 dark:bg-gray-700/70 shadow-sm shadow-indigo-500/10 dark:shadow-indigo-500/20"
+                                        : "bg-white/50 dark:bg-gray-700/50"
                                     }
                                   `}
                                     >
                                       {result.icon ? (
                                         <result.icon
                                           size={16}
-                                          className="text-indigo-500"
+                                          className="text-indigo-500 dark:text-indigo-400"
                                         />
                                       ) : (
                                         React.createElement(
                                           getCategoryIcon(result.category),
                                           {
                                             size: 16,
-                                            className: "text-indigo-500",
+                                            className:
+                                              "text-indigo-500 dark:text-indigo-400",
                                           }
                                         )
                                       )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <div className="font-medium text-sm truncate">
+                                      <div className="font-medium text-sm truncate text-gray-800 dark:text-gray-200">
                                         {result.title}
                                       </div>
-                                      <div className="text-xs text-gray-500 truncate">
+                                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                                         {result.path}
                                       </div>
                                     </div>
@@ -910,8 +934,8 @@ const TopNavigation = () => {
                                     ml-2 p-1 rounded-full transition-all duration-300
                                     ${
                                       isSelected
-                                        ? "bg-white/70 text-indigo-600"
-                                        : "text-gray-400"
+                                        ? "bg-white/70 dark:bg-gray-700/70 text-indigo-600 dark:text-indigo-400"
+                                        : "text-gray-400 dark:text-gray-500"
                                     }
                                   `}
                                     >
@@ -935,18 +959,18 @@ const TopNavigation = () => {
                       )}
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-white/50 text-xs text-gray-500 flex items-center justify-between">
+                    <div className="mt-3 pt-3 border-t border-white/50 dark:border-gray-700/50 text-xs text-gray-500 dark:text-gray-400 flex items-center justify-between">
                       <span>
-                        <kbd className="px-1.5 py-0.5 rounded-lg bg-white/70 text-gray-700 mx-1 shadow-sm border border-white/50">
+                        <kbd className="px-1.5 py-0.5 rounded-lg bg-white/70 dark:bg-gray-700/70 text-gray-700 dark:text-gray-300 mx-1 shadow-sm border border-white/50 dark:border-gray-600/50">
                           ↑
                         </kbd>
-                        <kbd className="px-1.5 py-0.5 rounded-lg bg-white/70 text-gray-700 mx-1 shadow-sm border border-white/50">
+                        <kbd className="px-1.5 py-0.5 rounded-lg bg-white/70 dark:bg-gray-700/70 text-gray-700 dark:text-gray-300 mx-1 shadow-sm border border-white/50 dark:border-gray-600/50">
                           ↓
                         </kbd>
                         to navigate
                       </span>
                       <span>
-                        <kbd className="px-1.5 py-0.5 rounded-lg bg-white/70 text-gray-700 mx-1 shadow-sm border border-white/50">
+                        <kbd className="px-1.5 py-0.5 rounded-lg bg-white/70 dark:bg-gray-700/70 text-gray-700 dark:text-gray-300 mx-1 shadow-sm border border-white/50 dark:border-gray-600/50">
                           Enter
                         </kbd>
                         to select
@@ -960,32 +984,35 @@ const TopNavigation = () => {
             <div className="relative" ref={notificationsRef}>
               <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className="p-2.5 rounded-xl hover:bg-white/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 hover:text-indigo-600 relative"
+                className="p-2.5 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-500 transform hover:scale-110 group text-gray-600/70 dark:text-gray-400/70 hover:text-indigo-600 dark:hover:text-indigo-400 relative"
               >
                 <Bell size={18} className="transition-colors duration-500" />
                 {unreadNotifications > 0 && (
                   <div className="absolute top-1.5 right-1.5 flex items-center justify-center">
-                    <span className="absolute w-2 h-2 bg-indigo-500 rounded-full shadow-sm shadow-indigo-500/50 animate-ping opacity-75"></span>
-                    <span className="relative w-2 h-2 bg-indigo-600 rounded-full"></span>
+                    <span className="absolute w-2 h-2 bg-indigo-500 dark:bg-indigo-400 rounded-full shadow-sm shadow-indigo-500/50 dark:shadow-indigo-400/50 animate-ping opacity-75"></span>
+                    <span className="relative w-2 h-2 bg-indigo-600 dark:bg-indigo-500 rounded-full"></span>
                   </div>
                 )}
 
-                <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 transition-colors duration-500 -z-10"></div>
-                <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 blur-sm transition-transform duration-500 -z-10"></div>
+                <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 dark:group-hover:bg-indigo-500/10 transition-colors duration-500 -z-10"></div>
+                <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 dark:bg-indigo-500/5 blur-sm transition-transform duration-500 -z-10"></div>
               </button>
 
               {notificationsOpen && (
-                <div className="absolute right-0 mt-3 w-80 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown">
-                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
-                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 via-violet-500/5 to-sky-500/5 rounded-full blur-3xl"></div>
+                <div className="absolute right-0 mt-3 w-80 bg-white/70 dark:bg-gray-800/70 backdrop-blur-2xl rounded-2xl border border-white/70 dark:border-gray-700/70 shadow-2xl shadow-indigo-900/10 dark:shadow-gray-900/30 z-50 overflow-hidden animate-fadeInDown">
+                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 dark:bg-sky-500/5 rounded-full blur-3xl"></div>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 dark:from-indigo-600/5 via-violet-500/5 dark:via-violet-600/5 to-sky-500/5 dark:to-sky-600/5 rounded-full blur-3xl"></div>
 
-                  <div className="px-4 py-3 border-b border-white/50 flex justify-between items-center relative">
-                    <h3 className="font-medium text-gray-800 flex items-center">
-                      <Bell size={14} className="mr-2 text-indigo-500" />
+                  <div className="px-4 py-3 border-b border-white/50 dark:border-gray-700/50 flex justify-between items-center relative">
+                    <h3 className="font-medium text-gray-800 dark:text-gray-200 flex items-center">
+                      <Bell
+                        size={14}
+                        className="mr-2 text-indigo-500 dark:text-indigo-400"
+                      />
                       Notifications
                       {unreadNotifications > 0 && (
-                        <span className="ml-2 text-xs font-medium px-1.5 py-0.5 bg-indigo-100/80 text-indigo-700 rounded-full">
+                        <span className="ml-2 text-xs font-medium px-1.5 py-0.5 bg-indigo-100/80 dark:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 rounded-full">
                           {unreadNotifications} new
                         </span>
                       )}
@@ -993,7 +1020,7 @@ const TopNavigation = () => {
                     {unreadNotifications > 0 && (
                       <button
                         onClick={markAllAsRead}
-                        className="text-xs text-indigo-600 hover:text-indigo-700 font-medium transition-colors duration-200"
+                        className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors duration-200"
                       >
                         Mark all as read
                       </button>
@@ -1005,8 +1032,12 @@ const TopNavigation = () => {
                       <div
                         key={notification.id}
                         className={`
-                          relative px-4 py-3 hover:bg-indigo-50/50 cursor-pointer transition-all duration-500
-                          ${!notification.read ? "bg-indigo-50/30" : ""}
+                          relative px-4 py-3 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/50 cursor-pointer transition-all duration-500
+                          ${
+                            !notification.read
+                              ? "bg-indigo-50/30 dark:bg-indigo-900/30"
+                              : ""
+                          }
                         `}
                       >
                         <div className="flex items-start">
@@ -1014,29 +1045,32 @@ const TopNavigation = () => {
                             {getNotificationIcon(notification.type)}
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-800">
+                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                               {notification.title}
                             </p>
-                            <p className="text-xs text-gray-500 mt-0.5">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                               {notification.description}
                             </p>
-                            <p className="text-xs text-gray-400 mt-1 flex items-center">
-                              <Eye size={10} className="mr-1 text-gray-400" />
+                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 flex items-center">
+                              <Eye
+                                size={10}
+                                className="mr-1 text-gray-400 dark:text-gray-500"
+                              />
                               {notification.time}
                             </p>
                           </div>
                           {!notification.read && (
-                            <div className="absolute top-3 right-3 w-2 h-2 bg-indigo-500 rounded-full"></div>
+                            <div className="absolute top-3 right-3 w-2 h-2 bg-indigo-500 dark:bg-indigo-400 rounded-full"></div>
                           )}
                         </div>
 
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-gray-600/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
                       </div>
                     ))}
                   </div>
 
-                  <div className="px-4 py-2 border-t border-white/50 relative">
-                    <button className="w-full text-xs text-center text-indigo-600 hover:text-indigo-700 font-medium py-1 transition-colors duration-200 flex items-center justify-center">
+                  <div className="px-4 py-2 border-t border-white/50 dark:border-gray-700/50 relative">
+                    <button className="w-full text-xs text-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium py-1 transition-colors duration-200 flex items-center justify-center">
                       <span>View all notifications</span>
                       <ArrowRight size={12} className="ml-1.5" />
                     </button>
@@ -1047,10 +1081,10 @@ const TopNavigation = () => {
 
             <div className="relative ml-2" ref={userMenuRef}>
               <button
-                className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all duration-500 hover:bg-white/60 text-gray-600/90 hover:text-indigo-600 group relative"
+                className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all duration-500 hover:bg-white/60 dark:hover:bg-gray-700/60 text-gray-600/90 dark:text-gray-400/90 hover:text-indigo-600 dark:hover:text-indigo-400 group relative"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
               >
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600/90 via-violet-600/80 to-sky-600/80 backdrop-blur-xl flex items-center justify-center border border-white/40 group-hover:from-indigo-500/90 group-hover:to-sky-500/80 transition-all duration-500 shadow-lg">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600/90 via-violet-600/80 to-sky-600/80 backdrop-blur-xl flex items-center justify-center border border-white/40 dark:border-gray-600/40 group-hover:from-indigo-500/90 group-hover:to-sky-500/80 transition-all duration-500 shadow-lg">
                   <User size={16} className="text-white" />
                 </div>
                 <span className="hidden md:block text-sm font-medium">
@@ -1060,46 +1094,48 @@ const TopNavigation = () => {
                   size={14}
                   className={`hidden md:block transition-all duration-500 ${
                     userMenuOpen
-                      ? "rotate-180 text-indigo-500"
-                      : "text-indigo-300 group-hover:text-indigo-500"
+                      ? "rotate-180 text-indigo-500 dark:text-indigo-400"
+                      : "text-indigo-300 dark:text-indigo-500 group-hover:text-indigo-500 dark:group-hover:text-indigo-400"
                   }`}
                 />
 
-                <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 transition-colors duration-500 -z-10"></div>
-                <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 blur-sm transition-transform duration-500 -z-10"></div>
+                <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 dark:group-hover:bg-indigo-500/10 transition-colors duration-500 -z-10"></div>
+                <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 dark:bg-indigo-500/5 blur-sm transition-transform duration-500 -z-10"></div>
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-3 w-64 bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/70 shadow-2xl shadow-indigo-900/10 z-50 overflow-hidden animate-fadeInDown">
-                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl"></div>
-                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl"></div>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 via-violet-500/5 to-sky-500/5 rounded-full blur-3xl"></div>
+                <div className="absolute right-0 mt-3 w-64 bg-white/70 dark:bg-gray-800/70 backdrop-blur-2xl rounded-2xl border border-white/70 dark:border-gray-700/70 shadow-2xl shadow-indigo-900/10 dark:shadow-gray-900/30 z-50 overflow-hidden animate-fadeInDown">
+                  <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
+                  <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/10 dark:bg-sky-500/5 rounded-full blur-3xl"></div>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-indigo-500/5 dark:from-indigo-600/5 via-violet-500/5 dark:via-violet-600/5 to-sky-500/5 dark:to-sky-600/5 rounded-full blur-3xl"></div>
 
                   <div className="relative">
-                    <div className="px-4 py-3 border-b border-white/50">
+                    <div className="px-4 py-3 border-b border-white/50 dark:border-gray-700/50">
                       <div className="flex items-center mb-2">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600/90 via-violet-600/80 to-sky-600/80 flex items-center justify-center mr-3 border border-white/40 shadow-md">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600/90 via-violet-600/80 to-sky-600/80 flex items-center justify-center mr-3 border border-white/40 dark:border-gray-600/40 shadow-md">
                           <User size={18} className="text-white" />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-800">
+                          <p className="font-medium text-gray-800 dark:text-gray-200">
                             {user?.first_name} {user?.last_name}
                           </p>
-                          <p className="text-xs text-gray-500">{user?.email}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {user?.email}
+                          </p>
                         </div>
                       </div>
                       <div className="mt-1.5 flex items-center">
-                        <span className="text-[10px] font-medium px-2 py-0.5 bg-indigo-100/80 text-indigo-700 rounded-full flex items-center">
+                        <span className="text-[10px] font-medium px-2 py-0.5 bg-indigo-100/80 dark:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 rounded-full flex items-center">
                           <Shield size={10} className="mr-1" />
                           {user?.role?.title}
                         </span>
 
                         <div className="ml-2 flex items-center">
                           <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 dark:bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 dark:bg-emerald-400"></span>
                           </span>
-                          <span className="ml-1.5 text-[10px] text-emerald-600">
+                          <span className="ml-1.5 text-[10px] text-emerald-600 dark:text-emerald-400">
                             Active
                           </span>
                         </div>
@@ -1111,40 +1147,59 @@ const TopNavigation = () => {
                         to="/accounts/profile"
                         onClick={() => closeAllMenus()}
                         className={({ isActive }) => `
-                          w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center transition-all duration-500 ${
-                            isActive ? "bg-indigo-50/30" : ""
+                          w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 dark:hover:bg-indigo-900/50 text-sm flex items-center transition-all duration-500 ${
+                            isActive
+                              ? "bg-indigo-50/30 dark:bg-indigo-900/30"
+                              : ""
                           }
                         `}
                       >
-                        <User size={16} className="mr-3 text-gray-500" />
-                        <span>My Profile</span>
+                        <User
+                          size={16}
+                          className="mr-3 text-gray-500 dark:text-gray-400"
+                        />
+                        <span className="text-gray-700 dark:text-gray-300">
+                          My Profile
+                        </span>
                       </NavLink>
                       <NavLink
                         to="/admin/settings"
                         onClick={() => closeAllMenus()}
                         className={({ isActive }) => `
-                          w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center transition-all duration-500 ${
-                            isActive ? "bg-indigo-50/30" : ""
+                          w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 dark:hover:bg-indigo-900/50 text-sm flex items-center transition-all duration-500 ${
+                            isActive
+                              ? "bg-indigo-50/30 dark:bg-indigo-900/30"
+                              : ""
                           }
                         `}
                       >
-                        <Settings size={16} className="mr-3 text-gray-500" />
-                        <span>Settings</span>
+                        <Settings
+                          size={16}
+                          className="mr-3 text-gray-500 dark:text-gray-400"
+                        />
+                        <span className="text-gray-700 dark:text-gray-300">
+                          Settings
+                        </span>
                       </NavLink>
 
-                      <div className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 text-sm flex items-center transition-all duration-500 cursor-pointer">
-                        <TrendingUp size={16} className="mr-3 text-gray-500" />
-                        <span>Account Activity</span>
-                        <div className="ml-auto w-4 h-4 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div>
+                      <div className="w-full text-left px-3 py-2 rounded-xl hover:bg-indigo-50/50 dark:hover:bg-indigo-900/50 text-sm flex items-center transition-all duration-500 cursor-pointer">
+                        <TrendingUp
+                          size={16}
+                          className="mr-3 text-gray-500 dark:text-gray-400"
+                        />
+                        <span className="text-gray-700 dark:text-gray-300">
+                          Account Activity
+                        </span>
+                        <div className="ml-auto w-4 h-4 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+                          <div className="w-1.5 h-1.5 bg-indigo-500 dark:bg-indigo-400 rounded-full"></div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="border-t border-white/50 mt-1 px-1 py-1">
+                    <div className="border-t border-white/50 dark:border-gray-700/50 mt-1 px-1 py-1">
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50/70 text-sm flex items-center text-red-600 transition-all duration-500"
+                        className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50/70 dark:hover:bg-red-900/70 text-sm flex items-center text-red-600 dark:text-red-400 transition-all duration-500"
                       >
                         <LogOut size={16} className="mr-3" />
                         <span>Logout</span>
@@ -1157,25 +1212,25 @@ const TopNavigation = () => {
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="xl:hidden p-2.5 rounded-xl hover:bg-white/60 transition-all duration-500 text-gray-600/70 hover:text-indigo-600 ml-1 group relative"
+              className="xl:hidden p-2.5 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-500 text-gray-600/70 dark:text-gray-400/70 hover:text-indigo-600 dark:hover:text-indigo-400 ml-1 group relative"
             >
               <Menu size={20} />
 
-              <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 transition-colors duration-500 -z-10"></div>
-              <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 blur-sm transition-transform duration-500 -z-10"></div>
+              <div className="absolute inset-0 rounded-xl bg-indigo-400/0 group-hover:bg-indigo-400/10 dark:group-hover:bg-indigo-500/10 transition-colors duration-500 -z-10"></div>
+              <div className="absolute inset-0 scale-0 group-hover:scale-100 rounded-xl bg-indigo-400/5 dark:bg-indigo-500/5 blur-sm transition-transform duration-500 -z-10"></div>
             </button>
           </div>
         </div>
       </div>
 
       {isMobileMenuOpen && (
-        <div className="xl:hidden fixed inset-0 z-50 left-[60px] w-[calc(100%-60px)] bg-white/95 backdrop-blur-2xl animate-fadeIn">
-          <div className="absolute top-40 left-20 w-60 h-60 bg-indigo-400/10 rounded-full blur-3xl animate-blob"></div>
-          <div className="absolute bottom-40 right-10 w-80 h-80 bg-sky-400/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
-          <div className="absolute top-1/4 right-20 w-40 h-40 bg-violet-400/10 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+        <div className="xl:hidden fixed inset-0 z-50 left-[60px] w-[calc(100%-60px)] bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl animate-fadeIn">
+          <div className="absolute top-40 left-20 w-60 h-60 bg-indigo-400/10 dark:bg-indigo-500/5 rounded-full blur-3xl animate-blob"></div>
+          <div className="absolute bottom-40 right-10 w-80 h-80 bg-sky-400/10 dark:bg-sky-500/5 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/4 right-20 w-40 h-40 bg-violet-400/10 dark:bg-violet-500/5 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
 
           <div
-            className="absolute w-60 h-60 rounded-full blur-3xl bg-indigo-400/5 pointer-events-none transition-all duration-300 ease-out"
+            className="absolute w-60 h-60 rounded-full blur-3xl bg-indigo-400/5 dark:bg-indigo-500/3 pointer-events-none transition-all duration-300 ease-out"
             style={{
               left: mousePosition.x - 100,
               top: mousePosition.y - 100,
@@ -1199,7 +1254,7 @@ const TopNavigation = () => {
               </div>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2.5 rounded-xl bg-white/60 hover:bg-indigo-50/80 transition-all duration-500 text-gray-600 shadow-lg border border-white/40"
+                className="p-2.5 rounded-xl bg-white/60 dark:bg-gray-700/60 hover:bg-indigo-50/80 dark:hover:bg-indigo-900/80 transition-all duration-500 text-gray-600 dark:text-gray-400 shadow-lg border border-white/40 dark:border-gray-600/40"
               >
                 <X
                   size={22}
@@ -1214,7 +1269,7 @@ const TopNavigation = () => {
                   {item.type === "section" && (
                     <>
                       <div className="flex items-center mb-4">
-                        <h3 className="text-xs font-bold text-indigo-600 uppercase tracking-[0.15em]">
+                        <h3 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.15em]">
                           {item.title}
                         </h3>
                         <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/30 via-violet-500/20 to-transparent ml-4"></div>
@@ -1230,26 +1285,26 @@ const TopNavigation = () => {
                                   flex items-center px-4 py-3.5 rounded-2xl transition-all duration-500 group relative overflow-hidden
                                   ${
                                     isActive
-                                      ? "bg-gradient-to-r from-indigo-50/90 via-violet-50/80 to-sky-50/90 border border-white/50 shadow-lg shadow-indigo-500/10"
-                                      : "hover:bg-white/60"
+                                      ? "bg-gradient-to-r from-indigo-50/90 dark:from-indigo-900/90 via-violet-50/80 dark:via-violet-900/80 to-sky-50/90 dark:to-sky-900/90 border border-white/50 dark:border-gray-700/50 shadow-lg shadow-indigo-500/10 dark:shadow-indigo-500/20"
+                                      : "hover:bg-white/60 dark:hover:bg-gray-700/60"
                                   }
                                 `}
                                 onClick={() => closeAllMenus()}
                               >
                                 {subItem.icon && (
-                                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-white/90 to-slate-50/90 group-hover:from-indigo-100/90 group-hover:to-sky-100/90 transition-all duration-500 mr-4 shadow-lg border border-white/40 group-hover:scale-105">
+                                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-white/90 dark:from-gray-700/90 to-slate-50/90 dark:to-gray-600/90 group-hover:from-indigo-100/90 dark:group-hover:from-indigo-900/90 group-hover:to-sky-100/90 dark:group-hover:to-sky-900/90 transition-all duration-500 mr-4 shadow-lg border border-white/40 dark:border-gray-600/40 group-hover:scale-105">
                                     <subItem.icon
                                       width={18}
                                       height={18}
-                                      className="text-indigo-600"
+                                      className="text-indigo-600 dark:text-indigo-400"
                                     />
                                   </div>
                                 )}
-                                <span className="text-sm font-semibold text-gray-800">
+                                <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                                   {subItem.title}
                                 </span>
 
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-gray-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none animate-shine-slow"></div>
                               </NavLink>
                             );
                           } else if (subItem.type === "dropdown") {
@@ -1264,25 +1319,25 @@ const TopNavigation = () => {
               ))}
             </nav>
 
-            <div className="mt-8 pt-6 border-t border-indigo-200/50">
-              <div className="flex items-center p-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/40 shadow-xl shadow-indigo-500/5 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1500 ease-in-out"></div>
+            <div className="mt-8 pt-6 border-t border-indigo-200/50 dark:border-indigo-800/50">
+              <div className="flex items-center p-4 rounded-2xl bg-white/80 dark:bg-gray-700/80 backdrop-blur-xl border border-white/40 dark:border-gray-600/40 shadow-xl shadow-indigo-500/5 dark:shadow-gray-900/20 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 dark:via-gray-600/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1500 ease-in-out"></div>
 
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600/90 via-violet-600/80 to-sky-600/80 flex items-center justify-center mr-4 border border-white/40 shadow-lg">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600/90 via-violet-600/80 to-sky-600/80 flex items-center justify-center mr-4 border border-white/40 dark:border-gray-600/40 shadow-lg">
                   <User size={20} className="text-white" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-semibold text-gray-800">
+                  <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                     {user?.name}
                   </div>
-                  <div className="text-xs text-indigo-600 flex items-center">
+                  <div className="text-xs text-indigo-600 dark:text-indigo-400 flex items-center">
                     <Shield size={10} className="mr-1" />
                     {user?.role?.title}
                   </div>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-2 rounded-xl bg-white/60 hover:bg-red-50/80 transition-all duration-500 text-red-500 border border-white/40 shadow-lg active:scale-95"
+                  className="p-2 rounded-xl bg-white/60 dark:bg-gray-600/60 hover:bg-red-50/80 dark:hover:bg-red-900/80 transition-all duration-500 text-red-500 dark:text-red-400 border border-white/40 dark:border-gray-600/40 shadow-lg active:scale-95"
                 >
                   <LogOut
                     size={16}

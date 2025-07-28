@@ -161,16 +161,16 @@ const SlimSidebar: React.FC = () => {
       onMouseLeave={handleMouseLeave}
     >
       {/* Background layers */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-indigo-950/90 to-slate-900 dark:from-gray-950 dark:via-indigo-950/80 dark:to-gray-950"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 dark:from-gray-950 via-indigo-950/90 dark:via-gray-900/90 to-slate-900 dark:to-gray-950"></div>
 
       {/* Animated gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-600/5 to-transparent opacity-70 animate-pulse-slow"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-600/5 dark:via-indigo-500/3 to-transparent opacity-70 dark:opacity-50 animate-pulse-slow"></div>
 
       {/* Decorative top gradient bar */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-[length:200%_100%] animate-gradient-flow"></div>
 
       {/* Subtle grid pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-5 dark:opacity-3">
         <div
           className="absolute inset-0"
           style={{
@@ -182,7 +182,7 @@ const SlimSidebar: React.FC = () => {
 
       {/* Interactive glow effect */}
       <div
-        className="absolute w-40 h-40 rounded-full blur-3xl bg-indigo-500/5 pointer-events-none transition-all duration-300 ease-out opacity-0 group-hover:opacity-100"
+        className="absolute w-40 h-40 rounded-full blur-3xl bg-indigo-500/5 dark:bg-indigo-400/3 pointer-events-none transition-all duration-300 ease-out opacity-0 group-hover:opacity-100"
         style={{
           left: "50%",
           top: mousePosition.y - 150,
@@ -200,17 +200,17 @@ const SlimSidebar: React.FC = () => {
         {(isExpanded || expandedByPin) && (
           <button
             onClick={togglePin}
-            className="absolute top-3 right-3 p-1.5 rounded-full transition-all duration-300 hover:bg-indigo-600/20 group/pin"
+            className="absolute top-3 right-3 p-1.5 rounded-full transition-all duration-300 hover:bg-indigo-600/20 dark:hover:bg-indigo-500/20 group/pin"
           >
             <Lock
               size={14}
               className={`transition-all duration-300 ${
                 expandedByPin
-                  ? "text-indigo-400"
-                  : "text-slate-500 group-hover/pin:text-indigo-400"
+                  ? "text-indigo-400 dark:text-indigo-400"
+                  : "text-slate-500 dark:text-gray-500 group-hover/pin:text-indigo-400 dark:group-hover/pin:text-indigo-400"
               }`}
             />
-            <span className="absolute left-full ml-2 px-2 py-1 bg-indigo-900/90 text-indigo-100 text-xs rounded-md whitespace-nowrap opacity-0 group-hover/pin:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <span className="absolute left-full ml-2 px-2 py-1 bg-indigo-900/90 dark:bg-gray-800/90 text-indigo-100 dark:text-indigo-200 text-xs rounded-md whitespace-nowrap opacity-0 group-hover/pin:opacity-100 transition-opacity duration-300 pointer-events-none">
               {expandedByPin ? "Unpin sidebar" : "Pin sidebar"}
             </span>
           </button>
@@ -221,10 +221,10 @@ const SlimSidebar: React.FC = () => {
           <div className="flex items-center">
             <div className="relative group/avatar">
               {/* Avatar with glowing border effect */}
-              <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500 opacity-70 blur-sm group-hover/avatar:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 via-violet-600 to-indigo-500 flex items-center justify-center text-white font-medium shadow-lg shadow-indigo-950/30 overflow-hidden">
+              <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500 opacity-70 dark:opacity-60 blur-sm group-hover/avatar:opacity-100 dark:group-hover/avatar:opacity-80 transition-opacity duration-300"></div>
+              <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 via-violet-600 to-indigo-500 flex items-center justify-center text-white font-medium shadow-lg shadow-indigo-950/30 dark:shadow-gray-950/50 overflow-hidden">
                 {/* Animated background shimmer */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 dark:via-white/5 to-transparent -translate-x-full animate-shimmer"></div>
                 <span className="relative z-10 text-lg">
                   {user?.name?.charAt(0) || "A"}
                 </span>
@@ -232,8 +232,8 @@ const SlimSidebar: React.FC = () => {
               {/* Online status indicator */}
               <div className="absolute -bottom-0.5 -right-0.5 flex">
                 <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-slate-900 dark:border-gray-950"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 dark:bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 dark:bg-emerald-400 border border-slate-900 dark:border-gray-950"></span>
                 </span>
               </div>
             </div>
@@ -241,9 +241,9 @@ const SlimSidebar: React.FC = () => {
             {/* User info (only shows when expanded) */}
             {(isExpanded || expandedByPin) && (
               <div className="ml-3 animate-fadeIn">
-                <p className="text-sm font-medium text-white flex items-center">
+                <p className="text-sm font-medium text-white dark:text-gray-100 flex items-center">
                   {user?.first_name} {user?.last_name}
-                  <span className="ml-1.5 text-[10px] px-1.5 py-0.5 bg-indigo-500/20 text-indigo-300 rounded-full flex items-center">
+                  <span className="ml-1.5 text-[10px] px-1.5 py-0.5 bg-indigo-500/20 dark:bg-indigo-500/30 text-indigo-300 dark:text-indigo-200 rounded-full flex items-center">
                     <Shield size={10} className="mr-0.5" />
                     Admin
                   </span>
@@ -255,12 +255,12 @@ const SlimSidebar: React.FC = () => {
                     onMouseLeave={() => setShowSecurityTooltip(false)}
                   >
                     {showSecurityTooltip && (
-                      <div className="absolute left-0 top-full mt-1 px-2 py-1 bg-indigo-900/90 backdrop-blur-sm text-indigo-100 text-xs rounded-md whitespace-nowrap z-50 animate-fadeIn">
+                      <div className="absolute left-0 top-full mt-1 px-2 py-1 bg-indigo-900/90 dark:bg-gray-800/90 backdrop-blur-sm text-indigo-100 dark:text-indigo-200 text-xs rounded-md whitespace-nowrap z-50 animate-fadeIn">
                         Security: {securityLevel.label}
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 truncate max-w-[140px]">
+                  <p className="text-xs text-slate-400 dark:text-gray-400 truncate max-w-[140px]">
                     {user?.email}
                   </p>
                 </div>
@@ -271,7 +271,7 @@ const SlimSidebar: React.FC = () => {
 
         {(isExpanded || expandedByPin) && (
           <div className="space-y-2 mb-2">
-            <div className="bg-slate-800/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-lg p-2.5 flex justify-between items-center border border-slate-700/20 dark:border-gray-800/20">
+            <div className="bg-slate-800/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg p-2.5 flex justify-between items-center border border-slate-700/20 dark:border-gray-700/30">
               <div className="flex items-center">
                 <div
                   className={`relative w-2 h-2 rounded-full ${getStatusColor(
@@ -281,33 +281,33 @@ const SlimSidebar: React.FC = () => {
                   } mr-2`}
                 >
                   {systemStatus === "operational" && (
-                    <span className="absolute inset-0 rounded-full bg-emerald-500/50 animate-ping-slow"></span>
+                    <span className="absolute inset-0 rounded-full bg-emerald-500/50 dark:bg-emerald-400/50 animate-ping-slow"></span>
                   )}
                 </div>
-                <span className="text-xs text-slate-300 dark:text-slate-400">
+                <span className="text-xs text-slate-300 dark:text-gray-300">
                   System Status
                 </span>
               </div>
-              <span className="text-xs font-medium text-slate-200 dark:text-slate-300 capitalize">
+              <span className="text-xs font-medium text-slate-200 dark:text-gray-200 capitalize">
                 {systemStatus}
               </span>
             </div>
 
-            <div className="bg-slate-800/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-lg p-2.5 flex justify-between items-center border border-slate-700/20 dark:border-gray-800/20 relative overflow-hidden">
+            <div className="bg-slate-800/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg p-2.5 flex justify-between items-center border border-slate-700/20 dark:border-gray-700/30 relative overflow-hidden">
               <div className="flex items-center relative z-10">
                 <Clock
                   size={14}
-                  className="text-indigo-400 dark:text-indigo-500 mr-2"
+                  className="text-indigo-400 dark:text-indigo-400 mr-2"
                 />
-                <span className="text-xs text-slate-300 dark:text-slate-400">
+                <span className="text-xs text-slate-300 dark:text-gray-300">
                   EAT Time
                 </span>
               </div>
-              <span className="text-xs font-mono font-medium text-slate-200 dark:text-slate-300 relative z-10">
+              <span className="text-xs font-mono font-medium text-slate-200 dark:text-gray-200 relative z-10">
                 {formatTime()}
               </span>
 
-              <div className="absolute -right-6 -top-6 w-12 h-12 rounded-full bg-indigo-500/5 animate-pulse-slow"></div>
+              <div className="absolute -right-6 -top-6 w-12 h-12 rounded-full bg-indigo-500/5 dark:bg-indigo-400/3 animate-pulse-slow"></div>
             </div>
           </div>
         )}
@@ -316,10 +316,10 @@ const SlimSidebar: React.FC = () => {
           {(isExpanded || expandedByPin) && (
             <div className="mb-2">
               <div className="flex items-center">
-                <p className="text-[10px] uppercase tracking-wider text-indigo-400/70 dark:text-indigo-500/70 font-medium px-1 mb-1.5">
+                <p className="text-[10px] uppercase tracking-wider text-indigo-400/70 dark:text-indigo-400/60 font-medium px-1 mb-1.5">
                   Main Navigation
                 </p>
-                <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/20 to-transparent ml-2"></div>
+                <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/20 dark:from-indigo-400/15 to-transparent ml-2"></div>
               </div>
             </div>
           )}
@@ -328,21 +328,21 @@ const SlimSidebar: React.FC = () => {
             to="/"
             className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
               isActive("/")
-                ? "bg-gradient-to-r from-indigo-600/20 via-violet-600/20 to-indigo-600/10 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20"
-                : "text-slate-300 dark:text-slate-400 hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10"
+                ? "bg-gradient-to-r from-indigo-600/20 dark:from-indigo-500/25 via-violet-600/20 dark:via-violet-500/25 to-indigo-600/10 dark:to-indigo-500/15 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20 dark:border-indigo-400/25"
+                : "text-slate-300 dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/15"
             }`}
             onMouseEnter={() => setActiveSection("dashboard")}
             onMouseLeave={() => setActiveSection(null)}
           >
             <div
               className={`relative ${
-                isActive("/") ? "text-indigo-300 dark:text-indigo-400" : ""
+                isActive("/") ? "text-indigo-300 dark:text-indigo-300" : ""
               }`}
             >
               <DollarSign size={20} strokeWidth={isActive("/") ? 2.5 : 1.5} />
 
               {isActive("/") && (
-                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping-slow opacity-75"></span>
+                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400 animate-ping-slow opacity-75"></span>
               )}
             </div>
 
@@ -354,13 +354,13 @@ const SlimSidebar: React.FC = () => {
                   Dashboard
                 </span>
                 {isActive("/") && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400"></div>
                 )}
               </div>
             )}
 
             {activeSection === "dashboard" && !isActive("/") && (
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 dark:via-indigo-400/3 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
             )}
           </Link>
 
@@ -368,8 +368,8 @@ const SlimSidebar: React.FC = () => {
             to="/admin/logs"
             className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
               isActive("/admin/logs")
-                ? "bg-gradient-to-r from-indigo-600/20 via-violet-600/20 to-indigo-600/10 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20"
-                : "text-slate-300 dark:text-slate-400 hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10"
+                ? "bg-gradient-to-r from-indigo-600/20 dark:from-indigo-500/25 via-violet-600/20 dark:via-violet-500/25 to-indigo-600/10 dark:to-indigo-500/15 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20 dark:border-indigo-400/25"
+                : "text-slate-300 dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/15"
             }`}
             onMouseEnter={() => setActiveSection("activity")}
             onMouseLeave={() => setActiveSection(null)}
@@ -377,7 +377,7 @@ const SlimSidebar: React.FC = () => {
             <div
               className={`relative ${
                 isActive("/admin/logs")
-                  ? "text-indigo-300 dark:text-indigo-400"
+                  ? "text-indigo-300 dark:text-indigo-300"
                   : ""
               }`}
             >
@@ -388,7 +388,7 @@ const SlimSidebar: React.FC = () => {
 
               {riskAlerts > 0 && (
                 <div className="absolute -top-1.5 -right-1.5 flex">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 dark:bg-amber-400 opacity-75"></span>
                   <span className="relative w-4 h-4 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full text-[10px] font-medium flex items-center justify-center text-white border border-slate-900/10 dark:border-gray-950/20">
                     {riskAlerts}
                   </span>
@@ -406,13 +406,13 @@ const SlimSidebar: React.FC = () => {
                   Activity
                 </span>
                 {isActive("/admin/logs") && !riskAlerts && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400"></div>
                 )}
               </div>
             )}
 
             {activeSection === "activity" && !isActive("/admin/logs") && (
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 dark:via-indigo-400/3 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
             )}
           </Link>
 
@@ -420,8 +420,8 @@ const SlimSidebar: React.FC = () => {
             to="/admin/finance/reports"
             className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
               isActive("/admin/finance/reports")
-                ? "bg-gradient-to-r from-indigo-600/20 via-violet-600/20 to-indigo-600/10 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20"
-                : "text-slate-300 dark:text-slate-400 hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10"
+                ? "bg-gradient-to-r from-indigo-600/20 dark:from-indigo-500/25 via-violet-600/20 dark:via-violet-500/25 to-indigo-600/10 dark:to-indigo-500/15 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20 dark:border-indigo-400/25"
+                : "text-slate-300 dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/15"
             }`}
             onMouseEnter={() => setActiveSection("analytics")}
             onMouseLeave={() => setActiveSection(null)}
@@ -429,7 +429,7 @@ const SlimSidebar: React.FC = () => {
             <div
               className={`relative ${
                 isActive("/admin/finance/reports")
-                  ? "text-indigo-300 dark:text-indigo-400"
+                  ? "text-indigo-300 dark:text-indigo-300"
                   : ""
               }`}
             >
@@ -439,7 +439,7 @@ const SlimSidebar: React.FC = () => {
               />
 
               {isActive("/admin/finance/reports") && (
-                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping-slow opacity-75"></span>
+                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400 animate-ping-slow opacity-75"></span>
               )}
             </div>
 
@@ -453,28 +453,28 @@ const SlimSidebar: React.FC = () => {
                   Analytics
                 </span>
                 {isActive("/admin/finance/reports") && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400"></div>
                 )}
               </div>
             )}
 
             {activeSection === "analytics" &&
               !isActive("/admin/finance/reports") && (
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 dark:via-indigo-400/3 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
               )}
           </Link>
 
           {isExpanded || expandedByPin ? (
             <div className="pt-4 pb-2 mt-3">
               <div className="flex items-center">
-                <p className="text-[10px] uppercase tracking-wider text-indigo-400/70 dark:text-indigo-500/70 font-medium px-1">
+                <p className="text-[10px] uppercase tracking-wider text-indigo-400/70 dark:text-indigo-400/60 font-medium px-1">
                   Account
                 </p>
-                <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/20 to-transparent ml-2"></div>
+                <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/20 dark:from-indigo-400/15 to-transparent ml-2"></div>
               </div>
             </div>
           ) : (
-            <div className="my-3 h-px bg-gradient-to-r from-indigo-500/20 via-indigo-500/10 to-indigo-500/5"></div>
+            <div className="my-3 h-px bg-gradient-to-r from-indigo-500/20 dark:from-indigo-400/15 via-indigo-500/10 dark:via-indigo-400/8 to-indigo-500/5 dark:to-indigo-400/3"></div>
           )}
 
           {/* Profile Link */}
@@ -482,8 +482,8 @@ const SlimSidebar: React.FC = () => {
             to="/accounts/profile"
             className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
               isActive("/accounts/profile")
-                ? "bg-gradient-to-r from-indigo-600/20 via-violet-600/20 to-indigo-600/10 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20"
-                : "text-slate-300 dark:text-slate-400 hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10"
+                ? "bg-gradient-to-r from-indigo-600/20 dark:from-indigo-500/25 via-violet-600/20 dark:via-violet-500/25 to-indigo-600/10 dark:to-indigo-500/15 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20 dark:border-indigo-400/25"
+                : "text-slate-300 dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/15"
             }`}
             onMouseEnter={() => setActiveSection("profile")}
             onMouseLeave={() => setActiveSection(null)}
@@ -491,7 +491,7 @@ const SlimSidebar: React.FC = () => {
             <div
               className={`relative ${
                 isActive("/accounts/profile")
-                  ? "text-indigo-300 dark:text-indigo-400"
+                  ? "text-indigo-300 dark:text-indigo-300"
                   : ""
               }`}
             >
@@ -502,7 +502,7 @@ const SlimSidebar: React.FC = () => {
 
               {/* Active indicator animation */}
               {isActive("/accounts/profile") && (
-                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping-slow opacity-75"></span>
+                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400 animate-ping-slow opacity-75"></span>
               )}
             </div>
 
@@ -516,14 +516,14 @@ const SlimSidebar: React.FC = () => {
                   Profile
                 </span>
                 {isActive("/accounts/profile") && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400"></div>
                 )}
               </div>
             )}
 
             {/* Animated hover effect */}
             {activeSection === "profile" && !isActive("/accounts/profile") && (
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 dark:via-indigo-400/3 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
             )}
           </Link>
 
@@ -532,8 +532,8 @@ const SlimSidebar: React.FC = () => {
             to="/admin/settings"
             className={`w-full flex items-center p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
               isActive("/admin/settings")
-                ? "bg-gradient-to-r from-indigo-600/20 via-violet-600/20 to-indigo-600/10 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20"
-                : "text-slate-300 dark:text-slate-400 hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/10"
+                ? "bg-gradient-to-r from-indigo-600/20 dark:from-indigo-500/25 via-violet-600/20 dark:via-violet-500/25 to-indigo-600/10 dark:to-indigo-500/15 text-indigo-200 dark:text-indigo-300 border border-indigo-500/20 dark:border-indigo-400/25"
+                : "text-slate-300 dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-indigo-500/10 dark:hover:bg-indigo-500/15"
             }`}
             onMouseEnter={() => setActiveSection("settings")}
             onMouseLeave={() => setActiveSection(null)}
@@ -541,7 +541,7 @@ const SlimSidebar: React.FC = () => {
             <div
               className={`relative ${
                 isActive("/admin/settings")
-                  ? "text-indigo-300 dark:text-indigo-400"
+                  ? "text-indigo-300 dark:text-indigo-300"
                   : ""
               }`}
             >
@@ -553,7 +553,7 @@ const SlimSidebar: React.FC = () => {
 
               {/* Active indicator animation */}
               {isActive("/admin/settings") && (
-                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping-slow opacity-75"></span>
+                <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400 animate-ping-slow opacity-75"></span>
               )}
             </div>
 
@@ -567,23 +567,23 @@ const SlimSidebar: React.FC = () => {
                   Settings
                 </span>
                 {isActive("/admin/settings") && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500"></div>
+                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 dark:bg-indigo-400"></div>
                 )}
               </div>
             )}
 
             {/* Animated hover effect */}
             {activeSection === "settings" && !isActive("/admin/settings") && (
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/5 dark:via-indigo-400/3 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
             )}
           </Link>
         </div>
 
         {/* Logout Button */}
-        <div className="mt-auto pt-3 border-t border-indigo-500/10 dark:border-indigo-500/5 relative">
+        <div className="mt-auto pt-3 border-t border-indigo-500/10 dark:border-indigo-400/8 relative">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center p-3 rounded-xl text-red-300 dark:text-red-400 hover:text-white hover:bg-gradient-to-r hover:from-red-600/20 hover:to-red-500/10 transition-all duration-300 group relative overflow-hidden"
+            className="w-full flex items-center p-3 rounded-xl text-red-300 dark:text-red-300 hover:text-white dark:hover:text-white hover:bg-gradient-to-r hover:from-red-600/20 dark:hover:from-red-500/25 hover:to-red-500/10 dark:hover:to-red-500/15 transition-all duration-300 group relative overflow-hidden"
             onMouseEnter={() => setActiveSection("logout")}
             onMouseLeave={() => setActiveSection(null)}
           >
@@ -595,7 +595,7 @@ const SlimSidebar: React.FC = () => {
 
             {/* Animated hover effect */}
             {activeSection === "logout" && (
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/5 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/5 dark:via-red-400/3 to-transparent -translate-x-full animate-shimmer-slow pointer-events-none"></div>
             )}
           </button>
         </div>
@@ -606,18 +606,18 @@ const SlimSidebar: React.FC = () => {
             <div className="flex items-center">
               <Database
                 size={12}
-                className="text-indigo-500/40 dark:text-indigo-500/30 mr-1.5"
+                className="text-indigo-500/40 dark:text-indigo-400/30 mr-1.5"
               />
-              <span className="text-[10px] text-indigo-500/40 dark:text-indigo-500/30">
+              <span className="text-[10px] text-indigo-500/40 dark:text-indigo-400/30">
                 v2.4.5
               </span>
             </div>
             <div className="flex items-center">
               <Shield
                 size={12}
-                className="text-indigo-500/40 dark:text-indigo-500/30 mr-1.5"
+                className="text-indigo-500/40 dark:text-indigo-400/30 mr-1.5"
               />
-              <span className="text-[10px] text-indigo-500/40 dark:text-indigo-500/30">
+              <span className="text-[10px] text-indigo-500/40 dark:text-indigo-400/30">
                 PCI DSS
               </span>
             </div>
