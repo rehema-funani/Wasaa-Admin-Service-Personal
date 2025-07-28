@@ -208,10 +208,10 @@ const UserProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen bg-slate-50 items-center justify-center">
+      <div className="flex min-h-screen bg-slate-50 dark:bg-gray-900 items-center justify-center">
         <div className="flex flex-col items-center">
           <div className="h-12 w-12 rounded-full border-2 border-t-blue-500 border-r-transparent border-b-blue-500 border-l-transparent animate-spin"></div>
-          <p className="text-slate-500 text-sm font-light mt-4">
+          <p className="text-slate-500 dark:text-gray-400 text-sm font-light mt-4">
             Loading profile information...
           </p>
         </div>
@@ -221,16 +221,16 @@ const UserProfile = () => {
 
   if (error || !userData) {
     return (
-      <div className="flex min-h-screen bg-slate-50 items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full border border-slate-100">
+      <div className="flex min-h-screen bg-slate-50 dark:bg-gray-900 items-center justify-center p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full border border-slate-100 dark:border-gray-700">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 rounded-full mb-6">
-              <AlertCircle className="w-8 h-8 text-red-500" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 dark:bg-red-900/30 rounded-full mb-6">
+              <AlertCircle className="w-8 h-8 text-red-500 dark:text-red-400" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">
+            <h2 className="text-xl font-semibold text-slate-800 dark:text-gray-100 mb-2">
               Unable to load profile
             </h2>
-            <p className="text-slate-500 mb-6">
+            <p className="text-slate-500 dark:text-gray-400 mb-6">
               {error || "User data not found"}
             </p>
             <button
@@ -250,13 +250,15 @@ const UserProfile = () => {
       onClick={onClick}
       className={`w-full flex items-center px-5 py-4 text-left transition-all ${
         active
-          ? "bg-gradient-to-r from-blue-50 to-transparent border-l-4 border-blue-500 text-blue-700"
-          : "text-slate-600 hover:bg-slate-50"
+          ? "bg-gradient-to-r from-blue-50 dark:from-blue-900/30 to-transparent border-l-4 border-blue-500 text-blue-700 dark:text-blue-300"
+          : "text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700"
       }`}
     >
       {React.cloneElement(icon, {
         size: 18,
-        className: active ? "text-blue-500 mr-4" : "text-slate-400 mr-4",
+        className: active
+          ? "text-blue-500 mr-4"
+          : "text-slate-400 dark:text-gray-500 mr-4",
       })}
       <span className={`text-sm ${active ? "font-medium" : ""}`}>{label}</span>
       {active && <ChevronRight size={16} className="ml-auto text-blue-500" />}
@@ -264,14 +266,18 @@ const UserProfile = () => {
   );
 
   const InfoCard = ({ icon, title, value }) => (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-gray-700 hover:shadow-md transition-shadow">
       <div className="flex items-center">
-        <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mr-4">
+        <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mr-4">
           {icon}
         </div>
         <div>
-          <p className="text-xs font-medium text-slate-500">{title}</p>
-          <p className="text-sm font-medium text-slate-800">{value}</p>
+          <p className="text-xs font-medium text-slate-500 dark:text-gray-400">
+            {title}
+          </p>
+          <p className="text-sm font-medium text-slate-800 dark:text-gray-200">
+            {value}
+          </p>
         </div>
       </div>
     </div>
@@ -281,19 +287,23 @@ const UserProfile = () => {
     <div className="relative flex items-center">
       <div
         className={`w-2 h-2 rounded-full ${
-          status === "active" ? "bg-emerald-500" : "bg-slate-400"
+          status === "active"
+            ? "bg-emerald-500"
+            : "bg-slate-400 dark:bg-gray-500"
         }`}
       ></div>
       <div
         className={`absolute w-2 h-2 rounded-full ${
-          status === "active" ? "bg-emerald-500" : "bg-slate-400"
+          status === "active"
+            ? "bg-emerald-500"
+            : "bg-slate-400 dark:bg-gray-500"
         } animate-ping opacity-75`}
       ></div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-900">
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden z-0 opacity-5">
           <div className="absolute -right-40 -top-40 w-80 h-80 rounded-full bg-blue-400"></div>
@@ -303,7 +313,7 @@ const UserProfile = () => {
 
         <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
           <div className="flex flex-col mb-8">
-            <h1 className="text-3xl font-light text-slate-800 tracking-tight">
+            <h1 className="text-3xl font-light text-slate-800 dark:text-gray-100 tracking-tight">
               My Profile
             </h1>
             <div className="flex items-center mt-2">
@@ -311,17 +321,17 @@ const UserProfile = () => {
                 className={`mr-2 ${
                   userData.account_status === "active"
                     ? "text-emerald-500"
-                    : "text-slate-400"
+                    : "text-slate-400 dark:text-gray-500"
                 }`}
               >
                 <StatusDot status={userData.account_status} />
               </div>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-gray-400">
                 <span
                   className={
                     userData.account_status === "active"
-                      ? "text-emerald-600 font-medium"
-                      : "text-slate-500"
+                      ? "text-emerald-600 dark:text-emerald-400 font-medium"
+                      : "text-slate-500 dark:text-gray-400"
                   }
                 >
                   {userData.account_status.charAt(0).toUpperCase() +
@@ -334,7 +344,7 @@ const UserProfile = () => {
 
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-6">
-              <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100">
+              <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-gray-700">
                 <div className="bg-gradient-to-r from-blue-600 to-blue-500 pt-6 pb-10 px-6 relative">
                   <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-0 left-0 w-full h-full">
@@ -371,19 +381,19 @@ const UserProfile = () => {
 
                 {/* User info */}
                 <div className="px-6 pt-0 pb-6 -mt-6">
-                  <div className="bg-white rounded-xl shadow-sm p-4 border border-slate-100">
+                  <div className="bg-white dark:bg-gray-700 rounded-xl shadow-sm p-4 border border-slate-100 dark:border-gray-600">
                     <div className="text-center mb-2">
-                      <h2 className="text-lg font-medium text-slate-800">
+                      <h2 className="text-lg font-medium text-slate-800 dark:text-gray-100">
                         {userData.first_name} {userData.last_name}
                       </h2>
-                      <p className="text-sm text-slate-500 flex items-center justify-center mt-1">
+                      <p className="text-sm text-slate-500 dark:text-gray-400 flex items-center justify-center mt-1">
                         <Mail size={14} className="mr-1.5" />
                         {userData.email}
                       </p>
                     </div>
 
                     <div className="flex justify-center mt-3">
-                      <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full border border-blue-100">
+                      <span className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full border border-blue-100 dark:border-blue-700">
                         {userData.role.title}
                       </span>
                     </div>
@@ -407,14 +417,14 @@ const UserProfile = () => {
               </div>
 
               {/* Navigation */}
-              <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="border-b border-slate-100 py-2 px-5">
-                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-100 dark:border-gray-700 overflow-hidden">
+                <div className="border-b border-slate-100 dark:border-gray-700 py-2 px-5">
+                  <p className="text-xs font-medium text-slate-400 dark:text-gray-500 uppercase tracking-wider">
                     Account Menu
                   </p>
                 </div>
 
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-slate-100 dark:divide-gray-700">
                   <MenuButton
                     icon={<User />}
                     label="Account Information"
@@ -435,7 +445,7 @@ const UserProfile = () => {
                   />
                 </div>
 
-                <div className="p-5 border-t border-slate-100">
+                <div className="p-5 border-t border-slate-100 dark:border-gray-700">
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition-colors"
@@ -450,15 +460,15 @@ const UserProfile = () => {
             {/* Main content area */}
             <div className="flex-grow">
               {activeSection === "account" && (
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-100 dark:border-gray-700 overflow-hidden">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-gray-700">
                     <div className="flex items-center">
                       <User size={20} className="text-blue-500 mr-3" />
-                      <h2 className="text-lg font-medium text-slate-800">
+                      <h2 className="text-lg font-medium text-slate-800 dark:text-gray-100">
                         Account Information
                       </h2>
                     </div>
-                    <button className="px-3 py-1 text-sm text-blue-600 font-medium bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors flex items-center">
+                    <button className="px-3 py-1 text-sm text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors flex items-center border border-blue-100 dark:border-blue-700">
                       <Edit size={14} className="mr-1.5" />
                       Edit
                     </button>
@@ -469,11 +479,11 @@ const UserProfile = () => {
                       <div className="space-y-6">
                         {/* First Name */}
                         <div>
-                          <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                          <label className="block text-xs font-medium text-slate-400 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
                             First Name
                           </label>
-                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 border border-slate-100">
-                            <span className="text-slate-800 text-sm">
+                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 dark:bg-gray-700 border border-slate-100 dark:border-gray-600">
+                            <span className="text-slate-800 dark:text-gray-200 text-sm">
                               {userData.first_name}
                             </span>
                           </div>
@@ -481,12 +491,15 @@ const UserProfile = () => {
 
                         {/* Email */}
                         <div>
-                          <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                          <label className="block text-xs font-medium text-slate-400 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
                             Email Address
                           </label>
-                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 border border-slate-100">
-                            <Mail size={16} className="text-slate-400 mr-2" />
-                            <span className="text-slate-800 text-sm">
+                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 dark:bg-gray-700 border border-slate-100 dark:border-gray-600">
+                            <Mail
+                              size={16}
+                              className="text-slate-400 dark:text-gray-500 mr-2"
+                            />
+                            <span className="text-slate-800 dark:text-gray-200 text-sm">
                               {userData.email}
                             </span>
                           </div>
@@ -494,15 +507,15 @@ const UserProfile = () => {
 
                         {/* Account Status */}
                         <div>
-                          <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                          <label className="block text-xs font-medium text-slate-400 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
                             Account Status
                           </label>
                           <div className="flex items-center">
                             <div
                               className={`inline-flex items-center px-3 py-1.5 rounded-lg ${
                                 userData.account_status === "active"
-                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                                  : "bg-slate-100 text-slate-700 border border-slate-200"
+                                  ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-700"
+                                  : "bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-600"
                               }`}
                             >
                               <StatusDot status={userData.account_status} />
@@ -517,11 +530,11 @@ const UserProfile = () => {
                       <div className="space-y-6">
                         {/* Last Name */}
                         <div>
-                          <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                          <label className="block text-xs font-medium text-slate-400 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
                             Last Name
                           </label>
-                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 border border-slate-100">
-                            <span className="text-slate-800 text-sm">
+                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 dark:bg-gray-700 border border-slate-100 dark:border-gray-600">
+                            <span className="text-slate-800 dark:text-gray-200 text-sm">
                               {userData.last_name}
                             </span>
                           </div>
@@ -529,12 +542,15 @@ const UserProfile = () => {
 
                         {/* Phone */}
                         <div>
-                          <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                          <label className="block text-xs font-medium text-slate-400 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
                             Phone Number
                           </label>
-                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 border border-slate-100">
-                            <Phone size={16} className="text-slate-400 mr-2" />
-                            <span className="text-slate-800 text-sm">
+                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 dark:bg-gray-700 border border-slate-100 dark:border-gray-600">
+                            <Phone
+                              size={16}
+                              className="text-slate-400 dark:text-gray-500 mr-2"
+                            />
+                            <span className="text-slate-800 dark:text-gray-200 text-sm">
                               {userData.phone_number}
                             </span>
                           </div>
@@ -542,12 +558,15 @@ const UserProfile = () => {
 
                         {/* Role */}
                         <div>
-                          <label className="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">
+                          <label className="block text-xs font-medium text-slate-400 dark:text-gray-500 mb-1.5 uppercase tracking-wider">
                             Role
                           </label>
-                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 border border-slate-100">
-                            <Shield size={16} className="text-slate-400 mr-2" />
-                            <span className="text-slate-800 text-sm">
+                          <div className="flex items-center h-10 px-4 rounded-lg bg-slate-50 dark:bg-gray-700 border border-slate-100 dark:border-gray-600">
+                            <Shield
+                              size={16}
+                              className="text-slate-400 dark:text-gray-500 mr-2"
+                            />
+                            <span className="text-slate-800 dark:text-gray-200 text-sm">
                               {userData.role.title}
                             </span>
                           </div>
@@ -555,57 +574,66 @@ const UserProfile = () => {
                       </div>
                     </div>
 
-                    <div className="mt-10 pt-6 border-t border-slate-100">
+                    <div className="mt-10 pt-6 border-t border-slate-100 dark:border-gray-700">
                       <div className="flex items-center mb-4">
                         <LineChart size={18} className="text-blue-500 mr-2" />
-                        <h3 className="text-sm font-medium text-slate-700">
+                        <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300">
                           Account Activity
                         </h3>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                        <div className="bg-slate-50 dark:bg-gray-700 rounded-lg p-4 border border-slate-100 dark:border-gray-600">
                           <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                              <Calendar size={16} className="text-blue-600" />
+                            <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-3">
+                              <Calendar
+                                size={16}
+                                className="text-blue-600 dark:text-blue-400"
+                              />
                             </div>
                             <div>
-                              <p className="text-xs text-slate-500">
+                              <p className="text-xs text-slate-500 dark:text-gray-400">
                                 Account Created
                               </p>
-                              <p className="text-sm font-medium text-slate-800">
+                              <p className="text-sm font-medium text-slate-800 dark:text-gray-200">
                                 {formatDate(userData.createdAt)}
                               </p>
                             </div>
                           </div>
                         </div>
 
-                        <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                        <div className="bg-slate-50 dark:bg-gray-700 rounded-lg p-4 border border-slate-100 dark:border-gray-600">
                           <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center mr-3">
-                              <Clock size={16} className="text-amber-600" />
+                            <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mr-3">
+                              <Clock
+                                size={16}
+                                className="text-amber-600 dark:text-amber-400"
+                              />
                             </div>
                             <div>
-                              <p className="text-xs text-slate-500">
+                              <p className="text-xs text-slate-500 dark:text-gray-400">
                                 Last Updated
                               </p>
-                              <p className="text-sm font-medium text-slate-800">
+                              <p className="text-sm font-medium text-slate-800 dark:text-gray-200">
                                 {formatDate(userData.updatedAt)}
                               </p>
                             </div>
                           </div>
                         </div>
 
-                        <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                        <div className="bg-slate-50 dark:bg-gray-700 rounded-lg p-4 border border-slate-100 dark:border-gray-600">
                           <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center mr-3">
-                              <Zap size={16} className="text-emerald-600" />
+                            <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mr-3">
+                              <Zap
+                                size={16}
+                                className="text-emerald-600 dark:text-emerald-400"
+                              />
                             </div>
                             <div>
-                              <p className="text-xs text-slate-500">
+                              <p className="text-xs text-slate-500 dark:text-gray-400">
                                 Recent Activity
                               </p>
-                              <p className="text-sm font-medium text-slate-800">
+                              <p className="text-sm font-medium text-slate-800 dark:text-gray-200">
                                 Login {getTimeSince(userData.last_login)}
                               </p>
                             </div>
@@ -618,11 +646,11 @@ const UserProfile = () => {
               )}
 
               {activeSection === "security" && (
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-100 dark:border-gray-700 overflow-hidden">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-gray-700">
                     <div className="flex items-center">
                       <Lock size={20} className="text-blue-500 mr-3" />
-                      <h2 className="text-lg font-medium text-slate-800">
+                      <h2 className="text-lg font-medium text-slate-800 dark:text-gray-100">
                         Security & Login
                       </h2>
                     </div>
@@ -630,29 +658,32 @@ const UserProfile = () => {
 
                   <div className="p-6 space-y-8">
                     {/* Current Session */}
-                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-blue-200 transition-colors">
+                    <div className="bg-slate-50 dark:bg-gray-700 rounded-xl p-5 border border-slate-100 dark:border-gray-600 hover:border-blue-200 dark:hover:border-blue-600 transition-colors">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-slate-700 flex items-center">
+                        <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300 flex items-center">
                           <Clock size={16} className="text-blue-500 mr-2" />
                           Current Session
                         </h3>
-                        <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-full border border-emerald-100 flex items-center">
+                        <span className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-medium rounded-full border border-emerald-100 dark:border-emerald-700 flex items-center">
                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></div>
                           Active
                         </span>
                       </div>
 
-                      <div className="bg-white rounded-lg p-4 border border-slate-100">
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-slate-100 dark:border-gray-600">
                         <div className="flex items-start">
-                          <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mr-4 flex-shrink-0">
-                            <CheckCircle2 size={18} className="text-blue-600" />
+                          <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mr-4 flex-shrink-0">
+                            <CheckCircle2
+                              size={18}
+                              className="text-blue-600 dark:text-blue-400"
+                            />
                           </div>
                           <div className="flex-grow">
-                            <p className="text-sm text-slate-800 font-medium">
+                            <p className="text-sm text-slate-800 dark:text-gray-200 font-medium">
                               Last login {getTimeSince(userData.last_login)}
                             </p>
-                            <div className="flex mt-2 items-center text-xs text-slate-500">
-                              <div className="flex items-center pr-3 mr-3 border-r border-slate-200">
+                            <div className="flex mt-2 items-center text-xs text-slate-500 dark:text-gray-400">
+                              <div className="flex items-center pr-3 mr-3 border-r border-slate-200 dark:border-gray-600">
                                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>
                                 Active Now
                               </div>
@@ -662,14 +693,14 @@ const UserProfile = () => {
                               </div>
                             </div>
                           </div>
-                          <button className="ml-4 px-3 py-1.5 text-xs text-red-600 font-medium bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-100 flex-shrink-0">
+                          <button className="ml-4 px-3 py-1.5 text-xs text-red-600 dark:text-red-400 font-medium bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg transition-colors border border-red-100 dark:border-red-700 flex-shrink-0">
                             End Session
                           </button>
                         </div>
                       </div>
 
                       <div className="mt-3 text-right">
-                        <button className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center ml-auto">
+                        <button className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center ml-auto">
                           <span>View All Sessions</span>
                           <ArrowRight size={14} className="ml-1" />
                         </button>
@@ -677,21 +708,21 @@ const UserProfile = () => {
                     </div>
 
                     {/* Password Management */}
-                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-blue-200 transition-colors">
+                    <div className="bg-slate-50 dark:bg-gray-700 rounded-xl p-5 border border-slate-100 dark:border-gray-600 hover:border-blue-200 dark:hover:border-blue-600 transition-colors">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-slate-700 flex items-center">
+                        <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300 flex items-center">
                           <Key size={16} className="text-blue-500 mr-2" />
                           Password Management
                         </h3>
                       </div>
 
-                      <div className="bg-white rounded-lg p-4 border border-slate-100">
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-slate-100 dark:border-gray-600">
                         <div className="flex items-center justify-between mb-4">
                           <div>
-                            <p className="text-sm font-medium text-slate-800">
+                            <p className="text-sm font-medium text-slate-800 dark:text-gray-200">
                               Password Security
                             </p>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
                               Last changed{" "}
                               {getTimeSince(userData.last_password_reset)}
                             </p>
@@ -702,13 +733,13 @@ const UserProfile = () => {
                         </div>
 
                         <div className="flex items-center">
-                          <div className="flex-grow h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="flex-grow h-1.5 bg-slate-100 dark:bg-gray-700 rounded-full overflow-hidden">
                             <div
                               className="h-full bg-emerald-500 rounded-full"
                               style={{ width: "85%" }}
                             ></div>
                           </div>
-                          <span className="ml-3 text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100">
+                          <span className="ml-3 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded-full border border-emerald-100 dark:border-emerald-700">
                             Strong
                           </span>
                         </div>
@@ -716,24 +747,27 @@ const UserProfile = () => {
                     </div>
 
                     {/* Two-Factor Authentication */}
-                    <div className="bg-slate-50 rounded-xl p-5 border border-slate-100 hover:border-blue-200 transition-colors">
+                    <div className="bg-slate-50 dark:bg-gray-700 rounded-xl p-5 border border-slate-100 dark:border-gray-600 hover:border-blue-200 dark:hover:border-blue-600 transition-colors">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-slate-700 flex items-center">
+                        <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300 flex items-center">
                           <Shield size={16} className="text-blue-500 mr-2" />
                           Two-Factor Authentication
                         </h3>
                       </div>
 
-                      <div className="bg-white rounded-lg p-4 border border-slate-100">
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-slate-100 dark:border-gray-600">
                         <div className="flex items-center">
-                          <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center mr-4 flex-shrink-0">
-                            <AlertCircle size={18} className="text-amber-600" />
+                          <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center mr-4 flex-shrink-0">
+                            <AlertCircle
+                              size={18}
+                              className="text-amber-600 dark:text-amber-400"
+                            />
                           </div>
                           <div className="flex-grow">
-                            <p className="text-sm font-medium text-slate-800">
+                            <p className="text-sm font-medium text-slate-800 dark:text-gray-200">
                               Not Enabled
                             </p>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
                               Add an extra layer of security to your account by
                               requiring both your password and a verification
                               code.
@@ -750,33 +784,36 @@ const UserProfile = () => {
               )}
 
               {activeSection === "permissions" && (
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-100 dark:border-gray-700 overflow-hidden">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-gray-700">
                     <div className="flex items-center">
                       <Shield size={20} className="text-blue-500 mr-3" />
-                      <h2 className="text-lg font-medium text-slate-800">
+                      <h2 className="text-lg font-medium text-slate-800 dark:text-gray-100">
                         Roles & Permissions
                       </h2>
                     </div>
-                    <div className="px-3 py-1.5 bg-blue-50 rounded-lg border border-blue-100">
-                      <span className="text-sm font-medium text-blue-700">
+                    <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-100 dark:border-blue-700">
+                      <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
                         {userData.role.title}
                       </span>
                     </div>
                   </div>
 
                   <div className="p-6">
-                    <div className="flex items-center p-4 bg-blue-50 rounded-xl mb-6 border border-blue-100">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-4 flex-shrink-0">
-                        <Info size={18} className="text-blue-600" />
+                    <div className="flex items-center p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl mb-6 border border-blue-100 dark:border-blue-700">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-800/50 flex items-center justify-center mr-4 flex-shrink-0">
+                        <Info
+                          size={18}
+                          className="text-blue-600 dark:text-blue-400"
+                        />
                       </div>
                       <div>
-                        <p className="text-sm text-slate-800 font-medium mb-1">
+                        <p className="text-sm text-slate-800 dark:text-gray-200 font-medium mb-1">
                           Role-Based Access Control
                         </p>
-                        <p className="text-xs text-slate-600">
+                        <p className="text-xs text-slate-600 dark:text-gray-400">
                           Your access is determined by your role:{" "}
-                          <span className="font-medium text-blue-700">
+                          <span className="font-medium text-blue-700 dark:text-blue-300">
                             {userData.role.title}
                           </span>
                           . The permissions below outline what actions you can
@@ -788,15 +825,15 @@ const UserProfile = () => {
                     {/* Permissions Overview */}
                     <div className="mb-6">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-medium text-slate-700 flex items-center">
+                        <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300 flex items-center">
                           <Settings size={16} className="text-blue-500 mr-2" />
                           Permissions Overview
                         </h3>
-                        <div className="flex items-center bg-slate-50 rounded-lg px-3 py-1 border border-slate-100">
-                          <span className="text-xs font-medium text-blue-700 mr-1">
+                        <div className="flex items-center bg-slate-50 dark:bg-gray-700 rounded-lg px-3 py-1 border border-slate-100 dark:border-gray-600">
+                          <span className="text-xs font-medium text-blue-700 dark:text-blue-300 mr-1">
                             {Object.values(groupedPermissions).flat().length}
                           </span>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-slate-500 dark:text-gray-400">
                             total permissions
                           </span>
                         </div>
@@ -810,16 +847,16 @@ const UserProfile = () => {
                               onClick={() => toggleCategory(category)}
                               className={`flex items-center px-3 py-1.5 rounded-lg text-xs transition-all ${
                                 expandedCategories[category]
-                                  ? "bg-blue-100 text-blue-700 font-medium border border-blue-200"
-                                  : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
+                                  ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium border border-blue-200 dark:border-blue-600"
+                                  : "bg-slate-50 dark:bg-gray-700 text-slate-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-600 border border-slate-200 dark:border-gray-600"
                               }`}
                             >
                               <span className="mr-1.5">{category}</span>
                               <span
                                 className={`flex items-center justify-center w-5 h-5 rounded-full text-xs ${
                                   expandedCategories[category]
-                                    ? "bg-blue-200 text-blue-800"
-                                    : "bg-slate-200 text-slate-600"
+                                    ? "bg-blue-200 dark:bg-blue-800/50 text-blue-800 dark:text-blue-300"
+                                    : "bg-slate-200 dark:bg-gray-600 text-slate-600 dark:text-gray-400"
                                 }`}
                               >
                                 {perms.length}
@@ -836,24 +873,24 @@ const UserProfile = () => {
                           expandedCategories[category] && (
                             <div
                               key={category}
-                              className="bg-slate-50 rounded-xl overflow-hidden border border-slate-100"
+                              className="bg-slate-50 dark:bg-gray-700 rounded-xl overflow-hidden border border-slate-100 dark:border-gray-600"
                             >
-                              <div className="bg-white px-4 py-3 border-b border-slate-100">
+                              <div className="bg-white dark:bg-gray-800 px-4 py-3 border-b border-slate-100 dark:border-gray-600">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center">
-                                    <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center mr-2">
+                                    <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-2">
                                       <Shield
                                         size={14}
-                                        className="text-blue-600"
+                                        className="text-blue-600 dark:text-blue-400"
                                       />
                                     </div>
-                                    <h3 className="text-sm font-medium text-slate-800">
+                                    <h3 className="text-sm font-medium text-slate-800 dark:text-gray-200">
                                       {category} Permissions
                                     </h3>
                                   </div>
                                   <button
                                     onClick={() => toggleCategory(category)}
-                                    className="text-slate-400 hover:text-slate-600 p-1"
+                                    className="text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 p-1"
                                   >
                                     <ChevronDown
                                       size={16}
@@ -888,12 +925,12 @@ const UserProfile = () => {
 
                                     // Determine color based on action type
                                     const colors = {
-                                      view: "bg-blue-50 text-blue-700 border-blue-100",
+                                      view: "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-700",
                                       create:
-                                        "bg-green-50 text-green-700 border-green-100",
-                                      edit: "bg-amber-50 text-amber-700 border-amber-100",
+                                        "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-100 dark:border-green-700",
+                                      edit: "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-700",
                                       delete:
-                                        "bg-red-50 text-red-700 border-red-100",
+                                        "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-100 dark:border-red-700",
                                     };
 
                                     return (
@@ -920,14 +957,17 @@ const UserProfile = () => {
                       {Object.values(expandedCategories).every(
                         (expanded) => !expanded
                       ) && (
-                        <div className="bg-slate-50 rounded-xl p-8 text-center border border-slate-100">
-                          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                            <Shield size={24} className="text-blue-600" />
+                        <div className="bg-slate-50 dark:bg-gray-700 rounded-xl p-8 text-center border border-slate-100 dark:border-gray-600">
+                          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4">
+                            <Shield
+                              size={24}
+                              className="text-blue-600 dark:text-blue-400"
+                            />
                           </div>
-                          <h4 className="text-slate-800 font-medium mb-2">
+                          <h4 className="text-slate-800 dark:text-gray-200 font-medium mb-2">
                             Select a permission category
                           </h4>
-                          <p className="text-slate-500 text-xs max-w-md mx-auto">
+                          <p className="text-slate-500 dark:text-gray-400 text-xs max-w-md mx-auto">
                             Click on any of the permission categories above to
                             view the detailed permissions for that section.
                           </p>
@@ -935,16 +975,19 @@ const UserProfile = () => {
                       )}
                     </div>
 
-                    <div className="mt-6 p-4 border border-slate-100 rounded-xl bg-slate-50">
+                    <div className="mt-6 p-4 border border-slate-100 dark:border-gray-600 rounded-xl bg-slate-50 dark:bg-gray-700">
                       <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                          <Plus size={16} className="text-blue-600" />
+                        <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-3">
+                          <Plus
+                            size={16}
+                            className="text-blue-600 dark:text-blue-400"
+                          />
                         </div>
                         <div>
-                          <h4 className="text-sm font-medium text-slate-800">
+                          <h4 className="text-sm font-medium text-slate-800 dark:text-gray-200">
                             Need Additional Access?
                           </h4>
-                          <p className="text-xs text-slate-500 mt-0.5">
+                          <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                             Contact your system administrator if you require
                             additional permissions.
                           </p>
