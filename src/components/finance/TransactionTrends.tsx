@@ -64,35 +64,35 @@ const TransactionTrends = () => {
 
   return (
     <motion.div
-      className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+      className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.5 }}
     >
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             Transaction Trends
           </h3>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 dark:text-gray-300 text-sm">
             Monthly transaction volume and count
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <div className="flex items-center">
             <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
-            <span className="text-xs text-gray-600">Count</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">Count</span>
           </div>
           <div className="flex items-center">
             <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-            <span className="text-xs text-gray-600">Amount</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">Amount</span>
           </div>
         </div>
       </div>
       <div className="h-72">
         {isLoading ? (
           <div className="h-full flex items-center justify-center">
-            <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
@@ -139,9 +139,8 @@ const TransactionTrends = () => {
         )}
       </div>
 
-      {/* Display note about potentially large values */}
       {!isLoading && transactionsData.some((item) => item.amount >= 1e12) && (
-        <div className="mt-2 text-xs text-gray-500 italic">
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 italic">
           Note: Some volume values are extremely large and have been capped for
           visualization purposes.
         </div>
