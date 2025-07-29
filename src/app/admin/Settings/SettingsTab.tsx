@@ -45,14 +45,12 @@ const SettingsTabs = ({
 }: SettingsTabsProps) => {
   return (
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 relative z-10">
-      {/* Sidebar Navigation */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={slideUp}
         className="hidden lg:block w-72 flex-shrink-0"
       >
-        {/* Navigation Card */}
         <motion.div
           className={`backdrop-blur-xl rounded-2xl shadow-md overflow-hidden border ${currentTheme.cardBorder} dark:border-gray-700/40 bg-gradient-to-br ${currentTheme.cardBg} dark:from-gray-800/90 dark:to-gray-800/80`}
           initial="rest"
@@ -98,7 +96,6 @@ const SettingsTabs = ({
           </div>
         </motion.div>
 
-        {/* Status Card */}
         <motion.div
           className={`mt-6 backdrop-blur-xl rounded-2xl p-6 border ${
             currentTheme.cardBorder
@@ -147,7 +144,6 @@ const SettingsTabs = ({
         </motion.div>
       </motion.div>
 
-      {/* Main Content Area */}
       <motion.div
         initial="hidden"
         animate="visible"

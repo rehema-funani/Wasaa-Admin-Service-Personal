@@ -15,9 +15,14 @@ import {
   Key,
   Shield,
   Bell,
-  Info
+  Info,
 } from "lucide-react";
-import { Settings, FileInputRef, ColorChangeHandler, ThemeStyles } from "./page";
+import {
+  Settings,
+  FileInputRef,
+  ColorChangeHandler,
+  ThemeStyles,
+} from "./page";
 
 interface SettingsFormProps {
   id: string;
@@ -42,12 +47,14 @@ const SettingsForm = ({
   settings,
   setSettings,
   settingsService,
-  setShowSuccess
+  setShowSuccess,
 }: SettingsFormProps) => {
   // Local state
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showColorPicker, setShowColorPicker] = useState<"primary" | "secondary" | null>(null);
+  const [showColorPicker, setShowColorPicker] = useState<
+    "primary" | "secondary" | null
+  >(null);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   // File input refs
@@ -65,7 +72,9 @@ const SettingsForm = ({
   });
 
   // Form handlers
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     if (!settings) return;
 
@@ -150,7 +159,10 @@ const SettingsForm = ({
     try {
       const updatedSettings = { ...settings };
 
-      if (updatedSettings.website_social_links && typeof updatedSettings.website_social_links !== 'object') {
+      if (
+        updatedSettings.website_social_links &&
+        typeof updatedSettings.website_social_links !== "object"
+      ) {
         updatedSettings.website_social_links = {};
       } else if (!updatedSettings.website_social_links) {
         updatedSettings.website_social_links = {};
@@ -159,11 +171,19 @@ const SettingsForm = ({
       const formData = new FormData();
 
       Object.entries(updatedSettings).forEach(([key, value]) => {
-        if (key === 'id' || key === 'website_phone' || key === 'website_address' || key === 'website_about' || key === 'createdAt' || key === 'updatedAt') return;
+        if (
+          key === "id" ||
+          key === "website_phone" ||
+          key === "website_address" ||
+          key === "website_about" ||
+          key === "createdAt" ||
+          key === "updatedAt"
+        )
+          return;
 
         if (value !== null && value !== undefined) {
           if (!(value instanceof File)) {
-            if (typeof value === 'object' && !(value instanceof File)) {
+            if (typeof value === "object" && !(value instanceof File)) {
               formData.append(key, JSON.stringify(value));
             } else {
               formData.append(key, String(value));
@@ -191,15 +211,17 @@ const SettingsForm = ({
 
   // Input style generator
   const inputStyle = (hasError: boolean) =>
-    `w-full px-4 py-3 text-[13px] rounded-xl border ${hasError
-      ? "border-red-400 ring-2 ring-red-100"
-      : theme === "light"
+    `w-full px-4 py-3 text-[13px] rounded-xl border ${
+      hasError
+        ? "border-red-400 ring-2 ring-red-100 dark:ring-red-900/30"
+        : theme === "light"
         ? "border-gray-200 focus:ring-2 focus:ring-blue-100"
         : "border-gray-700 focus:ring-2 focus:ring-blue-900"
-    } ${theme === "light"
-      ? "bg-white/90 text-gray-800"
-      : "bg-gray-800/60 text-white"
-    } focus:outline-none focus:border-blue-400 transition-all duration-200 backdrop-blur-sm`;
+    } ${
+      theme === "light"
+        ? "bg-white/90 text-gray-800"
+        : "bg-gray-800/60 text-white"
+    } dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:focus:ring-blue-900/30 focus:outline-none focus:border-blue-400 transition-all duration-200 backdrop-blur-sm`;
 
   // Tab content renderers
   const renderGeneralTab = () => (
@@ -216,28 +238,42 @@ const SettingsForm = ({
           variants={slideUp}
           className="flex items-center space-x-3 mb-4"
         >
-          <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${theme === "light" ? "bg-blue-50" : "bg-blue-900/30"
-            }`}>
-            <Globe size={20} className={theme === "light" ? "text-blue-600" : "text-blue-400"} />
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-xl ${
+              theme === "light" ? "bg-blue-50" : "bg-blue-900/30"
+            } dark:bg-blue-900/30`}
+          >
+            <Globe
+              size={20}
+              className={theme === "light" ? "text-blue-600" : "text-blue-400"}
+            />
           </div>
-          <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+          <h2
+            className={`text-lg font-semibold ${
+              theme === "light" ? "text-gray-800" : "text-white"
+            } dark:text-gray-100`}
+          >
             General Settings
           </h2>
         </motion.div>
 
         <motion.div
           variants={slideUp}
-          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} border ${currentTheme.sectionBorder} shadow-sm`}
+          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} dark:from-gray-700 dark:to-gray-700/80 border ${currentTheme.sectionBorder} dark:border-gray-600 shadow-sm`}
           whileHover={{
-            boxShadow: theme === "light"
-              ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
-              : "0 10px 30px -10px rgba(0, 0, 0, 0.3)"
+            boxShadow:
+              theme === "light"
+                ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
+                : "0 10px 30px -10px rgba(0, 0, 0, 0.3)",
           }}
         >
           <div className="space-y-6">
             <div>
-              <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                } mb-2`}>
+              <label
+                className={`block text-[13px] font-medium ${
+                  theme === "light" ? "text-gray-700" : "text-gray-300"
+                } dark:text-gray-300 mb-2`}
+              >
                 Website Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -249,13 +285,18 @@ const SettingsForm = ({
                 placeholder="Enter website name"
               />
               {errors.website_name && (
-                <p className="mt-2 text-xs text-red-500">{errors.website_name}</p>
+                <p className="mt-2 text-xs text-red-500 dark:text-red-400">
+                  {errors.website_name}
+                </p>
               )}
             </div>
 
             <div>
-              <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                } mb-2`}>
+              <label
+                className={`block text-[13px] font-medium ${
+                  theme === "light" ? "text-gray-700" : "text-gray-300"
+                } dark:text-gray-300 mb-2`}
+              >
                 Website Description
               </label>
               <textarea
@@ -269,8 +310,11 @@ const SettingsForm = ({
             </div>
 
             <div>
-              <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                } mb-2`}>
+              <label
+                className={`block text-[13px] font-medium ${
+                  theme === "light" ? "text-gray-700" : "text-gray-300"
+                } dark:text-gray-300 mb-2`}
+              >
                 Website Email
               </label>
               <input
@@ -302,11 +346,23 @@ const SettingsForm = ({
           variants={slideUp}
           className="flex items-center space-x-3 mb-4"
         >
-          <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${theme === "light" ? "bg-indigo-50" : "bg-indigo-900/30"
-            }`}>
-            <PaintBucket size={20} className={theme === "light" ? "text-indigo-600" : "text-indigo-400"} />
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-xl ${
+              theme === "light" ? "bg-indigo-50" : "bg-indigo-900/30"
+            } dark:bg-indigo-900/30`}
+          >
+            <PaintBucket
+              size={20}
+              className={
+                theme === "light" ? "text-indigo-600" : "text-indigo-400"
+              }
+            />
           </div>
-          <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+          <h2
+            className={`text-lg font-semibold ${
+              theme === "light" ? "text-gray-800" : "text-white"
+            } dark:text-gray-100`}
+          >
             Appearance Settings
           </h2>
         </motion.div>
@@ -314,19 +370,25 @@ const SettingsForm = ({
         {/* Colors Section */}
         <motion.div
           variants={slideUp}
-          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} border ${currentTheme.sectionBorder} shadow-sm`}
+          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} dark:from-gray-700 dark:to-gray-700/80 border ${currentTheme.sectionBorder} dark:border-gray-600 shadow-sm`}
           whileHover={{
-            boxShadow: theme === "light"
-              ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
-              : "0 10px 30px -10px rgba(0, 0, 0, 0.3)"
+            boxShadow:
+              theme === "light"
+                ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
+                : "0 10px 30px -10px rgba(0, 0, 0, 0.3)",
           }}
         >
           <div
             onClick={() => toggleSection("colors")}
-            className={`flex items-center justify-between cursor-pointer ${theme === "light" ? "hover:text-blue-600" : "hover:text-blue-400"
-              } transition-colors duration-200`}
+            className={`flex items-center justify-between cursor-pointer ${
+              theme === "light" ? "hover:text-blue-600" : "hover:text-blue-400"
+            } dark:hover:text-blue-400 transition-colors duration-200`}
           >
-            <h3 className={`text-base font-medium ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+            <h3
+              className={`text-base font-medium ${
+                theme === "light" ? "text-gray-800" : "text-white"
+              } dark:text-gray-100`}
+            >
               Brand Colors
             </h3>
             <motion.div
@@ -349,8 +411,11 @@ const SettingsForm = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Primary Color */}
                 <div className="relative">
-                  <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                    } mb-2`}>
+                  <label
+                    className={`block text-[13px] font-medium ${
+                      theme === "light" ? "text-gray-700" : "text-gray-300"
+                    } dark:text-gray-300 mb-2`}
+                  >
                     Primary Color
                   </label>
                   <div className="flex items-center">
@@ -358,19 +423,27 @@ const SettingsForm = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                       className="w-12 h-12 rounded-xl shadow-lg mr-4 cursor-pointer relative overflow-hidden"
-                      style={{ backgroundColor: settings?.website_color_primary || "#3B82F6" }}
-                      onClick={() => setShowColorPicker(showColorPicker === "primary" ? null : "primary")}
+                      style={{
+                        backgroundColor:
+                          settings?.website_color_primary || "#3B82F6",
+                      }}
+                      onClick={() =>
+                        setShowColorPicker(
+                          showColorPicker === "primary" ? null : "primary"
+                        )
+                      }
                     >
                       {/* Reflection effect */}
                       <div
                         className="absolute inset-0 opacity-30"
                         style={{
-                          background: "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.8) 40%, transparent 50%)",
+                          background:
+                            "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.8) 40%, transparent 50%)",
                           top: "-100%",
                           left: "-100%",
                           width: "300%",
                           height: "300%",
-                          animation: "colorShine 3s ease-in-out infinite"
+                          animation: "colorShine 3s ease-in-out infinite",
                         }}
                       />
                     </motion.div>
@@ -389,25 +462,38 @@ const SettingsForm = ({
                       animate={{ opacity: 1, y: 0 }}
                       className="absolute z-10 mt-4"
                     >
-                      <div className={`p-3 rounded-xl shadow-xl border ${theme === "light"
-                          ? "bg-white border-gray-200"
-                          : "bg-gray-800 border-gray-700"
-                        }`}>
+                      <div
+                        className={`p-3 rounded-xl shadow-xl border ${
+                          theme === "light"
+                            ? "bg-white border-gray-200"
+                            : "bg-gray-800 border-gray-700"
+                        } dark:bg-gray-800 dark:border-gray-600`}
+                      >
                         <HexColorPicker
                           color={settings?.website_color_primary || "#3B82F6"}
-                          onChange={(color) => handleColorChange(color, "website_color_primary")}
+                          onChange={(color) =>
+                            handleColorChange(color, "website_color_primary")
+                          }
                         />
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           type="button"
-                          className={`absolute -top-2 -right-2 ${theme === "light"
+                          className={`absolute -top-2 -right-2 ${
+                            theme === "light"
                               ? "bg-white rounded-full p-1 shadow-md border border-gray-200"
                               : "bg-gray-800 rounded-full p-1 shadow-md border border-gray-700"
-                            }`}
+                          } dark:bg-gray-700 dark:border-gray-600`}
                           onClick={() => setShowColorPicker(null)}
                         >
-                          <X size={14} className={theme === "light" ? "text-gray-600" : "text-gray-300"} />
+                          <X
+                            size={14}
+                            className={
+                              theme === "light"
+                                ? "text-gray-600"
+                                : "text-gray-300"
+                            }
+                          />
                         </motion.button>
                       </div>
                     </motion.div>
@@ -416,8 +502,11 @@ const SettingsForm = ({
 
                 {/* Secondary Color */}
                 <div className="relative">
-                  <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                    } mb-2`}>
+                  <label
+                    className={`block text-[13px] font-medium ${
+                      theme === "light" ? "text-gray-700" : "text-gray-300"
+                    } dark:text-gray-300 mb-2`}
+                  >
                     Secondary Color
                   </label>
                   <div className="flex items-center">
@@ -425,19 +514,27 @@ const SettingsForm = ({
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                       className="w-12 h-12 rounded-xl shadow-lg mr-4 cursor-pointer relative overflow-hidden"
-                      style={{ backgroundColor: settings?.website_color_secondary || "#10B981" }}
-                      onClick={() => setShowColorPicker(showColorPicker === "secondary" ? null : "secondary")}
+                      style={{
+                        backgroundColor:
+                          settings?.website_color_secondary || "#10B981",
+                      }}
+                      onClick={() =>
+                        setShowColorPicker(
+                          showColorPicker === "secondary" ? null : "secondary"
+                        )
+                      }
                     >
                       {/* Reflection effect */}
                       <div
                         className="absolute inset-0 opacity-30"
                         style={{
-                          background: "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.8) 40%, transparent 50%)",
+                          background:
+                            "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.8) 40%, transparent 50%)",
                           top: "-100%",
                           left: "-100%",
                           width: "300%",
                           height: "300%",
-                          animation: "colorShine 3s ease-in-out infinite"
+                          animation: "colorShine 3s ease-in-out infinite",
                         }}
                       />
                     </motion.div>
@@ -456,25 +553,38 @@ const SettingsForm = ({
                       animate={{ opacity: 1, y: 0 }}
                       className="absolute z-10 mt-4"
                     >
-                      <div className={`p-3 rounded-xl shadow-xl border ${theme === "light"
-                          ? "bg-white border-gray-200"
-                          : "bg-gray-800 border-gray-700"
-                        }`}>
+                      <div
+                        className={`p-3 rounded-xl shadow-xl border ${
+                          theme === "light"
+                            ? "bg-white border-gray-200"
+                            : "bg-gray-800 border-gray-700"
+                        } dark:bg-gray-800 dark:border-gray-600`}
+                      >
                         <HexColorPicker
                           color={settings?.website_color_secondary || "#10B981"}
-                          onChange={(color) => handleColorChange(color, "website_color_secondary")}
+                          onChange={(color) =>
+                            handleColorChange(color, "website_color_secondary")
+                          }
                         />
                         <motion.button
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                           type="button"
-                          className={`absolute -top-2 -right-2 ${theme === "light"
+                          className={`absolute -top-2 -right-2 ${
+                            theme === "light"
                               ? "bg-white rounded-full p-1 shadow-md border border-gray-200"
                               : "bg-gray-800 rounded-full p-1 shadow-md border border-gray-700"
-                            }`}
+                          } dark:bg-gray-700 dark:border-gray-600`}
                           onClick={() => setShowColorPicker(null)}
                         >
-                          <X size={14} className={theme === "light" ? "text-gray-600" : "text-gray-300"} />
+                          <X
+                            size={14}
+                            className={
+                              theme === "light"
+                                ? "text-gray-600"
+                                : "text-gray-300"
+                            }
+                          />
                         </motion.button>
                       </div>
                     </motion.div>
@@ -483,28 +593,44 @@ const SettingsForm = ({
               </div>
 
               {/* Color preview panel */}
-              <div className={`mt-4 p-4 rounded-xl ${theme === "light" ? "bg-white/70" : "bg-gray-800/50"
-                } border ${theme === "light" ? "border-gray-200" : "border-gray-700"
-                }`}>
-                <p className={`text-xs font-medium mb-3 ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}>
+              <div
+                className={`mt-4 p-4 rounded-xl ${
+                  theme === "light" ? "bg-white/70" : "bg-gray-800/50"
+                } dark:bg-gray-700/50 border ${
+                  theme === "light" ? "border-gray-200" : "border-gray-700"
+                } dark:border-gray-600`}
+              >
+                <p
+                  className={`text-xs font-medium mb-3 ${
+                    theme === "light" ? "text-gray-600" : "text-gray-400"
+                  } dark:text-gray-400`}
+                >
                   Preview:
                 </p>
                 <div className="flex space-x-3">
                   <div
                     className="flex-1 h-14 rounded-lg flex items-center justify-center shadow-md"
                     style={{
-                      background: `linear-gradient(to right, ${settings?.website_color_primary || "#3B82F6"}, ${settings?.website_color_primary || "#3B82F6"}90)`,
+                      background: `linear-gradient(to right, ${
+                        settings?.website_color_primary || "#3B82F6"
+                      }, ${settings?.website_color_primary || "#3B82F6"}90)`,
                     }}
                   >
-                    <p className="text-white text-[13px] font-medium">Primary Button</p>
+                    <p className="text-white text-[13px] font-medium">
+                      Primary Button
+                    </p>
                   </div>
                   <div
                     className="flex-1 h-14 rounded-lg flex items-center justify-center shadow-md"
                     style={{
-                      background: `linear-gradient(to right, ${settings?.website_color_secondary || "#10B981"}, ${settings?.website_color_secondary || "#10B981"}90)`,
+                      background: `linear-gradient(to right, ${
+                        settings?.website_color_secondary || "#10B981"
+                      }, ${settings?.website_color_secondary || "#10B981"}90)`,
                     }}
                   >
-                    <p className="text-white text-[13px] font-medium">Secondary Button</p>
+                    <p className="text-white text-[13px] font-medium">
+                      Secondary Button
+                    </p>
                   </div>
                 </div>
               </div>
@@ -515,19 +641,25 @@ const SettingsForm = ({
         {/* Branding Section */}
         <motion.div
           variants={slideUp}
-          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} border ${currentTheme.sectionBorder} shadow-sm`}
+          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} dark:from-gray-700 dark:to-gray-700/80 border ${currentTheme.sectionBorder} dark:border-gray-600 shadow-sm`}
           whileHover={{
-            boxShadow: theme === "light"
-              ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
-              : "0 10px 30px -10px rgba(0, 0, 0, 0.3)"
+            boxShadow:
+              theme === "light"
+                ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
+                : "0 10px 30px -10px rgba(0, 0, 0, 0.3)",
           }}
         >
           <div
             onClick={() => toggleSection("branding")}
-            className={`flex items-center justify-between cursor-pointer ${theme === "light" ? "hover:text-blue-600" : "hover:text-blue-400"
-              } transition-colors duration-200`}
+            className={`flex items-center justify-between cursor-pointer ${
+              theme === "light" ? "hover:text-blue-600" : "hover:text-blue-400"
+            } dark:hover:text-blue-400 transition-colors duration-200`}
           >
-            <h3 className={`text-base font-medium ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+            <h3
+              className={`text-base font-medium ${
+                theme === "light" ? "text-gray-800" : "text-white"
+              } dark:text-gray-100`}
+            >
               Visual Assets
             </h3>
             <motion.div
@@ -550,22 +682,32 @@ const SettingsForm = ({
               {/* Logo, Favicon, Banner Uploads */}
               <div className="space-y-6">
                 <div>
-                  <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                    } mb-2 flex items-center space-x-2`}>
-                    <Image size={16} className={theme === "light" ? "text-gray-500" : "text-gray-400"} />
+                  <label
+                    className={`block text-[13px] font-medium ${
+                      theme === "light" ? "text-gray-700" : "text-gray-300"
+                    } dark:text-gray-300 mb-2 flex items-center space-x-2`}
+                  >
+                    <Image
+                      size={16}
+                      className={
+                        theme === "light" ? "text-gray-500" : "text-gray-400"
+                      }
+                    />
                     <span>Website Logo</span>
                   </label>
                   <motion.div
                     whileHover={{
-                      borderColor: theme === "light" ? '#3B82F6' : '#60A5FA',
-                      boxShadow: theme === "light"
-                        ? '0 0 0 3px rgba(59, 130, 246, 0.1)'
-                        : '0 0 0 3px rgba(96, 165, 250, 0.1)'
+                      borderColor: theme === "light" ? "#3B82F6" : "#60A5FA",
+                      boxShadow:
+                        theme === "light"
+                          ? "0 0 0 3px rgba(59, 130, 246, 0.1)"
+                          : "0 0 0 3px rgba(96, 165, 250, 0.1)",
                     }}
-                    className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${theme === "light"
+                    className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${
+                      theme === "light"
                         ? "border-gray-200 bg-gray-50/50"
                         : "border-gray-700 bg-gray-800/30"
-                      }`}
+                    } dark:border-gray-600 dark:bg-gray-700/30`}
                     onClick={() => triggerFileInput(fileInputRefs.website_logo)}
                   >
                     <input
@@ -590,12 +732,22 @@ const SettingsForm = ({
                           <div
                             className="absolute -inset-1 opacity-30 rounded-lg z-0"
                             style={{
-                              background: `linear-gradient(45deg, ${settings?.website_color_primary || "#3B82F6"}, ${settings?.website_color_secondary || "#10B981"})`,
-                              filter: "blur(8px)"
+                              background: `linear-gradient(45deg, ${
+                                settings?.website_color_primary || "#3B82F6"
+                              }, ${
+                                settings?.website_color_secondary || "#10B981"
+                              })`,
+                              filter: "blur(8px)",
                             }}
                           />
                         </motion.div>
-                        <p className={`text-xs font-medium ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}>
+                        <p
+                          className={`text-xs font-medium ${
+                            theme === "light"
+                              ? "text-gray-600"
+                              : "text-gray-400"
+                          } dark:text-gray-400`}
+                        >
                           Click to change
                         </p>
                       </div>
@@ -604,16 +756,35 @@ const SettingsForm = ({
                         <motion.div
                           whileHover={{ y: -5 }}
                           transition={{ type: "spring", stiffness: 300 }}
-                          className={`w-16 h-16 rounded-full ${theme === "light" ? "bg-blue-50" : "bg-blue-900/30"
-                            } flex items-center justify-center mb-3`}
+                          className={`w-16 h-16 rounded-full ${
+                            theme === "light" ? "bg-blue-50" : "bg-blue-900/30"
+                          } dark:bg-blue-900/30 flex items-center justify-center mb-3`}
                         >
-                          <Upload className={theme === "light" ? "text-blue-400" : "text-blue-300"} size={24} />
+                          <Upload
+                            className={
+                              theme === "light"
+                                ? "text-blue-400"
+                                : "text-blue-300"
+                            }
+                            size={24}
+                          />
                         </motion.div>
-                        <p className={`text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                          } mb-1`}>
+                        <p
+                          className={`text-[13px] font-medium ${
+                            theme === "light"
+                              ? "text-gray-700"
+                              : "text-gray-300"
+                          } dark:text-gray-300 mb-1`}
+                        >
                           Click to upload logo
                         </p>
-                        <p className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-500"}`}>
+                        <p
+                          className={`text-xs ${
+                            theme === "light"
+                              ? "text-gray-500"
+                              : "text-gray-500"
+                          } dark:text-gray-400`}
+                        >
                           PNG, JPG, SVG, WEBP up to 1MB
                         </p>
                       </div>
@@ -642,28 +813,44 @@ const SettingsForm = ({
           variants={slideUp}
           className="flex items-center space-x-3 mb-4"
         >
-          <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${theme === "light" ? "bg-amber-50" : "bg-amber-900/30"
-            }`}>
-            <Users size={20} className={theme === "light" ? "text-amber-600" : "text-amber-400"} />
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-xl ${
+              theme === "light" ? "bg-amber-50" : "bg-amber-900/30"
+            } dark:bg-amber-900/30`}
+          >
+            <Users
+              size={20}
+              className={
+                theme === "light" ? "text-amber-600" : "text-amber-400"
+              }
+            />
           </div>
-          <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+          <h2
+            className={`text-lg font-semibold ${
+              theme === "light" ? "text-gray-800" : "text-white"
+            } dark:text-gray-100`}
+          >
             User Limits
           </h2>
         </motion.div>
 
         <motion.div
           variants={slideUp}
-          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} border ${currentTheme.sectionBorder} shadow-sm`}
+          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} dark:from-gray-700 dark:to-gray-700/80 border ${currentTheme.sectionBorder} dark:border-gray-600 shadow-sm`}
           whileHover={{
-            boxShadow: theme === "light"
-              ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
-              : "0 10px 30px -10px rgba(0, 0, 0, 0.3)"
+            boxShadow:
+              theme === "light"
+                ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
+                : "0 10px 30px -10px rgba(0, 0, 0, 0.3)",
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                } mb-2`}>
+              <label
+                className={`block text-[13px] font-medium ${
+                  theme === "light" ? "text-gray-700" : "text-gray-300"
+                } dark:text-gray-300 mb-2`}
+              >
                 Maximum Group Members <span className="text-red-500">*</span>
               </label>
               <input
@@ -676,28 +863,41 @@ const SettingsForm = ({
                 placeholder="Enter maximum group members"
               />
               {errors.max_group_members && (
-                <p className="mt-2 text-xs text-red-500">{errors.max_group_members}</p>
+                <p className="mt-2 text-xs text-red-500 dark:text-red-400">
+                  {errors.max_group_members}
+                </p>
               )}
 
               {/* Visual slider */}
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-1.5">
-                  <p className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}>
+                  <p
+                    className={`text-xs ${
+                      theme === "light" ? "text-gray-500" : "text-gray-400"
+                    } dark:text-gray-400`}
+                  >
                     Value: {settings?.max_group_members || 0}
                   </p>
-                  <p className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}>
+                  <p
+                    className={`text-xs ${
+                      theme === "light" ? "text-gray-500" : "text-gray-400"
+                    } dark:text-gray-400`}
+                  >
                     Recommended: 50-200
                   </p>
                 </div>
-                <div className={`h-2 w-full rounded-full overflow-hidden ${theme === "light" ? "bg-gray-200" : "bg-gray-700"
-                  }`}>
+                <div
+                  className={`h-2 w-full rounded-full overflow-hidden ${
+                    theme === "light" ? "bg-gray-200" : "bg-gray-700"
+                  } dark:bg-gray-600`}
+                >
                   <motion.div
                     className="h-full bg-gradient-to-r from-amber-500 to-amber-300"
                     initial={{ width: 0 }}
                     animate={{
                       width: settings?.max_group_members
                         ? `${Math.min(settings.max_group_members / 2, 100)}%`
-                        : '0%'
+                        : "0%",
                     }}
                     transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
                   />
@@ -706,8 +906,11 @@ const SettingsForm = ({
             </div>
 
             <div>
-              <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                } mb-2`}>
+              <label
+                className={`block text-[13px] font-medium ${
+                  theme === "light" ? "text-gray-700" : "text-gray-300"
+                } dark:text-gray-300 mb-2`}
+              >
                 Maximum Group Name Length
               </label>
               <input
@@ -723,22 +926,36 @@ const SettingsForm = ({
               {/* Visual slider */}
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-1.5">
-                  <p className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}>
+                  <p
+                    className={`text-xs ${
+                      theme === "light" ? "text-gray-500" : "text-gray-400"
+                    } dark:text-gray-400`}
+                  >
                     Value: {settings?.max_group_name_length || 0} characters
                   </p>
-                  <p className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}>
+                  <p
+                    className={`text-xs ${
+                      theme === "light" ? "text-gray-500" : "text-gray-400"
+                    } dark:text-gray-400`}
+                  >
                     Recommended: 30-50
                   </p>
                 </div>
-                <div className={`h-2 w-full rounded-full overflow-hidden ${theme === "light" ? "bg-gray-200" : "bg-gray-700"
-                  }`}>
+                <div
+                  className={`h-2 w-full rounded-full overflow-hidden ${
+                    theme === "light" ? "bg-gray-200" : "bg-gray-700"
+                  } dark:bg-gray-600`}
+                >
                   <motion.div
                     className="h-full bg-gradient-to-r from-blue-500 to-blue-300"
                     initial={{ width: 0 }}
                     animate={{
                       width: settings?.max_group_name_length
-                        ? `${Math.min(settings.max_group_name_length * 2, 100)}%`
-                        : '0%'
+                        ? `${Math.min(
+                            settings.max_group_name_length * 2,
+                            100
+                          )}%`
+                        : "0%",
                     }}
                     transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
                   />
@@ -765,33 +982,54 @@ const SettingsForm = ({
           variants={slideUp}
           className="flex items-center space-x-3 mb-4"
         >
-          <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${theme === "light" ? "bg-emerald-50" : "bg-emerald-900/30"
-            }`}>
-            <LinkIcon size={20} className={theme === "light" ? "text-emerald-600" : "text-emerald-400"} />
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-xl ${
+              theme === "light" ? "bg-emerald-50" : "bg-emerald-900/30"
+            } dark:bg-emerald-900/30`}
+          >
+            <LinkIcon
+              size={20}
+              className={
+                theme === "light" ? "text-emerald-600" : "text-emerald-400"
+              }
+            />
           </div>
-          <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+          <h2
+            className={`text-lg font-semibold ${
+              theme === "light" ? "text-gray-800" : "text-white"
+            } dark:text-gray-100`}
+          >
             Links & Legal
           </h2>
         </motion.div>
 
         <motion.div
           variants={slideUp}
-          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} border ${currentTheme.sectionBorder} shadow-sm`}
+          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} dark:from-gray-700 dark:to-gray-700/80 border ${currentTheme.sectionBorder} dark:border-gray-600 shadow-sm`}
           whileHover={{
-            boxShadow: theme === "light"
-              ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
-              : "0 10px 30px -10px rgba(0, 0, 0, 0.3)"
+            boxShadow:
+              theme === "light"
+                ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
+                : "0 10px 30px -10px rgba(0, 0, 0, 0.3)",
           }}
         >
           <div className="space-y-6">
             <div>
-              <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                } mb-2`}>
+              <label
+                className={`block text-[13px] font-medium ${
+                  theme === "light" ? "text-gray-700" : "text-gray-300"
+                } dark:text-gray-300 mb-2`}
+              >
                 Website Link
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Globe size={16} className={theme === "light" ? "text-gray-400" : "text-gray-500"} />
+                  <Globe
+                    size={16}
+                    className={
+                      theme === "light" ? "text-gray-400" : "text-gray-500"
+                    }
+                  />
                 </div>
                 <input
                   type="url"
@@ -806,8 +1044,11 @@ const SettingsForm = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                  } mb-2`}>
+                <label
+                  className={`block text-[13px] font-medium ${
+                    theme === "light" ? "text-gray-700" : "text-gray-300"
+                  } dark:text-gray-300 mb-2`}
+                >
                   iOS App Link
                 </label>
                 <input
@@ -821,8 +1062,11 @@ const SettingsForm = ({
               </div>
 
               <div>
-                <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                  } mb-2`}>
+                <label
+                  className={`block text-[13px] font-medium ${
+                    theme === "light" ? "text-gray-700" : "text-gray-300"
+                  } dark:text-gray-300 mb-2`}
+                >
                   Android App Link
                 </label>
                 <input
@@ -837,8 +1081,11 @@ const SettingsForm = ({
             </div>
 
             <div>
-              <label className={`block text-[13px] font-medium ${theme === "light" ? "text-gray-700" : "text-gray-300"
-                } mb-2`}>
+              <label
+                className={`block text-[13px] font-medium ${
+                  theme === "light" ? "text-gray-700" : "text-gray-300"
+                } dark:text-gray-300 mb-2`}
+              >
                 Copyright Text
               </label>
               <input
@@ -870,60 +1117,104 @@ const SettingsForm = ({
           variants={slideUp}
           className="flex items-center space-x-3 mb-4"
         >
-          <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${theme === "light" ? "bg-red-50" : "bg-red-900/30"
-            }`}>
-            <Shield size={20} className={theme === "light" ? "text-red-600" : "text-red-400"} />
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-xl ${
+              theme === "light" ? "bg-red-50" : "bg-red-900/30"
+            } dark:bg-red-900/30`}
+          >
+            <Shield
+              size={20}
+              className={theme === "light" ? "text-red-600" : "text-red-400"}
+            />
           </div>
-          <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+          <h2
+            className={`text-lg font-semibold ${
+              theme === "light" ? "text-gray-800" : "text-white"
+            } dark:text-gray-100`}
+          >
             Security Settings
           </h2>
         </motion.div>
 
         <motion.div
           variants={slideUp}
-          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} border ${currentTheme.sectionBorder} shadow-sm`}
+          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} dark:from-gray-700 dark:to-gray-700/80 border ${currentTheme.sectionBorder} dark:border-gray-600 shadow-sm`}
           whileHover={{
-            boxShadow: theme === "light"
-              ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
-              : "0 10px 30px -10px rgba(0, 0, 0, 0.3)"
+            boxShadow:
+              theme === "light"
+                ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
+                : "0 10px 30px -10px rgba(0, 0, 0, 0.3)",
           }}
         >
           <div className="flex items-center mb-6">
-            <div className={`p-3 rounded-lg ${theme === "light" ? "bg-red-50" : "bg-red-900/30"
-              } mr-4`}>
-              <Key size={20} className={theme === "light" ? "text-red-600" : "text-red-400"} />
+            <div
+              className={`p-3 rounded-lg ${
+                theme === "light" ? "bg-red-50" : "bg-red-900/30"
+              } dark:bg-red-900/30 mr-4`}
+            >
+              <Key
+                size={20}
+                className={theme === "light" ? "text-red-600" : "text-red-400"}
+              />
             </div>
             <div>
-              <h3 className={`text-base font-medium ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+              <h3
+                className={`text-base font-medium ${
+                  theme === "light" ? "text-gray-800" : "text-white"
+                } dark:text-gray-100`}
+              >
                 API Key Management
               </h3>
-              <p className={`text-sm ${theme === "light" ? "text-gray-500" : "text-gray-400"} mt-1`}>
+              <p
+                className={`text-sm ${
+                  theme === "light" ? "text-gray-500" : "text-gray-400"
+                } dark:text-gray-400 mt-1`}
+              >
                 Manage API keys and access credentials
               </p>
             </div>
           </div>
 
-          <div className={`p-4 rounded-xl border ${theme === "light" ? "border-red-100 bg-red-50/50" : "border-red-900/30 bg-red-900/10"
-            } mb-4 flex items-start`}>
-            <Info size={16} className={`${theme === "light" ? "text-red-600" : "text-red-400"
-              } mr-3 mt-0.5 flex-shrink-0`} />
-            <p className={`text-xs ${theme === "light" ? "text-red-700" : "text-red-300"}`}>
-              API keys grant programmatic access to your platform. Keep them secure and never share them in client-side code.
+          <div
+            className={`p-4 rounded-xl border ${
+              theme === "light"
+                ? "border-red-100 bg-red-50/50"
+                : "border-red-900/30 bg-red-900/10"
+            } dark:border-red-900/30 dark:bg-red-900/20 mb-4 flex items-start`}
+          >
+            <Info
+              size={16}
+              className={`${
+                theme === "light" ? "text-red-600" : "text-red-400"
+              } mr-3 mt-0.5 flex-shrink-0`}
+            />
+            <p
+              className={`text-xs ${
+                theme === "light" ? "text-red-700" : "text-red-300"
+              } dark:text-red-300`}
+            >
+              API keys grant programmatic access to your platform. Keep them
+              secure and never share them in client-side code.
             </p>
           </div>
 
           <div className="space-y-4">
             {/* Placeholder for API key management UI */}
-            <p className={`text-sm ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}>
+            <p
+              className={`text-sm ${
+                theme === "light" ? "text-gray-600" : "text-gray-400"
+              } dark:text-gray-400`}
+            >
               No API keys have been created yet.
             </p>
 
             <button
               type="button"
-              className={`px-4 py-2.5 rounded-lg text-sm font-medium ${theme === "light"
+              className={`px-4 py-2.5 rounded-lg text-sm font-medium ${
+                theme === "light"
                   ? "bg-red-100 text-red-700 hover:bg-red-200"
                   : "bg-red-900/30 text-red-400 hover:bg-red-900/50"
-                } transition-colors duration-200`}
+              } dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition-colors duration-200`}
             >
               <Key size={16} className="inline-block mr-2" />
               Generate New API Key
@@ -948,48 +1239,95 @@ const SettingsForm = ({
           variants={slideUp}
           className="flex items-center space-x-3 mb-4"
         >
-          <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${theme === "light" ? "bg-purple-50" : "bg-purple-900/30"
-            }`}>
-            <Bell size={20} className={theme === "light" ? "text-purple-600" : "text-purple-400"} />
+          <div
+            className={`flex items-center justify-center w-10 h-10 rounded-xl ${
+              theme === "light" ? "bg-purple-50" : "bg-purple-900/30"
+            } dark:bg-purple-900/30`}
+          >
+            <Bell
+              size={20}
+              className={
+                theme === "light" ? "text-purple-600" : "text-purple-400"
+              }
+            />
           </div>
-          <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-white"}`}>
+          <h2
+            className={`text-lg font-semibold ${
+              theme === "light" ? "text-gray-800" : "text-white"
+            } dark:text-gray-100`}
+          >
             Notification Settings
           </h2>
         </motion.div>
 
         <motion.div
           variants={slideUp}
-          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} border ${currentTheme.sectionBorder} shadow-sm`}
+          className={`p-6 rounded-2xl bg-gradient-to-br ${currentTheme.sectionBg} dark:from-gray-700 dark:to-gray-700/80 border ${currentTheme.sectionBorder} dark:border-gray-600 shadow-sm`}
           whileHover={{
-            boxShadow: theme === "light"
-              ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
-              : "0 10px 30px -10px rgba(0, 0, 0, 0.3)"
+            boxShadow:
+              theme === "light"
+                ? "0 10px 30px -10px rgba(0, 0, 0, 0.08)"
+                : "0 10px 30px -10px rgba(0, 0, 0, 0.3)",
           }}
         >
           <div className="space-y-6">
             {/* Email notification settings */}
             <div>
-              <h3 className={`text-base font-medium ${theme === "light" ? "text-gray-800" : "text-white"} mb-4`}>
+              <h3
+                className={`text-base font-medium ${
+                  theme === "light" ? "text-gray-800" : "text-white"
+                } dark:text-gray-100 mb-4`}
+              >
                 Email Notifications
               </h3>
 
               <div className="space-y-3">
-                {['user_registrations', 'new_transactions', 'system_alerts', 'weekly_reports'].map((notif, index) => (
-                  <div key={index} className={`flex items-center justify-between p-3 rounded-lg ${theme === "light" ? "bg-gray-50" : "bg-gray-800/50"
-                    }`}>
+                {[
+                  "user_registrations",
+                  "new_transactions",
+                  "system_alerts",
+                  "weekly_reports",
+                ].map((notif, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center justify-between p-3 rounded-lg ${
+                      theme === "light" ? "bg-gray-50" : "bg-gray-800/50"
+                    } dark:bg-gray-700/50`}
+                  >
                     <div className="flex items-center">
-                      <Bell size={16} className={`mr-3 ${theme === "light" ? "text-gray-500" : "text-gray-400"
-                        }`} />
-                      <span className={`text-sm ${theme === "light" ? "text-gray-700" : "text-gray-300"}`}>
-                        {notif.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                      <Bell
+                        size={16}
+                        className={`mr-3 ${
+                          theme === "light" ? "text-gray-500" : "text-gray-400"
+                        } dark:text-gray-400`}
+                      />
+                      <span
+                        className={`text-sm ${
+                          theme === "light" ? "text-gray-700" : "text-gray-300"
+                        } dark:text-gray-300`}
+                      >
+                        {notif
+                          .split("_")
+                          .map(
+                            (word) =>
+                              word.charAt(0).toUpperCase() + word.slice(1)
+                          )
+                          .join(" ")}
                       </span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" defaultChecked={index !== 3} />
-                      <div className={`w-11 h-6 rounded-full peer ${theme === "light"
-                          ? "bg-gray-200 peer-checked:bg-blue-500"
-                          : "bg-gray-700 peer-checked:bg-blue-600"
-                        } peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all`}></div>
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        defaultChecked={index !== 3}
+                      />
+                      <div
+                        className={`w-11 h-6 rounded-full peer ${
+                          theme === "light"
+                            ? "bg-gray-200 peer-checked:bg-blue-500"
+                            : "bg-gray-700 peer-checked:bg-blue-600"
+                        } dark:bg-gray-600 dark:peer-checked:bg-blue-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all`}
+                      ></div>
                     </label>
                   </div>
                 ))}
@@ -997,28 +1335,61 @@ const SettingsForm = ({
             </div>
 
             {/* Push notification settings */}
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-              <h3 className={`text-base font-medium ${theme === "light" ? "text-gray-800" : "text-white"} mb-4`}>
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+              <h3
+                className={`text-base font-medium ${
+                  theme === "light" ? "text-gray-800" : "text-white"
+                } dark:text-gray-100 mb-4`}
+              >
                 Push Notifications
               </h3>
 
               <div className="space-y-3">
-                {['user_activities', 'group_messages', 'payment_confirmations'].map((notif, index) => (
-                  <div key={index} className={`flex items-center justify-between p-3 rounded-lg ${theme === "light" ? "bg-gray-50" : "bg-gray-800/50"
-                    }`}>
+                {[
+                  "user_activities",
+                  "group_messages",
+                  "payment_confirmations",
+                ].map((notif, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center justify-between p-3 rounded-lg ${
+                      theme === "light" ? "bg-gray-50" : "bg-gray-800/50"
+                    } dark:bg-gray-700/50`}
+                  >
                     <div className="flex items-center">
-                      <Bell size={16} className={`mr-3 ${theme === "light" ? "text-gray-500" : "text-gray-400"
-                        }`} />
-                      <span className={`text-sm ${theme === "light" ? "text-gray-700" : "text-gray-300"}`}>
-                        {notif.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                      <Bell
+                        size={16}
+                        className={`mr-3 ${
+                          theme === "light" ? "text-gray-500" : "text-gray-400"
+                        } dark:text-gray-400`}
+                      />
+                      <span
+                        className={`text-sm ${
+                          theme === "light" ? "text-gray-700" : "text-gray-300"
+                        } dark:text-gray-300`}
+                      >
+                        {notif
+                          .split("_")
+                          .map(
+                            (word) =>
+                              word.charAt(0).toUpperCase() + word.slice(1)
+                          )
+                          .join(" ")}
                       </span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" defaultChecked={index !== 2} />
-                      <div className={`w-11 h-6 rounded-full peer ${theme === "light"
-                          ? "bg-gray-200 peer-checked:bg-blue-500"
-                          : "bg-gray-700 peer-checked:bg-blue-600"
-                        } peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all`}></div>
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        defaultChecked={index !== 2}
+                      />
+                      <div
+                        className={`w-11 h-6 rounded-full peer ${
+                          theme === "light"
+                            ? "bg-gray-200 peer-checked:bg-blue-500"
+                            : "bg-gray-700 peer-checked:bg-blue-600"
+                        } dark:bg-gray-600 dark:peer-checked:bg-blue-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all`}
+                      ></div>
                     </label>
                   </div>
                 ))}
@@ -1059,23 +1430,28 @@ const SettingsForm = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className={`pt-6 border-t ${theme === "light" ? "border-gray-100" : "border-gray-700/50"
-          } flex justify-end`}
+        className={`pt-6 border-t ${
+          theme === "light" ? "border-gray-100" : "border-gray-700/50"
+        } dark:border-gray-600 flex justify-end`}
       >
         <motion.button
           whileHover={{
             scale: 1.03,
-            boxShadow: theme === "light"
-              ? "0 15px 30px -5px rgba(59, 130, 246, 0.4)"
-              : "0 15px 30px -5px rgba(37, 99, 235, 0.3)"
+            boxShadow:
+              theme === "light"
+                ? "0 15px 30px -5px rgba(59, 130, 246, 0.4)"
+                : "0 15px 30px -5px rgba(37, 99, 235, 0.3)",
           }}
           whileTap={{ scale: 0.97 }}
           disabled={saving}
           type="submit"
-          className={`relative overflow-hidden flex items-center px-8 py-3.5 rounded-xl text-[13px] font-medium text-white ${saving
-              ? theme === "light" ? "bg-gray-400" : "bg-gray-600"
+          className={`relative overflow-hidden flex items-center px-8 py-3.5 rounded-xl text-[13px] font-medium text-white ${
+            saving
+              ? theme === "light"
+                ? "bg-gray-400"
+                : "bg-gray-600"
               : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-            } shadow-lg transition-all duration-300`}
+          } shadow-lg transition-all duration-300`}
         >
           {/* Animated background effect */}
           <div
@@ -1085,7 +1461,7 @@ const SettingsForm = ({
                 ? "linear-gradient(45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%)"
                 : "none",
               backgroundSize: "200% 200%",
-              animation: "moveGradient 3s ease infinite"
+              animation: "moveGradient 3s ease infinite",
             }}
           />
 

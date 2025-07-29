@@ -16,7 +16,6 @@ import {
   HelpCircle,
   Save,
   RefreshCw,
-  Clipboard,
   KeyRound,
   ChevronDown,
   ChevronUp,
@@ -26,7 +25,6 @@ import {
 import toast from "react-hot-toast";
 import { roleService } from "../../../api/services/roles";
 
-// Modal Component
 const Modal = ({ isOpen, onClose, children, title }) => {
   if (!isOpen) return null;
 
@@ -53,7 +51,6 @@ const Modal = ({ isOpen, onClose, children, title }) => {
   );
 };
 
-// Helper functions
 const capitalizeWords = (str) => {
   return str
     .replace(/_/g, " ")
@@ -138,13 +135,11 @@ const getActionColor = (action) => {
   );
 };
 
-// Role Detail Category component
 const PermissionCategory = ({ category, permissions }) => {
   const [expanded, setExpanded] = useState(true);
 
   return (
     <div className="border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden hover:shadow-md dark:hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
-      {/* Category Header */}
       <div
         className="p-4 flex items-center justify-between cursor-pointer bg-gradient-to-r from-gray-50 dark:from-gray-700 to-gray-100 dark:to-gray-700 hover:from-gray-100 dark:hover:from-gray-600 hover:to-gray-200 dark:hover:to-gray-600 transition-colors duration-300"
         onClick={() => setExpanded(!expanded)}
@@ -175,7 +170,6 @@ const PermissionCategory = ({ category, permissions }) => {
         </div>
       </div>
 
-      {/* Permission Cards */}
       {expanded && (
         <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {permissions.map((rp) => {
@@ -209,7 +203,6 @@ const PermissionCategory = ({ category, permissions }) => {
   );
 };
 
-// Main Component
 const RoleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -222,7 +215,6 @@ const RoleDetail = () => {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [editedRoleTitle, setEditedRoleTitle] = useState("");
 
-  // Fetch role details
   const fetchRoleDetails = async () => {
     try {
       setLoading(true);
@@ -245,7 +237,6 @@ const RoleDetail = () => {
     fetchRoleDetails();
   }, [id]);
 
-  // Update role
   const handleUpdateRole = async () => {
     try {
       if (id && editedRoleTitle.trim()) {
@@ -260,7 +251,6 @@ const RoleDetail = () => {
     }
   };
 
-  // Delete role
   const handleDeleteRole = async () => {
     try {
       setIsConfirmingDelete(true);
@@ -278,7 +268,6 @@ const RoleDetail = () => {
     }
   };
 
-  // Filter and group permissions
   const groupedPermissions = useMemo(() => {
     if (!role) return {};
 
@@ -298,7 +287,6 @@ const RoleDetail = () => {
     }, {});
   }, [role, searchQuery]);
 
-  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
@@ -324,7 +312,6 @@ const RoleDetail = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
@@ -352,7 +339,6 @@ const RoleDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header Card */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 mb-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div className="flex items-center">
@@ -400,7 +386,6 @@ const RoleDetail = () => {
             </div>
           </div>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div className="bg-gradient-to-br from-blue-50 dark:from-blue-900/30 to-indigo-50 dark:to-indigo-900/30 p-6 rounded-xl border border-blue-100 dark:border-blue-800 shadow-sm hover:shadow-md dark:hover:shadow-xl transition-all duration-300">
               <div className="flex items-start">
@@ -477,7 +462,6 @@ const RoleDetail = () => {
           </div>
         </div>
 
-        {/* Permissions List */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 mb-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
             <div className="flex items-center">
@@ -552,7 +536,6 @@ const RoleDetail = () => {
           )}
         </div>
 
-        {/* Help Card */}
         <div className="bg-gradient-to-br from-blue-50 dark:from-blue-900/30 to-indigo-50 dark:to-indigo-900/30 rounded-2xl shadow-sm p-6 border border-blue-100 dark:border-blue-800 mb-8">
           <div className="flex items-start">
             <div className="bg-white dark:bg-gray-700 p-3 rounded-xl shadow-sm mr-4 flex-shrink-0">
@@ -619,7 +602,6 @@ const RoleDetail = () => {
         </div>
       </div>
 
-      {/* Edit Modal */}
       <Modal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
@@ -668,7 +650,6 @@ const RoleDetail = () => {
         </div>
       </Modal>
 
-      {/* Delete Modal */}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
