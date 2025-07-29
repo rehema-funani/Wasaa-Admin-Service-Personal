@@ -31,6 +31,9 @@ import {
 } from "lucide-react";
 import supportService from "../../../api/services/support";
 import userService from "../../../api/services/users";
+import CannedResponseCompactView from "../../../components/support/CannedResponseCompactView";
+import CannedResponsePagination from "../../../components/support/CannedResponsePagination";
+import CannedResponseCardView from "../../../components/support/CannedResponseCardView";
 
 const getCategoryIcon = (iconName: string) => {
   switch (iconName) {
@@ -378,456 +381,44 @@ export default function CannedResponsesListPage() {
     );
   };
 
-  // Render card view
   const renderCardView = () => {
     return (
-      <div className="space-y-4">
-        {filteredResponses.map((response) => (
-          <div
-            key={response.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700"
-          >
-            <div className="px-6 py-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 min-w-0">
-                  {/* Header */}
-                  <div className="flex items-center mb-2">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mr-2 truncate">
-                      {response.title}
-                    </h3>
-                    {!response.isActive && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-                        Inactive
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Category & Metadata */}
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    {renderCategoryBadge(response.category)}
-
-                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                      <User className="h-3.5 w-3.5 mr-1" />
-                      <span className="flex items-center">
-                        {renderCreatorAvatar(response.createdBy)}
-                        <span className="ml-1">
-                          {creators[response.createdBy]?.name || "Unknown"}
-                        </span>
-                      </span>
-                    </div>
-
-                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                      <Clock className="h-3.5 w-3.5 mr-1" />
-                      {formatDate(response.updatedAt)}
-                    </div>
-                  </div>
-
-                  {/* Tags */}
-                  {response.tags.length > 0 && (
-                    <div className="mb-3 flex flex-wrap gap-1">
-                      {response.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-400"
-                        >
-                          <Tag className="h-3 w-3 mr-1" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-start space-x-2 ml-4">
-                  <div className="text-center px-2 py-1 bg-gray-50 dark:bg-gray-700 rounded-md">
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {response.usageCount}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      uses
-                    </div>
-                  </div>
-
-                  <div className="flex items-center text-right space-x-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCopy(response.content);
-                      }}
-                      className="p-1 rounded-full text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
-                    {extractPlaceholders(response.content).length > 0 && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRenderTemplate(response);
-                        }}
-                        className="p-1 rounded-full text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
-                        title="Render Template"
-                      >
-                        <FileText className="h-4 w-4" />
-                      </button>
-                    )}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveMenu(
-                          activeMenu === response.id ? null : response.id
-                        );
-                      }}
-                      className="p-1 rounded-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <MoreHorizontal className="h-5 w-5" />
-                    </button>
-                    {renderActionMenu(response)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Content Preview Toggle */}
-              <div
-                className={`mt-3 bg-gray-50 dark:bg-gray-700 rounded-md p-3 text-sm text-gray-700 dark:text-gray-300 ${
-                  expandedResponseId === response.id
-                    ? ""
-                    : "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
-                }`}
-                onClick={() =>
-                  expandedResponseId !== response.id &&
-                  setExpandedResponseId(response.id)
-                }
-              >
-                {expandedResponseId === response.id ? (
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center">
-                        <MessageSquare className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                          Content
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCopy(response.content);
-                          }}
-                          className="inline-flex items-center px-2 py-1 text-xs font-medium rounded text-indigo-700 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-200 dark:hover:bg-indigo-900/50"
-                        >
-                          {copiedId === response.content ? (
-                            <>
-                              <Check className="h-3 w-3 mr-1" />
-                              Copied
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="h-3 w-3 mr-1" />
-                              Copy
-                            </>
-                          )}
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setExpandedResponseId(null);
-                          }}
-                          className="p-1 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="whitespace-pre-wrap">
-                      {highlightPlaceholders(response.content)}
-                    </div>
-
-                    {/* Detailed Info */}
-                    <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-3 grid grid-cols-2 gap-4 text-xs">
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium">
-                          Created
-                        </p>
-                        <p className="flex items-center mt-1">
-                          <Calendar className="h-3.5 w-3.5 mr-1 text-gray-400 dark:text-gray-500" />
-                          {formatDateTime(response.createdAt)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium">
-                          Updated
-                        </p>
-                        <p className="flex items-center mt-1">
-                          <Clock className="h-3.5 w-3.5 mr-1 text-gray-400 dark:text-gray-500" />
-                          {formatDateTime(response.updatedAt)}
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium">
-                          Placeholders
-                        </p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {extractPlaceholders(response.content).map(
-                            (placeholder) => (
-                              <span
-                                key={placeholder}
-                                className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
-                              >
-                                {placeholder}
-                              </span>
-                            )
-                          )}
-                          {extractPlaceholders(response.content).length ===
-                            0 && (
-                            <span className="text-gray-400 dark:text-gray-500 italic">
-                              None
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium">
-                          Category Details
-                        </p>
-                        {response.category ? (
-                          <div className="mt-1">
-                            <p className="text-xs text-gray-700 dark:text-gray-300">
-                              {response.category.description}
-                            </p>
-                            <div className="flex items-center mt-1 space-x-2">
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400">
-                                SLA: {response.category.firstResponseSla}m
-                              </span>
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400">
-                                {response.category.defaultPriority}
-                              </span>
-                            </div>
-                          </div>
-                        ) : (
-                          <span className="text-gray-400 dark:text-gray-500 italic mt-1 inline-block">
-                            No category assigned
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between">
-                    <p className="line-clamp-1">
-                      {highlightPlaceholders(response.content.split("\n")[0])}
-                      {response.content.includes("\n") && "..."}
-                    </p>
-                    <button
-                      className="ml-2 flex-shrink-0 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setExpandedResponseId(response.id);
-                      }}
-                    >
-                      <ArrowUpRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <CannedResponseCardView
+        filteredResponses={filteredResponses}
+        handleCopy={handleCopy}
+        renderCategoryBadge={renderCategoryBadge}
+        renderCreatorAvatar={renderCreatorAvatar}
+        formatDate={formatDate}
+        creators={creators}
+        handleRenderTemplate={handleRenderTemplate}
+        extractPlaceholders={extractPlaceholders}
+        highlightPlaceholders={highlightPlaceholders}
+        setActiveMenu={setActiveMenu}
+        renderActionMenu={renderActionMenu}
+        expandedResponseId={expandedResponseId}
+        setExpandedResponseId={setExpandedResponseId}
+        copiedId={copiedId}
+        activeMenu={activeMenu}
+        formatDateTime={formatDateTime}
+      />
     );
   };
 
   const renderCompactView = () => {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-          <thead className="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("title")}
-              >
-                <div className="flex items-center">
-                  Title
-                  {sortField === "title" && (
-                    <span className="ml-1">
-                      {sortDirection === "asc" ? (
-                        <ArrowUp className="h-3 w-3" />
-                      ) : (
-                        <ArrowDown className="h-3 w-3" />
-                      )}
-                    </span>
-                  )}
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("categoryName")}
-              >
-                <div className="flex items-center">
-                  Category
-                  {sortField === "categoryName" && (
-                    <span className="ml-1">
-                      {sortDirection === "asc" ? (
-                        <ArrowUp className="h-3 w-3" />
-                      ) : (
-                        <ArrowDown className="h-3 w-3" />
-                      )}
-                    </span>
-                  )}
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("updatedAt")}
-              >
-                <div className="flex items-center">
-                  Last Updated
-                  {sortField === "updatedAt" && (
-                    <span className="ml-1">
-                      {sortDirection === "asc" ? (
-                        <ArrowUp className="h-3 w-3" />
-                      ) : (
-                        <ArrowDown className="h-3 w-3" />
-                      )}
-                    </span>
-                  )}
-                </div>
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort("usageCount")}
-              >
-                <div className="flex items-center">
-                  Usage
-                  {sortField === "usageCount" && (
-                    <span className="ml-1">
-                      {sortDirection === "asc" ? (
-                        <ArrowUp className="h-3 w-3" />
-                      ) : (
-                        <ArrowDown className="h-3 w-3" />
-                      )}
-                    </span>
-                  )}
-                </div>
-              </th>
-              <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
-            {filteredResponses.map((response) => (
-              <tr
-                key={response.id}
-                className="hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center">
-                        {response.title}
-                        {!response.isActive && (
-                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-                            Inactive
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
-                        {response.content.replace(/\n/g, " ")}
-                      </div>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {response.tags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-400"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {response.tags.length > 3 && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
-                            +{response.tags.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {response.category ? (
-                    renderCategoryBadge(response.category)
-                  ) : (
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      —
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900 dark:text-gray-100">
-                    {formatDate(response.updatedAt)}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-1">
-                    <User className="h-3 w-3 mr-1" />
-                    {creators[response.createdBy]?.name || "Unknown"}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {response.usageCount}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    uses
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex justify-end items-center space-x-2">
-                    <button
-                      onClick={() => handleCopy(response.content)}
-                      className="text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
-                    {extractPlaceholders(response.content).length > 0 && (
-                      <button
-                        onClick={() => handleRenderTemplate(response)}
-                        className="text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
-                        title="Render Template"
-                      >
-                        <FileText className="h-4 w-4" />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => console.log("View details", response.id)}
-                      className="text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => console.log("Edit", response.id)}
-                      className="text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(response.id)}
-                      className="text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <CannedResponseCompactView
+        filteredResponses={filteredResponses}
+        sortField={sortField}
+        sortDirection={sortDirection}
+        handleSort={handleSort}
+        renderCategoryBadge={renderCategoryBadge}
+        formatDate={formatDate}
+        creators={creators}
+        handleCopy={handleCopy}
+        handleRenderTemplate={handleRenderTemplate}
+        extractPlaceholders={extractPlaceholders}
+        handleDelete={handleDelete}
+      />
     );
   };
 
@@ -835,120 +426,10 @@ export default function CannedResponsesListPage() {
     if (pagination.pages <= 1) return null;
 
     return (
-      <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6 rounded-b-lg">
-        <div className="flex flex-1 justify-between sm:hidden">
-          <button
-            onClick={() => handlePageChange(pagination.page - 1)}
-            disabled={pagination.page === 1}
-            className={`relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ${
-              pagination.page === 1
-                ? "text-gray-300 dark:text-gray-600 cursor-not-allowed"
-                : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => handlePageChange(pagination.page + 1)}
-            disabled={pagination.page === pagination.pages}
-            className={`relative ml-3 inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ${
-              pagination.page === pagination.pages
-                ? "text-gray-300 dark:text-gray-600 cursor-not-allowed"
-                : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-            }`}
-          >
-            Next
-          </button>
-        </div>
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              Showing{" "}
-              <span className="font-medium">
-                {(pagination.page - 1) * pagination.limit + 1}
-              </span>{" "}
-              to{" "}
-              <span className="font-medium">
-                {Math.min(pagination.page * pagination.limit, pagination.total)}
-              </span>{" "}
-              of <span className="font-medium">{pagination.total}</span> results
-            </p>
-          </div>
-          <div>
-            <nav
-              className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-              aria-label="Pagination"
-            >
-              <button
-                onClick={() => handlePageChange(pagination.page - 1)}
-                disabled={pagination.page === 1}
-                className={`relative inline-flex items-center rounded-l-md px-2 py-2 ${
-                  pagination.page === 1
-                    ? "text-gray-300 dark:text-gray-600 cursor-not-allowed"
-                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                }`}
-              >
-                <ChevronLeft className="h-5 w-5" />
-                <span className="sr-only">Previous</span>
-              </button>
-
-              {Array.from({ length: pagination.pages }, (_, i) => i + 1)
-                .filter((page) => {
-                  // Show first, last, current, and pages within 1 of current
-                  return (
-                    page === 1 ||
-                    page === pagination.pages ||
-                    Math.abs(page - pagination.page) <= 1
-                  );
-                })
-                .map((page, index, array) => {
-                  const showEllipsisBefore =
-                    index > 0 && array[index - 1] !== page - 1;
-                  const showEllipsisAfter =
-                    index < array.length - 1 && array[index + 1] !== page + 1;
-
-                  return (
-                    <React.Fragment key={page}>
-                      {showEllipsisBefore && (
-                        <span className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                          ...
-                        </span>
-                      )}
-                      <button
-                        onClick={() => handlePageChange(page)}
-                        className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
-                          page === pagination.page
-                            ? "z-10 bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 dark:border-indigo-600 text-indigo-600 dark:text-indigo-400"
-                            : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                      {showEllipsisAfter && (
-                        <span className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                          ...
-                        </span>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-
-              <button
-                onClick={() => handlePageChange(pagination.page + 1)}
-                disabled={pagination.page === pagination.pages}
-                className={`relative inline-flex items-center rounded-r-md px-2 py-2 ${
-                  pagination.page === pagination.pages
-                    ? "text-gray-300 dark:text-gray-600 cursor-not-allowed"
-                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                }`}
-              >
-                <ChevronRight className="h-5 w-5" />
-                <span className="sr-only">Next</span>
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
+      <CannedResponsePagination
+        pagination={pagination}
+        handlePageChange={handlePageChange}
+      />
     );
   };
 
@@ -1223,7 +704,6 @@ export default function CannedResponsesListPage() {
           </div>
         </div>
 
-        {/* Search and Filter */}
         <div className="mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
           <div className="flex flex-col md:flex-row gap-3 items-center">
             <div className="w-full md:w-1/3 relative">
