@@ -280,17 +280,14 @@ export default function CategoriesListPage() {
       [name]: updatedValue,
     }));
 
-    // Mark field as touched
     setTouched((prev) => ({
       ...prev,
       [name]: true,
     }));
 
-    // Validate on change
     validateField(name, updatedValue);
   };
 
-  // Validate a single field
   const validateField = (name: string, value: any) => {
     let errors = { ...editFormErrors };
 
@@ -424,7 +421,6 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Format time in hours and minutes
   const formatTime = (minutes: number) => {
     if (minutes < 60) {
       return `${minutes}m`;
@@ -437,7 +433,6 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Get human-readable time
   const getHumanReadableTime = (minutes: number) => {
     if (minutes < 60) {
       return `${minutes} minute${minutes !== 1 ? "s" : ""}`;
@@ -455,7 +450,6 @@ export default function CategoriesListPage() {
     }
   };
 
-  // Get priority badge with appropriate styling
   const getPriorityBadge = (priority: string) => {
     const classes = {
       LOW: "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-600",
@@ -717,7 +711,6 @@ export default function CategoriesListPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <div className="inline-block px-3 py-1 bg-indigo-50/80 dark:bg-indigo-900/30 border border-indigo-100/80 dark:border-indigo-600 rounded-lg text-indigo-600 dark:text-indigo-400 text-xs font-medium mb-2 backdrop-blur-sm">
