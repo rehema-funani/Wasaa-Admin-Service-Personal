@@ -316,7 +316,6 @@ const FAQManagementPage = () => {
               <div className="flex items-center">
                 {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
                   .filter(page => {
-                    // Show current page, first, last, and pages around current
                     return (
                       page === 1 ||
                       page === pagination.totalPages ||
