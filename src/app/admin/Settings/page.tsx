@@ -277,7 +277,6 @@ const page: React.FC = () => {
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={fadeIn}
           className="hidden lg:block mb-10 px-2"
           style={{ y: headerParallax }}
         >

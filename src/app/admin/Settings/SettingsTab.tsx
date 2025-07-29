@@ -4,7 +4,6 @@ import { ChevronRight } from "lucide-react";
 import SettingsForm from "./SettingsForm";
 import { Settings, ThemeStyles } from "./page";
 
-// Animation variants
 const staggerChildren = {
   hidden: { opacity: 0 },
   visible: {
@@ -15,7 +14,6 @@ const staggerChildren = {
   }
 };
 
-// Component props
 interface SettingsTabsProps {
   theme: "light" | "dark";
   currentTheme: ThemeStyles;
