@@ -1,4 +1,3 @@
-import React from 'react'
 import { Copy, FileText, MoreHorizontal, Tag, User, Clock, MessageSquare, Check, X, Calendar, ArrowUpRight } from 'lucide-react';
 
 const CannedResponseCardView = ({
@@ -30,7 +29,6 @@ const CannedResponseCardView = ({
           <div className="px-6 py-4">
             <div className="flex justify-between items-start">
               <div className="flex-1 min-w-0">
-                {/* Header */}
                 <div className="flex items-center mb-2">
                   <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mr-2 truncate">
                     {response.title}
@@ -42,7 +40,6 @@ const CannedResponseCardView = ({
                   )}
                 </div>
 
-                {/* Category & Metadata */}
                 <div className="flex flex-wrap items-center gap-2 mb-3">
                   {renderCategoryBadge(response.category)}
 
@@ -62,7 +59,6 @@ const CannedResponseCardView = ({
                   </div>
                 </div>
 
-                {/* Tags */}
                 {response.tags.length > 0 && (
                   <div className="mb-3 flex flex-wrap gap-1">
                     {response.tags.map((tag) => (
@@ -78,7 +74,6 @@ const CannedResponseCardView = ({
                 )}
               </div>
 
-              {/* Actions */}
               <div className="flex items-start space-x-2 ml-4">
                 <div className="text-center px-2 py-1 bg-gray-50 dark:bg-gray-700 rounded-md">
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -182,7 +177,6 @@ const CannedResponseCardView = ({
                     {highlightPlaceholders(response.content)}
                   </div>
 
-                  {/* Detailed Info */}
                   <div className="mt-4 border-t border-gray-200 dark:border-gray-600 pt-3 grid grid-cols-2 gap-4 text-xs">
                     <div>
                       <p className="text-gray-500 dark:text-gray-400 font-medium">

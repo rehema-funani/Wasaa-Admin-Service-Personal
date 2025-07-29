@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   Eye,
   Edit,
@@ -23,17 +23,17 @@ import {
   CheckSquare,
   Square,
   Loader,
-} from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
-import { toast } from 'react-hot-toast';
-import userService from '../../../api/services/users';
-import { roleService } from '../../../api/services/roles';
+} from "lucide-react";
+import { format, formatDistanceToNow } from "date-fns";
+import { toast } from "react-hot-toast";
+import userService from "../../../api/services/users";
+import { roleService } from "../../../api/services/roles";
 import {
   CreateUserModal,
   EditUserModal,
   DeleteUserModal,
-  UserRoleModal
-} from '../../../components/users';
+  UserRoleModal,
+} from "../../../components/users";
 
 interface User {
   id: string;
@@ -61,7 +61,7 @@ interface Role {
 
 const UserManagementPage: React.FC = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [users, setUsers] = useState<User[]>([]);
@@ -70,12 +70,14 @@ const UserManagementPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
   const [recentSearches, setRecentSearches] = useState<string[]>([
-    'admin', 'inactive', 'new york'
+    "admin",
+    "inactive",
+    "new york",
   ]);
   const [showFilters, setShowFilters] = useState(false);
 
-  const [sortBy, setSortBy] = useState('name');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
 
@@ -94,29 +96,33 @@ const UserManagementPage: React.FC = () => {
       const response = await userService.getAdminUsers();
       const formattedUsers = response.users.map((user: any) => ({
         id: user.id,
-        name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
-        email: user.email || '',
-        role: user.role?.title || 'User',
-        status: user.status || 'active',
-        location: user.location || 'Not specified',
-        lastActive: user.last_login ? formatDistanceToNow(new Date(user.last_login), { addSuffix: true }) : 'Never',
-        joinDate: user.createdAt ? format(new Date(user.createdAt), 'MMM d, yyyy') : 'Unknown',
+        name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),
+        email: user.email || "",
+        role: user.role?.title || "User",
+        status: user.status || "active",
+        location: user.location || "Not specified",
+        lastActive: user.last_login
+          ? formatDistanceToNow(new Date(user.last_login), { addSuffix: true })
+          : "Never",
+        joinDate: user.createdAt
+          ? format(new Date(user.createdAt), "MMM d, yyyy")
+          : "Unknown",
         transactions: user.transactions_count || 0,
         role_id: user.role_id,
         phone_number: user.phone_number,
-        first_name: user.first_name || '',
-        last_name: user.last_name || '',
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
         createdAt: user.createdAt,
         last_login: user.last_login,
-        transactions_count: user.transactions_count || 0
+        transactions_count: user.transactions_count || 0,
       }));
 
       setUsers(formattedUsers);
       setFilteredUsers(formattedUsers);
     } catch (err) {
-      console.error('Failed to fetch users:', err);
-      setError('Failed to load users. Please try again later.');
-      toast.error('Failed to load users');
+      console.error("Failed to fetch users:", err);
+      setError("Failed to load users. Please try again later.");
+      toast.error("Failed to load users");
     } finally {
       setIsLoading(false);
     }
@@ -127,7 +133,7 @@ const UserManagementPage: React.FC = () => {
       const response = await roleService.getRoles();
       setRoles(response || []);
     } catch (err) {
-      console.error('Failed to fetch roles:', err);
+      console.error("Failed to fetch roles:", err);
     }
   };
 
@@ -144,7 +150,7 @@ const UserManagementPage: React.FC = () => {
 
   useEffect(() => {
     if (selectAll) {
-      setSelectedRows(paginatedUsers.map(user => user.id));
+      setSelectedRows(paginatedUsers.map((user) => user.id));
     } else {
       setSelectedRows([]);
     }
@@ -154,34 +160,35 @@ const UserManagementPage: React.FC = () => {
     setIsLoading(true);
     try {
       await userService.deleteUser(userId);
-      toast.success('User deleted successfully');
+      toast.success("User deleted successfully");
       fetchUsers();
       setDeleteModalOpen(false);
     } catch (err) {
-      console.error('Failed to delete user:', err);
-      toast.error('Failed to delete user');
+      console.error("Failed to delete user:", err);
+      toast.error("Failed to delete user");
     } finally {
       setIsLoading(false);
     }
   };
 
   const getUserInitials = (name: string) => {
-    if (!name) return '?';
-    return name.split(' ')
-      .map(n => n[0])
-      .join('')
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
       .toUpperCase()
       .substring(0, 2);
   };
 
   const getUserColor = (id: string) => {
     const colors = [
-      'from-blue-500 to-indigo-600',
-      'from-emerald-500 to-teal-600',
-      'from-purple-500 to-indigo-600',
-      'from-amber-500 to-orange-600',
-      'from-rose-500 to-pink-600',
-      'from-sky-500 to-blue-600'
+      "from-blue-500 to-indigo-600",
+      "from-emerald-500 to-teal-600",
+      "from-purple-500 to-indigo-600",
+      "from-amber-500 to-orange-600",
+      "from-rose-500 to-pink-600",
+      "from-sky-500 to-blue-600",
     ];
 
     const index = parseInt(id.slice(-1), 16) % colors.length;
@@ -191,54 +198,54 @@ const UserManagementPage: React.FC = () => {
   const getRoleBadgeStyle = (role: string) => {
     const roleLower = role.toLowerCase();
 
-    if (roleLower.includes('admin')) {
-      return 'bg-purple-50 text-purple-700 border border-purple-100';
+    if (roleLower.includes("admin")) {
+      return "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border border-purple-100 dark:border-purple-800";
     }
-    if (roleLower.includes('manager')) {
-      return 'bg-amber-50 text-amber-700 border border-amber-100';
+    if (roleLower.includes("manager")) {
+      return "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-800";
     }
-    if (roleLower.includes('support')) {
-      return 'bg-emerald-50 text-emerald-700 border border-emerald-100';
+    if (roleLower.includes("support")) {
+      return "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800";
     }
 
-    return 'bg-blue-50 text-blue-700 border border-blue-100';
+    return "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800";
   };
 
   const sortedUsers = [...filteredUsers].sort((a, b) => {
     let valueA, valueB;
 
     switch (sortBy) {
-      case 'name':
-        valueA = a.name || '';
-        valueB = b.name || '';
+      case "name":
+        valueA = a.name || "";
+        valueB = b.name || "";
         break;
-      case 'role':
-        valueA = a.role || '';
-        valueB = b.role || '';
+      case "role":
+        valueA = a.role || "";
+        valueB = b.role || "";
         break;
-      case 'status':
-        valueA = a.status || '';
-        valueB = b.status || '';
+      case "status":
+        valueA = a.status || "";
+        valueB = b.status || "";
         break;
-      case 'lastActive':
+      case "lastActive":
         valueA = a.last_login ? new Date(a.last_login).getTime() : 0;
         valueB = b.last_login ? new Date(b.last_login).getTime() : 0;
         break;
-      case 'transactions':
+      case "transactions":
         valueA = a.transactions_count || 0;
         valueB = b.transactions_count || 0;
         break;
       default:
-        valueA = a.name || '';
-        valueB = b.name || '';
+        valueA = a.name || "";
+        valueB = b.name || "";
     }
 
-    if (typeof valueA === 'string' && typeof valueB === 'string') {
-      return sortDirection === 'asc'
+    if (typeof valueA === "string" && typeof valueB === "string") {
+      return sortDirection === "asc"
         ? valueA.localeCompare(valueB)
         : valueB.localeCompare(valueA);
     } else {
-      return sortDirection === 'asc'
+      return sortDirection === "asc"
         ? (valueA as number) - (valueB as number)
         : (valueB as number) - (valueA as number);
     }
@@ -251,17 +258,17 @@ const UserManagementPage: React.FC = () => {
 
   const handleSort = (columnId: string) => {
     if (sortBy === columnId) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortBy(columnId);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
   };
 
   const handleRowSelect = (userId: string) => {
-    setSelectedRows(prev =>
+    setSelectedRows((prev) =>
       prev.includes(userId)
-        ? prev.filter(id => id !== userId)
+        ? prev.filter((id) => id !== userId)
         : [...prev, userId]
     );
   };
@@ -297,24 +304,25 @@ const UserManagementPage: React.FC = () => {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
 
-    if (query.trim() === '') {
+    if (query.trim() === "") {
       setFilteredUsers(users);
       return;
     }
 
     const lowercasedQuery = query.toLowerCase();
 
-    const filtered = users.filter(user =>
-      (user.name?.toLowerCase() || '').includes(lowercasedQuery) ||
-      (user.email?.toLowerCase() || '').includes(lowercasedQuery) ||
-      (user.role?.toLowerCase() || '').includes(lowercasedQuery) ||
-      (user.location?.toLowerCase() || '').includes(lowercasedQuery)
+    const filtered = users.filter(
+      (user) =>
+        (user.name?.toLowerCase() || "").includes(lowercasedQuery) ||
+        (user.email?.toLowerCase() || "").includes(lowercasedQuery) ||
+        (user.role?.toLowerCase() || "").includes(lowercasedQuery) ||
+        (user.location?.toLowerCase() || "").includes(lowercasedQuery)
     );
 
     setFilteredUsers(filtered);
 
-    if (query.trim() !== '' && !recentSearches.includes(query)) {
-      setRecentSearches(prev => [query, ...prev.slice(0, 4)]);
+    if (query.trim() !== "" && !recentSearches.includes(query)) {
+      setRecentSearches((prev) => [query, ...prev.slice(0, 4)]);
     }
 
     setCurrentPage(1);
@@ -326,20 +334,23 @@ const UserManagementPage: React.FC = () => {
     let filtered = [...users];
 
     if (filters.role) {
-      filtered = filtered.filter(user => user.role === filters.role);
+      filtered = filtered.filter((user) => user.role === filters.role);
     }
 
     if (filters.status && filters.status.length > 0) {
-      filtered = filtered.filter(user => filters.status.includes(user.status));
+      filtered = filtered.filter((user) =>
+        filters.status.includes(user.status)
+      );
     }
 
-    if (searchQuery.trim() !== '') {
+    if (searchQuery.trim() !== "") {
       const lowercasedQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(user =>
-        (user.name?.toLowerCase() || '').includes(lowercasedQuery) ||
-        (user.email?.toLowerCase() || '').includes(lowercasedQuery) ||
-        (user.role?.toLowerCase() || '').includes(lowercasedQuery) ||
-        (user.location?.toLowerCase() || '').includes(lowercasedQuery)
+      filtered = filtered.filter(
+        (user) =>
+          (user.name?.toLowerCase() || "").includes(lowercasedQuery) ||
+          (user.email?.toLowerCase() || "").includes(lowercasedQuery) ||
+          (user.role?.toLowerCase() || "").includes(lowercasedQuery) ||
+          (user.location?.toLowerCase() || "").includes(lowercasedQuery)
       );
     }
 
@@ -362,7 +373,7 @@ const UserManagementPage: React.FC = () => {
   };
 
   const handleExport = () => {
-    toast.success('Users exported successfully');
+    toast.success("Users exported successfully");
   };
 
   const handleModalSuccess = () => {
@@ -371,9 +382,11 @@ const UserManagementPage: React.FC = () => {
 
   const getStatistics = () => {
     const totalUsers = users.length;
-    const activeUsers = users.filter(user => user.status === 'active').length;
-    const adminUsers = users.filter(user => user.role.toLowerCase().includes('admin')).length;
-    const recentUsers = users.filter(user => {
+    const activeUsers = users.filter((user) => user.status === "active").length;
+    const adminUsers = users.filter((user) =>
+      user.role.toLowerCase().includes("admin")
+    ).length;
+    const recentUsers = users.filter((user) => {
       if (!user.createdAt) return false;
       const createdDate = new Date(user.createdAt);
       const thirtyDaysAgo = new Date();
@@ -390,20 +403,30 @@ const UserManagementPage: React.FC = () => {
     const endIndex = Math.min(currentPage * itemsPerPage, filteredUsers.length);
 
     return (
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4 px-6 bg-white border-t border-slate-100">
-        <div className="text-sm text-slate-500">
-          Showing <span className="font-medium text-slate-700">{startIndex}</span> to{" "}
-          <span className="font-medium text-slate-700">{endIndex}</span> of{" "}
-          <span className="font-medium text-slate-700">{filteredUsers.length}</span> users
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4 px-6 bg-white dark:bg-gray-800 border-t border-slate-100 dark:border-gray-700">
+        <div className="text-sm text-slate-500 dark:text-gray-400">
+          Showing{" "}
+          <span className="font-medium text-slate-700 dark:text-gray-300">
+            {startIndex}
+          </span>{" "}
+          to{" "}
+          <span className="font-medium text-slate-700 dark:text-gray-300">
+            {endIndex}
+          </span>{" "}
+          of{" "}
+          <span className="font-medium text-slate-700 dark:text-gray-300">
+            {filteredUsers.length}
+          </span>{" "}
+          users
         </div>
 
         <div className="flex items-center gap-2">
           <select
             value={itemsPerPage}
             onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-            className="px-2 py-1 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="px-2 py-1 border border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
           >
-            {[10, 25, 50, 100].map(size => (
+            {[10, 25, 50, 100].map((size) => (
               <option key={size} value={size}>
                 {size} per page
               </option>
@@ -414,10 +437,11 @@ const UserManagementPage: React.FC = () => {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`p-1.5 border border-slate-200 rounded-l-lg ${currentPage === 1
-                  ? 'text-slate-300 cursor-not-allowed'
-                  : 'text-slate-500 hover:bg-slate-50'
-                }`}
+              className={`p-1.5 border border-slate-200 dark:border-gray-600 rounded-l-lg ${
+                currentPage === 1
+                  ? "text-slate-300 dark:text-gray-600 cursor-not-allowed"
+                  : "text-slate-500 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-gray-700"
+              }`}
             >
               <ArrowLeft size={16} />
             </button>
@@ -439,10 +463,11 @@ const UserManagementPage: React.FC = () => {
                 <button
                   key={pageNumber}
                   onClick={() => handlePageChange(pageNumber)}
-                  className={`w-9 h-9 border-t border-b border-slate-200 ${pageNumber === currentPage
-                      ? 'bg-primary-50 text-primary-600 font-medium'
-                      : 'text-slate-500 hover:bg-slate-50'
-                    }`}
+                  className={`w-9 h-9 border-t border-b border-slate-200 dark:border-gray-600 ${
+                    pageNumber === currentPage
+                      ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-medium"
+                      : "text-slate-500 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-gray-700"
+                  }`}
                 >
                   {pageNumber}
                 </button>
@@ -451,10 +476,11 @@ const UserManagementPage: React.FC = () => {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`p-1.5 border border-slate-200 rounded-r-lg ${currentPage === totalPages
-                  ? 'text-slate-300 cursor-not-allowed'
-                  : 'text-slate-500 hover:bg-slate-50'
-                }`}
+              className={`p-1.5 border border-slate-200 dark:border-gray-600 rounded-r-lg ${
+                currentPage === totalPages
+                  ? "text-slate-300 dark:text-gray-600 cursor-not-allowed"
+                  : "text-slate-500 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-gray-700"
+              }`}
             >
               <ArrowRight size={16} />
             </button>
@@ -466,16 +492,18 @@ const UserManagementPage: React.FC = () => {
 
   const EmptyState = () => (
     <div className="py-12 px-4 text-center">
-      <div className="inline-flex items-center justify-center p-4 bg-slate-100 rounded-full mb-4">
-        <Users size={24} className="text-slate-400" />
+      <div className="inline-flex items-center justify-center p-4 bg-slate-100 dark:bg-gray-700 rounded-full mb-4">
+        <Users size={24} className="text-slate-400 dark:text-gray-500" />
       </div>
-      <h3 className="text-lg font-medium text-slate-800 mb-2">No users found</h3>
-      <p className="text-slate-500 max-w-md mx-auto mb-6">
+      <h3 className="text-lg font-medium text-slate-800 dark:text-gray-200 mb-2">
+        No users found
+      </h3>
+      <p className="text-slate-500 dark:text-gray-400 max-w-md mx-auto mb-6">
         Try adjusting your search or filters to find what you're looking for.
       </p>
       <button
         onClick={handleResetFilters}
-        className="px-4 py-2 bg-primary-50 text-primary-600 rounded-lg text-sm hover:bg-primary-100 transition-colors"
+        className="px-4 py-2 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors"
       >
         Clear filters
       </button>
@@ -486,7 +514,9 @@ const UserManagementPage: React.FC = () => {
     <div className="py-12 px-4 text-center">
       <div className="inline-flex items-center justify-center">
         <Loader size={24} className="text-primary-500 animate-spin" />
-        <span className="ml-3 text-slate-500">Loading users...</span>
+        <span className="ml-3 text-slate-500 dark:text-gray-400">
+          Loading users...
+        </span>
       </div>
     </div>
   );
@@ -502,12 +532,16 @@ const UserManagementPage: React.FC = () => {
         transition={{ duration: 0.3 }}
       >
         <div>
-          <h1 className="text-2xl font-light text-slate-900">User Management</h1>
-          <p className="text-slate-500 text-sm mt-0.5">Manage user accounts, roles and permissions</p>
+          <h1 className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            User Management
+          </h1>
+          <p className="text-slate-500 dark:text-gray-400 text-sm mt-0.5">
+            Manage user accounts, roles and permissions
+          </p>
         </div>
         <motion.button
           className="flex items-center px-4 py-2.5 bg-primary-600 text-white rounded-lg text-sm shadow-sm"
-          whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)' }}
+          whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(79, 70, 229, 0.2)" }}
           whileTap={{ y: 0 }}
           onClick={handleAddUser}
         >
@@ -522,54 +556,78 @@ const UserManagementPage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-slate-500 text-sm">Total Users</p>
-            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Total Users
+            </p>
+            <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
               <Users size={16} />
             </div>
           </div>
-          <p className="text-2xl font-light text-slate-900">{totalUsers}</p>
-          <p className="text-xs text-slate-500 mt-1">All registered user accounts</p>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {totalUsers}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            All registered user accounts
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-slate-500 text-sm">Active Users</p>
-            <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Active Users
+            </p>
+            <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
               <CheckCircle size={16} />
             </div>
           </div>
-          <p className="text-2xl font-light text-slate-900">{activeUsers}</p>
-          <p className="text-xs text-slate-500 mt-1">{((activeUsers / totalUsers) * 100).toFixed(0)}% of total users</p>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {activeUsers}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            {((activeUsers / totalUsers) * 100).toFixed(0)}% of total users
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-slate-500 text-sm">Admin Users</p>
-            <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Admin Users
+            </p>
+            <div className="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
               <Shield size={16} />
             </div>
           </div>
-          <p className="text-2xl font-light text-slate-900">{adminUsers}</p>
-          <p className="text-xs text-slate-500 mt-1">Users with administrative access</p>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {adminUsers}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            Users with administrative access
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-slate-500 text-sm">New Users (30d)</p>
-            <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              New Users (30d)
+            </p>
+            <div className="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
               <Calendar size={16} />
             </div>
           </div>
-          <p className="text-2xl font-light text-slate-900">{recentUsers}</p>
-          <p className="text-xs text-slate-500 mt-1">Added in the last 30 days</p>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {recentUsers}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            Added in the last 30 days
+          </p>
         </div>
       </motion.div>
 
       {/* Search and Filters */}
       <motion.div
-        className="bg-white rounded-xl border border-slate-100 shadow-sm p-4 mb-6"
+        className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm p-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
@@ -578,12 +636,12 @@ const UserManagementPage: React.FC = () => {
           {/* Search Box */}
           <div className="relative flex-grow">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search size={16} className="text-slate-400" />
+              <Search size={16} className="text-slate-400 dark:text-gray-500" />
             </div>
             <input
               type="text"
               placeholder="Search users by name, email, or role..."
-              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
             />
@@ -593,19 +651,21 @@ const UserManagementPage: React.FC = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg flex items-center text-sm hover:bg-slate-50 transition-colors"
+              className="px-4 py-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 text-slate-700 dark:text-gray-300 rounded-lg flex items-center text-sm hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors"
             >
               <Filter size={16} className="mr-2" />
               <span>Filter</span>
               <ChevronDown
                 size={16}
-                className={`ml-1 transition-transform ${showFilters ? 'transform rotate-180' : ''}`}
+                className={`ml-1 transition-transform ${
+                  showFilters ? "transform rotate-180" : ""
+                }`}
               />
             </button>
 
             <button
               onClick={handleExport}
-              className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg flex items-center text-sm hover:bg-slate-50 transition-colors"
+              className="px-4 py-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 text-slate-700 dark:text-gray-300 rounded-lg flex items-center text-sm hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors"
             >
               <Download size={16} className="mr-2" />
               <span>Export</span>
@@ -617,56 +677,79 @@ const UserManagementPage: React.FC = () => {
           {showFilters && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
+              animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="mt-4 pt-4 border-t border-slate-100">
+              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-gray-700">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
+                      Role
+                    </label>
                     <select
-                      className="w-full border border-slate-200 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      value={appliedFilters.role || ''}
-                      onChange={(e) => handleApplyFilters({ ...appliedFilters, role: e.target.value })}
+                      className="w-full border border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      value={appliedFilters.role || ""}
+                      onChange={(e) =>
+                        handleApplyFilters({
+                          ...appliedFilters,
+                          role: e.target.value,
+                        })
+                      }
                     >
                       <option value="">All Roles</option>
-                      {roles.map(role => (
-                        <option key={role.id} value={role.title}>{role.title}</option>
+                      {roles.map((role) => (
+                        <option key={role.id} value={role.title}>
+                          {role.title}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
+                      Status
+                    </label>
                     <div className="flex space-x-2">
-                      <label className="flex items-center text-sm text-slate-600">
+                      <label className="flex items-center text-sm text-slate-600 dark:text-gray-400">
                         <input
                           type="checkbox"
-                          className="rounded border-slate-300 text-primary-600 mr-1.5"
-                          checked={!appliedFilters.status || appliedFilters.status.includes('active')}
+                          className="rounded border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-primary-600 mr-1.5"
+                          checked={
+                            !appliedFilters.status ||
+                            appliedFilters.status.includes("active")
+                          }
                           onChange={(e) => {
                             const status = appliedFilters.status || [];
                             const newStatus = e.target.checked
-                              ? [...status, 'active']
-                              : status.filter(s => s !== 'active');
-                            handleApplyFilters({ ...appliedFilters, status: newStatus });
+                              ? [...status, "active"]
+                              : status.filter((s) => s !== "active");
+                            handleApplyFilters({
+                              ...appliedFilters,
+                              status: newStatus,
+                            });
                           }}
                         />
                         Active
                       </label>
-                      <label className="flex items-center text-sm text-slate-600">
+                      <label className="flex items-center text-sm text-slate-600 dark:text-gray-400">
                         <input
                           type="checkbox"
-                          className="rounded border-slate-300 text-primary-600 mr-1.5"
-                          checked={!appliedFilters.status || appliedFilters.status.includes('inactive')}
+                          className="rounded border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-primary-600 mr-1.5"
+                          checked={
+                            !appliedFilters.status ||
+                            appliedFilters.status.includes("inactive")
+                          }
                           onChange={(e) => {
                             const status = appliedFilters.status || [];
                             const newStatus = e.target.checked
-                              ? [...status, 'inactive']
-                              : status.filter(s => s !== 'inactive');
-                            handleApplyFilters({ ...appliedFilters, status: newStatus });
+                              ? [...status, "inactive"]
+                              : status.filter((s) => s !== "inactive");
+                            handleApplyFilters({
+                              ...appliedFilters,
+                              status: newStatus,
+                            });
                           }}
                         />
                         Inactive
@@ -677,7 +760,7 @@ const UserManagementPage: React.FC = () => {
                   <div className="flex items-end">
                     <button
                       onClick={handleResetFilters}
-                      className="px-4 py-2 text-slate-600 text-sm hover:text-primary-600 transition-colors"
+                      className="px-4 py-2 text-slate-600 dark:text-gray-400 text-sm hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                     >
                       Reset Filters
                     </button>
@@ -692,7 +775,7 @@ const UserManagementPage: React.FC = () => {
       {/* Error Message */}
       {error && (
         <motion.div
-          className="bg-red-50 border border-red-100 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center"
+          className="bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6 flex items-center"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -703,22 +786,30 @@ const UserManagementPage: React.FC = () => {
 
       {/* Results Summary */}
       <motion.div
-        className="flex items-center mb-2 text-sm text-slate-500"
+        className="flex items-center mb-2 text-sm text-slate-500 dark:text-gray-400"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
         <Users size={14} className="mr-2" />
-        Showing <span className="font-medium text-slate-700 mx-1">{filteredUsers.length}</span>
+        Showing{" "}
+        <span className="font-medium text-slate-700 dark:text-gray-300 mx-1">
+          {filteredUsers.length}
+        </span>
         {filteredUsers.length !== users.length && (
-          <>of <span className="font-medium text-slate-700 mx-1">{users.length}</span></>
+          <>
+            of{" "}
+            <span className="font-medium text-slate-700 dark:text-gray-300 mx-1">
+              {users.length}
+            </span>
+          </>
         )}
         users
       </motion.div>
 
       {/* Custom Users Table */}
       <motion.div
-        className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mb-6"
+        className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.3 }}
@@ -727,12 +818,12 @@ const UserManagementPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
+              <tr className="bg-slate-50 dark:bg-gray-700 border-b border-slate-100 dark:border-gray-600">
                 <th className="px-4 py-3 text-left">
                   <div className="flex items-center">
                     <button
                       onClick={handleSelectAll}
-                      className="mr-3 text-slate-400 hover:text-primary-500 focus:outline-none"
+                      className="mr-3 text-slate-400 dark:text-gray-500 hover:text-primary-500 focus:outline-none"
                     >
                       {selectAll ? (
                         <CheckSquare size={16} className="text-primary-500" />
@@ -741,13 +832,17 @@ const UserManagementPage: React.FC = () => {
                       )}
                     </button>
                     <button
-                      onClick={() => handleSort('name')}
-                      className="flex items-center text-xs font-medium text-slate-700 uppercase tracking-wider focus:outline-none"
+                      onClick={() => handleSort("name")}
+                      className="flex items-center text-xs font-medium text-slate-700 dark:text-gray-300 uppercase tracking-wider focus:outline-none"
                     >
                       <span>User</span>
-                      {sortBy === 'name' && (
+                      {sortBy === "name" && (
                         <span className="ml-1 text-primary-500">
-                          {sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                          {sortDirection === "asc" ? (
+                            <ChevronUp size={14} />
+                          ) : (
+                            <ChevronDown size={14} />
+                          )}
                         </span>
                       )}
                     </button>
@@ -755,32 +850,40 @@ const UserManagementPage: React.FC = () => {
                 </th>
                 <th className="px-4 py-3 text-left">
                   <button
-                    onClick={() => handleSort('status')}
-                    className="flex items-center text-xs font-medium text-slate-700 uppercase tracking-wider focus:outline-none"
+                    onClick={() => handleSort("status")}
+                    className="flex items-center text-xs font-medium text-slate-700 dark:text-gray-300 uppercase tracking-wider focus:outline-none"
                   >
                     <span>Status</span>
-                    {sortBy === 'status' && (
+                    {sortBy === "status" && (
                       <span className="ml-1 text-primary-500">
-                        {sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        {sortDirection === "asc" ? (
+                          <ChevronUp size={14} />
+                        ) : (
+                          <ChevronDown size={14} />
+                        )}
                       </span>
                     )}
                   </button>
                 </th>
                 <th className="px-4 py-3 text-left">
                   <button
-                    onClick={() => handleSort('lastActive')}
-                    className="flex items-center text-xs font-medium text-slate-700 uppercase tracking-wider focus:outline-none"
+                    onClick={() => handleSort("lastActive")}
+                    className="flex items-center text-xs font-medium text-slate-700 dark:text-gray-300 uppercase tracking-wider focus:outline-none"
                   >
                     <span>Last Login</span>
-                    {sortBy === 'lastActive' && (
+                    {sortBy === "lastActive" && (
                       <span className="ml-1 text-primary-500">
-                        {sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        {sortDirection === "asc" ? (
+                          <ChevronUp size={14} />
+                        ) : (
+                          <ChevronDown size={14} />
+                        )}
                       </span>
                     )}
                   </button>
                 </th>
                 <th className="px-4 py-3 text-right">
-                  <span className="text-xs font-medium text-slate-700 uppercase tracking-wider">
+                  <span className="text-xs font-medium text-slate-700 dark:text-gray-300 uppercase tracking-wider">
                     Actions
                   </span>
                 </th>
@@ -804,53 +907,86 @@ const UserManagementPage: React.FC = () => {
                   <tr
                     key={user.id}
                     className={`
-                      border-b border-slate-100
-                      ${selectedRows.includes(user.id) ? 'bg-primary-50' : index % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'}
-                      hover:bg-slate-50 transition-colors
+                      border-b border-slate-100 dark:border-gray-600
+                      ${
+                        selectedRows.includes(user.id)
+                          ? "bg-primary-50 dark:bg-primary-900/30"
+                          : index % 2 === 0
+                          ? "bg-white dark:bg-gray-800"
+                          : "bg-slate-50/30 dark:bg-gray-700/30"
+                      }
+                      hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors
                     `}
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center">
                         <button
                           onClick={() => handleRowSelect(user.id)}
-                          className="mr-3 text-slate-400 hover:text-primary-500 focus:outline-none"
+                          className="mr-3 text-slate-400 dark:text-gray-500 hover:text-primary-500 focus:outline-none"
                         >
                           {selectedRows.includes(user.id) ? (
-                            <CheckSquare size={16} className="text-primary-500" />
+                            <CheckSquare
+                              size={16}
+                              className="text-primary-500"
+                            />
                           ) : (
                             <Square size={16} />
                           )}
                         </button>
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${getUserColor(user.id)} text-white flex items-center justify-center font-medium text-sm mr-3 shadow-sm`}>
+                        <div
+                          className={`w-10 h-10 rounded-xl bg-gradient-to-br ${getUserColor(
+                            user.id
+                          )} text-white flex items-center justify-center font-medium text-sm mr-3 shadow-sm`}
+                        >
                           {getUserInitials(user.name)}
                         </div>
                         <div>
-                          <p className="font-medium text-slate-800">{user.name || 'Unnamed User'}</p>
-                          <div className="flex items-center text-xs text-slate-500">
+                          <p className="font-medium text-slate-800 dark:text-gray-200">
+                            {user.name || "Unnamed User"}
+                          </p>
+                          <div className="flex items-center text-xs text-slate-500 dark:text-gray-400">
                             <Mail size={12} className="mr-1" />
-                            <span className="truncate max-w-[180px]">{user.email}</span>
+                            <span className="truncate max-w-[180px]">
+                              {user.email}
+                            </span>
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center">
-                        <div className={`w-1.5 h-1.5 rounded-full mr-2 ${user.status === 'active' ? 'bg-emerald-500' : 'bg-slate-300'}`}></div>
-                        <span className={`text-sm ${user.status === 'active' ? 'text-emerald-700' : 'text-slate-500'}`}>
-                          {user.status === 'active' ? 'Active' : 'Inactive'}
+                        <div
+                          className={`w-1.5 h-1.5 rounded-full mr-2 ${
+                            user.status === "active"
+                              ? "bg-emerald-500"
+                              : "bg-slate-300 dark:bg-gray-600"
+                          }`}
+                        ></div>
+                        <span
+                          className={`text-sm ${
+                            user.status === "active"
+                              ? "text-emerald-700 dark:text-emerald-400"
+                              : "text-slate-500 dark:text-gray-400"
+                          }`}
+                        >
+                          {user.status === "active" ? "Active" : "Inactive"}
                         </span>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center text-slate-600">
-                        <Clock size={14} className="text-slate-400 mr-1.5" strokeWidth={1.8} />
+                      <div className="flex items-center text-slate-600 dark:text-gray-400">
+                        <Clock
+                          size={14}
+                          className="text-slate-400 dark:text-gray-500 mr-1.5"
+                          strokeWidth={1.8}
+                        />
                         <span className="text-sm">{user.lastActive}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end space-x-1">
                         <motion.button
-                          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-primary-600 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-600 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           aria-label="View user"
@@ -859,7 +995,7 @@ const UserManagementPage: React.FC = () => {
                           <Eye size={16} strokeWidth={1.8} />
                         </motion.button>
                         <motion.button
-                          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-primary-600 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-600 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           aria-label="Edit user"
@@ -868,16 +1004,7 @@ const UserManagementPage: React.FC = () => {
                           <Edit size={16} strokeWidth={1.8} />
                         </motion.button>
                         <motion.button
-                          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-purple-600 transition-colors"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          aria-label="Assign role"
-                          onClick={() => handleAssignRole(user)}
-                        >
-                          <Shield size={16} strokeWidth={1.8} />
-                        </motion.button>
-                        <motion.button
-                          className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-red-600 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-600 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           aria-label="Delete user"
@@ -894,9 +1021,7 @@ const UserManagementPage: React.FC = () => {
           </table>
         </div>
 
-        {!isLoading && filteredUsers.length > 0 && (
-          <CustomPagination />
-        )}
+        {!isLoading && filteredUsers.length > 0 && <CustomPagination />}
       </motion.div>
 
       <AnimatePresence>
@@ -905,14 +1030,15 @@ const UserManagementPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-lg flex items-center"
+            className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 dark:bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg flex items-center"
           >
             <span className="mr-4 text-sm">
-              <span className="font-medium">{selectedRows.length}</span> users selected
+              <span className="font-medium">{selectedRows.length}</span> users
+              selected
             </span>
             <div className="flex space-x-2">
               <button
-                className="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-md text-sm flex items-center"
+                className="px-3 py-1 bg-slate-700 dark:bg-gray-700 hover:bg-slate-600 dark:hover:bg-gray-600 rounded-md text-sm flex items-center"
                 onClick={() => {
                   toast.success(`${selectedRows.length} users exported`);
                   setSelectedRows([]);
@@ -974,7 +1100,7 @@ const UserManagementPage: React.FC = () => {
             onSuccess={handleModalSuccess}
             userId={selectedUser.id}
             roles={roles}
-            currentRoleId={selectedUser.role_id || ''}
+            currentRoleId={selectedUser.role_id || ""}
           />
         )}
       </AnimatePresence>
