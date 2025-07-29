@@ -1004,15 +1004,6 @@ const UserManagementPage: React.FC = () => {
                           <Edit size={16} strokeWidth={1.8} />
                         </motion.button>
                         <motion.button
-                          className="p-1.5 rounded-lg text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-600 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          aria-label="Assign role"
-                          onClick={() => handleAssignRole(user)}
-                        >
-                          <Shield size={16} strokeWidth={1.8} />
-                        </motion.button>
-                        <motion.button
                           className="p-1.5 rounded-lg text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-600 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
