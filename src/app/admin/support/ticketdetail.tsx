@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Clock,
@@ -17,10 +17,13 @@ import {
   Calendar,
   Info,
   Upload,
-  ExternalLink
-} from 'lucide-react';
-import supportService from '../../../api/services/support';
-import toast from 'react-hot-toast';
+  ExternalLink,
+} from "lucide-react";
+import supportService from "../../../api/services/support";
+import toast from "react-hot-toast";
+import ResolveModal from "../../../components/support/ResolveModal";
+import EscalateModal from "../../../components/support/EscalateModal";
+import AssignModal from "../../../components/support/AssignModal";
 
 interface User {
   id: string;
@@ -107,11 +110,11 @@ interface Attachment {
 interface Message {
   id: string;
   ticketId: string;
-  senderType: 'USER' | 'AGENT' | 'SYSTEM';
+  senderType: "USER" | "AGENT" | "SYSTEM";
   userId: string | null;
   agentId: string | null;
   content: string;
-  messageType: 'TEXT' | 'HTML' | 'SYSTEM';
+  messageType: "TEXT" | "HTML" | "SYSTEM";
   isRead: boolean;
   readAt: string | null;
   isInternal: boolean;
@@ -129,7 +132,7 @@ interface Activity {
   activityType: string;
   description: string;
   performedBy: string;
-  performedByType: 'USER' | 'AGENT' | 'SYSTEM';
+  performedByType: "USER" | "AGENT" | "SYSTEM";
   previousValue: string | null;
   newValue: string | null;
   createdAt: string;
@@ -198,14 +201,17 @@ export default function TicketDetailPage() {
   const [loading, setLoading] = useState(true);
   const [messageLoading, setMessageLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [isInternal, setIsInternal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showEscalateModal, setShowEscalateModal] = useState(false);
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [showActivities, setShowActivities] = useState(false);
-  const [assignData, setAssignData] = useState<AssignModalData>({ userId: '' });
-  const [escalateData, setEscalateData] = useState<EscalateModalData>({ reason: '', escalateToUserId: '' });
+  const [assignData, setAssignData] = useState<AssignModalData>({ userId: "" });
+  const [escalateData, setEscalateData] = useState<EscalateModalData>({
+    reason: "",
+    escalateToUserId: "",
+  });
   const [resolveData, setResolveData] = useState<ResolveModalData>({
     resolutionNotes: "",
   });
@@ -220,7 +226,7 @@ export default function TicketDetailPage() {
         const response = await supportService.getAgents();
         setAgents(response.data);
       } catch (err) {
-        console.error('Failed to fetch agents:', err);
+        console.error("Failed to fetch agents:", err);
       } finally {
         setLoadingAgents(false);
       }
@@ -239,10 +245,10 @@ export default function TicketDetailPage() {
         if (response.success) {
           setTicket(response.data.ticket);
         } else {
-          setError('Failed to fetch ticket data');
+          setError("Failed to fetch ticket data");
         }
       } catch (err) {
-        setError('Failed to fetch ticket data');
+        setError("Failed to fetch ticket data");
         console.error(err);
       } finally {
         setLoading(false);
@@ -254,7 +260,7 @@ export default function TicketDetailPage() {
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [ticket?.messages]);
 
@@ -267,7 +273,7 @@ export default function TicketDetailPage() {
     try {
       const messageData = {
         content: newMessage,
-        isInternal
+        isInternal,
       };
 
       await supportService.createMessage(id, messageData);
@@ -276,10 +282,10 @@ export default function TicketDetailPage() {
         setTicket(updatedTicket.data.ticket);
       }
 
-      setNewMessage('');
+      setNewMessage("");
       setIsInternal(false);
     } catch (err) {
-      console.error('Failed to send message:', err);
+      console.error("Failed to send message:", err);
     } finally {
       setMessageLoading(false);
     }
@@ -298,7 +304,7 @@ export default function TicketDetailPage() {
 
       setShowAssignModal(false);
     } catch (err) {
-      console.error('Failed to assign ticket:', err);
+      console.error("Failed to assign ticket:", err);
     }
   };
 
@@ -315,7 +321,7 @@ export default function TicketDetailPage() {
 
       setShowEscalateModal(false);
     } catch (err) {
-      console.error('Failed to escalate ticket:', err);
+      console.error("Failed to escalate ticket:", err);
     }
   };
 
@@ -332,25 +338,25 @@ export default function TicketDetailPage() {
 
       setShowResolveModal(false);
     } catch (err) {
-      console.error('Failed to resolve ticket:', err);
+      console.error("Failed to resolve ticket:", err);
     }
   };
 
   const handleCloseTicket = async () => {
     if (!id) return;
 
-    if (!window.confirm('Are you sure you want to close this ticket?')) return;
+    if (!window.confirm("Are you sure you want to close this ticket?")) return;
 
     try {
       await supportService.closeTicket(id);
 
       const updatedTicket = await supportService.getTicketById(id);
-      toast.success('Ticket closed successfully');
+      toast.success("Ticket closed successfully");
       if (updatedTicket.success) {
         setTicket(updatedTicket.data.ticket);
       }
     } catch (err) {
-      console.error('Failed to close ticket:', err);
+      console.error("Failed to close ticket:", err);
     }
   };
 
@@ -369,18 +375,21 @@ export default function TicketDetailPage() {
     } else if (diffDays < 7) {
       return `${diffDays}d ago`;
     } else {
-      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      return date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+      });
     }
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -389,12 +398,15 @@ export default function TicketDetailPage() {
   };
 
   const getSenderName = (message: Message) => {
-    if (message.senderType === 'USER' && message.user) {
+    if (message.senderType === "USER" && message.user) {
       return getFullName(message.user.firstName, message.user.lastName);
-    } else if (message.senderType === 'AGENT' && message.agent) {
-      return getFullName(message.agent.user.firstName, message.agent.user.lastName);
+    } else if (message.senderType === "AGENT" && message.agent) {
+      return getFullName(
+        message.agent.user.firstName,
+        message.agent.user.lastName
+      );
     } else {
-      return 'System';
+      return "System";
     }
   };
 
@@ -403,7 +415,7 @@ export default function TicketDetailPage() {
     const due = new Date(dueDate);
     const diffMs = due.getTime() - now.getTime();
 
-    if (diffMs < 0) return 'Overdue';
+    if (diffMs < 0) return "Overdue";
 
     const diffMins = Math.floor(diffMs / (1000 * 60));
     const diffHours = Math.floor(diffMins / 60);
@@ -420,30 +432,30 @@ export default function TicketDetailPage() {
 
   const getSlaStatusBadge = (slaStatus: string) => {
     switch (slaStatus) {
-      case 'WITHIN_SLA':
+      case "WITHIN_SLA":
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
             <Clock className="w-3 h-3 mr-1" />
             Within SLA
           </span>
         );
-      case 'AT_RISK':
+      case "AT_RISK":
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400">
             <AlertCircle className="w-3 h-3 mr-1" />
             At Risk
           </span>
         );
-      case 'BREACHED':
+      case "BREACHED":
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400">
             <AlertTriangle className="w-3 h-3 mr-1" />
             SLA Breached
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
             <Info className="w-3 h-3 mr-1" />
             {slaStatus}
           </span>
@@ -453,38 +465,38 @@ export default function TicketDetailPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'OPEN':
+      case "OPEN":
         return (
-          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            <div className="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></div>
+          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400">
+            <div className="w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400 mr-1.5"></div>
             Open
           </div>
         );
-      case 'IN_PROGRESS':
+      case "IN_PROGRESS":
         return (
-          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-            <div className="w-2 h-2 rounded-full bg-yellow-500 mr-1.5"></div>
+          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400">
+            <div className="w-2 h-2 rounded-full bg-yellow-500 dark:bg-yellow-400 mr-1.5"></div>
             In Progress
           </div>
         );
-      case 'RESOLVED':
+      case "RESOLVED":
         return (
-          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            <div className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></div>
+          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
+            <div className="w-2 h-2 rounded-full bg-green-500 dark:bg-green-400 mr-1.5"></div>
             Resolved
           </div>
         );
-      case 'CLOSED':
+      case "CLOSED":
         return (
-          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-            <div className="w-2 h-2 rounded-full bg-gray-500 mr-1.5"></div>
+          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+            <div className="w-2 h-2 rounded-full bg-gray-500 dark:bg-gray-400 mr-1.5"></div>
             Closed
           </div>
         );
       default:
         return (
-          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-            <div className="w-2 h-2 rounded-full bg-gray-500 mr-1.5"></div>
+          <div className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300">
+            <div className="w-2 h-2 rounded-full bg-gray-500 dark:bg-gray-400 mr-1.5"></div>
             {status}
           </div>
         );
@@ -492,39 +504,41 @@ export default function TicketDetailPage() {
   };
 
   const getPriorityBadge = (priority: string) => {
-    let bgColor = '';
-    let textColor = '';
+    let bgColor = "";
+    let textColor = "";
     let icon = null;
 
     switch (priority) {
-      case 'CRITICAL':
-        bgColor = 'bg-red-50';
-        textColor = 'text-red-700';
+      case "CRITICAL":
+        bgColor = "bg-red-50 dark:bg-red-900/30";
+        textColor = "text-red-700 dark:text-red-400";
         icon = <AlertTriangle className="w-3 h-3 mr-1" />;
         break;
-      case 'HIGH':
-        bgColor = 'bg-orange-50';
-        textColor = 'text-orange-700';
+      case "HIGH":
+        bgColor = "bg-orange-50 dark:bg-orange-900/30";
+        textColor = "text-orange-700 dark:text-orange-400";
         icon = <AlertCircle className="w-3 h-3 mr-1" />;
         break;
-      case 'MEDIUM':
-        bgColor = 'bg-yellow-50';
-        textColor = 'text-yellow-700';
+      case "MEDIUM":
+        bgColor = "bg-yellow-50 dark:bg-yellow-900/30";
+        textColor = "text-yellow-700 dark:text-yellow-400";
         icon = <AlertCircle className="w-3 h-3 mr-1" />;
         break;
-      case 'LOW':
-        bgColor = 'bg-green-50';
-        textColor = 'text-green-700';
+      case "LOW":
+        bgColor = "bg-green-50 dark:bg-green-900/30";
+        textColor = "text-green-700 dark:text-green-400";
         icon = <Info className="w-3 h-3 mr-1" />;
         break;
       default:
-        bgColor = 'bg-gray-50';
-        textColor = 'text-gray-700';
+        bgColor = "bg-gray-50 dark:bg-gray-700";
+        textColor = "text-gray-700 dark:text-gray-300";
         icon = <Info className="w-3 h-3 mr-1" />;
     }
 
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${bgColor} ${textColor}`}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${bgColor} ${textColor}`}
+      >
         {icon}
         {priority.charAt(0) + priority.slice(1).toLowerCase()}
       </span>
@@ -533,29 +547,39 @@ export default function TicketDetailPage() {
 
   const getActivityIcon = (activityType: string) => {
     switch (activityType) {
-      case 'CREATED':
-        return <MessageSquare className="w-4 h-4 text-blue-500" />;
-      case 'ASSIGNED':
-        return <UserPlus className="w-4 h-4 text-indigo-500" />;
-      case 'ESCALATED':
-        return <AlertCircle className="w-4 h-4 text-orange-500" />;
-      case 'STATUS_CHANGED':
-        return <Tag className="w-4 h-4 text-purple-500" />;
-      case 'RESOLVED':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'CLOSED':
-        return <X className="w-4 h-4 text-gray-500" />;
+      case "CREATED":
+        return (
+          <MessageSquare className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+        );
+      case "ASSIGNED":
+        return (
+          <UserPlus className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+        );
+      case "ESCALATED":
+        return (
+          <AlertCircle className="w-4 h-4 text-orange-500 dark:text-orange-400" />
+        );
+      case "STATUS_CHANGED":
+        return <Tag className="w-4 h-4 text-purple-500 dark:text-purple-400" />;
+      case "RESOLVED":
+        return (
+          <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
+        );
+      case "CLOSED":
+        return <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />;
       default:
-        return <Info className="w-4 h-4 text-gray-500" />;
+        return <Info className="w-4 h-4 text-gray-500 dark:text-gray-400" />;
     }
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
+      <div className="flex justify-center items-center h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <div className="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-indigo-600 rounded-full"></div>
-          <p className="mt-2 text-gray-500">Loading ticket details...</p>
+          <div className="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-indigo-600 dark:text-indigo-400 rounded-full"></div>
+          <p className="mt-2 text-gray-500 dark:text-gray-400">
+            Loading ticket details...
+          </p>
         </div>
       </div>
     );
@@ -563,13 +587,18 @@ export default function TicketDetailPage() {
 
   if (error || !ticket) {
     return (
-      <div className="container mx-auto px-4 py-8 bg-gray-50">
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center text-red-600 mb-4">
+      <div className="container mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-900">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center text-red-600 dark:text-red-400 mb-4">
             <AlertTriangle className="w-6 h-6 mr-2" />
-            <h2 className="text-xl font-semibold">{error || 'Ticket not found'}</h2>
+            <h2 className="text-xl font-semibold">
+              {error || "Ticket not found"}
+            </h2>
           </div>
-          <p className="text-gray-600 mb-6">We couldn't load the ticket information. Please try again or contact support.</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            We couldn't load the ticket information. Please try again or contact
+            support.
+          </p>
           <button
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             onClick={() => navigate(-1)}
@@ -583,10 +612,10 @@ export default function TicketDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
-          className="inline-flex items-center mb-6 text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
+          className="inline-flex items-center mb-6 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
@@ -595,20 +624,20 @@ export default function TicketDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="border-b border-gray-200">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="border-b border-gray-200 dark:border-gray-600">
                 <div className="px-6 py-5">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                       <div className="flex items-center">
-                        <h1 className="text-xl font-semibold text-gray-900 mr-3">
+                        <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mr-3">
                           {ticket.subject}
                         </h1>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                           #{ticket.ticketNumber}
                         </span>
                       </div>
-                      <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                         {ticket.description}
                       </p>
                     </div>
@@ -619,36 +648,46 @@ export default function TicketDetailPage() {
                   </div>
                 </div>
               </div>
-              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <div className="text-gray-500 mb-1">Customer</div>
-                    <div className="font-medium">
+                    <div className="text-gray-500 dark:text-gray-400 mb-1">
+                      Customer
+                    </div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {getFullName(ticket.user.firstName, ticket.user.lastName)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-gray-500 mb-1">Category</div>
-                    <div className="font-medium flex items-center">
+                    <div className="text-gray-500 dark:text-gray-400 mb-1">
+                      Category
+                    </div>
+                    <div className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                       {ticket.category.name}
                     </div>
                   </div>
                   <div>
-                    <div className="text-gray-500 mb-1">Created</div>
-                    <div className="font-medium">
+                    <div className="text-gray-500 dark:text-gray-400 mb-1">
+                      Created
+                    </div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {formatRelativeTime(ticket.createdAt)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-gray-500 mb-1">Assigned To</div>
-                    <div className="font-medium">
+                    <div className="text-gray-500 dark:text-gray-400 mb-1">
+                      Assigned To
+                    </div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {ticket.agent ? (
                         getFullName(
                           ticket.agent.user.firstName,
                           ticket.agent.user.lastName
                         )
                       ) : (
-                        <span className="text-yellow-600">Unassigned</span>
+                        <span className="text-yellow-600 dark:text-yellow-400">
+                          Unassigned
+                        </span>
                       )}
                     </div>
                   </div>
@@ -656,14 +695,14 @@ export default function TicketDetailPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                <h2 className="text-lg font-medium text-gray-900">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   Conversation
                 </h2>
                 <div className="flex items-center">
                   {getSlaStatusBadge(ticket.slaStatus)}
-                  <span className="ml-2 text-sm text-gray-500">
+                  <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
                     {ticket.status === "RESOLVED" || ticket.status === "CLOSED"
                       ? "Completed"
                       : getTimeRemaining(ticket.resolutionDue)}
@@ -671,14 +710,14 @@ export default function TicketDetailPage() {
                 </div>
               </div>
 
-              <div className="px-6 py-4 max-h-[500px] overflow-y-auto bg-gray-50">
+              <div className="px-6 py-4 max-h-[500px] overflow-y-auto bg-gray-50 dark:bg-gray-700">
                 {ticket.messages.length === 0 ? (
                   <div className="text-center py-8">
-                    <MessageSquare className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">
+                    <MessageSquare className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+                    <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                       No messages
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                       Get started by sending a message.
                     </p>
                   </div>
@@ -696,31 +735,31 @@ export default function TicketDetailPage() {
                         <div
                           className={`max-w-[80%] rounded-lg p-4 ${
                             message.isInternal
-                              ? "bg-yellow-50 border border-yellow-100"
+                              ? "bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-100 dark:border-yellow-600"
                               : message.senderType === "USER"
-                              ? "bg-white border border-gray-200"
-                              : "bg-indigo-50 border border-indigo-100"
+                              ? "bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500"
+                              : "bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-600"
                           }`}
                         >
                           <div className="flex justify-between items-start mb-2">
-                            <div className="font-medium text-gray-900 text-sm">
+                            <div className="font-medium text-gray-900 dark:text-gray-100 text-sm">
                               {getSenderName(message)}
                               {message.isInternal && (
-                                <span className="ml-2 px-1.5 py-0.5 bg-yellow-200 text-yellow-800 text-xs rounded">
+                                <span className="ml-2 px-1.5 py-0.5 bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-300 text-xs rounded">
                                   Internal
                                 </span>
                               )}
                             </div>
-                            <div className="text-xs text-gray-500 ml-3">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 ml-3">
                               {formatRelativeTime(message.createdAt)}
                             </div>
                           </div>
-                          <div className="text-gray-700 text-sm whitespace-pre-wrap break-words">
+                          <div className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap break-words">
                             {message.content}
                           </div>
                           {message.attachments.length > 0 && (
-                            <div className="mt-3 border-t border-gray-100 pt-3">
-                              <div className="text-xs font-medium text-gray-500 mb-2">
+                            <div className="mt-3 border-t border-gray-100 dark:border-gray-600 pt-3">
+                              <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
                                 Attachments
                               </div>
                               <div className="space-y-2">
@@ -730,13 +769,13 @@ export default function TicketDetailPage() {
                                     href={attachment.fileUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center p-2 bg-white rounded border border-gray-200 hover:bg-gray-50 text-sm text-gray-700"
+                                    className="flex items-center p-2 bg-white dark:bg-gray-500 rounded border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-sm text-gray-700 dark:text-gray-300"
                                   >
-                                    <Paperclip className="w-4 h-4 text-gray-400 mr-2" />
+                                    <Paperclip className="w-4 h-4 text-gray-400 dark:text-gray-500 mr-2" />
                                     <span className="truncate flex-1">
                                       {attachment.fileName}
                                     </span>
-                                    <ExternalLink className="w-3 h-3 text-gray-400 ml-1" />
+                                    <ExternalLink className="w-3 h-3 text-gray-400 dark:text-gray-500 ml-1" />
                                   </a>
                                 ))}
                               </div>
@@ -750,24 +789,24 @@ export default function TicketDetailPage() {
                 )}
               </div>
 
-              <div className="p-4 border-t border-gray-200">
+              <div className="p-4 border-t border-gray-200 dark:border-gray-600">
                 <form onSubmit={handleSendMessage}>
                   <div className="mb-3">
                     <textarea
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       placeholder="Type your message..."
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                       rows={3}
                     />
                   </div>
                   <div className="flex justify-between items-center">
-                    <label className="flex items-center text-sm text-gray-600">
+                    <label className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                       <input
                         type="checkbox"
                         checked={isInternal}
                         onChange={() => setIsInternal(!isInternal)}
-                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                        className="h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500 bg-white dark:bg-gray-700"
                       />
                       <span className="ml-2">
                         Internal note (not visible to customer)
@@ -776,7 +815,7 @@ export default function TicketDetailPage() {
                     <div className="flex space-x-2">
                       <button
                         type="button"
-                        className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
                         <Upload className="w-4 h-4 mr-2" />
                         Attach
@@ -786,7 +825,7 @@ export default function TicketDetailPage() {
                         disabled={messageLoading || !newMessage.trim()}
                         className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium ${
                           messageLoading || !newMessage.trim()
-                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            ? "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                             : "bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         }`}
                       >
@@ -812,14 +851,16 @@ export default function TicketDetailPage() {
           {/* Sidebar - Actions & Details */}
           <div className="space-y-6">
             {/* Actions Card */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900">Actions</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  Actions
+                </h2>
               </div>
               <div className="p-6 space-y-3">
                 <button
                   onClick={() => setShowAssignModal(true)}
-                  className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   disabled={ticket.status === "CLOSED"}
                 >
                   <UserPlus className="w-4 h-4 mr-2" />
@@ -827,7 +868,7 @@ export default function TicketDetailPage() {
                 </button>
                 <button
                   onClick={() => setShowEscalateModal(true)}
-                  className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   disabled={
                     ticket.status === "CLOSED" || ticket.status === "RESOLVED"
                   }
@@ -856,29 +897,28 @@ export default function TicketDetailPage() {
               </div>
             </div>
 
-            {/* SLA Info Card */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   SLA Information
                 </h2>
               </div>
               <div className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
                       First Response
                     </div>
                     <div className="flex justify-between items-center">
-                      <div className="font-medium">
+                      <div className="font-medium text-gray-900 dark:text-gray-100">
                         {ticket.firstResponseAt ? "Completed" : "Pending"}
                       </div>
                       <div
                         className={`text-sm ${
                           new Date(ticket.firstResponseDue) < new Date() &&
                           !ticket.firstResponseAt
-                            ? "text-red-600"
-                            : "text-gray-500"
+                            ? "text-red-600 dark:text-red-400"
+                            : "text-gray-500 dark:text-gray-400"
                         }`}
                       >
                         {ticket.firstResponseAt
@@ -888,7 +928,7 @@ export default function TicketDetailPage() {
                             )}`}
                       </div>
                     </div>
-                    <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="mt-2 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${
                           ticket.firstResponseAt
@@ -905,17 +945,19 @@ export default function TicketDetailPage() {
                   </div>
 
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">Resolution</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                      Resolution
+                    </div>
                     <div className="flex justify-between items-center">
-                      <div className="font-medium">
+                      <div className="font-medium text-gray-900 dark:text-gray-100">
                         {ticket.resolvedAt ? "Completed" : "Pending"}
                       </div>
                       <div
                         className={`text-sm ${
                           new Date(ticket.resolutionDue) < new Date() &&
                           !ticket.resolvedAt
-                            ? "text-red-600"
-                            : "text-gray-500"
+                            ? "text-red-600 dark:text-red-400"
+                            : "text-gray-500 dark:text-gray-400"
                         }`}
                       >
                         {ticket.resolvedAt
@@ -923,7 +965,7 @@ export default function TicketDetailPage() {
                           : `Due ${formatRelativeTime(ticket.resolutionDue)}`}
                       </div>
                     </div>
-                    <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="mt-2 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${
                           ticket.resolvedAt
@@ -939,8 +981,10 @@ export default function TicketDetailPage() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-gray-200">
-                    <div className="text-sm text-gray-500 mb-1">SLA Status</div>
+                  <div className="pt-3 border-t border-gray-200 dark:border-gray-600">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                      SLA Status
+                    </div>
                     <div className="font-medium">
                       {getSlaStatusBadge(ticket.slaStatus)}
                     </div>
@@ -949,17 +993,16 @@ export default function TicketDetailPage() {
               </div>
             </div>
 
-            {/* Activity Log Card */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
               <div
-                className="px-6 py-4 border-b border-gray-200 flex items-center justify-between cursor-pointer"
+                className="px-6 py-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between cursor-pointer"
                 onClick={() => setShowActivities(!showActivities)}
               >
-                <h2 className="text-lg font-medium text-gray-900">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   Activity Log
                 </h2>
                 <ChevronRight
-                  className={`w-5 h-5 text-gray-500 transition-transform ${
+                  className={`w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform ${
                     showActivities ? "transform rotate-90" : ""
                   }`}
                 />
@@ -969,7 +1012,7 @@ export default function TicketDetailPage() {
                 <div className="p-6">
                   <div className="space-y-4">
                     {ticket.activities.length === 0 ? (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         No activities recorded
                       </p>
                     ) : (
@@ -977,22 +1020,22 @@ export default function TicketDetailPage() {
                         {ticket.activities.map((activity) => (
                           <div key={activity.id} className="flex">
                             <div className="flex-shrink-0 mr-3">
-                              <div className="mt-1 bg-gray-100 rounded-full p-1">
+                              <div className="mt-1 bg-gray-100 dark:bg-gray-700 rounded-full p-1">
                                 {getActivityIcon(activity.activityType)}
                               </div>
                             </div>
                             <div className="min-w-0 flex-1">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                 {activity.description}
                               </div>
-                              <div className="mt-0.5 text-xs text-gray-500">
+                              <div className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
                                 {formatDate(activity.createdAt)}
                               </div>
                               {(activity.previousValue ||
                                 activity.newValue) && (
                                 <div className="mt-2 text-sm">
                                   {activity.previousValue && (
-                                    <div className="text-gray-500">
+                                    <div className="text-gray-500 dark:text-gray-400">
                                       From:{" "}
                                       <span className="font-medium">
                                         {activity.previousValue}
@@ -1000,7 +1043,7 @@ export default function TicketDetailPage() {
                                     </div>
                                   )}
                                   {activity.newValue && (
-                                    <div className="text-gray-500">
+                                    <div className="text-gray-500 dark:text-gray-400">
                                       To:{" "}
                                       <span className="font-medium">
                                         {activity.newValue}
@@ -1019,24 +1062,23 @@ export default function TicketDetailPage() {
               )}
             </div>
 
-            {/* Customer Information */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                   Customer Information
                 </h2>
               </div>
               <div className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium text-lg mr-4">
+                  <div className="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-medium text-lg mr-4">
                     {ticket.user.firstName.charAt(0)}
                     {ticket.user.lastName.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {getFullName(ticket.user.firstName, ticket.user.lastName)}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       {ticket.user.email}
                     </div>
                   </div>
@@ -1044,31 +1086,43 @@ export default function TicketDetailPage() {
 
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <div className="text-gray-500">Language</div>
-                    <div className="font-medium text-gray-900">
+                    <div className="text-gray-500 dark:text-gray-400">
+                      Language
+                    </div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {ticket.user.language.toUpperCase()}
                     </div>
                   </div>
                   <div className="flex justify-between">
-                    <div className="text-gray-500">Timezone</div>
-                    <div className="font-medium text-gray-900">
+                    <div className="text-gray-500 dark:text-gray-400">
+                      Timezone
+                    </div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {ticket.user.timezone}
                     </div>
                   </div>
                   <div className="flex justify-between">
-                    <div className="text-gray-500">Account Status</div>
-                    <div className="font-medium text-gray-900">
+                    <div className="text-gray-500 dark:text-gray-400">
+                      Account Status
+                    </div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {ticket.user.isActive ? (
-                        <span className="text-green-600">Active</span>
+                        <span className="text-green-600 dark:text-green-400">
+                          Active
+                        </span>
                       ) : (
-                        <span className="text-red-600">Inactive</span>
+                        <span className="text-red-600 dark:text-red-400">
+                          Inactive
+                        </span>
                       )}
                     </div>
                   </div>
                   <div className="flex justify-between">
-                    <div className="text-gray-500">User ID</div>
+                    <div className="text-gray-500 dark:text-gray-400">
+                      User ID
+                    </div>
                     <div
-                      className="font-medium text-gray-900 truncate max-w-[150px]"
+                      className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-[150px]"
                       title={ticket.user.id}
                     >
                       {ticket.user.externalUserId}
@@ -1081,209 +1135,37 @@ export default function TicketDetailPage() {
         </div>
       </div>
 
-      {/* Assign Modal */}
       {showAssignModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Assign Ticket
-              </h2>
-              <button
-                onClick={() => setShowAssignModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Assign to Agent
-              </label>
-              {loadingAgents ? (
-                <div className="animate-pulse h-10 bg-gray-200 rounded"></div>
-              ) : (
-                <select
-                  value={assignData.userId}
-                  onChange={(e) =>
-                    setAssignData({ ...assignData, userId: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
-                >
-                  <option value="">Select an agent</option>
-                  {agents.map((agent) => (
-                    <option key={agent.id} value={agent.userId}>
-                      {getFullName(agent.user.firstName, agent.user.lastName)} (
-                      {agent.department})
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setShowAssignModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAssignTicket}
-                disabled={!assignData.userId}
-                className={`px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                  !assignData.userId
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-indigo-600 text-white hover:bg-indigo-700"
-                }`}
-              >
-                Assign
-              </button>
-            </div>
-          </div>
-        </div>
+        <AssignModal
+          setShowAssignModal={setShowAssignModal}
+          assignData={assignData}
+          setAssignData={setAssignData}
+          handleAssignTicket={handleAssignTicket}
+          agents={agents}
+          loadingAgents={loadingAgents}
+          getFullName={getFullName}
+        />
       )}
 
-      {/* Escalate Modal */}
       {showEscalateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Escalate Ticket
-              </h2>
-              <button
-                onClick={() => setShowEscalateModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Escalate to
-              </label>
-              {loadingAgents ? (
-                <div className="animate-pulse h-10 bg-gray-200 rounded"></div>
-              ) : (
-                <select
-                  value={escalateData.escalateToUserId}
-                  onChange={(e) =>
-                    setEscalateData({
-                      ...escalateData,
-                      escalateToUserId: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
-                >
-                  <option value="">Select an agent</option>
-                  {agents
-                    .filter(
-                      (agent) =>
-                        agent.role === "supervisor" || agent.role === "admin"
-                    )
-                    .map((agent) => (
-                      <option key={agent.id} value={agent.userId}>
-                        {getFullName(agent.user.firstName, agent.user.lastName)}{" "}
-                        ({agent.role})
-                      </option>
-                    ))}
-                </select>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Reason for escalation
-              </label>
-              <textarea
-                value={escalateData.reason}
-                onChange={(e) =>
-                  setEscalateData({ ...escalateData, reason: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
-                rows={3}
-                placeholder="Explain why this ticket needs to be escalated..."
-              />
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setShowEscalateModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleEscalateTicket}
-                disabled={
-                  !escalateData.escalateToUserId || !escalateData.reason
-                }
-                className={`px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                  !escalateData.escalateToUserId || !escalateData.reason
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-indigo-600 text-white hover:bg-indigo-700"
-                }`}
-              >
-                Escalate
-              </button>
-            </div>
-          </div>
-        </div>
+        <EscalateModal
+          setShowEscalateModal={setShowEscalateModal}
+          escalateData={escalateData}
+          setEscalateData={setEscalateData}
+          handleEscalateTicket={handleEscalateTicket}
+          agents={agents}
+          loadingAgents={loadingAgents}
+          getFullName={getFullName}
+        />
       )}
 
-      {/* Resolve Modal */}
       {showResolveModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Resolve Ticket
-              </h2>
-              <button
-                onClick={() => setShowResolveModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Resolution notes
-              </label>
-              <textarea
-                value={resolveData.resolutionNotes}
-                onChange={(e) =>
-                  setResolveData({
-                    ...resolveData,
-                    resolutionNotes: e.target.value,
-                  })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
-                rows={3}
-                placeholder="Provide details about how this issue was resolved..."
-              />
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setShowResolveModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleResolveTicket}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              >
-                Resolve
-              </button>
-            </div>
-          </div>
-        </div>
+        <ResolveModal
+          setShowResolveModal={setShowResolveModal}
+          resolveData={resolveData}
+          setResolveData={setResolveData}
+          handleResolveTicket={handleResolveTicket}
+        />
       )}
     </div>
   );

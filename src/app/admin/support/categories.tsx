@@ -458,19 +458,35 @@ export default function CategoriesListPage() {
   // Get priority badge with appropriate styling
   const getPriorityBadge = (priority: string) => {
     const classes = {
-      LOW: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-      MEDIUM: "bg-blue-50 text-blue-700 border border-blue-200",
-      HIGH: "bg-amber-50 text-amber-700 border border-amber-200",
-      CRITICAL: "bg-rose-50 text-rose-700 border border-rose-200",
-      default: "bg-slate-50 text-slate-700 border border-slate-200",
+      LOW: "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-600",
+      MEDIUM:
+        "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-600",
+      HIGH: "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-600",
+      CRITICAL:
+        "bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-600",
+      default:
+        "bg-slate-50 dark:bg-gray-700 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-600",
     };
 
     const icons = {
-      LOW: <Shield size={12} className="mr-1 text-emerald-500" />,
-      MEDIUM: <Shield size={12} className="mr-1 text-blue-500" />,
-      HIGH: <Shield size={12} className="mr-1 text-amber-500" />,
-      CRITICAL: <Shield size={12} className="mr-1 text-rose-500" />,
-      default: <Shield size={12} className="mr-1 text-slate-500" />,
+      LOW: (
+        <Shield
+          size={12}
+          className="mr-1 text-emerald-500 dark:text-emerald-400"
+        />
+      ),
+      MEDIUM: (
+        <Shield size={12} className="mr-1 text-blue-500 dark:text-blue-400" />
+      ),
+      HIGH: (
+        <Shield size={12} className="mr-1 text-amber-500 dark:text-amber-400" />
+      ),
+      CRITICAL: (
+        <Shield size={12} className="mr-1 text-rose-500 dark:text-rose-400" />
+      ),
+      default: (
+        <Shield size={12} className="mr-1 text-slate-500 dark:text-gray-400" />
+      ),
     };
 
     return (
@@ -539,9 +555,13 @@ export default function CategoriesListPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
           className={`
-            border-b border-slate-100 transition-all duration-200
-            ${depth === 0 ? "hover:bg-slate-50" : "hover:bg-slate-50/50"}
-            ${isHovered ? "bg-slate-50" : ""}
+            border-b border-slate-100 dark:border-gray-600 transition-all duration-200
+            ${
+              depth === 0
+                ? "hover:bg-slate-50 dark:hover:bg-gray-700"
+                : "hover:bg-slate-50/50 dark:hover:bg-gray-700/50"
+            }
+            ${isHovered ? "bg-slate-50 dark:bg-gray-700" : ""}
             relative overflow-hidden
           `}
           style={{ paddingLeft: `${depth * 1.5}rem` }}
@@ -552,7 +572,7 @@ export default function CategoriesListPage() {
             {hasChildren && (
               <button
                 onClick={() => toggleExpand(category.id)}
-                className="mr-2 text-slate-400 hover:text-indigo-600 transition-colors"
+                className="mr-2 text-slate-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
                 {isExpanded ? (
                   <ChevronDown className="h-4 w-4" />
@@ -577,39 +597,45 @@ export default function CategoriesListPage() {
 
             <div className="flex-grow min-w-0">
               <div className="flex items-center">
-                <h3 className="text-sm font-medium text-slate-900 mr-2 truncate">
+                <h3 className="text-sm font-medium text-slate-900 dark:text-gray-100 mr-2 truncate">
                   {category.name}
                 </h3>
                 {!category.isActive && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-400 border border-slate-200 dark:border-gray-600">
                     Inactive
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-500 truncate">
+              <p className="text-xs text-slate-500 dark:text-gray-400 truncate">
                 {category.description}
               </p>
             </div>
 
             <div className="hidden md:flex items-center space-x-6 text-sm mr-4">
               <div className="text-right">
-                <p className="text-slate-500 text-xs">Response</p>
-                <div className="font-medium text-slate-700 flex items-center justify-end">
+                <p className="text-slate-500 dark:text-gray-400 text-xs">
+                  Response
+                </p>
+                <div className="font-medium text-slate-700 dark:text-gray-300 flex items-center justify-end">
                   <Clock className="w-3 h-3 mr-1 text-indigo-400" />
                   {formatTime(category.firstResponseSla)}
                 </div>
               </div>
 
               <div className="text-right">
-                <p className="text-slate-500 text-xs">Resolution</p>
-                <div className="font-medium text-slate-700 flex items-center justify-end">
+                <p className="text-slate-500 dark:text-gray-400 text-xs">
+                  Resolution
+                </p>
+                <div className="font-medium text-slate-700 dark:text-gray-300 flex items-center justify-end">
                   <Clock className="w-3 h-3 mr-1 text-indigo-400" />
                   {formatTime(category.resolutionSla)}
                 </div>
               </div>
 
               <div className="w-24 text-right">
-                <p className="text-slate-500 text-xs">Priority</p>
+                <p className="text-slate-500 dark:text-gray-400 text-xs">
+                  Priority
+                </p>
                 <div className="flex justify-end mt-1">
                   {getPriorityBadge(category.defaultPriority)}
                 </div>
@@ -629,7 +655,7 @@ export default function CategoriesListPage() {
                     activeMenu === category.id ? null : category.id
                   );
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
+                className="p-1.5 rounded-lg text-slate-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all"
               >
                 <MoreHorizontal className="h-5 w-5" />
               </button>
@@ -640,7 +666,7 @@ export default function CategoriesListPage() {
                   onClick={() => setActiveMenu(null)}
                 >
                   <div
-                    className="absolute rounded-lg shadow-lg bg-white ring-1 ring-slate-200 z-[100] w-48"
+                    className="absolute rounded-lg shadow-lg bg-white dark:bg-gray-800 ring-1 ring-slate-200 dark:ring-gray-600 z-[100] w-48 border border-gray-200 dark:border-gray-600"
                     style={{
                       position: "fixed",
                       top: `${menuPosition.top}px`,
@@ -651,16 +677,16 @@ export default function CategoriesListPage() {
                     <div className="py-1" role="menu">
                       <button
                         onClick={() => handleEditClick(category)}
-                        className="flex w-full items-center px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                        className="flex w-full items-center px-4 py-2 text-sm text-slate-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                       >
-                        <Edit className="mr-3 h-4 w-4 text-slate-500" />
+                        <Edit className="mr-3 h-4 w-4 text-slate-500 dark:text-gray-400" />
                         Edit Category
                       </button>
                       <button
                         onClick={() => handleDeleteCategory(category.id)}
-                        className="flex w-full items-center px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
+                        className="flex w-full items-center px-4 py-2 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors"
                       >
-                        <Trash2 className="mr-3 h-4 w-4 text-rose-500" />
+                        <Trash2 className="mr-3 h-4 w-4 text-rose-500 dark:text-rose-400" />
                         Delete Category
                       </button>
                     </div>
@@ -672,7 +698,7 @@ export default function CategoriesListPage() {
 
           {isHovered && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/20 to-transparent -translate-x-full animate-shimmer-slow"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/20 dark:via-indigo-900/20 to-transparent -translate-x-full animate-shimmer-slow"></div>
             </div>
           )}
         </motion.div>
@@ -689,22 +715,28 @@ export default function CategoriesListPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <div className="inline-block px-3 py-1 bg-indigo-50/80 border border-indigo-100/80 rounded-lg text-indigo-600 text-xs font-medium mb-2 backdrop-blur-sm">
+            <div className="inline-block px-3 py-1 bg-indigo-50/80 dark:bg-indigo-900/30 border border-indigo-100/80 dark:border-indigo-600 rounded-lg text-indigo-600 dark:text-indigo-400 text-xs font-medium mb-2 backdrop-blur-sm">
               <div className="flex items-center">
-                <Tag size={12} className="text-indigo-500 mr-1.5" />
+                <Tag
+                  size={12}
+                  className="text-indigo-500 dark:text-indigo-400 mr-1.5"
+                />
                 <span>Support Configuration</span>
               </div>
             </div>
-            <h1 className="text-xl font-bold text-slate-900 flex items-center">
-              <Folder size={22} className="text-indigo-500 mr-2" />
+            <h1 className="text-xl font-bold text-slate-900 dark:text-gray-100 flex items-center">
+              <Folder
+                size={22}
+                className="text-indigo-500 dark:text-indigo-400 mr-2"
+              />
               Ticket Categories
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <p className="text-sm text-slate-500 dark:text-gray-400 mt-0.5">
               Manage support ticket categories and classification
             </p>
           </div>
@@ -721,16 +753,19 @@ export default function CategoriesListPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg border border-slate-200/80 shadow-sm p-4 relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-indigo-100/50"></div>
-            <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-slate-200/80 dark:border-gray-600 shadow-sm p-4 relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-indigo-100/50 dark:bg-indigo-900/30"></div>
+            <h3 className="text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               Total Categories
             </h3>
-            <div className="text-2xl font-bold text-slate-900">
+            <div className="text-2xl font-bold text-slate-900 dark:text-gray-100">
               {analytics.totalCategories}
             </div>
-            <div className="mt-2 text-xs text-slate-600 flex items-center">
-              <Tag size={14} className="mr-1.5 text-indigo-500" />
+            <div className="mt-2 text-xs text-slate-600 dark:text-gray-400 flex items-center">
+              <Tag
+                size={14}
+                className="mr-1.5 text-indigo-500 dark:text-indigo-400"
+              />
               <span>
                 {analytics.activeCategories} active,{" "}
                 {analytics.totalCategories - analytics.activeCategories}{" "}
@@ -739,37 +774,43 @@ export default function CategoriesListPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-slate-200/80 shadow-sm p-4 relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-100/50"></div>
-            <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-slate-200/80 dark:border-gray-600 shadow-sm p-4 relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-100/50 dark:bg-amber-900/30"></div>
+            <h3 className="text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               Avg. Response Time
             </h3>
-            <div className="text-2xl font-bold text-slate-900">
+            <div className="text-2xl font-bold text-slate-900 dark:text-gray-100">
               {formatTime(analytics.avgResponseTime)}
             </div>
-            <div className="mt-2 text-xs text-slate-600 flex items-center">
-              <Clock size={14} className="mr-1.5 text-amber-500" />
+            <div className="mt-2 text-xs text-slate-600 dark:text-gray-400 flex items-center">
+              <Clock
+                size={14}
+                className="mr-1.5 text-amber-500 dark:text-amber-400"
+              />
               <span>{getHumanReadableTime(analytics.avgResponseTime)}</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-slate-200/80 shadow-sm p-4 relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-emerald-100/50"></div>
-            <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-slate-200/80 dark:border-gray-600 shadow-sm p-4 relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-emerald-100/50 dark:bg-emerald-900/30"></div>
+            <h3 className="text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               Avg. Resolution Time
             </h3>
-            <div className="text-2xl font-bold text-slate-900">
+            <div className="text-2xl font-bold text-slate-900 dark:text-gray-100">
               {formatTime(analytics.avgResolutionTime)}
             </div>
-            <div className="mt-2 text-xs text-slate-600 flex items-center">
-              <Clock size={14} className="mr-1.5 text-emerald-500" />
+            <div className="mt-2 text-xs text-slate-600 dark:text-gray-400 flex items-center">
+              <Clock
+                size={14}
+                className="mr-1.5 text-emerald-500 dark:text-emerald-400"
+              />
               <span>{getHumanReadableTime(analytics.avgResolutionTime)}</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-slate-200/80 shadow-sm p-4 relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-violet-100/50"></div>
-            <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-slate-200/80 dark:border-gray-600 shadow-sm p-4 relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-violet-100/50 dark:bg-violet-900/30"></div>
+            <h3 className="text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               Priority Distribution
             </h3>
             <div className="flex items-center space-x-2 mt-2">
@@ -786,7 +827,7 @@ export default function CategoriesListPage() {
                     key={priority}
                     className="flex-1 flex flex-col items-center"
                   >
-                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-slate-100 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${
                           priority === "LOW"
@@ -800,10 +841,10 @@ export default function CategoriesListPage() {
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
-                    <div className="text-xs text-slate-600 mt-1 font-medium">
+                    <div className="text-xs text-slate-600 dark:text-gray-400 mt-1 font-medium">
                       {percentage}%
                     </div>
-                    <div className="text-[10px] text-slate-500">
+                    <div className="text-[10px] text-slate-500 dark:text-gray-500">
                       {priority.charAt(0)}
                     </div>
                   </div>
@@ -816,19 +857,19 @@ export default function CategoriesListPage() {
         <div className="mb-6 flex flex-col md:flex-row gap-2 items-center">
           <div className="w-full md:w-1/3 relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-slate-400" />
+              <Search className="h-4 w-4 text-slate-400 dark:text-gray-500" />
             </div>
             <input
               type="text"
               placeholder="Search categories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2.5 sm:text-sm border border-slate-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition-colors"
+              className="block w-full pl-10 pr-3 py-2.5 sm:text-sm border border-slate-200 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-400"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -839,17 +880,17 @@ export default function CategoriesListPage() {
             <div className="flex space-x-2">
               <button
                 onClick={expandAll}
-                className="inline-flex items-center px-3 py-1.5 border border-slate-200 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition-colors"
+                className="inline-flex items-center px-3 py-1.5 border border-slate-200 dark:border-gray-600 text-sm font-medium rounded-lg text-slate-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-slate-50 dark:hover:bg-gray-600 shadow-sm transition-colors"
               >
-                <ChevronDown className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
+                <ChevronDown className="w-3.5 h-3.5 mr-1.5 text-slate-500 dark:text-gray-400" />
                 Expand All
               </button>
 
               <button
                 onClick={collapseAll}
-                className="inline-flex items-center px-3 py-1.5 border border-slate-200 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition-colors"
+                className="inline-flex items-center px-3 py-1.5 border border-slate-200 dark:border-gray-600 text-sm font-medium rounded-lg text-slate-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-slate-50 dark:hover:bg-gray-600 shadow-sm transition-colors"
               >
-                <ChevronRight className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
+                <ChevronRight className="w-3.5 h-3.5 mr-1.5 text-slate-500 dark:text-gray-400" />
                 Collapse All
               </button>
             </div>
@@ -858,8 +899,8 @@ export default function CategoriesListPage() {
               onClick={() => setShowInactive(!showInactive)}
               className={`inline-flex items-center px-3 py-1.5 border text-sm font-medium rounded-lg shadow-sm transition-colors ${
                 showInactive
-                  ? "border-indigo-200 bg-indigo-50 text-indigo-700"
-                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  ? "border-indigo-200 dark:border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400"
+                  : "border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-600"
               }`}
             >
               <Filter className="w-3.5 h-3.5 mr-1.5" />
@@ -871,11 +912,13 @@ export default function CategoriesListPage() {
                 resetFilters();
                 fetchCategories();
               }}
-              className="inline-flex items-center px-3 py-1.5 border border-slate-200 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 shadow-sm transition-colors"
+              className="inline-flex items-center px-3 py-1.5 border border-slate-200 dark:border-gray-600 text-sm font-medium rounded-lg text-slate-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-slate-50 dark:hover:bg-gray-600 shadow-sm transition-colors"
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 mr-1.5 ${
-                  isRefreshing ? "animate-spin text-indigo-500" : ""
+                  isRefreshing
+                    ? "animate-spin text-indigo-500 dark:text-indigo-400"
+                    : ""
                 }`}
               />
               {isRefreshing ? "Refreshing..." : "Refresh"}
@@ -885,37 +928,42 @@ export default function CategoriesListPage() {
 
         {/* Categories List */}
         {loading && !isRefreshing ? (
-          <div className="flex flex-col justify-center items-center h-64 bg-white rounded-lg shadow-sm p-8 border border-slate-200/80">
+          <div className="flex flex-col justify-center items-center h-64 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 border border-slate-200/80 dark:border-gray-600">
             <div className="relative w-16 h-16 mb-6">
-              <div className="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-indigo-900"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 dark:border-t-indigo-400 animate-spin"></div>
               <div
-                className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-500 animate-spin opacity-70"
+                className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-500 dark:border-t-indigo-500 animate-spin opacity-70"
                 style={{ animationDuration: "1.5s" }}
               ></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <Folder size={24} className="text-indigo-600" />
+                <Folder
+                  size={24}
+                  className="text-indigo-600 dark:text-indigo-400"
+                />
               </div>
             </div>
-            <h3 className="text-lg font-medium text-slate-900 mb-1">
+            <h3 className="text-lg font-medium text-slate-900 dark:text-gray-100 mb-1">
               Loading categories
             </h3>
-            <p className="text-slate-500 text-center max-w-sm">
+            <p className="text-slate-500 dark:text-gray-400 text-center max-w-sm">
               Please wait while we fetch the category data...
             </p>
           </div>
         ) : error ? (
-          <div className="bg-rose-50 border border-rose-200 p-4 rounded-lg shadow-sm">
+          <div className="bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-600 p-4 rounded-lg shadow-sm">
             <div className="flex">
               <div className="flex-shrink-0">
-                <AlertTriangle className="h-5 w-5 text-rose-500" />
+                <AlertTriangle className="h-5 w-5 text-rose-500 dark:text-rose-400" />
               </div>
               <div className="ml-3">
-                <p className="text-sm text-rose-700">{error}</p>
+                <p className="text-sm text-rose-700 dark:text-rose-300">
+                  {error}
+                </p>
                 <div className="mt-2">
                   <button
                     onClick={fetchCategories}
-                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-rose-700 bg-rose-100 hover:bg-rose-200 transition-colors"
+                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-900/50 hover:bg-rose-200 dark:hover:bg-rose-900/70 transition-colors"
                   >
                     <RefreshCw className="w-4 h-4 mr-1.5" />
                     Try Again
@@ -925,14 +973,14 @@ export default function CategoriesListPage() {
             </div>
           </div>
         ) : filteredCategories.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center border border-slate-200/80">
-            <div className="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Folder className="h-8 w-8 text-slate-400" />
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 text-center border border-slate-200/80 dark:border-gray-600">
+            <div className="w-16 h-16 bg-slate-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <Folder className="h-8 w-8 text-slate-400 dark:text-gray-500" />
             </div>
-            <h3 className="text-lg font-medium text-slate-900 mb-2">
+            <h3 className="text-lg font-medium text-slate-900 dark:text-gray-100 mb-2">
               No categories found
             </h3>
-            <p className="text-slate-500 text-center max-w-sm mx-auto mb-6">
+            <p className="text-slate-500 dark:text-gray-400 text-center max-w-sm mx-auto mb-6">
               {searchTerm || showInactive
                 ? "No categories match your current filters. Try adjusting your search criteria."
                 : "Get started by creating your first support ticket category."}
@@ -941,7 +989,7 @@ export default function CategoriesListPage() {
             {searchTerm || showInactive ? (
               <button
                 onClick={resetFilters}
-                className="inline-flex items-center px-3 py-1.5 border border-slate-300 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-sm"
+                className="inline-flex items-center px-3 py-1.5 border border-slate-300 dark:border-gray-600 text-sm font-medium rounded-lg text-slate-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors shadow-sm"
               >
                 <X className="w-4 h-4 mr-1.5" />
                 Clear Filters
@@ -957,8 +1005,8 @@ export default function CategoriesListPage() {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-slate-200/80">
-            <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex items-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden border border-slate-200/80 dark:border-gray-600">
+            <div className="bg-slate-50 dark:bg-gray-700 border-b border-slate-200 dark:border-gray-600 px-4 py-3 flex items-center text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
               <div className="flex-grow flex items-center">
                 <button
                   className="flex items-center text-left focus:outline-none group"
@@ -968,8 +1016,8 @@ export default function CategoriesListPage() {
                   <span
                     className={`ml-1 transition-colors ${
                       sortField === "name"
-                        ? "text-indigo-500"
-                        : "text-slate-400 group-hover:text-slate-500"
+                        ? "text-indigo-500 dark:text-indigo-400"
+                        : "text-slate-400 dark:text-gray-500 group-hover:text-slate-500 dark:group-hover:text-gray-400"
                     }`}
                   >
                     {sortField === "name" ? (
@@ -995,8 +1043,8 @@ export default function CategoriesListPage() {
                     <span
                       className={`ml-1 transition-colors ${
                         sortField === "firstResponseSla"
-                          ? "text-indigo-500"
-                          : "text-slate-400 group-hover:text-slate-500"
+                          ? "text-indigo-500 dark:text-indigo-400"
+                          : "text-slate-400 dark:text-gray-500 group-hover:text-slate-500 dark:group-hover:text-gray-400"
                       }`}
                     >
                       {sortField === "firstResponseSla" ? (
@@ -1021,8 +1069,8 @@ export default function CategoriesListPage() {
                     <span
                       className={`ml-1 transition-colors ${
                         sortField === "resolutionSla"
-                          ? "text-indigo-500"
-                          : "text-slate-400 group-hover:text-slate-500"
+                          ? "text-indigo-500 dark:text-indigo-400"
+                          : "text-slate-400 dark:text-gray-500 group-hover:text-slate-500 dark:group-hover:text-gray-400"
                       }`}
                     >
                       {sortField === "resolutionSla" ? (
@@ -1047,8 +1095,8 @@ export default function CategoriesListPage() {
                     <span
                       className={`ml-1 transition-colors ${
                         sortField === "defaultPriority"
-                          ? "text-indigo-500"
-                          : "text-slate-400 group-hover:text-slate-500"
+                          ? "text-indigo-500 dark:text-indigo-400"
+                          : "text-slate-400 dark:text-gray-500 group-hover:text-slate-500 dark:group-hover:text-gray-400"
                       }`}
                     >
                       {sortField === "defaultPriority" ? (
@@ -1076,8 +1124,7 @@ export default function CategoriesListPage() {
               )}
             </div>
 
-            {/* Bottom info */}
-            <div className="bg-slate-50 border-t border-slate-200 px-4 py-3 text-xs text-slate-500 flex items-center justify-between">
+            <div className="bg-slate-50 dark:bg-gray-700 border-t border-slate-200 dark:border-gray-600 px-4 py-3 text-xs text-slate-500 dark:text-gray-400 flex items-center justify-between">
               <div className="flex items-center">
                 <Info size={14} className="mr-1.5 text-indigo-400" />
                 <span>
@@ -1086,29 +1133,31 @@ export default function CategoriesListPage() {
                 </span>
               </div>
               <div className="flex items-center">
-                <Clock size={14} className="mr-1.5 text-slate-400" />
+                <Clock
+                  size={14}
+                  className="mr-1.5 text-slate-400 dark:text-gray-500"
+                />
                 <span>Last updated: {new Date().toLocaleTimeString()}</span>
               </div>
             </div>
           </div>
         )}
 
-        {/* Information Panel */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-6 bg-gradient-to-r from-indigo-50/80 to-white backdrop-blur-sm rounded-xl p-5 border border-indigo-100/50 shadow-md"
+          className="mt-6 bg-gradient-to-r from-indigo-50/80 dark:from-indigo-900/30 to-white dark:to-gray-800 backdrop-blur-sm rounded-xl p-5 border border-indigo-100/50 dark:border-indigo-600 shadow-md"
         >
           <div className="flex items-start space-x-4">
-            <div className="bg-indigo-100 rounded-lg p-2 text-indigo-600">
+            <div className="bg-indigo-100 dark:bg-indigo-900/50 rounded-lg p-2 text-indigo-600 dark:text-indigo-400">
               <Info size={20} />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900 mb-1">
+              <h3 className="font-semibold text-slate-900 dark:text-gray-100 mb-1">
                 About Ticket Categories
               </h3>
-              <p className="text-slate-700 text-sm leading-relaxed">
+              <p className="text-slate-700 dark:text-gray-300 text-sm leading-relaxed">
                 Categories help organize support tickets and automatically apply
                 the right SLA rules. Each category can have its own response
                 time, resolution time, and default priority.
@@ -1117,21 +1166,21 @@ export default function CategoriesListPage() {
               <div className="mt-3 flex flex-wrap gap-3">
                 <a
                   href="#"
-                  className="text-xs flex items-center text-indigo-600 hover:text-indigo-800 font-medium"
+                  className="text-xs flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
                 >
                   <HelpCircle size={14} className="mr-1" />
                   Category Documentation
                 </a>
                 <a
                   href="#"
-                  className="text-xs flex items-center text-indigo-600 hover:text-indigo-800 font-medium"
+                  className="text-xs flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
                 >
                   <Users size={14} className="mr-1" />
                   Support Best Practices
                 </a>
                 <a
                   href="#"
-                  className="text-xs flex items-center text-indigo-600 hover:text-indigo-800 font-medium"
+                  className="text-xs flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium"
                 >
                   <BarChart3 size={14} className="mr-1" />
                   Category Analytics
