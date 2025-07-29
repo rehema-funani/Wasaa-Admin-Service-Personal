@@ -128,7 +128,6 @@ export default function CannedResponsesListPage() {
     fetchCreators();
   }, [responses]);
 
-  // Filter and sort responses
   const filteredResponses = useMemo(() => {
     const filtered = responses.filter((response) => {
       const matchesSearch =
@@ -147,18 +146,15 @@ export default function CannedResponsesListPage() {
       return matchesSearch && matchesActiveFilter;
     });
 
-    // Sort filtered responses
     return filtered.sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
 
-      // Special handling for categoryName
       if (sortField === "categoryName") {
         aValue = a.category?.name || "";
         bValue = b.category?.name || "";
       }
 
-      // Handle string comparison
       if (typeof aValue === "string") {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
@@ -170,7 +166,6 @@ export default function CannedResponsesListPage() {
     });
   }, [responses, searchTerm, showInactive, sortField, sortDirection]);
 
-  // Handle sort
   const handleSort = (field) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -180,7 +175,6 @@ export default function CannedResponsesListPage() {
     }
   };
 
-  // Handle delete
   const handleDelete = async (id) => {
     if (
       !window.confirm(
@@ -201,23 +195,19 @@ export default function CannedResponsesListPage() {
     }
   };
 
-  // Handle copy to clipboard
   const handleCopy = (content) => {
     navigator.clipboard.writeText(content).then(() => {
-      // Visual feedback on copy
       setCopiedId(content);
       setTimeout(() => setCopiedId(null), 2000);
     });
   };
 
-  // Handle page change
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= pagination.pages) {
       setPagination((prev) => ({ ...prev, page: newPage }));
     }
   };
 
-  // Format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("en-US", {
@@ -227,7 +217,6 @@ export default function CannedResponsesListPage() {
     }).format(date);
   };
 
-  // Format date with time
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("en-US", {
@@ -239,7 +228,6 @@ export default function CannedResponsesListPage() {
     }).format(date);
   };
 
-  // Extract and count placeholders
   const extractPlaceholders = (content) => {
     const matches = content.match(/\{\{([^}]+)\}\}/g) || [];
     return [...new Set(matches)].map((ph) =>
@@ -248,7 +236,6 @@ export default function CannedResponsesListPage() {
   };
 
   const highlightPlaceholders = (content) => {
-    // Split by placeholder pattern {{...}} and join with highlighted spans
     const parts = content.split(/(\{\{[^}]+\}\})/g);
 
     return parts.map((part, index) => {
@@ -266,7 +253,6 @@ export default function CannedResponsesListPage() {
     });
   };
 
-  // Get initials from name
   const getInitials = (name) => {
     if (!name) return "?";
     return name
@@ -277,28 +263,21 @@ export default function CannedResponsesListPage() {
       .substring(0, 2);
   };
 
-  // Handle export all responses
   const handleExport = async () => {
     try {
-      // await supportService.exportCannedResponses();
       alert("Canned responses exported successfully!");
     } catch (err) {
       console.error("Failed to export canned responses", err);
     }
   };
 
-  // Handle template rendering
   const handleRenderTemplate = (response) => {
-    // Extract placeholders from the template
     const placeholders = extractPlaceholders(response.content);
-
-    // Initialize template variables with empty values
     const initialVariables = {};
     placeholders.forEach((placeholder) => {
       initialVariables[placeholder] = "";
     });
 
-    // Set states to open the modal
     setSelectedTemplate(response);
     setTemplateVariables(initialVariables);
     setRenderedTemplate("");
