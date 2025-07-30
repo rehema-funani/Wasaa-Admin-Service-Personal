@@ -1,23 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   Download,
   Filter,
   Calendar,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  CreditCard,
-  Wallet,
   ArrowRight,
   BarChart3,
   PieChart,
   LineChart as LineChartIcon,
-  FileText,
-  Mail,
-  Printer,
-} from 'lucide-react';
+  FileText
+} from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -33,204 +25,119 @@ import {
   Pie,
   Cell,
   AreaChart,
-  Area
-} from 'recharts';
-import TransactionTrends from '../../../../components/finance/TransactionTrends';
-import TransactionStats from '../../../../components/finance/TransactionStats';
+  Area,
+} from "recharts";
+import TransactionTrends from "../../../../components/finance/TransactionTrends";
+import TransactionStats from "../../../../components/finance/TransactionStats";
 
 const page: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState('monthly');
+  const [selectedPeriod, setSelectedPeriod] = useState("monthly");
   const [selectedYear, setSelectedYear] = useState(2025);
   const [selectedMonth, setSelectedMonth] = useState(4);
   const [selectedQuarter, setSelectedQuarter] = useState(2);
   const [isLoading, setIsLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<any[]>([]);
-  const [usersData, setUsersData] = useState<any[]>([]);
-  const [transactionsData, setTransactionsData] = useState<any[]>([]);
-  const [paymentDistribution, setPaymentDistribution] = useState<any[]>([]);
+  const [expenseData, setExpenseData] = useState<any[]>([]);
+  const [profitMarginData, setProfitMarginData] = useState<any[]>([]);
+  const [cashFlowData, setCashFlowData] = useState<any[]>([]);
 
-  const statsData = [
-    {
-      title: 'Total Revenue',
-      value: '$132,456.89',
-      change: '+12.5%',
-      trend: 'up',
-      period: 'vs. last month',
-      icon: <DollarSign size={24} />,
-      color: 'primary'
-    },
-    {
-      title: 'Total Transactions',
-      value: '8,745',
-      change: '+8.2%',
-      trend: 'up',
-      period: 'vs. last month',
-      icon: <CreditCard size={24} />,
-      color: 'green'
-    },
-    {
-      title: 'Active Users',
-      value: '3,251',
-      change: '+15.7%',
-      trend: 'up',
-      period: 'vs. last month',
-      icon: <Users size={24} />,
-      color: 'purple'
-    },
-    {
-      title: 'Average Transaction',
-      value: '$42.35',
-      change: '-3.2%',
-      trend: 'down',
-      period: 'vs. last month',
-      icon: <Wallet size={24} />,
-      color: 'orange'
-    }
-  ];
-
-  // Monthly Revenue Data
+  // Financial Revenue Data
   const monthlyRevenueData = [
-    { name: 'Jan', revenue: 76500, expenses: 52000, profit: 24500 },
-    { name: 'Feb', revenue: 82300, expenses: 55000, profit: 27300 },
-    { name: 'Mar', revenue: 91500, expenses: 59000, profit: 32500 },
-    { name: 'Apr', revenue: 132456, expenses: 73000, profit: 59456 },
-    { name: 'May', revenue: 0, expenses: 0, profit: 0 },
-    { name: 'Jun', revenue: 0, expenses: 0, profit: 0 },
-    { name: 'Jul', revenue: 0, expenses: 0, profit: 0 },
-    { name: 'Aug', revenue: 0, expenses: 0, profit: 0 },
-    { name: 'Sep', revenue: 0, expenses: 0, profit: 0 },
-    { name: 'Oct', revenue: 0, expenses: 0, profit: 0 },
-    { name: 'Nov', revenue: 0, expenses: 0, profit: 0 },
-    { name: 'Dec', revenue: 0, expenses: 0, profit: 0 }
+    {
+      name: "Jan",
+      revenue: 76500,
+      expenses: 52000,
+      profit: 24500,
+      margin: 32.0,
+    },
+    {
+      name: "Feb",
+      revenue: 82300,
+      expenses: 55000,
+      profit: 27300,
+      margin: 33.2,
+    },
+    {
+      name: "Mar",
+      revenue: 91500,
+      expenses: 59000,
+      profit: 32500,
+      margin: 35.5,
+    },
+    {
+      name: "Apr",
+      revenue: 132456,
+      expenses: 73000,
+      profit: 59456,
+      margin: 44.9,
+    },
   ];
 
-  // Quarterly Revenue Data
-  const quarterlyRevenueData = [
-    { name: 'Q1', revenue: 250300, expenses: 166000, profit: 84300 },
-    { name: 'Q2', revenue: 132456, expenses: 73000, profit: 59456 },
-    { name: 'Q3', revenue: 0, expenses: 0, profit: 0 },
-    { name: 'Q4', revenue: 0, expenses: 0, profit: 0 }
+  // Financial Expense Breakdown
+  const expenseBreakdownData = [
+    { name: "Operations", value: 35, amount: 25550 },
+    { name: "Marketing", value: 20, amount: 14600 },
+    { name: "Technology", value: 25, amount: 18250 },
+    { name: "Personnel", value: 15, amount: 10950 },
+    { name: "Other", value: 5, amount: 3650 },
   ];
 
-  // Weekly Revenue Data for current month
-  const weeklyRevenueData = [
-    { name: 'Week 1', revenue: 32500, expenses: 18000, profit: 14500 },
-    { name: 'Week 2', revenue: 28900, expenses: 16000, profit: 12900 },
-    { name: 'Week 3', revenue: 35700, expenses: 19500, profit: 16200 },
-    { name: 'Week 4', revenue: 35356, expenses: 19500, profit: 15856 }
+  // Cash Flow Data
+  const monthlyCashFlowData = [
+    { name: "Jan", inflow: 76500, outflow: 52000, netFlow: 24500 },
+    { name: "Feb", inflow: 82300, outflow: 55000, netFlow: 27300 },
+    { name: "Mar", inflow: 91500, outflow: 59000, netFlow: 32500 },
+    { name: "Apr", inflow: 132456, outflow: 73000, netFlow: 59456 },
   ];
 
-  // User Growth Data
-  const userGrowthData = [
-    { name: 'Jan', total: 2100, new: 350, active: 1900 },
-    { name: 'Feb', total: 2300, new: 200, active: 2050 },
-    { name: 'Mar', total: 2800, new: 500, active: 2450 },
-    { name: 'Apr', total: 3251, new: 451, active: 2800 }
+  // Profit Margin Trends
+  const profitMarginTrendData = [
+    { name: "Jan", grossMargin: 68.0, netMargin: 32.0, operatingMargin: 42.0 },
+    { name: "Feb", grossMargin: 66.8, netMargin: 33.2, operatingMargin: 43.5 },
+    { name: "Mar", grossMargin: 64.5, netMargin: 35.5, operatingMargin: 45.2 },
+    { name: "Apr", grossMargin: 55.1, netMargin: 44.9, operatingMargin: 52.3 },
   ];
 
-  // Payment Method Distribution
-  const paymentMethodData = [
-    { name: 'Credit Card', value: 65 },
-    { name: 'Bank Transfer', value: 15 },
-    { name: 'PayPal', value: 10 },
-    { name: 'Digital Wallets', value: 8 },
-    { name: 'Other', value: 2 }
-  ];
-
-  // Transaction data by type
-  const transactionTypeData = [
-    { name: 'Top-ups', count: 3240, amount: 245000 },
-    { name: 'Transfers', count: 4560, amount: 368000 },
-    { name: 'Withdrawals', count: 945, amount: 152000 }
-  ];
-
-  // Daily transactions for current month
-  const dailyTransactionsData = [
-    { name: '04/01', count: 120, amount: 5200 },
-    { name: '04/02', count: 145, amount: 6100 },
-    { name: '04/03', count: 132, amount: 5500 },
-    { name: '04/04', count: 121, amount: 4900 },
-    { name: '04/05', count: 110, amount: 4600 },
-    { name: '04/06', count: 95, amount: 4000 },
-    { name: '04/07', count: 130, amount: 5300 },
-    { name: '04/08', count: 140, amount: 5800 },
-    { name: '04/09', count: 150, amount: 6200 },
-    { name: '04/10', count: 165, amount: 6800 },
-    { name: '04/11', count: 155, amount: 6400 },
-    { name: '04/12', count: 130, amount: 5400 },
-    { name: '04/13', count: 120, amount: 5000 },
-    { name: '04/14', count: 138, amount: 5700 },
-    { name: '04/15', count: 145, amount: 6000 },
-    { name: '04/16', count: 160, amount: 6600 },
-    { name: '04/17', count: 155, amount: 6400 },
-    { name: '04/18', count: 140, amount: 5800 },
-    { name: '04/19', count: 125, amount: 5200 },
-    { name: '04/20', count: 115, amount: 4800 },
-    { name: '04/21', count: 130, amount: 5400 },
-    { name: '04/22', count: 142, amount: 5900 },
-    { name: '04/23', count: 155, amount: 6400 },
-    { name: '04/24', count: 165, amount: 6900 },
-    { name: '04/25', count: 170, amount: 7100 },
-    { name: '04/26', count: 168, amount: 7000 },
-    { name: '04/27', count: 160, amount: 6600 },
-    { name: '04/28', count: 155, amount: 6400 },
-    { name: '04/29', count: 0, amount: 0 },
-    { name: '04/30', count: 0, amount: 0 }
-  ];
-
-  // Top 5 Revenue Sources
-  const topRevenueSourcesData = [
-    { name: 'Transaction Fees', value: 45 },
-    { name: 'Subscription Fees', value: 25 },
-    { name: 'Currency Exchange', value: 15 },
-    { name: 'Premium Features', value: 10 },
-    { name: 'API Access', value: 5 }
-  ];
-
-  // Geographic distribution
-  const geographicData = [
-    { name: 'North America', value: 40 },
-    { name: 'Europe', value: 30 },
-    { name: 'Asia', value: 20 },
-    { name: 'Other Regions', value: 10 }
+  // Revenue by Category
+  const revenueCategoryData = [
+    { name: "Transaction Fees", value: 45, amount: 59605 },
+    { name: "Subscription Revenue", value: 25, amount: 33114 },
+    { name: "Interest Income", value: 15, amount: 19868 },
+    { name: "Service Charges", value: 10, amount: 13246 },
+    { name: "Other Revenue", value: 5, amount: 6623 },
   ];
 
   // Financial KPI table data
-  const kpiTableData = [
-    { metric: 'Monthly Recurring Revenue (MRR)', value: '$98,750', change: '+12.4%' },
-    { metric: 'Average Revenue Per User (ARPU)', value: '$42.35', change: '-3.2%' },
-    { metric: 'Customer Acquisition Cost (CAC)', value: '$24.18', change: '-8.5%' },
-    { metric: 'Lifetime Value (LTV)', value: '$1,235', change: '+15.3%' },
-    { metric: 'Churn Rate', value: '3.2%', change: '-0.8%' },
-    { metric: 'Gross Margin', value: '72%', change: '+2.1%' },
-    { metric: 'Revenue Growth Rate', value: '18.5%', change: '+2.7%' },
-    { metric: 'Payment Processing Costs', value: '$18,420', change: '+9.2%' }
+  const financialKpiData = [
+    { metric: "Revenue Growth Rate", value: "44.7%", change: "+12.2%" },
+    { metric: "Gross Profit Margin", value: "55.1%", change: "-13.4%" },
+    { metric: "Net Profit Margin", value: "44.9%", change: "+9.4%" },
+    { metric: "Return on Assets (ROA)", value: "18.5%", change: "+3.2%" },
+    { metric: "Return on Equity (ROE)", value: "24.8%", change: "+5.1%" },
+    { metric: "Current Ratio", value: "2.45", change: "+0.15" },
+    { metric: "Debt-to-Equity Ratio", value: "0.32", change: "-0.08" },
+    { metric: "Operating Cash Flow", value: "$59,456", change: "+83.0%" },
   ];
 
   // Colors
-  const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+  const COLORS = [
+    "#6366f1",
+    "#10b981",
+    "#f59e0b",
+    "#ef4444",
+    "#8b5cf6",
+    "#ec4899",
+  ];
 
   useEffect(() => {
     setIsLoading(true);
 
     // Simulate API call
     setTimeout(() => {
-      // Select data based on period
-      if (selectedPeriod === 'monthly') {
-        setRevenueData(monthlyRevenueData);
-        setUsersData(userGrowthData);
-        setTransactionsData(dailyTransactionsData);
-      } else if (selectedPeriod === 'quarterly') {
-        setRevenueData(quarterlyRevenueData);
-        setUsersData(userGrowthData);
-        setTransactionsData(transactionTypeData);
-      } else if (selectedPeriod === 'weekly') {
-        setRevenueData(weeklyRevenueData);
-        setUsersData(userGrowthData);
-        setTransactionsData(dailyTransactionsData.slice(0, 7));
-      }
-
-      setPaymentDistribution(paymentMethodData);
+      setRevenueData(monthlyRevenueData);
+      setExpenseData(expenseBreakdownData);
+      setProfitMarginData(profitMarginTrendData);
+      setCashFlowData(monthlyCashFlowData);
       setIsLoading(false);
     }, 1000);
   }, [selectedPeriod, selectedYear, selectedMonth, selectedQuarter]);
@@ -240,16 +147,20 @@ const page: React.FC = () => {
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(1)}%`;
+  };
+
   return (
-    <div className="p-6 max-w-[1600px] mx-auto">
+    <div className="p-6 max-w-[1600px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -327,8 +238,10 @@ const page: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* API-driven Transaction Statistics */}
       <TransactionStats />
 
+      {/* Financial Revenue & Profit Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-2"
@@ -339,31 +252,37 @@ const page: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                Revenue Overview
+                Revenue & Profitability
               </h3>
-              <p className="text-gray-500 dark:text-gray-300 text-sm">
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Revenue, expenses, and profit trends
               </p>
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-primary-500 dark:bg-primary-700 mr-1"></div>
-                <span className="text-xs text-gray-600 dark:text-gray-400">Revenue</span>
+                <div className="w-3 h-3 rounded-full bg-primary-500 dark:bg-primary-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Revenue
+                </span>
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 rounded-full bg-red-400 dark:bg-red-500 mr-1"></div>
-                <span className="text-xs text-gray-600 dark:text-gray-400">Expenses</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Expenses
+                </span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-green-500 dark:bg-green-700 mr-1"></div>
-                <span className="text-xs text-gray-600 dark:text-gray-400">Profit</span>
+                <div className="w-3 h-3 rounded-full bg-green-500 dark:bg-green-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Profit
+                </span>
               </div>
             </div>
           </div>
           <div className="h-72">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
@@ -404,10 +323,10 @@ const page: React.FC = () => {
         >
           <div className="mb-4">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Payment Methods
+              Revenue Sources
             </h3>
-            <p className="text-gray-500 dark:text-gray-300 text-sm">
-              Distribution by payment type
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Breakdown by revenue category
             </p>
           </div>
           <div className="h-72">
@@ -419,7 +338,7 @@ const page: React.FC = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <RechartsPieChart>
                   <Pie
-                    data={paymentDistribution}
+                    data={revenueCategoryData}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
@@ -430,7 +349,7 @@ const page: React.FC = () => {
                       `${name}: ${(percent * 100).toFixed(0)}%`
                     }
                   >
-                    {paymentDistribution.map((entry, index) => (
+                    {revenueCategoryData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
@@ -446,6 +365,7 @@ const page: React.FC = () => {
         </motion.div>
       </div>
 
+      {/* Cash Flow & Profit Margins */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
@@ -456,63 +376,71 @@ const page: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                User Growth
+                Cash Flow Analysis
               </h3>
-              <p className="text-gray-500 dark:text-gray-300 text-sm">
-                Total, new and active users
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Monthly cash inflows and outflows
               </p>
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-primary-500 mr-1"></div>
-                <span className="text-xs text-gray-600 dark:text-gray-400">Total</span>
+                <div className="w-3 h-3 rounded-full bg-green-500 dark:bg-green-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Inflow
+                </span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                <span className="text-xs text-gray-600 dark:text-gray-400">Active</span>
+                <div className="w-3 h-3 rounded-full bg-red-500 dark:bg-red-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Outflow
+                </span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-purple-500 mr-1"></div>
-                <span className="text-xs text-gray-600 dark:text-gray-400">New</span>
+                <div className="w-3 h-3 rounded-full bg-blue-500 dark:bg-blue-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Net Flow
+                </span>
               </div>
             </div>
           </div>
           <div className="h-72">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-md w-full h-full"></div>
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
-                  data={usersData}
+                  data={cashFlowData}
                   margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis tickFormatter={(value) => formatCurrency(value)} />
+                  <Tooltip
+                    formatter={(value: number) => formatCurrency(value)}
+                  />
                   <Legend />
                   <Area
                     type="monotone"
-                    dataKey="total"
+                    dataKey="inflow"
                     stackId="1"
-                    stroke="#3b82f6"
-                    fill="#93c5fd"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="active"
-                    stackId="2"
                     stroke="#10b981"
                     fill="#6ee7b7"
                   />
                   <Area
                     type="monotone"
-                    dataKey="new"
+                    dataKey="outflow"
+                    stackId="2"
+                    stroke="#ef4444"
+                    fill="#fca5a5"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="netFlow"
                     stackId="3"
-                    stroke="#8b5cf6"
-                    fill="#c4b5fd"
+                    stroke="#3b82f6"
+                    fill="#93c5fd"
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -520,9 +448,11 @@ const page: React.FC = () => {
           </div>
         </motion.div>
 
+        {/* API-driven Transaction Trends */}
         <TransactionTrends />
       </div>
 
+      {/* Financial KPIs and Additional Metrics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
@@ -532,9 +462,11 @@ const page: React.FC = () => {
         >
           <div className="mb-4">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Revenue Sources
+              Expense Breakdown
             </h3>
-            <p className="text-gray-500 dark:text-gray-300 text-sm">Breakdown by source</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Operating expenses by category
+            </p>
           </div>
           <div className="h-60">
             {isLoading ? (
@@ -545,7 +477,7 @@ const page: React.FC = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <RechartsPieChart>
                   <Pie
-                    data={topRevenueSourcesData}
+                    data={expenseData}
                     cx="50%"
                     cy="50%"
                     outerRadius={60}
@@ -555,21 +487,25 @@ const page: React.FC = () => {
                       `${name}: ${(percent * 100).toFixed(0)}%`
                     }
                   >
-                    {topRevenueSourcesData.map((entry, index) => (
+                    {expenseData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
                       />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => `${value}%`} />
+                  <Tooltip
+                    formatter={(value, name, props) => [
+                      `${value}%`,
+                      formatCurrency(props.payload.amount),
+                    ]}
+                  />
                 </RechartsPieChart>
               </ResponsiveContainer>
             )}
           </div>
         </motion.div>
 
-        {/* Geographic Distribution */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
@@ -578,9 +514,11 @@ const page: React.FC = () => {
         >
           <div className="mb-4">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Geographic Distribution
+              Profit Margin Trends
             </h3>
-            <p className="text-gray-500 dark:text-gray-300 text-sm">Revenue by region</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Gross, operating, and net margins
+            </p>
           </div>
           <div className="h-60">
             {isLoading ? (
@@ -589,38 +527,39 @@ const page: React.FC = () => {
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={geographicData}
-                  layout="vertical"
+                <LineChart
+                  data={profitMarginData}
                   margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                 >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    horizontal={true}
-                    vertical={false}
-                  />
-                  <XAxis
-                    type="number"
-                    domain={[0, "dataMax"]}
-                    tickFormatter={(value) => `${value}%`}
-                  />
-                  <YAxis dataKey="name" type="category" width={100} />
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis tickFormatter={(value) => `${value}%`} />
                   <Tooltip formatter={(value) => `${value}%`} />
-                  <Bar dataKey="value" fill="#8884d8" radius={[0, 4, 4, 0]}>
-                    {geographicData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="grossMargin"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="operatingMargin"
+                    stroke="#82ca9d"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="netMargin"
+                    stroke="#ffc658"
+                    strokeWidth={2}
+                  />
+                </LineChart>
               </ResponsiveContainer>
             )}
           </div>
         </motion.div>
 
-        {/* Financial KPIs Summary */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
@@ -631,7 +570,9 @@ const page: React.FC = () => {
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
               Financial KPIs
             </h3>
-            <p className="text-gray-500 dark:text-gray-300 text-sm">Key performance indicators</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Key financial performance indicators
+            </p>
           </div>
           <div className="h-60 overflow-y-auto">
             {isLoading ? (
@@ -641,19 +582,19 @@ const page: React.FC = () => {
             ) : (
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {kpiTableData.map((kpi, index) => (
+                  {financialKpiData.map((kpi, index) => (
                     <tr key={index}>
-                      <td className="py-2 text-sm font-medium text-gray-800 dark:text-gray-100">
+                      <td className="py-2 text-sm font-medium text-gray-800 dark:text-gray-200">
                         {kpi.metric}
                       </td>
-                      <td className="py-2 text-sm text-gray-800 dark:text-gray-100 text-right">
+                      <td className="py-2 text-sm text-gray-800 dark:text-gray-200 text-right">
                         {kpi.value}
                       </td>
                       <td
                         className={`py-2 text-sm text-right font-medium ${
                           kpi.change.startsWith("+")
-                            ? "text-green-600"
-                            : "text-red-600"
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-red-600 dark:text-red-400"
                         }`}
                       >
                         {kpi.change}
@@ -667,6 +608,7 @@ const page: React.FC = () => {
         </motion.div>
       </div>
 
+      {/* Financial Reports Generation */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -676,15 +618,15 @@ const page: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Generate Reports
+              Generate Financial Reports
             </h3>
-            <p className="text-gray-500 dark:text-gray-300 text-sm">
-              Create customized financial reports
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Create detailed financial analysis reports
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <motion.button
-              className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-100 text-sm shadow-sm"
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
@@ -693,109 +635,46 @@ const page: React.FC = () => {
             >
               <FileText
                 size={16}
-                className="mr-2 text-gray-600"
+                className="mr-2 text-gray-600 dark:text-gray-400"
                 strokeWidth={1.8}
               />
-              PDF Report
+              P&L Statement
             </motion.button>
             <motion.button
-              className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-100 text-sm shadow-sm"
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
               }}
               whileTap={{ y: 0 }}
             >
-              <FileText
+              <BarChart3
                 size={16}
-                className="mr-2 text-green-600"
+                className="mr-2 text-green-600 dark:text-green-400"
                 strokeWidth={1.8}
               />
-              Excel Export
+              Cash Flow Report
             </motion.button>
             <motion.button
-              className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-100 text-sm shadow-sm"
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
               }}
               whileTap={{ y: 0 }}
             >
-              <Mail
+              <PieChart
                 size={16}
-                className="mr-2 text-primary-600"
+                className="mr-2 text-primary-600 dark:text-primary-400"
                 strokeWidth={1.8}
               />
-              Email Report
+              Financial Analysis
             </motion.button>
-            <motion.button
-              className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-100 text-sm shadow-sm"
-              whileHover={{
-                y: -2,
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-              }}
-              whileTap={{ y: 0 }}
-            >
-              <Printer
-                size={16}
-                className="mr-2 text-gray-600"
-                strokeWidth={1.8}
-              />
-              Print Report
-            </motion.button>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Report Type
-            </label>
-            <select className="block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-100 text-sm">
-              <option>Revenue Report</option>
-              <option>Transaction Report</option>
-              <option>User Activity Report</option>
-              <option>Financial Performance</option>
-              <option>Custom Report</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Time Period
-            </label>
-            <select className="block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-100 text-sm">
-              <option>Current Month</option>
-              <option>Previous Month</option>
-              <option>Current Quarter</option>
-              <option>Year to Date</option>
-              <option>Custom Range</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Comparison
-            </label>
-            <select className="block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-100 text-sm">
-              <option>Previous Period</option>
-              <option>Same Period Last Year</option>
-              <option>Year Over Year</option>
-              <option>No Comparison</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Format
-            </label>
-            <select className="block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-100 text-sm">
-              <option>Detailed Report</option>
-              <option>Summary Report</option>
-              <option>Charts & Graphs</option>
-              <option>Data Table Only</option>
-            </select>
           </div>
         </div>
         <div className="mt-4 flex justify-end">
           <motion.button
-            className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 rounded-xl text-sm shadow-sm"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 dark:text-gray-100 rounded-xl text-sm shadow-sm hover:bg-primary-700 dark:hover:bg-primary-600"
             whileHover={{
               y: -2,
               backgroundColor: "#4f46e5",
@@ -803,76 +682,9 @@ const page: React.FC = () => {
             }}
             whileTap={{ y: 0 }}
           >
-            Generate Report
+            Generate Reports
             <ArrowRight size={16} className="ml-2" strokeWidth={1.8} />
           </motion.button>
-        </div>
-      </motion.div>
-
-      {/* Quick Reports */}
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 1.0 }}
-      >
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center">
-          <div className="mr-4 p-3 bg-primary-100 dark:bg-primary-200 text-primary-600 rounded-lg">
-            <BarChart3 size={24} strokeWidth={1.8} />
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-800 dark:text-gray-100">Revenue Report</h4>
-            <p className="text-gray-500 text-sm">Detailed revenue breakdown</p>
-          </div>
-          <div className="ml-auto">
-            <motion.button
-              className="text-primary-600 hover:text-primary-800"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ArrowRight size={20} strokeWidth={1.8} />
-            </motion.button>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center">
-          <div className="mr-4 p-3 bg-purple-100  dark:bg-purple-200 text-purple-600 rounded-lg">
-            <PieChart size={24} strokeWidth={1.8} />
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-800 dark:text-gray-100">Transaction Analysis</h4>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Transaction patterns and trends
-            </p>
-          </div>
-          <div className="ml-auto">
-            <motion.button
-              className="text-purple-600 hover:text-purple-800 dark:text-purple-300 dark:hover:text-purple-100"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ArrowRight size={20} strokeWidth={1.8} />
-            </motion.button>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center">
-          <div className="mr-4 p-3 bg-green-100 dark:bg-green-200 text-green-600 rounded-lg">
-            <LineChartIcon size={24} strokeWidth={1.8} />
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-800 dark:text-gray-100">Growth Metrics</h4>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              User and revenue growth trends
-            </p>
-          </div>
-          <div className="ml-auto">
-            <motion.button
-              className="text-green-600 hover:text-green-800 dark:text-green-300 dark:hover:text-green-100"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ArrowRight size={20} strokeWidth={1.8} />
-            </motion.button>
-          </div>
         </div>
       </motion.div>
     </div>
