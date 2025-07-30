@@ -807,14 +807,12 @@ const UserManagementPage: React.FC = () => {
         users
       </motion.div>
 
-      {/* Custom Users Table */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.3 }}
       >
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

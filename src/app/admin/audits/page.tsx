@@ -26,7 +26,7 @@ import {
   Terminal,
   X,
   ShieldCheck,
-  Globe
+  Globe,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../../components/common/Button";
@@ -236,42 +236,42 @@ const AuditLogsPage: React.FC = () => {
   const getEventTypeBadge = (eventType: string) => {
     if (eventType.includes("create")) {
       return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-xs font-medium shadow-sm">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-700 text-xs font-medium shadow-sm">
           <FileText size={12} />
           <span>{eventType}</span>
         </div>
       );
     } else if (eventType.includes("update")) {
       return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 text-xs font-medium shadow-sm">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-700 text-xs font-medium shadow-sm">
           <Edit size={12} />
           <span>{eventType}</span>
         </div>
       );
     } else if (eventType.includes("delete")) {
       return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-100 text-xs font-medium shadow-sm">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border border-rose-100 dark:border-rose-700 text-xs font-medium shadow-sm">
           <Trash2 size={12} />
           <span>{eventType}</span>
         </div>
       );
     } else if (eventType.includes("login")) {
       return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-100 text-xs font-medium shadow-sm">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border border-violet-100 dark:border-violet-700 text-xs font-medium shadow-sm">
           <LogIn size={12} />
           <span>{eventType}</span>
         </div>
       );
     } else if (eventType.includes("fetch")) {
       return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100 text-xs font-medium shadow-sm">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 border border-sky-100 dark:border-sky-700 text-xs font-medium shadow-sm">
           <Database size={12} />
           <span>{eventType}</span>
         </div>
       );
     } else {
       return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-50 text-gray-700 border border-gray-100 text-xs font-medium shadow-sm">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 text-xs font-medium shadow-sm">
           <Terminal size={12} />
           <span>{eventType}</span>
         </div>
@@ -365,23 +365,29 @@ const AuditLogsPage: React.FC = () => {
   }, [auditLogs, searchTerm, activeFilters, activeSort]);
 
   return (
-    <div className="h-auto bg-gradient-to-b from-slate-50 to-white">
+    <div className="h-auto bg-gradient-to-b from-slate-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="w-full mx-auto px-6 py-8">
         {/* Header with Security Summary */}
         <div className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <div className="inline-block px-3 py-1 bg-indigo-50/80 border border-indigo-100/80 rounded-lg text-indigo-600 text-xs font-medium mb-2 backdrop-blur-sm">
+              <div className="inline-block px-3 py-1 bg-indigo-50/80 dark:bg-indigo-900/30 border border-indigo-100/80 dark:border-indigo-700 rounded-lg text-indigo-600 dark:text-indigo-300 text-xs font-medium mb-2 backdrop-blur-sm">
                 <div className="flex items-center gap-1.5">
-                  <Shield size={12} className="text-indigo-500" />
+                  <Shield
+                    size={12}
+                    className="text-indigo-500 dark:text-indigo-400"
+                  />
                   <span>System Security</span>
                 </div>
               </div>
-              <h1 className="text-2xl font-semibold text-slate-900 flex items-center">
-                <ShieldCheck size={24} className="text-indigo-600 mr-2" />
+              <h1 className="text-2xl font-semibold text-slate-900 dark:text-gray-200 flex items-center">
+                <ShieldCheck
+                  size={24}
+                  className="text-indigo-600 dark:text-indigo-400 mr-2"
+                />
                 Audit Log Registry
               </h1>
-              <p className="text-slate-500 text-sm mt-1 max-w-2xl">
+              <p className="text-slate-500 dark:text-gray-400 text-sm mt-1 max-w-2xl">
                 Track and monitor all system activities and security events for
                 compliance and security assurance
               </p>
@@ -399,7 +405,7 @@ const AuditLogsPage: React.FC = () => {
                     refreshing ? (
                       <RefreshCw
                         size={16}
-                        className="animate-spin text-indigo-600"
+                        className="animate-spin text-indigo-600 dark:text-indigo-400"
                       />
                     ) : (
                       <RefreshCw size={16} />
@@ -407,7 +413,7 @@ const AuditLogsPage: React.FC = () => {
                   }
                   onClick={handleRefresh}
                   disabled={isLoading}
-                  className="border-slate-200 bg-white hover:bg-slate-50 shadow-sm"
+                  className="border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 shadow-sm text-gray-700 dark:text-gray-300"
                 >
                   {refreshing ? "Refreshing..." : "Refresh Data"}
                 </Button>
@@ -422,7 +428,7 @@ const AuditLogsPage: React.FC = () => {
                   leftIcon={<Download size={16} />}
                   onClick={handleExport}
                   disabled={isLoading || auditLogs.length === 0}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200/50"
+                  className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 text-white shadow-lg shadow-indigo-200/50 dark:shadow-indigo-800/20"
                 >
                   Export Report
                 </Button>
@@ -436,22 +442,25 @@ const AuditLogsPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 relative overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm p-4 relative overflow-hidden"
             >
-              <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-rose-100/50"></div>
+              <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-rose-100/50 dark:bg-rose-900/20"></div>
               <div className="flex items-center mb-2">
-                <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center mr-3">
-                  <LogIn size={16} className="text-rose-500" />
+                <div className="w-8 h-8 rounded-full bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center mr-3">
+                  <LogIn
+                    size={16}
+                    className="text-rose-500 dark:text-rose-400"
+                  />
                 </div>
-                <h3 className="text-sm font-medium text-slate-800">
+                <h3 className="text-sm font-medium text-slate-800 dark:text-gray-200">
                   Failed Logins
                 </h3>
               </div>
               <div className="flex items-end justify-between">
-                <div className="text-2xl font-bold text-slate-900">
+                <div className="text-2xl font-bold text-slate-900 dark:text-gray-100">
                   {securityMetrics.failedLogins}
                 </div>
-                <div className="text-xs text-rose-600 flex items-center">
+                <div className="text-xs text-rose-600 dark:text-rose-400 flex items-center">
                   <Shield size={10} className="mr-1" />
                   High Priority
                 </div>
@@ -462,22 +471,25 @@ const AuditLogsPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 relative overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm p-4 relative overflow-hidden"
             >
-              <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-100/50"></div>
+              <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-100/50 dark:bg-amber-900/20"></div>
               <div className="flex items-center mb-2">
-                <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center mr-3">
-                  <AlertCircle size={16} className="text-amber-500" />
+                <div className="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center mr-3">
+                  <AlertCircle
+                    size={16}
+                    className="text-amber-500 dark:text-amber-400"
+                  />
                 </div>
-                <h3 className="text-sm font-medium text-slate-800">
+                <h3 className="text-sm font-medium text-slate-800 dark:text-gray-200">
                   Suspicious Activity
                 </h3>
               </div>
               <div className="flex items-end justify-between">
-                <div className="text-2xl font-bold text-slate-900">
+                <div className="text-2xl font-bold text-slate-900 dark:text-gray-100">
                   {securityMetrics.suspiciousActivities}
                 </div>
-                <div className="text-xs text-amber-600 flex items-center">
+                <div className="text-xs text-amber-600 dark:text-amber-400 flex items-center">
                   <Shield size={10} className="mr-1" />
                   Medium Priority
                 </div>
@@ -488,22 +500,25 @@ const AuditLogsPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 relative overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm p-4 relative overflow-hidden"
             >
-              <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-indigo-100/50"></div>
+              <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-indigo-100/50 dark:bg-indigo-900/20"></div>
               <div className="flex items-center mb-2">
-                <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center mr-3">
-                  <Edit size={16} className="text-indigo-500" />
+                <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center mr-3">
+                  <Edit
+                    size={16}
+                    className="text-indigo-500 dark:text-indigo-400"
+                  />
                 </div>
-                <h3 className="text-sm font-medium text-slate-800">
+                <h3 className="text-sm font-medium text-slate-800 dark:text-gray-200">
                   Data Modifications
                 </h3>
               </div>
               <div className="flex items-end justify-between">
-                <div className="text-2xl font-bold text-slate-900">
+                <div className="text-2xl font-bold text-slate-900 dark:text-gray-100">
                   {securityMetrics.dataModifications}
                 </div>
-                <div className="text-xs text-indigo-600 flex items-center">
+                <div className="text-xs text-indigo-600 dark:text-indigo-400 flex items-center">
                   <Clock size={10} className="mr-1" />
                   Last 24 hours
                 </div>
@@ -514,22 +529,25 @@ const AuditLogsPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 relative overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm p-4 relative overflow-hidden"
             >
-              <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-emerald-100/50"></div>
+              <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-emerald-100/50 dark:bg-emerald-900/20"></div>
               <div className="flex items-center mb-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center mr-3">
-                  <Database size={16} className="text-emerald-500" />
+                <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center mr-3">
+                  <Database
+                    size={16}
+                    className="text-emerald-500 dark:text-emerald-400"
+                  />
                 </div>
-                <h3 className="text-sm font-medium text-slate-800">
+                <h3 className="text-sm font-medium text-slate-800 dark:text-gray-200">
                   System Accesses
                 </h3>
               </div>
               <div className="flex items-end justify-between">
-                <div className="text-2xl font-bold text-slate-900">
+                <div className="text-2xl font-bold text-slate-900 dark:text-gray-100">
                   {securityMetrics.systemAccesses}
                 </div>
-                <div className="text-xs text-emerald-600 flex items-center">
+                <div className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center">
                   <Clock size={10} className="mr-1" />
                   Last 24 hours
                 </div>
@@ -542,24 +560,24 @@ const AuditLogsPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-lg mb-6 flex items-center"
+            className="bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-700 text-rose-700 dark:text-rose-300 px-4 py-3 rounded-lg mb-6 flex items-center"
           >
             <AlertCircle size={16} className="mr-2 flex-shrink-0" />
             {error}
           </motion.div>
         )}
 
-        <Card className="overflow-hidden bg-white border border-slate-200 shadow-xl rounded-xl">
-          <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+        <Card className="overflow-hidden bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 shadow-xl rounded-xl">
+          <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-slate-50 to-white dark:from-gray-800 dark:to-gray-800 border-b border-slate-200 dark:border-gray-700">
             <div className="flex items-center space-x-2">
-              <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+              <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
                 <ClipboardList size={18} />
               </div>
-              <h2 className="text-base font-medium text-slate-800">
+              <h2 className="text-base font-medium text-slate-800 dark:text-gray-200">
                 Audit Event Registry
               </h2>
               <div className="flex items-center ml-3">
-                <div className="text-xs px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 font-medium flex items-center gap-1">
+                <div className="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium flex items-center gap-1">
                   <Lock size={10} />
                   <span>PCI DSS Compliant</span>
                 </div>
@@ -574,16 +592,16 @@ const AuditLogsPage: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search logs..."
-                  className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 transition-all"
+                  className="w-full pl-9 pr-4 py-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 focus:border-indigo-300 dark:focus:border-indigo-500 transition-all text-gray-900 dark:text-gray-100"
                 />
                 <Search
                   size={16}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-gray-500"
                 />
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm("")}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300"
                   >
                     <X size={14} />
                   </button>
@@ -596,10 +614,10 @@ const AuditLogsPage: React.FC = () => {
                   variant="outline"
                   leftIcon={<Filter size={16} />}
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`border-slate-200 ${
+                  className={`border-slate-200 dark:border-gray-600 ${
                     activeFilters.length > 0
-                      ? "bg-indigo-50 border-indigo-200 text-indigo-700"
-                      : "bg-white"
+                      ? "bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300"
+                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   {activeFilters.length > 0
@@ -614,13 +632,13 @@ const AuditLogsPage: React.FC = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 mt-2 bg-white rounded-lg shadow-xl border border-slate-200 w-64 z-10 p-2"
+                      className="absolute right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-slate-200 dark:border-gray-700 w-64 z-10 p-2"
                     >
-                      <div className="p-2 border-b border-slate-100 mb-2">
-                        <h3 className="text-sm font-medium text-slate-700">
+                      <div className="p-2 border-b border-slate-100 dark:border-gray-700 mb-2">
+                        <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300">
                           Filter by Event Type
                         </h3>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-gray-400">
                           Select events to display
                         </p>
                       </div>
@@ -630,16 +648,16 @@ const AuditLogsPage: React.FC = () => {
                             key={option.id}
                             className={`flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${
                               activeFilters.includes(option.id)
-                                ? "bg-indigo-50 text-indigo-700"
-                                : "hover:bg-slate-50 text-slate-700"
+                                ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
+                                : "hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300"
                             }`}
                             onClick={() => toggleFilter(option.id)}
                           >
                             <div
                               className={`w-4 h-4 rounded-sm mr-3 flex items-center justify-center ${
                                 activeFilters.includes(option.id)
-                                  ? "bg-indigo-500 text-white"
-                                  : "border border-slate-300"
+                                  ? "bg-indigo-500 dark:bg-indigo-600 text-white"
+                                  : "border border-slate-300 dark:border-gray-600"
                               }`}
                             >
                               {activeFilters.includes(option.id) && (
@@ -650,15 +668,15 @@ const AuditLogsPage: React.FC = () => {
                           </div>
                         ))}
                       </div>
-                      <div className="pt-2 mt-2 border-t border-slate-100 flex justify-between">
+                      <div className="pt-2 mt-2 border-t border-slate-100 dark:border-gray-700 flex justify-between">
                         <button
-                          className="text-xs text-slate-500 hover:text-slate-700"
+                          className="text-xs text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-gray-300"
                           onClick={() => setActiveFilters([])}
                         >
                           Clear filters
                         </button>
                         <button
-                          className="text-xs text-indigo-600 hover:text-indigo-800"
+                          className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
                           onClick={() => setShowFilters(false)}
                         >
                           Apply
@@ -674,17 +692,17 @@ const AuditLogsPage: React.FC = () => {
                 <Button
                   variant="outline"
                   leftIcon={<ArrowUpDown size={16} />}
-                  className="border-slate-200 bg-white"
+                  className="border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
                 >
                   Sort
                 </Button>
-                <div className="absolute right-0 mt-2 bg-white rounded-lg shadow-xl border border-slate-200 w-48 z-10 p-2 hidden group-focus:block">
+                <div className="absolute right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-slate-200 dark:border-gray-700 w-48 z-10 p-2 hidden group-focus:block">
                   <div className="space-y-1">
                     <button
                       className={`flex items-center w-full px-3 py-2 text-left rounded-lg text-sm ${
                         activeSort === "newest"
-                          ? "bg-indigo-50 text-indigo-700"
-                          : "hover:bg-slate-50 text-slate-700"
+                          ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
+                          : "hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300"
                       }`}
                       onClick={() => handleSortChange("newest")}
                     >
@@ -693,8 +711,8 @@ const AuditLogsPage: React.FC = () => {
                     <button
                       className={`flex items-center w-full px-3 py-2 text-left rounded-lg text-sm ${
                         activeSort === "oldest"
-                          ? "bg-indigo-50 text-indigo-700"
-                          : "hover:bg-slate-50 text-slate-700"
+                          ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
+                          : "hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300"
                       }`}
                       onClick={() => handleSortChange("oldest")}
                     >
@@ -703,8 +721,8 @@ const AuditLogsPage: React.FC = () => {
                     <button
                       className={`flex items-center w-full px-3 py-2 text-left rounded-lg text-sm ${
                         activeSort === "user-az"
-                          ? "bg-indigo-50 text-indigo-700"
-                          : "hover:bg-slate-50 text-slate-700"
+                          ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
+                          : "hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300"
                       }`}
                       onClick={() => handleSortChange("user-az")}
                     >
@@ -713,8 +731,8 @@ const AuditLogsPage: React.FC = () => {
                     <button
                       className={`flex items-center w-full px-3 py-2 text-left rounded-lg text-sm ${
                         activeSort === "user-za"
-                          ? "bg-indigo-50 text-indigo-700"
-                          : "hover:bg-slate-50 text-slate-700"
+                          ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
+                          : "hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300"
                       }`}
                       onClick={() => handleSortChange("user-za")}
                     >
@@ -725,12 +743,14 @@ const AuditLogsPage: React.FC = () => {
               </div>
 
               <div className="flex items-center">
-                <span className="text-sm text-slate-600 mr-2">Rows:</span>
+                <span className="text-sm text-slate-600 dark:text-gray-400 mr-2">
+                  Rows:
+                </span>
                 <div className="relative">
                   <select
                     value={itemsPerPage}
                     onChange={handleItemsPerPageChange}
-                    className="pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 text-sm"
+                    className="pl-3 pr-8 py-2 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-500 focus:border-indigo-300 dark:focus:border-indigo-500 text-sm text-gray-900 dark:text-gray-100"
                   >
                     <option value="10">10</option>
                     <option value="25">25</option>
@@ -738,13 +758,19 @@ const AuditLogsPage: React.FC = () => {
                     <option value="100">100</option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <ChevronDown size={14} className="text-slate-400" />
+                    <ChevronDown
+                      size={14}
+                      className="text-slate-400 dark:text-gray-500"
+                    />
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center text-xs text-slate-500">
-                <Clock size={14} className="mr-1 text-indigo-500" />
+              <div className="flex items-center text-xs text-slate-500 dark:text-gray-400">
+                <Clock
+                  size={14}
+                  className="mr-1 text-indigo-500 dark:text-indigo-400"
+                />
                 <span>Updated: {lastUpdated.toLocaleTimeString()}</span>
               </div>
             </div>
@@ -753,32 +779,38 @@ const AuditLogsPage: React.FC = () => {
           {isLoading ? (
             <div className="p-12 flex flex-col items-center justify-center">
               <div className="relative w-16 h-16 mb-6">
-                <div className="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
-                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-indigo-900"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 dark:border-t-indigo-400 animate-spin"></div>
                 <div
-                  className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-500 animate-spin opacity-80"
+                  className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-500 dark:border-t-indigo-500 animate-spin opacity-80"
                   style={{ animationDuration: "1.5s" }}
                 ></div>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <ShieldCheck size={20} className="text-indigo-600" />
+                  <ShieldCheck
+                    size={20}
+                    className="text-indigo-600 dark:text-indigo-400"
+                  />
                 </div>
               </div>
-              <h3 className="text-lg font-medium text-slate-900 mb-1">
+              <h3 className="text-lg font-medium text-slate-900 dark:text-gray-200 mb-1">
                 Loading audit data
               </h3>
-              <p className="text-slate-500 text-center max-w-sm">
+              <p className="text-slate-500 dark:text-gray-400 text-center max-w-sm">
                 Securely retrieving and decrypting audit log information...
               </p>
             </div>
           ) : filteredLogs.length === 0 ? (
             <div className="p-12 flex flex-col items-center justify-center">
-              <div className="bg-slate-100 p-6 rounded-full mb-6">
-                <EyeOff size={32} className="text-slate-400" />
+              <div className="bg-slate-100 dark:bg-gray-700 p-6 rounded-full mb-6">
+                <EyeOff
+                  size={32}
+                  className="text-slate-400 dark:text-gray-500"
+                />
               </div>
-              <h3 className="text-lg font-medium text-slate-900 mb-1">
+              <h3 className="text-lg font-medium text-slate-900 dark:text-gray-200 mb-1">
                 No audit records found
               </h3>
-              <p className="text-slate-500 text-center max-w-sm mb-6">
+              <p className="text-slate-500 dark:text-gray-400 text-center max-w-sm mb-6">
                 {searchTerm || activeFilters.length > 0
                   ? "No records match your current filters. Try adjusting your search criteria."
                   : "There are no audit events recorded in the system yet."}
@@ -790,7 +822,7 @@ const AuditLogsPage: React.FC = () => {
                     setSearchTerm("");
                     setActiveFilters([]);
                   }}
-                  className="border-slate-200"
+                  className="border-slate-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800"
                 >
                   Clear all filters
                 </Button>
@@ -801,29 +833,29 @@ const AuditLogsPage: React.FC = () => {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    <tr className="bg-slate-50 dark:bg-gray-800 border-b border-slate-200 dark:border-gray-700">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         Event Type
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         User
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         Service
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         Date
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-gray-400 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200">
+                  <tbody className="divide-y divide-slate-200 dark:divide-gray-700">
                     {filteredLogs.map((log) => (
                       <motion.tr
                         key={log._id}
-                        className="group hover:bg-indigo-50/30 transition-colors cursor-pointer relative"
+                        className="group hover:bg-indigo-50/30 dark:hover:bg-indigo-900/20 transition-colors cursor-pointer relative"
                         onClick={() => handleViewDetails(log._id)}
                         onMouseEnter={() => setHoveredLog(log._id)}
                         onMouseLeave={() => setHoveredLog(null)}
@@ -842,25 +874,24 @@ const AuditLogsPage: React.FC = () => {
                               <User size={14} />
                             </div>
                             <div>
-                              <div className="text-sm font-medium text-slate-900">
+                              <div className="text-sm font-medium text-slate-900 dark:text-gray-200">
                                 {getUsernameDisplay(log)}
                               </div>
-                              <div className="text-xs text-slate-500">
+                              <div className="text-xs text-slate-500 dark:text-gray-400">
                                 {getUserEmailDisplay(log)}
                               </div>
                             </div>
                           </div>
-                        {/* </td> */}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200 inline-flex items-center gap-1.5">
+                          <div className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-600 inline-flex items-center gap-1.5">
                             <Globe size={12} />
                             <span>{log.service_name}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-xs text-slate-500 flex flex-col">
-                            <span className="text-slate-700 font-medium">
+                          <div className="text-xs text-slate-500 dark:text-gray-400 flex flex-col">
+                            <span className="text-slate-700 dark:text-gray-300 font-medium">
                               {formatTimeAgo(log.createdAt)}
                             </span>
                             <span>{formatDate(log.createdAt)}</span>
@@ -868,7 +899,7 @@ const AuditLogsPage: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <button
-                            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-lg hover:bg-indigo-100 transition-colors shadow-sm"
+                            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-700 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors shadow-sm"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleViewDetails(log._id);
@@ -882,7 +913,7 @@ const AuditLogsPage: React.FC = () => {
                         {/* Hover effect */}
                         {hoveredLog === log._id && (
                           <td className="absolute inset-0 pointer-events-none overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/10 dark:via-indigo-800/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                           </td>
                         )}
                       </motion.tr>
@@ -892,9 +923,9 @@ const AuditLogsPage: React.FC = () => {
               </div>
 
               {totalPages > 1 && (
-                <div className="px-6 py-4 flex items-center justify-between border-t border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+                <div className="px-6 py-4 flex items-center justify-between border-t border-slate-200 dark:border-gray-700 bg-gradient-to-r from-slate-50 to-white dark:from-gray-800 dark:to-gray-800">
                   <div>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-600 dark:text-gray-400">
                       Showing{" "}
                       <span className="font-medium">
                         {(page - 1) * itemsPerPage + 1}
@@ -913,8 +944,8 @@ const AuditLogsPage: React.FC = () => {
                       disabled={page === 1}
                       className={`p-2 rounded-lg border ${
                         page === 1
-                          ? "border-slate-200 text-slate-300 cursor-not-allowed"
-                          : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-indigo-200 hover:text-indigo-600"
+                          ? "border-slate-200 dark:border-gray-600 text-slate-300 dark:text-gray-600 cursor-not-allowed"
+                          : "border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-gray-700 hover:border-indigo-200 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400"
                       }`}
                     >
                       <ChevronLeft size={16} />
@@ -926,8 +957,8 @@ const AuditLogsPage: React.FC = () => {
                       disabled={page === 1}
                       className={`p-2 rounded-lg border ${
                         page === 1
-                          ? "border-slate-200 text-slate-300 cursor-not-allowed"
-                          : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-indigo-200 hover:text-indigo-600"
+                          ? "border-slate-200 dark:border-gray-600 text-slate-300 dark:text-gray-600 cursor-not-allowed"
+                          : "border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-gray-700 hover:border-indigo-200 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400"
                       }`}
                     >
                       <ChevronLeft size={16} />
@@ -952,8 +983,8 @@ const AuditLogsPage: React.FC = () => {
                               className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-all
                                 ${
                                   i === page
-                                    ? "bg-indigo-600 text-white border border-indigo-600 shadow-md shadow-indigo-200"
-                                    : "bg-white text-slate-700 border border-slate-200 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600"
+                                    ? "bg-indigo-600 dark:bg-indigo-700 text-white border border-indigo-600 dark:border-indigo-700 shadow-md shadow-indigo-200 dark:shadow-indigo-800/20"
+                                    : "bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-600 hover:border-indigo-200 dark:hover:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400"
                                 }`}
                             >
                               {i}
@@ -969,8 +1000,8 @@ const AuditLogsPage: React.FC = () => {
                       disabled={page === totalPages}
                       className={`p-2 rounded-lg border ${
                         page === totalPages
-                          ? "border-slate-200 text-slate-300 cursor-not-allowed"
-                          : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-indigo-200 hover:text-indigo-600"
+                          ? "border-slate-200 dark:border-gray-600 text-slate-300 dark:text-gray-600 cursor-not-allowed"
+                          : "border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-gray-700 hover:border-indigo-200 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400"
                       }`}
                     >
                       <ChevronRight size={16} />
@@ -982,8 +1013,8 @@ const AuditLogsPage: React.FC = () => {
                       disabled={page === totalPages}
                       className={`p-2 rounded-lg border ${
                         page === totalPages
-                          ? "border-slate-200 text-slate-300 cursor-not-allowed"
-                          : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-indigo-200 hover:text-indigo-600"
+                          ? "border-slate-200 dark:border-gray-600 text-slate-300 dark:text-gray-600 cursor-not-allowed"
+                          : "border-slate-200 dark:border-gray-600 text-slate-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-gray-700 hover:border-indigo-200 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400"
                       }`}
                     >
                       <ChevronRight size={16} />
@@ -997,7 +1028,7 @@ const AuditLogsPage: React.FC = () => {
         </Card>
 
         <div className="mt-4 px-2 flex items-center justify-between">
-          <div className="flex items-center text-xs text-slate-500">
+          <div className="flex items-center text-xs text-slate-500 dark:text-gray-400">
             <div className="flex items-center mr-6">
               <Info size={14} className="mr-1 text-indigo-400" />
               <span>
@@ -1005,17 +1036,20 @@ const AuditLogsPage: React.FC = () => {
                 administrative use only
               </span>
             </div>
-            <div className="flex items-center bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200">
-              <Shield size={14} className="mr-1.5 text-indigo-500" />
+            <div className="flex items-center bg-slate-50 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-slate-200 dark:border-gray-700">
+              <Shield
+                size={14}
+                className="mr-1.5 text-indigo-500 dark:text-indigo-400"
+              />
               <span>Security and Compliance Registry</span>
             </div>
           </div>
           <div className="flex items-center">
-            <div className="flex items-center text-xs text-indigo-600 mr-4">
+            <div className="flex items-center text-xs text-indigo-600 dark:text-indigo-400 mr-4">
               <ShieldCheck size={14} className="mr-1.5" />
               <span>PCI DSS Compliant</span>
             </div>
-            <div className="flex items-center text-xs text-indigo-600">
+            <div className="flex items-center text-xs text-indigo-600 dark:text-indigo-400">
               <Lock size={14} className="mr-1.5" />
               <span>GDPR Compliant</span>
             </div>
