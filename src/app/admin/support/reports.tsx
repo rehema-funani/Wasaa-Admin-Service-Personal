@@ -36,7 +36,7 @@ const ReportsDashboard = () => {
 
   const [generatingReport, setGeneratingReport] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(null);
-  const [reportError, setReportError] = useState(null);
+  const [reportError, setReportError] = useState(null);¸
 
   const [reportFilters, setReportFilters] = useState({
     type: "",
@@ -383,7 +383,6 @@ const ReportsDashboard = () => {
                 </div>
               </div>
 
-              {/* SLA Compliance Rate */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <div className="flex items-start">
                   <div className="p-2 bg-amber-50 dark:bg-amber-900/30 rounded-lg">
@@ -419,7 +418,6 @@ const ReportsDashboard = () => {
           )}
         </div>
 
-        {/* Report Generation Form */}
         <div className="mb-8">
           <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
             Generate New Report
