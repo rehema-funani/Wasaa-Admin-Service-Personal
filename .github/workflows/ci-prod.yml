@@ -8,10 +8,13 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 env:
   ENV: production
   ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-  REPO_NAME: wasaa-admin-service # change this to the right repo name
+  REPO_NAME: wasaa-admin-service
   NODE_ENV: production
 
 jobs:
@@ -119,11 +122,13 @@ jobs:
   build-and-push:
     needs: build-test-analyze
     runs-on: ubuntu-latest
+    outputs:
+      version_tag: ${{ steps.set-version.outputs.version_tag }}
     environment:
       name: production
     permissions:
-      id-token: write       # 👈 Required for OIDC
-      contents: read        # 👈 Required to read code from repo
+      id-token: write 
+      contents: read 
 
     steps:
       - name: Checkout code
@@ -139,10 +144,17 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Extract version details
+        id: set-version
         run: |
-          echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "VERSION_TAG=${GITHUB_REF##*/}-$(date +%Y%m%d%H%M)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          BRANCH_NAME=${GITHUB_REF##*/}
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION_TAG="${BRANCH_NAME}-$(date +%Y%m%d%H%M)-${SHORT_SHA}"
+      
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+          echo "VERSION_TAG=$VERSION_TAG" >> $GITHUB_ENV
+      
+          echo "version_tag=$VERSION_TAG" >> $GITHUB_OUTPUT
 
       - name: Ensure ECR repository exists
         run: |
@@ -160,10 +172,40 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t $ECR_REGISTRY/$REPO_NAME:${VERSION_TAG} .
-          docker tag $ECR_REGISTRY/$REPO_NAME:${VERSION_TAG} $ECR_REGISTRY/$REPO_NAME:latest-${BRANCH_NAME}
+          docker build -t $ECR_REGISTRY/$REPO_NAME:$VERSION_TAG .
+          docker tag $ECR_REGISTRY/$REPO_NAME:$VERSION_TAG $ECR_REGISTRY/$REPO_NAME:latest-${BRANCH_NAME}
 
       - name: Push Docker image to ECR
         run: |
           docker push $ECR_REGISTRY/$REPO_NAME:${VERSION_TAG}
           docker push $ECR_REGISTRY/$REPO_NAME:latest-${BRANCH_NAME}
+    
+  verify-secrets:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print all environment vars
+        run: env | sort
+      - name: Debug secrets availability
+        env:
+          HELM_CHARTS_PAT: ${{ secrets.HELM_CHARTS_PAT }}
+        run: |
+          echo "=== Secret Debug ==="
+          if [ -z "$HELM_CHARTS_PAT" ]; then
+            echo "ERROR: HELM_CHARTS_PAT secret is not set in repository"
+            echo "Please ensure the secret is configured in your repository settings"
+            exit 1
+          else
+            echo "✅ HELM_CHARTS_PAT secret is available"
+            echo "Secret length: ${#HELM_CHARTS_PAT}"
+          fi
+
+  update-helm-values:
+    needs: [build-and-push, verify-secrets]
+    uses: web-masters-ke/wasaa-ci-shared-workflows/.github/workflows/update-helm-values.yaml@main
+    with:
+      helm_repo: web-masters-ke/wasaa-chat-helm-charts
+      chart_path: wasaa-admin-service
+      version_tag: ${{ needs.build-and-push.outputs.version_tag }}
+    secrets:
+      HELM_TOKEN: ${{ secrets.HELM_CHARTS_PAT }}
