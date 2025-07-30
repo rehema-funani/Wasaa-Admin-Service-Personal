@@ -4,18 +4,11 @@ import {
   Download,
   Filter,
   Calendar,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  CreditCard,
-  Wallet,
   ArrowRight,
   BarChart3,
   PieChart,
   LineChart as LineChartIcon,
-  FileText,
-  Mail,
-  Printer,
+  FileText
 } from "lucide-react";
 import {
   BarChart,
@@ -48,7 +41,6 @@ const page: React.FC = () => {
   const [profitMarginData, setProfitMarginData] = useState<any[]>([]);
   const [cashFlowData, setCashFlowData] = useState<any[]>([]);
 
-  // Financial Revenue Data (in KES)
   const monthlyRevenueData = [
     {
       name: "Jan",
@@ -80,7 +72,6 @@ const page: React.FC = () => {
     },
   ];
 
-  // Financial Expense Breakdown (in KES)
   const expenseBreakdownData = [
     { name: "Operations", value: 35, amount: 3832500 },
     { name: "Marketing", value: 20, amount: 2190000 },
@@ -89,7 +80,6 @@ const page: React.FC = () => {
     { name: "Other", value: 5, amount: 547500 },
   ];
 
-  // Cash Flow Data (in KES)
   const monthlyCashFlowData = [
     { name: "Jan", inflow: 11475000, outflow: 7800000, netFlow: 3675000 },
     { name: "Feb", inflow: 12345000, outflow: 8250000, netFlow: 4095000 },
@@ -97,7 +87,6 @@ const page: React.FC = () => {
     { name: "Apr", inflow: 19868400, outflow: 10950000, netFlow: 8918400 },
   ];
 
-  // Profit Margin Trends
   const profitMarginTrendData = [
     { name: "Jan", grossMargin: 68.0, netMargin: 32.0, operatingMargin: 42.0 },
     { name: "Feb", grossMargin: 66.8, netMargin: 33.2, operatingMargin: 43.5 },
@@ -105,7 +94,6 @@ const page: React.FC = () => {
     { name: "Apr", grossMargin: 55.1, netMargin: 44.9, operatingMargin: 52.3 },
   ];
 
-  // Revenue by Category (in KES)
   const revenueCategoryData = [
     { name: "Transaction Fees", value: 45, amount: 8940780 },
     { name: "Subscription Revenue", value: 25, amount: 4967100 },
@@ -114,7 +102,6 @@ const page: React.FC = () => {
     { name: "Other Revenue", value: 5, amount: 993420 },
   ];
 
-  // Financial KPI table data
   const financialKpiData = [
     { metric: "Revenue Growth Rate", value: "44.7%", change: "+12.2%" },
     { metric: "Gross Profit Margin", value: "55.1%", change: "-13.4%" },
@@ -126,7 +113,6 @@ const page: React.FC = () => {
     { metric: "Operating Cash Flow", value: "KES 8,918,400", change: "+83.0%" },
   ];
 
-  // Colors
   const COLORS = [
     "#6366f1",
     "#10b981",
@@ -139,7 +125,6 @@ const page: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
 
-    // Simulate API call
     setTimeout(() => {
       setRevenueData(monthlyRevenueData);
       setExpenseData(expenseBreakdownData);
