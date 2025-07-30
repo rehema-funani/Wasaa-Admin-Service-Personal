@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from "react";
 import {
+  AlertTriangle,
   BarChart,
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  ChevronLeft,
+  Clock,
   Download,
+  FileBarChart,
+  FileMinus,
+  FilePlus,
   FileText,
   Filter,
-  Calendar,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
   Loader,
+  PieChart,
   RefreshCw,
   X,
-  ChevronDown,
-  FileBarChart,
-  FilePlus,
-  FileMinus,
-  PieChart,
-  ChevronLeft,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
 import supportService from "../../../api/services/support";
 
 const ReportsDashboard = () => {
@@ -36,7 +37,7 @@ const ReportsDashboard = () => {
 
   const [generatingReport, setGeneratingReport] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(null);
-  const [reportError, setReportError] = useState(null);¸
+  const [reportError, setReportError] = useState(null);
 
   const [reportFilters, setReportFilters] = useState({
     type: "",
