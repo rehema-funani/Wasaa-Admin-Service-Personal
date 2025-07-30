@@ -23,7 +23,8 @@ import {
   Moon,
 } from "lucide-react";
 import routes from "../../constants/routes";
-import logo from "../../assets/images/logo-wasaa.png";
+import dark from "../../assets/images/dark-logo-white.svg";
+import light from "../../assets/images/dark-logo-full.svg";
 import {
   getUserPermissions,
   routePermissionsMap,
@@ -754,7 +755,7 @@ const TopNavigation = () => {
           <div className="flex items-center mr-4 lg:mr-12">
             <div className="relative">
               <img
-                src={logo}
+                src={isDarkMode ? dark : light}
                 alt="Logo"
                 className="w-[150px] h-auto cursor-pointer transition-transform duration-500 hover:scale-105"
                 onClick={() => navigate("/")}
@@ -1156,7 +1157,7 @@ const TopNavigation = () => {
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center">
                 <img
-                  src={logo}
+                  src={isDarkMode ? dark : light}
                   alt="Logo"
                   className="w-[150px] h-auto cursor-pointer transition-transform duration-500 hover:scale-105"
                   onClick={() => {
