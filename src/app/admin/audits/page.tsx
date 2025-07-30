@@ -27,45 +27,14 @@ import {
   X,
   ShieldCheck,
   Globe,
+  Check,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../../components/common/Button";
 import { Card } from "../../../components/common/Card";
 import { logsService } from "../../../api/services/logs";
-
-interface AuditLog {
-  _id: string;
-  user_id: string;
-  username: string;
-  ip_address: string;
-  service_name: string;
-  status_code: number;
-  session_id?: string;
-  user_email?: string;
-  event_type: string;
-  event_description: string;
-  entity_affected: string;
-  entity_id: string;
-  http_method: string;
-  request_url: string;
-  query_params: string;
-  request_body: any;
-  response_body: any;
-  execution_time: number;
-  location: string;
-  user_agent: string;
-  device_type: string;
-  device_model: string;
-  os: string;
-  browser: string;
-  auth_method: string;
-  roles: string;
-  permissions: string;
-  is_successful: boolean;
-  __v: number;
-  createdAt: string;
-  timestamp?: string;
-}
+import { AuditLog } from "../../../types";
+import getEventTypeBadge from "../../../components/audit/getEventTypeBadge";
 
 interface SecurityMetrics {
   failedLogins: number;
@@ -233,52 +202,6 @@ const AuditLogsPage: React.FC = () => {
     return "";
   };
 
-  const getEventTypeBadge = (eventType: string) => {
-    if (eventType.includes("create")) {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-700 text-xs font-medium shadow-sm">
-          <FileText size={12} />
-          <span>{eventType}</span>
-        </div>
-      );
-    } else if (eventType.includes("update")) {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-700 text-xs font-medium shadow-sm">
-          <Edit size={12} />
-          <span>{eventType}</span>
-        </div>
-      );
-    } else if (eventType.includes("delete")) {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border border-rose-100 dark:border-rose-700 text-xs font-medium shadow-sm">
-          <Trash2 size={12} />
-          <span>{eventType}</span>
-        </div>
-      );
-    } else if (eventType.includes("login")) {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border border-violet-100 dark:border-violet-700 text-xs font-medium shadow-sm">
-          <LogIn size={12} />
-          <span>{eventType}</span>
-        </div>
-      );
-    } else if (eventType.includes("fetch")) {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 border border-sky-100 dark:border-sky-700 text-xs font-medium shadow-sm">
-          <Database size={12} />
-          <span>{eventType}</span>
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 text-xs font-medium shadow-sm">
-          <Terminal size={12} />
-          <span>{eventType}</span>
-        </div>
-      );
-    }
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
@@ -304,11 +227,9 @@ const AuditLogsPage: React.FC = () => {
     return `${months} mo ago`;
   };
 
-  // Filter and sort the logs based on search term, active filters, and sort option
   const filteredLogs = useMemo(() => {
     let filtered = [...auditLogs];
 
-    // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(
         (log) =>
@@ -326,7 +247,6 @@ const AuditLogsPage: React.FC = () => {
       );
     }
 
-    // Apply event type filters
     if (activeFilters.length > 0) {
       filtered = filtered.filter((log) =>
         activeFilters.some((filter) =>
@@ -335,7 +255,6 @@ const AuditLogsPage: React.FC = () => {
       );
     }
 
-    // Apply sorting
     switch (activeSort) {
       case "newest":
         filtered.sort(
@@ -367,7 +286,6 @@ const AuditLogsPage: React.FC = () => {
   return (
     <div className="h-auto bg-gradient-to-b from-slate-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="w-full mx-auto px-6 py-8">
-        {/* Header with Security Summary */}
         <div className="mb-8">
           <div className="flex justify-between items-start">
             <div>
@@ -608,7 +526,6 @@ const AuditLogsPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Filter Button */}
               <div className="relative">
                 <Button
                   variant="outline"
@@ -910,7 +827,6 @@ const AuditLogsPage: React.FC = () => {
                           </button>
                         </td>
 
-                        {/* Hover effect */}
                         {hoveredLog === log._id && (
                           <td className="absolute inset-0 pointer-events-none overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/10 dark:via-indigo-800/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
@@ -1057,25 +973,6 @@ const AuditLogsPage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-const Check = ({ size = 24, ...props }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
   );
 };
 
