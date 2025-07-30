@@ -21,7 +21,6 @@ import {
 import supportService from "../../../api/services/support";
 
 const ReportsDashboard = () => {
-  // State for quick statistics
   const [quickStats, setQuickStats] = useState({
     ticketsCreated: 0,
     ticketsClosed: 0,
@@ -31,17 +30,14 @@ const ReportsDashboard = () => {
     error: null,
   });
 
-  // State for reports list
   const [availableReports, setAvailableReports] = useState([]);
   const [reportsLoading, setReportsLoading] = useState(true);
   const [reportsError, setReportsError] = useState(null);
 
-  // State for report generation
   const [generatingReport, setGeneratingReport] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(null);
   const [reportError, setReportError] = useState(null);
 
-  // State for filtering reports
   const [reportFilters, setReportFilters] = useState({
     type: "",
     status: "",
@@ -49,7 +45,6 @@ const ReportsDashboard = () => {
     limit: 10,
   });
 
-  // State for report generation form
   const [reportForm, setReportForm] = useState({
     type: "TICKET_SUMMARY",
     format: "PDF",
@@ -61,7 +56,6 @@ const ReportsDashboard = () => {
     },
   });
 
-  // Report type definitions
   const [reportTypes] = useState([
     {
       id: "TICKET_SUMMARY",
@@ -89,7 +83,6 @@ const ReportsDashboard = () => {
     },
   ]);
 
-  // Pagination state
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -97,12 +90,10 @@ const ReportsDashboard = () => {
     totalPages: 0,
   });
 
-  // Fetch initial data
   useEffect(() => {
     fetchQuickStats();
   }, []);
 
-  // Fetch reports when filters change
   useEffect(() => {
     fetchAvailableReports();
   }, [reportFilters]);
@@ -111,11 +102,9 @@ const ReportsDashboard = () => {
     try {
       const response = await supportService.getQuickStats();
 
-      // Check if response has the expected structure
       if (response.success && response.data && response.data.stats) {
         const { stats } = response.data;
 
-        // Calculate resolved tickets count from byStatus
         const resolvedTickets =
           stats.tickets.byStatus.find((item) => item.status === "RESOLVED")
             ?._count || 0;
@@ -141,7 +130,6 @@ const ReportsDashboard = () => {
     }
   };
 
-  // Fetch available reports
   const fetchAvailableReports = async () => {
     setReportsLoading(true);
 
@@ -153,7 +141,6 @@ const ReportsDashboard = () => {
         status: reportFilters.status,
       });
 
-      // Check if response has the expected structure
       if (response.success && response.data) {
         setAvailableReports(response.data.reports || []);
         setPagination({
@@ -173,13 +160,11 @@ const ReportsDashboard = () => {
     }
   };
 
-  // Generate report
   const generateReport = async () => {
     setGeneratingReport(true);
     setReportSuccess(null);
     setReportError(null);
 
-    // Format date range for API
     const formattedData = {
       ...reportForm,
       dateRange: {
@@ -197,12 +182,10 @@ const ReportsDashboard = () => {
         "Report generation started. It will appear in the list when ready."
       );
 
-      // Refresh reports list after a delay
       setTimeout(() => {
         fetchAvailableReports();
       }, 2000);
 
-      // Reset form to defaults after successful submission
       setReportForm({
         type: "TICKET_SUMMARY",
         format: "PDF",
@@ -221,12 +204,10 @@ const ReportsDashboard = () => {
     }
   };
 
-  // Handle report download
   const handleDownloadReport = async (reportId) => {
     try {
       const blob = await supportService.downloadReport(reportId);
 
-      // Create download link
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.style.display = "none";
@@ -235,7 +216,6 @@ const ReportsDashboard = () => {
       document.body.appendChild(a);
       a.click();
 
-      // Clean up
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
@@ -244,16 +224,14 @@ const ReportsDashboard = () => {
     }
   };
 
-  // Handle report filter change
   const handleFilterChange = (name, value) => {
     setReportFilters((prev) => ({
       ...prev,
       [name]: value,
-      page: name !== "page" ? 1 : value, // Reset page when changing filters
+      page: name !== "page" ? 1 : value,
     }));
   };
 
-  // Handle report form change
   const handleReportFormChange = (field, value) => {
     if (field.includes(".")) {
       const [parent, child] = field.split(".");
@@ -272,7 +250,6 @@ const ReportsDashboard = () => {
     }
   };
 
-  // Format date for display
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -281,7 +258,6 @@ const ReportsDashboard = () => {
     });
   };
 
-  // Format time duration in minutes to human-readable format
   const formatDuration = (minutes) => {
     if (minutes < 60) {
       return `${minutes} mins`;
@@ -297,7 +273,6 @@ const ReportsDashboard = () => {
     return `${hours}h ${remainingMinutes}m`;
   };
 
-  // Get report type details
   const getReportTypeDetails = (typeId) => {
     return (
       reportTypes.find((type) => type.id === typeId) || {
@@ -311,7 +286,6 @@ const ReportsDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header section */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             Reports Dashboard
@@ -321,7 +295,6 @@ const ReportsDashboard = () => {
           </p>
         </div>
 
-        {/* Quick Stats */}
         <div className="mb-8">
           <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
             Quick Stats
