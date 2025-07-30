@@ -36,7 +36,7 @@ const ReportsDashboard = () => {
 
   const [generatingReport, setGeneratingReport] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(null);
-  const [reportError, setReportError] = useState(null);¸
+  const [reportError, setReportError] = useState(null);
 
   const [reportFilters, setReportFilters] = useState({
     type: "",
