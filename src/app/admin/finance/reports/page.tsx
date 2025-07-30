@@ -4,11 +4,18 @@ import {
   Download,
   Filter,
   Calendar,
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  CreditCard,
+  Wallet,
   ArrowRight,
   BarChart3,
   PieChart,
   LineChart as LineChartIcon,
-  FileText
+  FileText,
+  Mail,
+  Printer,
 } from "lucide-react";
 import {
   BarChart,
@@ -41,53 +48,53 @@ const page: React.FC = () => {
   const [profitMarginData, setProfitMarginData] = useState<any[]>([]);
   const [cashFlowData, setCashFlowData] = useState<any[]>([]);
 
-  // Financial Revenue Data
+  // Financial Revenue Data (in KES)
   const monthlyRevenueData = [
     {
       name: "Jan",
-      revenue: 76500,
-      expenses: 52000,
-      profit: 24500,
+      revenue: 11475000,
+      expenses: 7800000,
+      profit: 3675000,
       margin: 32.0,
     },
     {
       name: "Feb",
-      revenue: 82300,
-      expenses: 55000,
-      profit: 27300,
+      revenue: 12345000,
+      expenses: 8250000,
+      profit: 4095000,
       margin: 33.2,
     },
     {
       name: "Mar",
-      revenue: 91500,
-      expenses: 59000,
-      profit: 32500,
+      revenue: 13725000,
+      expenses: 8850000,
+      profit: 4875000,
       margin: 35.5,
     },
     {
       name: "Apr",
-      revenue: 132456,
-      expenses: 73000,
-      profit: 59456,
+      revenue: 19868400,
+      expenses: 10950000,
+      profit: 8918400,
       margin: 44.9,
     },
   ];
 
-  // Financial Expense Breakdown
+  // Financial Expense Breakdown (in KES)
   const expenseBreakdownData = [
-    { name: "Operations", value: 35, amount: 25550 },
-    { name: "Marketing", value: 20, amount: 14600 },
-    { name: "Technology", value: 25, amount: 18250 },
-    { name: "Personnel", value: 15, amount: 10950 },
-    { name: "Other", value: 5, amount: 3650 },
+    { name: "Operations", value: 35, amount: 3832500 },
+    { name: "Marketing", value: 20, amount: 2190000 },
+    { name: "Technology", value: 25, amount: 2737500 },
+    { name: "Personnel", value: 15, amount: 1642500 },
+    { name: "Other", value: 5, amount: 547500 },
   ];
 
-  // Cash Flow Data
+  // Cash Flow Data (in KES)
   const monthlyCashFlowData = [
-    { name: "Jan", inflow: 76500, outflow: 52000, netFlow: 24500 },
-    { name: "Feb", inflow: 82300, outflow: 55000, netFlow: 27300 },
-    { name: "Mar", inflow: 91500, outflow: 59000, netFlow: 32500 },
-    { name: "Apr", inflow: 132456, outflow: 73000, netFlow: 59456 },
+    { name: "Jan", inflow: 11475000, outflow: 7800000, netFlow: 3675000 },
+    { name: "Feb", inflow: 12345000, outflow: 8250000, netFlow: 4095000 },
+    { name: "Mar", inflow: 13725000, outflow: 8850000, netFlow: 4875000 },
+    { name: "Apr", inflow: 19868400, outflow: 10950000, netFlow: 8918400 },
   ];
 
   // Profit Margin Trends
@@ -98,13 +105,13 @@ const page: React.FC = () => {
     { name: "Apr", grossMargin: 55.1, netMargin: 44.9, operatingMargin: 52.3 },
   ];
 
-  // Revenue by Category
+  // Revenue by Category (in KES)
   const revenueCategoryData = [
-    { name: "Transaction Fees", value: 45, amount: 59605 },
-    { name: "Subscription Revenue", value: 25, amount: 33114 },
-    { name: "Interest Income", value: 15, amount: 19868 },
-    { name: "Service Charges", value: 10, amount: 13246 },
-    { name: "Other Revenue", value: 5, amount: 6623 },
+    { name: "Transaction Fees", value: 45, amount: 8940780 },
+    { name: "Subscription Revenue", value: 25, amount: 4967100 },
+    { name: "Interest Income", value: 15, amount: 2980260 },
+    { name: "Service Charges", value: 10, amount: 1986840 },
+    { name: "Other Revenue", value: 5, amount: 993420 },
   ];
 
   // Financial KPI table data
@@ -116,7 +123,7 @@ const page: React.FC = () => {
     { metric: "Return on Equity (ROE)", value: "24.8%", change: "+5.1%" },
     { metric: "Current Ratio", value: "2.45", change: "+0.15" },
     { metric: "Debt-to-Equity Ratio", value: "0.32", change: "-0.08" },
-    { metric: "Operating Cash Flow", value: "$59,456", change: "+83.0%" },
+    { metric: "Operating Cash Flow", value: "KES 8,918,400", change: "+83.0%" },
   ];
 
   // Colors
@@ -147,9 +154,9 @@ const page: React.FC = () => {
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-KE", {
       style: "currency",
-      currency: "USD",
+      currency: "KES",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
@@ -172,7 +179,7 @@ const page: React.FC = () => {
             Financial Reports
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Track revenue, transactions, and financial metrics
+            Track revenue, transactions, and financial metrics in KES
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -255,7 +262,7 @@ const page: React.FC = () => {
                 Revenue & Profitability
               </h3>
               <p className="text-gray-500 dark:text-gray-400 text-sm">
-                Revenue, expenses, and profit trends
+                Revenue, expenses, and profit trends in KES
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -379,7 +386,7 @@ const page: React.FC = () => {
                 Cash Flow Analysis
               </h3>
               <p className="text-gray-500 dark:text-gray-400 text-sm">
-                Monthly cash inflows and outflows
+                Monthly cash inflows and outflows in KES
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -465,7 +472,7 @@ const page: React.FC = () => {
               Expense Breakdown
             </h3>
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Operating expenses by category
+              Operating expenses by category in KES
             </p>
           </div>
           <div className="h-60">
@@ -621,7 +628,7 @@ const page: React.FC = () => {
               Generate Financial Reports
             </h3>
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Create detailed financial analysis reports
+              Create detailed financial analysis reports in KES
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
