@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Download,
   Calendar,
   Eye,
   Ban,
   CheckCircle,
-  User,
   Flag,
   Clock,
-  Bell,
-  X,
   Loader,
   Filter,
   ChevronDown,
@@ -22,6 +18,9 @@ import SearchBox from "../../../../components/common/SearchBox";
 import Pagination from "../../../../components/common/Pagination";
 import { contactService } from "../../../../api/services/contact";
 import { FlaggedContact } from "../../../../types";
+import SelectedUser from "../../../../components/users/SelectedUser";
+import userService from "../../../../api/services/users";
+import toast from "react-hot-toast";
 
 const FlaggedContactsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -92,16 +91,13 @@ const FlaggedContactsPage: React.FC = () => {
     fetchFlaggedContacts();
   }, []);
 
-  // Apply filters to the contacts
   useEffect(() => {
     let filtered = [...flaggedContacts];
 
-    // Apply status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter((contact) => contact.status === statusFilter);
     }
 
-    // Apply search query
     if (searchQuery.trim() !== "") {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -140,14 +136,6 @@ const FlaggedContactsPage: React.FC = () => {
   const handleItemsPerPageChange = (perPage: number) => {
     setItemsPerPage(perPage);
     setCurrentPage(1);
-  };
-
-  const handleExport = () => {
-    if (filteredContacts.length === 0) {
-      alert("No contacts to export");
-      return;
-    }
-    alert("Export functionality would go here");
   };
 
   const handleViewContact = (contact: FlaggedContact) => {
@@ -192,14 +180,11 @@ const FlaggedContactsPage: React.FC = () => {
     return filteredContacts.slice(startIndex, endIndex);
   };
 
-  // Actions for handling flagged contacts
   const handleReviewContact = async (id: string) => {
     try {
       setActionInProgress(id);
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 800));
 
-      // Update the local state
       const updatedContacts = flaggedContacts.map((contact) =>
         contact.contact_id === id
           ? { ...contact, status: "reviewed" as const }
@@ -220,10 +205,8 @@ const FlaggedContactsPage: React.FC = () => {
   const handleClearContact = async (id: string) => {
     try {
       setActionInProgress(id);
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 800));
 
-      // Update the local state
       const updatedContacts = flaggedContacts.map((contact) =>
         contact.contact_id === id
           ? { ...contact, status: "cleared" as const }
@@ -244,14 +227,24 @@ const FlaggedContactsPage: React.FC = () => {
   const handleBlockContact = async (id: string) => {
     try {
       setActionInProgress(id);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      // In a real implementation, you'd call an API to block the contact
-      alert("Contact blocked");
+      await userService.suspendUser(id);
+      toast.success("Contact suspended successfully");
     } catch (error) {
       console.error("Error blocking contact:", error);
-      alert("Failed to block contact. Please try again.");
+      toast.error("Failed to block contact. Please try again.");
+    } finally {
+      setActionInProgress(null);
+    }
+  };
+
+  const handleLockContact = async (id: string) => {
+    try {
+      setActionInProgress(id);
+      await userService.lockUserAccount(id);
+      toast.success("Contact locked successfully");
+    } catch (error) {
+      console.error("Error locking contact:", error);
+      toast.error("Failed to lock contact. Please try again.");
     } finally {
       setActionInProgress(null);
     }
@@ -277,7 +270,6 @@ const FlaggedContactsPage: React.FC = () => {
     }
   };
 
-  // Helper to get the full name of a user
   const getUserFullName = (contact: FlaggedContact) => {
     if (!contact.user_details) return "Unknown User";
 
@@ -291,7 +283,6 @@ const FlaggedContactsPage: React.FC = () => {
     return contact.user_details.username || "Unknown User";
   };
 
-  // Helper to get initials for avatar
   const getUserInitials = (contact: FlaggedContact) => {
     const fullName = getUserFullName(contact);
 
@@ -302,7 +293,6 @@ const FlaggedContactsPage: React.FC = () => {
       .toUpperCase();
   };
 
-  // Get appropriate color based on status
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -333,25 +323,6 @@ const FlaggedContactsPage: React.FC = () => {
             activity
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-          >
-            <Bell size={16} className="mr-2" strokeWidth={1.8} />
-            Notification Settings
-          </motion.button>
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-            onClick={handleExport}
-          >
-            <Download size={16} className="mr-2" strokeWidth={1.8} />
-            Export
-          </motion.button>
-        </div>
       </motion.div>
 
       <motion.div
@@ -360,7 +331,6 @@ const FlaggedContactsPage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        {/* Stats Cards */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center"
           whileHover={{
@@ -745,57 +715,6 @@ const FlaggedContactsPage: React.FC = () => {
                               >
                                 <Eye size={16} strokeWidth={1.8} />
                               </motion.button>
-
-                              {contact.status === "pending" && (
-                                <motion.button
-                                  className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400"
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  aria-label="Mark as reviewed"
-                                  onClick={() =>
-                                    handleReviewContact(contact.contact_id)
-                                  }
-                                  disabled={
-                                    actionInProgress === contact.contact_id
-                                  }
-                                >
-                                  <Eye size={16} strokeWidth={1.8} />
-                                </motion.button>
-                              )}
-
-                              {(contact.status === "pending" ||
-                                contact.status === "reviewed") && (
-                                <>
-                                  <motion.button
-                                    className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    aria-label="Block contact"
-                                    onClick={() =>
-                                      handleBlockContact(contact.contact_id)
-                                    }
-                                    disabled={
-                                      actionInProgress === contact.contact_id
-                                    }
-                                  >
-                                    <Ban size={16} strokeWidth={1.8} />
-                                  </motion.button>
-                                  <motion.button
-                                    className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400"
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    aria-label="Clear flag"
-                                    onClick={() =>
-                                      handleClearContact(contact.contact_id)
-                                    }
-                                    disabled={
-                                      actionInProgress === contact.contact_id
-                                    }
-                                  >
-                                    <CheckCircle size={16} strokeWidth={1.8} />
-                                  </motion.button>
-                                </>
-                              )}
                             </div>
                           </td>
                         </tr>
@@ -828,290 +747,16 @@ const FlaggedContactsPage: React.FC = () => {
 
       <AnimatePresence>
         {showModal && selectedContact && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <motion.div
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-            >
-              <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700">
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                  Contact Details
-                </h3>
-                <button
-                  className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={handleCloseModal}
-                >
-                  <X size={20} strokeWidth={1.8} />
-                </button>
-              </div>
-
-              <div className="p-5 overflow-y-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <div className="mb-6">
-                      <div className="flex items-center mb-4">
-                        {selectedContact.user_details.profile_picture ? (
-                          <img
-                            src={selectedContact.user_details.profile_picture}
-                            alt={getUserFullName(selectedContact)}
-                            className="w-20 h-20 rounded-full object-cover mr-4"
-                          />
-                        ) : (
-                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center text-xl font-medium mr-4">
-                            {getUserInitials(selectedContact)}
-                          </div>
-                        )}
-                        <div>
-                          <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                            {getUserFullName(selectedContact)}
-                          </h4>
-                          <p className="text-gray-600 dark:text-gray-400">
-                            @{selectedContact.user_details.username}
-                          </p>
-                          <div className="mt-2">
-                            <span
-                              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                                selectedContact.status || "pending"
-                              )}`}
-                            >
-                              {selectedContact.status === "pending" && (
-                                <Clock size={12} className="mr-1.5" />
-                              )}
-                              {selectedContact.status === "reviewed" && (
-                                <Eye size={12} className="mr-1.5" />
-                              )}
-                              {selectedContact.status === "cleared" && (
-                                <CheckCircle size={12} className="mr-1.5" />
-                              )}
-                              {selectedContact.status
-                                ? selectedContact.status
-                                    .charAt(0)
-                                    .toUpperCase() +
-                                  selectedContact.status.slice(1)
-                                : "Pending"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
-                        <div className="flex items-center">
-                          <Phone
-                            size={16}
-                            className="text-gray-500 dark:text-gray-400 mr-3"
-                          />
-                          <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              Phone Number
-                            </p>
-                            <p className="text-gray-800 dark:text-gray-200">
-                              {selectedContact.user_details.phone_number}
-                            </p>
-                          </div>
-                        </div>
-
-                        {selectedContact.user_details.email && (
-                          <div className="flex items-center">
-                            <Mail
-                              size={16}
-                              className="text-gray-500 dark:text-gray-400 mr-3"
-                            />
-                            <div>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                Email
-                              </p>
-                              <p className="text-gray-800 dark:text-gray-200">
-                                {selectedContact.user_details.email}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex items-center">
-                          <Flag
-                            size={16}
-                            className="text-red-500 dark:text-red-400 mr-3"
-                          />
-                          <div>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              Flag Count
-                            </p>
-                            <p className="text-gray-800 dark:text-gray-200">
-                              {selectedContact._count.contact_id || 1} time(s)
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                        Flag Information
-                      </h4>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                        <div className="flex justify-between mb-2">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Status:
-                          </span>
-                          <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                              selectedContact.status || "pending"
-                            )}`}
-                          >
-                            {selectedContact.status === "pending" && (
-                              <Clock size={12} className="mr-1.5" />
-                            )}
-                            {selectedContact.status === "reviewed" && (
-                              <Eye size={12} className="mr-1.5" />
-                            )}
-                            {selectedContact.status === "cleared" && (
-                              <CheckCircle size={12} className="mr-1.5" />
-                            )}
-                            {selectedContact.status
-                              ? selectedContact.status.charAt(0).toUpperCase() +
-                                selectedContact.status.slice(1)
-                              : "Pending"}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between mb-2">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Flagged At:
-                          </span>
-                          <span className="text-gray-800 dark:text-gray-200 text-sm">
-                            {
-                              formatDate(
-                                selectedContact.flagged_at ||
-                                  new Date().toISOString()
-                              ).formattedDate
-                            }
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between mb-2">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Contact ID:
-                          </span>
-                          <span className="text-gray-800 dark:text-gray-200 text-sm font-mono text-xs">
-                            {selectedContact.contact_id}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                        Flag Reason
-                      </h4>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                        <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
-                          {selectedContact.reason ||
-                            "This contact has been flagged for review."}
-                        </p>
-                      </div>
-                    </div>
-
-                    {selectedContact.flagged_by &&
-                      selectedContact.flagged_by.length > 0 && (
-                        <div className="mb-6">
-                          <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                            Flagged By
-                          </h4>
-                          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                            <ul className="space-y-2">
-                              {selectedContact.flagged_by.map(
-                                (flagger, index) => (
-                                  <li key={index} className="flex items-center">
-                                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center mr-3">
-                                      <User
-                                        size={14}
-                                        className="text-gray-500 dark:text-gray-400"
-                                      />
-                                    </div>
-                                    <div>
-                                      <p className="text-gray-800 dark:text-gray-200 text-sm">
-                                        {flagger.first_name && flagger.last_name
-                                          ? `${flagger.first_name} ${flagger.last_name}`
-                                          : flagger.username}
-                                      </p>
-                                    </div>
-                                  </li>
-                                )
-                              )}
-                            </ul>
-                          </div>
-                        </div>
-                      )}
-
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                        Actions
-                      </h4>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex flex-wrap gap-2">
-                        {selectedContact.status === "pending" && (
-                          <button
-                            className="flex items-center px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm"
-                            onClick={() => {
-                              handleReviewContact(selectedContact.contact_id);
-                              handleCloseModal();
-                            }}
-                          >
-                            <Eye size={16} className="mr-2" strokeWidth={1.8} />
-                            Mark as Reviewed
-                          </button>
-                        )}
-
-                        {(selectedContact.status === "pending" ||
-                          selectedContact.status === "reviewed") && (
-                          <>
-                            <button
-                              className="flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm"
-                              onClick={() => {
-                                handleBlockContact(selectedContact.contact_id);
-                                handleCloseModal();
-                              }}
-                            >
-                              <Ban
-                                size={16}
-                                className="mr-2"
-                                strokeWidth={1.8}
-                              />
-                              Block Contact
-                            </button>
-                            <button
-                              className="flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm"
-                              onClick={() => {
-                                handleClearContact(selectedContact.contact_id);
-                                handleCloseModal();
-                              }}
-                            >
-                              <CheckCircle
-                                size={16}
-                                className="mr-2"
-                                strokeWidth={1.8}
-                              />
-                              Clear Flag
-                            </button>
-                          </>
-                        )}
-
-                        <button
-                          className="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500 rounded-lg text-sm ml-auto"
-                          onClick={handleCloseModal}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+          <SelectedUser
+            selectedContact={selectedContact}
+            handleCloseModal={handleCloseModal}
+            handleBlockContact={handleBlockContact}
+            getUserFullName={getUserFullName}
+            getUserInitials={getUserInitials}
+            handleLockContact={handleLockContact}
+            getStatusColor={getStatusColor}
+            formatDate={formatDate}
+          />
         )}
       </AnimatePresence>
     </div>
