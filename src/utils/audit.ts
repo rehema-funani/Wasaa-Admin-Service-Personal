@@ -1,26 +1,14 @@
-// Fixed version of getUsernameDisplay function to handle the API data properly
-// Fixed TypeError: object is not iterable (cannot read property Symbol(Symbol.iterator))
-
-// Helper function to safely check if a value is an array
 const isArray = (value: any): boolean => {
   return Array.isArray(value);
 };
 
-// Helper function to safely check if a value is an object
 const isObject = (value: any): boolean => {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 };
 
-/**
- * Get proper username display from log data
- * @param {Object} log - The audit log object from API
- * @return {string} Formatted username
- */
 export const getUsernameDisplay = (log: any): string => {
-  // Check if log is valid
   if (!log) return "Unknown User";
 
-  // Use username if it exists and is valid
   if (
     log.username &&
     log.username !== "undefined undefined" &&
@@ -112,9 +100,6 @@ export const getUsernameDisplay = (log: any): string => {
   return "Unknown User";
 };
 
-/**
- * Clean IP address by removing IPv6 prefix
- */
 export const cleanIpAddress = (ipAddress: string): string => {
   if (!ipAddress || typeof ipAddress !== "string") {
     return "Unknown IP";
@@ -122,31 +107,24 @@ export const cleanIpAddress = (ipAddress: string): string => {
   return ipAddress.replace("::ffff:", "");
 };
 
-/**
- * Safely format JSON for display
- */
 export const formatJSON = (json: any): string => {
   if (!json) return "No data";
 
-  // If json is a string, try to parse it
   if (typeof json === "string") {
     try {
       json = JSON.parse(json);
     } catch (e) {
-      return json; // Return original if not valid JSON
+      return json;
     }
   }
 
   try {
-    // Handle empty arrays
     if (Array.isArray(json) && json.length === 0) {
       return "[]";
     }
 
-    // Deep clone to avoid modifying original
     const sanitized = JSON.parse(JSON.stringify(json));
 
-    // Remove sensitive information
     const sanitizeObject = (obj: any) => {
       if (!isObject(obj)) return obj;
 
@@ -178,9 +156,6 @@ export const formatJSON = (json: any): string => {
   }
 };
 
-/**
- * Get the right event type badge based on API data
- */
 export const getEventTypeIcon = (eventType: string): string => {
   if (!eventType || typeof eventType !== "string") {
     return "default";
@@ -207,9 +182,6 @@ export const getEventTypeIcon = (eventType: string): string => {
   return "default";
 };
 
-/**
- * Format event type for display
- */
 export const formatEventType = (eventType: string): string => {
   if (!eventType || typeof eventType !== "string") {
     return "Unknown Event";
@@ -221,9 +193,6 @@ export const formatEventType = (eventType: string): string => {
     .join(" ");
 };
 
-/**
- * Get formatted device info from log
- */
 export const getDeviceInfo = (log: any): string => {
   if (!log) return "Unknown Device";
 
@@ -334,7 +303,93 @@ export const getUserEmail = (log: any): string | null => {
   return null;
 };
 
-// Export all these fixed functions
+export const safeGetUserEmailDisplay = (log) => {
+  if (!log) return "";
+
+  if (log.user_email) {
+    return log.user_email;
+  }
+
+  // Safely handle response_body
+  if (log.response_body) {
+    let responseBody = log.response_body;
+
+    // Handle the case where response_body is a string (JSON string)
+    if (typeof responseBody === "string") {
+      try {
+        responseBody = JSON.parse(responseBody);
+      } catch (e) {
+        // If parsing fails, continue with the original value
+      }
+    }
+
+    // Check if responseBody is an object and has users property that is an array
+    if (
+      responseBody &&
+      typeof responseBody === "object" &&
+      !Array.isArray(responseBody) &&
+      responseBody.users &&
+      Array.isArray(responseBody.users)
+    ) {
+      // Safe to iterate over users array
+      for (const user of responseBody.users) {
+        if (user && user.id === log.user_id && user.email) {
+          return user.email;
+        }
+      }
+    }
+  }
+
+  return "";
+};
+
+export const safeGetUsernameDisplay = (log) => {
+  if (!log) return "Unknown User";
+
+  // Use username if it exists and is valid
+  if (
+    log.username &&
+    log.username !== "undefined undefined" &&
+    log.username !== "null null"
+  ) {
+    return log.username.trim();
+  }
+
+  // Safely handle response_body with type checking before iteration
+  if (log.response_body) {
+    let responseBody = log.response_body;
+
+    // Parse if string
+    if (typeof responseBody === "string") {
+      try {
+        responseBody = JSON.parse(responseBody);
+      } catch (e) {
+        // Continue if parse fails
+      }
+    }
+
+    // Only iterate if we have a proper structure
+    if (
+      responseBody &&
+      typeof responseBody === "object" &&
+      responseBody.users &&
+      Array.isArray(responseBody.users)
+    ) {
+      for (const user of responseBody.users) {
+        if (user && user.id === log.user_id) {
+          const firstName = user.first_name || "";
+          const lastName = user.last_name || "";
+          return (
+            `${firstName} ${lastName}`.trim() || user.username || "Unknown User"
+          );
+        }
+      }
+    }
+  }
+
+  return `User ${log.user_id.substring(0, 8)}...`;
+};
+
 export const auditUtils = {
   getUsernameDisplay,
   cleanIpAddress,
@@ -345,6 +400,7 @@ export const auditUtils = {
   getUserEmail,
   isArray,
   isObject,
+  safeGetUsernameDisplay,
 };
 
 export default auditUtils;

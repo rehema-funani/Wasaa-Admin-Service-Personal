@@ -20,66 +20,8 @@ import { Button } from "../../../components/common/Button";
 import { Card } from "../../../components/common/Card";
 import { logsService } from "../../../api/services/logs";
 import moment from "moment";
-
-interface AuditLog {
-  _id: string;
-  user_id: string;
-  username: string;
-  ip_address: string;
-  service_name: string;
-  status_code: number;
-  session_id?: string;
-  user_email?: string;
-  event_type: string;
-  event_description: string;
-  entity_affected: string;
-  entity_id: string;
-  http_method: string;
-  request_url: string;
-  query_params: string;
-  request_body: any;
-  response_body: any;
-  execution_time: number;
-  location: string;
-  user_agent: string;
-  device_type: string;
-  device_model: string;
-  os: string;
-  browser: string;
-  auth_method: string;
-  roles: string;
-  permissions: string;
-  is_successful: boolean;
-  timestamp?: string;
-  __v: number;
-}
-
-const JsonViewer: React.FC<{ data: any }> = ({ data }) => {
-  if (
-    !data ||
-    (typeof data === "object" && Object.keys(data).length === 0) ||
-    data === ""
-  ) {
-    return <div className="text-gray-500 dark:text-gray-400 italic">Empty</div>;
-  }
-
-  let jsonData = data;
-  if (typeof data === "string" && data.trim() !== "") {
-    try {
-      jsonData = JSON.parse(data);
-    } catch (e) {
-      return (
-        <div className="text-sm text-gray-900 dark:text-gray-200">{data}</div>
-      );
-    }
-  }
-
-  return (
-    <pre className="bg-gray-800/10 dark:bg-gray-700/30 backdrop-blur-sm p-3 rounded-lg text-xs text-gray-900 dark:text-gray-200 overflow-auto max-h-60 border border-gray-200 dark:border-gray-600">
-      {JSON.stringify(jsonData, null, 2)}
-    </pre>
-  );
-};
+import { safeGetUserEmailDisplay, safeGetUsernameDisplay } from "../../../utils/audit";
+import { AuditLog } from "../../../types";
 
 const InfoItem: React.FC<{
   label: string;
@@ -130,46 +72,6 @@ const AuditLogDetailsPage: React.FC = () => {
     fetchLogDetails();
   }, [id]);
 
-  const getUsernameDisplay = (log: AuditLog) => {
-    if (log.username && log.username !== "undefined undefined") {
-      return log.username;
-    }
-
-    if (
-      log.response_body &&
-      typeof log.response_body === "object" &&
-      log.response_body.users
-    ) {
-      for (const user of log.response_body.users) {
-        if (user.id === log.user_id) {
-          return `${user.first_name} ${user.last_name}`;
-        }
-      }
-    }
-
-    return "Unknown user";
-  };
-
-  const getUserEmailDisplay = (log: AuditLog) => {
-    if (log.user_email) {
-      return log.user_email;
-    }
-
-    if (
-      log.response_body &&
-      typeof log.response_body === "object" &&
-      log.response_body.users
-    ) {
-      for (const user of log.response_body.users) {
-        if (user.id === log.user_id) {
-          return user.email;
-        }
-      }
-    }
-
-    return "";
-  };
-
   const handleGoBack = () => {
     navigate(-1);
   };
@@ -202,6 +104,45 @@ const AuditLogDetailsPage: React.FC = () => {
         Failed
       </Badge>
     );
+  };
+
+  const SafeJsonViewer = ({ data }) => {
+    if (
+      !data ||
+      (typeof data === "object" && Object.keys(data).length === 0) ||
+      data === "" ||
+      (Array.isArray(data) && data.length === 0)
+    ) {
+      return (
+        <div className="text-gray-500 dark:text-gray-400 italic">Empty</div>
+      );
+    }
+
+    let jsonData = data;
+    if (typeof data === "string" && data.trim() !== "") {
+      try {
+        jsonData = JSON.parse(data);
+      } catch (e) {
+        return (
+          <div className="text-sm text-gray-900 dark:text-gray-200">{data}</div>
+        );
+      }
+    }
+
+    try {
+      const stringified = JSON.stringify(jsonData, null, 2);
+      return (
+        <pre className="bg-gray-800/10 dark:bg-gray-700/30 backdrop-blur-sm p-3 rounded-lg text-xs text-gray-900 dark:text-gray-200 overflow-auto max-h-60 border border-gray-200 dark:border-gray-600">
+          {stringified}
+        </pre>
+      );
+    } catch (error) {
+      return (
+        <div className="text-amber-600 dark:text-amber-400 italic p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+          Unable to display data: {error.message}
+        </div>
+      );
+    }
   };
 
   const getEventTypeBadge = (eventType: string) => {
@@ -349,10 +290,10 @@ const AuditLogDetailsPage: React.FC = () => {
               />
               <div>
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-200">
-                  {getUsernameDisplay(log)}
+                  {safeGetUsernameDisplay(log)}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {getUserEmailDisplay(log)}
+                  {safeGetUserEmailDisplay(log)}
                 </p>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                   User ID: {log.user_id}
@@ -446,7 +387,9 @@ const AuditLogDetailsPage: React.FC = () => {
                   />
                   <InfoItem
                     label="Execution date & time"
-                    value={`${moment(log.execution_time).format("DD MMM, YYYY, HH:mm:ss.SSS")}`}
+                    value={`${moment(log.execution_time).format(
+                      "DD MMM, YYYY, HH:mm:ss.SSS"
+                    )}`}
                     icon={<Clock size={12} />}
                   />
                   <InfoItem
@@ -546,7 +489,7 @@ const AuditLogDetailsPage: React.FC = () => {
                 <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                   Request Body
                 </h4>
-                <JsonViewer data={log.request_body} />
+                <SafeJsonViewer data={log.request_body} />
               </Card>
 
               <Card className="p-5 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-white/50 dark:border-gray-700/50">
@@ -568,7 +511,7 @@ const AuditLogDetailsPage: React.FC = () => {
                   <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                     Response Body
                   </h4>
-                  <JsonViewer data={log.response_body} />
+                  <SafeJsonViewer data={log.response_body} />
                 </div>
               </Card>
             </>
@@ -582,12 +525,12 @@ const AuditLogDetailsPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InfoItem
                   label="Username"
-                  value={getUsernameDisplay(log)}
+                  value={safeGetUsernameDisplay(log)}
                   icon={<User size={12} />}
                 />
                 <InfoItem
                   label="Email"
-                  value={getUserEmailDisplay(log) || "Not available"}
+                  value={safeGetUserEmailDisplay(log) || "Not available"}
                   icon={
                     <Mail
                       size={12}
