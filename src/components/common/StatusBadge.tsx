@@ -55,7 +55,6 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
     icon,
     className = ''
 }) => {
-    // Determine label if not provided
     const defaultLabel = (() => {
         switch (status) {
             case 'success': return 'Success';
@@ -77,7 +76,6 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
 
     const label = text || defaultLabel;
 
-    // Define style configurations
     const getStatusStyles = () => {
         if (customColors) {
             return {

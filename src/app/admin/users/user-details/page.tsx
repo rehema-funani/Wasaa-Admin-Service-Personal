@@ -506,10 +506,10 @@ const page = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <StatusBadge
-                        status={user.status as any}
+                        status={user.account_status as any}
                         size="sm"
                         withIcon
-                        withDot={user.status === "active"}
+                        withDot={user.account_status === "active"}
                       />
                     </td>
                     <td className="px-6 py-4">
