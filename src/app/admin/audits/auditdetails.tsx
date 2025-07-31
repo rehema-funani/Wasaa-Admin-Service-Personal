@@ -19,6 +19,7 @@ import { Badge } from "../../../components/common/Badge";
 import { Button } from "../../../components/common/Button";
 import { Card } from "../../../components/common/Card";
 import { logsService } from "../../../api/services/logs";
+import moment from "moment";
 
 interface AuditLog {
   _id: string;
@@ -115,7 +116,6 @@ const AuditLogDetailsPage: React.FC = () => {
 
       try {
         const response = await logsService.getAuditLogById(id);
-        console.log("Fetched audit log details:", response);
         setLog(response);
       } catch (err) {
         console.error("Failed to fetch audit log details:", err);
@@ -384,21 +384,17 @@ const AuditLogDetailsPage: React.FC = () => {
                 className="text-gray-400 dark:text-gray-500 flex-shrink-0 mt-0.5"
               />
               <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Ip Address:
+                </p>
                 <h3 className="text-sm font-medium text-gray-900 dark:text-gray-200">
                   {log.ip_address.replace("::ffff:", "")}
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {log.location || "Unknown location"}
-                </p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                  Execution: {log.execution_time}ms
-                </p>
               </div>
             </div>
           </div>
         </Card>
 
-        {/* Tab Navigation */}
         <div className="mb-6">
           <div className="border-b border-gray-200 dark:border-gray-700">
             <div className="flex overflow-x-auto hide-scrollbar">
@@ -449,8 +445,8 @@ const AuditLogDetailsPage: React.FC = () => {
                     icon={<AlertTriangle size={12} />}
                   />
                   <InfoItem
-                    label="Execution Time"
-                    value={`${log.execution_time}ms`}
+                    label="Execution date & time"
+                    value={`${moment(log.execution_time).format("DD MMM, YYYY, HH:mm:ss.SSS")}`}
                     icon={<Clock size={12} />}
                   />
                   <InfoItem

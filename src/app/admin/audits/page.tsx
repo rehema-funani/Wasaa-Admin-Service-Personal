@@ -35,6 +35,7 @@ import { Card } from "../../../components/common/Card";
 import { logsService } from "../../../api/services/logs";
 import { AuditLog } from "../../../types";
 import getEventTypeBadge from "../../../components/audit/getEventTypeBadge";
+import { getUsernameDisplay } from "../../../utils/audit";
 
 interface SecurityMetrics {
   failedLogins: number;
@@ -160,46 +161,6 @@ const AuditLogsPage: React.FC = () => {
 
   const handleSortChange = (sortOption: string) => {
     setActiveSort(sortOption);
-  };
-
-  const getUsernameDisplay = (log: AuditLog) => {
-    if (log.username && log.username !== "undefined undefined") {
-      return log.username;
-    }
-
-    if (
-      log.response_body &&
-      typeof log.response_body === "object" &&
-      log.response_body.users
-    ) {
-      for (const user of log.response_body.users) {
-        if (user.id === log.user_id) {
-          return `${user.first_name} ${user.last_name}`;
-        }
-      }
-    }
-
-    return "Unknown user";
-  };
-
-  const getUserEmailDisplay = (log: AuditLog) => {
-    if (log.user_email) {
-      return log.user_email;
-    }
-
-    if (
-      log.response_body &&
-      typeof log.response_body === "object" &&
-      log.response_body.users
-    ) {
-      for (const user of log.response_body.users) {
-        if (user.id === log.user_id) {
-          return user.email;
-        }
-      }
-    }
-
-    return "";
   };
 
   const formatDate = (dateString: string) => {
@@ -795,7 +756,7 @@ const AuditLogsPage: React.FC = () => {
                                 {getUsernameDisplay(log)}
                               </div>
                               <div className="text-xs text-slate-500 dark:text-gray-400">
-                                {getUserEmailDisplay(log)}
+                                {/* {getUserEmailDisplay(log)} */}
                               </div>
                             </div>
                           </div>
