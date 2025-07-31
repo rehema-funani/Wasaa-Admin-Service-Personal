@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { api } from '../axios';
-import { param } from 'framer-motion/client';
 const API_KEY = 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==';
-
 
 type User = {
     id: string;

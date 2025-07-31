@@ -788,7 +788,6 @@ const page = () => {
                   <ChevronRight size={16} />
                 </motion.button>
 
-                {/* Last Page */}
                 <motion.button
                   onClick={() => handlePageChange(totalPages)}
                   disabled={paginationData.currentPage === totalPages}
