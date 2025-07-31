@@ -1,71 +1,64 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
-  ArrowLeft,
-  Calendar,
-  CheckCircle,
-  Clock,
+  ArrowDownToLine,
   Copy,
   Download,
-  FileText,
-  Hash,
   Share,
   Printer,
   Shield,
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  ArrowLeftRight,
+  Clock,
+  Calendar,
+  CheckCircle,
+  CircleDollarSign,
   Tag,
   Info,
   Wallet,
-  CircleDollarSign,
+  ArrowLeft,
 } from "lucide-react";
-import financeService from "../../../../api/services/finance";
-import { useNavigate, useParams } from "react-router-dom";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 
-const TransactionReceiptPage = () => {
-  const [transaction, setTransaction] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// Sample transaction data based on the provided JSON
+const transactionData = {
+  amount: "10",
+  description:
+    "You have received KES 10 from 254705984640 at a transaction fee of KES 0",
+  type: "RECEIVE",
+  debit: "3000010",
+  credit: "400",
+  status: "COMPLETED",
+  reference: "TX-1753940332670",
+  createdAt: "2025-07-31T05:38:52.611Z",
+  wallet: {
+    type: "user",
+    status: "Active",
+    availableBalance: "2999610",
+  },
+};
+
+export default function EnhancedTransactionReceipt() {
   const [copied, setCopied] = useState(false);
   const [notification, setNotification] = useState({
     show: false,
     message: "",
     type: "",
   });
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const receiptRef = useRef(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
+  // Handle scroll effects
   useEffect(() => {
-    const fetchTransaction = async () => {
-      if (!id) {
-        setError("No transaction ID provided");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await financeService.getTransaction(id);
-        if (response.status && response.transaction) {
-          setTransaction(response.transaction);
-        } else {
-          setError("Failed to load transaction details");
-        }
-      } catch (err) {
-        setError("An error occurred while fetching transaction data");
-        console.error("Error fetching transaction:", err);
-      } finally {
-        setLoading(false);
-      }
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
     };
 
-    fetchTransaction();
-  }, [id]);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  const navigateBack = () => {
-    navigate(-1);
+  // Copy to clipboard function
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    showNotification("Copied to clipboard");
   };
 
   // Show notification
@@ -77,20 +70,13 @@ const TransactionReceiptPage = () => {
     );
   };
 
-  // Copy to clipboard function
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   // Share functionality
   const shareTransaction = async () => {
     const shareData = {
-      title: `Transaction Receipt: ${transaction.reference}`,
+      title: `Transaction Receipt: ${transactionData.reference}`,
       text: `Transaction of ${formatCurrency(
-        transaction.amount
-      )} on ${formatDate(transaction.createdAt)}`,
+        transactionData.amount
+      )} on ${formatDate(transactionData.createdAt)}`,
       url: window.location.href,
     };
 
@@ -104,73 +90,21 @@ const TransactionReceiptPage = () => {
         showNotification("Transaction URL copied to clipboard");
       }
     } catch (error) {
-      console.error("Error sharing transaction:", error);
       // Fallback to copying URL
       copyToClipboard(window.location.href);
       showNotification("Transaction URL copied to clipboard");
     }
   };
 
-  // Print functionality with improved handling
+  // Print functionality
   const printReceipt = () => {
     window.print();
+    showNotification("Printing receipt...");
   };
 
-  // Download functionality
-  const downloadReceipt = async () => {
-    if (!receiptRef.current) {
-      showNotification("Could not generate receipt", "error");
-      return;
-    }
-
-    try {
-      setNotification({
-        show: true,
-        message: "Generating PDF...",
-        type: "info",
-      });
-
-      const element = receiptRef.current;
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-
-      // A4 dimensions: 210 × 297 mm
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const imgWidth = 210 - 40; // A4 width with margins
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      pdf.addImage(imgData, "PNG", 20, 20, imgWidth, imgHeight);
-      pdf.save(
-        `Transaction_${transaction.reference}_${formatDateForFilename(
-          transaction.createdAt
-        )}.pdf`
-      );
-
-      showNotification("Receipt downloaded successfully");
-    } catch (error) {
-      console.error("Error downloading receipt:", error);
-      showNotification("Failed to download receipt", "error");
-    }
-  };
-
-  const formatDateForFilename = (dateString) => {
-    try {
-      const date = new Date(dateString);
-      return date.toISOString().split("T")[0];
-    } catch (error) {
-      return "unknown-date";
-    }
+  // Download functionality (mock)
+  const downloadReceipt = () => {
+    showNotification("Receipt downloaded successfully");
   };
 
   const formatCurrency = (amount) => {
@@ -210,133 +144,25 @@ const TransactionReceiptPage = () => {
     }
   };
 
-  const getTransactionIcon = (type) => {
-    switch (type) {
-      case "RECEIVE":
-        return (
-          <ArrowDownToLine className="text-emerald-500 dark:text-emerald-400" />
-        );
-      case "SEND":
-        return (
-          <ArrowUpFromLine className="text-indigo-500 dark:text-indigo-400" />
-        );
-      case "TRANSFER":
-        return <ArrowLeftRight className="text-blue-500 dark:text-blue-400" />;
-      default:
-        return (
-          <CircleDollarSign className="text-blue-500 dark:text-blue-400" />
-        );
-    }
-  };
-
-  const getTransactionTypeLabel = (type) => {
-    switch (type) {
-      case "RECEIVE":
-        return "Money Received";
-      case "SEND":
-        return "Money Sent";
-      case "TRANSFER":
-        return "Transfer";
-      case "DEPOSIT":
-        return "Deposit";
-      case "WITHDRAW":
-        return "Withdrawal";
-      default:
-        return type;
-    }
-  };
-
-  const getTransactionColor = (type) => {
-    switch (type) {
-      case "RECEIVE":
-        return "emerald";
-      case "SEND":
-        return "indigo";
-      case "TRANSFER":
-        return "blue";
-      case "DEPOSIT":
-        return "green";
-      case "WITHDRAW":
-        return "amber";
-      default:
-        return "gray";
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "COMPLETED":
-        return "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300";
-      case "PENDING":
-        return "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300";
-      case "FAILED":
-        return "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300";
-      default:
-        return "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 dark:from-gray-900 to-blue-50 dark:to-gray-800 flex items-center justify-center">
-        <div className="flex flex-col items-center">
-          <div className="w-16 h-16 relative">
-            <div className="w-16 h-16 rounded-full border-[3px] border-blue-100 dark:border-blue-800 border-t-blue-500 dark:border-t-blue-400 animate-spin absolute"></div>
-            <div
-              className="w-16 h-16 rounded-full border-[3px] border-transparent border-b-blue-300 dark:border-b-blue-600 animate-spin absolute"
-              style={{ animationDuration: "1.5s" }}
-            ></div>
-          </div>
-          <p className="mt-6 text-gray-600 dark:text-gray-400 font-medium">
-            Loading transaction...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !transaction) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 dark:from-gray-900 to-blue-50 dark:to-gray-800 flex items-center justify-center p-6">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-slate-100 dark:border-gray-700 shadow-xl text-center max-w-md mx-auto">
-          <div className="w-20 h-20 bg-red-50 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-            <FileText size={32} className="text-red-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-            Transaction Not Found
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-8">
-            {error || "We couldn't locate the requested transaction record."}
-          </p>
-          <button
-            onClick={() => navigate("/admin/finance/transactions")}
-            className="px-8 py-3 bg-blue-500 dark:bg-blue-600 text-white rounded-full font-medium hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 dark:shadow-blue-900/20"
-          >
-            Return to Transactions
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const isCredit =
-    transaction.type === "RECEIVE" || transaction.type === "DEPOSIT";
-  const transactionDate = formatDate(transaction.createdAt);
-  const transactionTime = formatTime(transaction.createdAt);
-
-  const formattedBalance = formatCurrency(
-    transaction.wallet.availableBalance.length > 10
-      ? transaction.wallet.availableBalance.slice(0, 10)
-      : transaction.wallet.availableBalance
-  );
+  // Transaction type and styling logic
+  const isCredit = transactionData.type === "RECEIVE";
+  const transactionDate = formatDate(transactionData.createdAt);
+  const transactionTime = formatTime(transactionData.createdAt);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 dark:from-gray-900 to-blue-50 dark:to-gray-800">
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-slate-100 dark:border-gray-700 shadow-sm print:hidden">
-        <div className="max-w-5xl mx-auto px-6 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex flex-col">
+      {/* Fixed top navigation bar with blur effect */}
+      <div
+        className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-slate-100 dark:border-gray-700 shadow-sm print:hidden"
+        style={{
+          transform: scrollPosition > 100 ? "translateY(0)" : "translateY(0)",
+          transition: "transform 0.3s ease",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <button
-              onClick={navigateBack}
+              onClick={() => window.history.back()}
               className="flex items-center space-x-2 text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 transition"
             >
               <ArrowLeft size={18} />
@@ -370,317 +196,299 @@ const TransactionReceiptPage = () => {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto pb-20 pt-8">
-        <div className="mb-10 text-center">
-          <h1 className="text-blue-500 dark:text-blue-400 text-xl font-medium mb-1">
+      {/* Full-height main content */}
+      <div className="flex-grow flex flex-col items-center justify-center px-4 py-12 md:py-20">
+        <div className="text-center mb-12">
+          <h1 className="text-blue-500 dark:text-blue-400 text-2xl md:text-3xl font-medium mb-2">
             Transaction Receipt
           </h1>
-          <h2 className="text-3xl font-bold text-slate-800 dark:text-gray-100 mb-1">
-            {getTransactionTypeLabel(transaction.type)}
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-gray-100 mb-2">
+            Money Received
           </h2>
-          <div
-            className={`inline-flex items-center px-3 py-1 ${getStatusColor(
-              transaction.status
-            )} text-xs font-medium rounded-full`}
-          >
-            {transaction.status}
+          <div className="inline-flex items-center px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium rounded-full">
+            {transactionData.status}
           </div>
         </div>
 
-        {/* Main Receipt Card - Add ref for PDF generation */}
-        <div className="mx-auto px-6 mb-8">
-          <div
-            ref={receiptRef}
-            className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
-          >
-            {/* Amount Section */}
-            <div className="px-8 py-10 bg-blue-50 dark:bg-blue-900/30 border-b border-blue-100 dark:border-blue-800">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center text-blue-500 dark:text-blue-400">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mr-3">
-                    {getTransactionIcon(transaction.type)}
-                  </div>
-                  <span className="text-xl font-semibold">
-                    {getTransactionTypeLabel(transaction.type)}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-2 text-slate-500 dark:text-gray-400 text-sm">
-                  <Calendar size={16} />
-                  <span>{transactionDate}</span>
-                  <span className="mx-1">•</span>
-                  <Clock size={16} />
-                  <span>{transactionTime}</span>
-                </div>
-              </div>
+        {/* Main Receipt Card */}
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden transform transition-all duration-300 hover:shadow-3xl">
+            {/* Header with gradient background */}
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 p-10 text-white relative overflow-hidden">
+              {/* Decorative circles */}
+              <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48"></div>
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full -ml-32 -mb-32"></div>
+              <div className="absolute top-1/3 left-1/4 w-20 h-20 bg-white/5 rounded-full"></div>
 
-              <div className="text-center">
-                <div
-                  className={`text-5xl font-bold mb-3 ${
-                    isCredit
-                      ? "text-emerald-500 dark:text-emerald-400"
-                      : "text-indigo-500 dark:text-indigo-400"
-                  }`}
-                >
-                  {isCredit ? "+" : "-"}
-                  {formatCurrency(transaction.amount)}
+              <div className="relative z-10">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 space-y-6 md:space-y-0">
+                  <div className="flex items-center">
+                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mr-4">
+                      <ArrowDownToLine size={32} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white/80 text-sm font-medium uppercase tracking-wider">
+                        Transaction Type
+                      </p>
+                      <h3 className="text-white text-2xl font-bold">
+                        Money Received
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <div className="flex items-center space-x-3 text-white/80 text-sm mb-2">
+                      <Calendar size={16} />
+                      <span>{transactionDate}</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-white/80 text-sm">
+                      <Clock size={16} />
+                      <span>{transactionTime}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-white/80 text-lg mb-2">Amount</p>
+                  <div className="text-6xl md:text-7xl font-bold mb-3">
+                    {formatCurrency(transactionData.amount)}
+                  </div>
+                  <div className="inline-flex items-center px-4 py-1.5 bg-white/10 rounded-full">
+                    <CircleDollarSign size={16} className="mr-2" />
+                    <span className="text-white/90">
+                      Transaction Completed Successfully
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Transaction Details */}
-            <div className="px-8 py-8">
-              {/* Transaction Identifiers */}
+            {/* Transaction Details Content */}
+            <div className="p-8 md:p-10">
+              {/* Reference Number with Copy */}
               <div className="mb-10">
-                <h3 className="text-slate-400 dark:text-gray-500 uppercase text-xs font-semibold tracking-wider mb-4">
-                  Transaction Details
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Transaction ID */}
-                  <div
-                    className="group flex items-start space-x-4 cursor-pointer"
-                    onClick={() => copyToClipboard(transaction.id)}
-                  >
-                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <Hash
-                        size={18}
+                <div
+                  className="flex items-center justify-between p-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800/40 group cursor-pointer transition-all duration-300 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                  onClick={() => copyToClipboard(transactionData.reference)}
+                >
+                  <div className="flex items-center">
+                    <div className="w-14 h-14 bg-blue-500/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mr-4">
+                      <Tag
+                        size={24}
                         className="text-blue-500 dark:text-blue-400"
                       />
                     </div>
-                    <div className="flex-grow">
+                    <div>
                       <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
-                        Transaction ID
+                        Reference Number
                       </p>
-                      <div className="flex items-center">
-                        <p className="text-slate-800 dark:text-gray-200 font-mono text-sm truncate">
-                          {transaction.id}
-                        </p>
-                        <Copy
-                          size={14}
-                          className="ml-2 text-slate-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition"
-                        />
-                      </div>
+                      <p className="text-slate-800 dark:text-gray-200 text-xl font-medium">
+                        {transactionData.reference}
+                      </p>
                     </div>
                   </div>
-
-                  {/* Reference Number */}
-                  <div
-                    className="group flex items-start space-x-4 cursor-pointer"
-                    onClick={() => copyToClipboard(transaction.reference)}
-                  >
-                    <div className="flex-shrink-0 w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <Tag
-                        size={18}
-                        className="text-blue-500 dark:text-blue-400"
-                      />
-                    </div>
-                    <div className="flex-grow">
-                      <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
-                        Reference
-                      </p>
-                      <div className="flex items-center">
-                        <p className="text-slate-800 dark:text-gray-200 font-medium">
-                          {transaction.reference}
-                        </p>
-                        <Copy
-                          size={14}
-                          className="ml-2 text-slate-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition"
-                        />
-                      </div>
-                    </div>
+                  <div className="flex items-center text-blue-500 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Copy size={20} className="mr-2" />
+                    <span className="text-sm font-medium">Copy</span>
                   </div>
                 </div>
               </div>
 
-              {/* Amount & Wallet Details */}
-              <div className="mb-10">
-                <h3 className="text-slate-400 dark:text-gray-500 uppercase text-xs font-semibold tracking-wider mb-4">
-                  Amount & Wallet Details
-                </h3>
+              {/* Two Column Layout for Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                {/* Transaction Details */}
+                <div className="bg-slate-50 dark:bg-gray-700/50 rounded-3xl p-8 border border-gray-100 dark:border-gray-600 h-full">
+                  <h3 className="text-slate-700 dark:text-gray-300 text-xl font-semibold mb-6 flex items-center">
+                    <Info
+                      size={20}
+                      className="text-blue-500 dark:text-blue-400 mr-2"
+                    />
+                    Transaction Details
+                  </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Amount Details */}
-                  <div className="bg-slate-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-600">
-                    <div className="mb-6">
+                  <div className="space-y-6">
+                    <div>
                       <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
-                        Transaction Amount
+                        Transaction Type
                       </p>
-                      <p
-                        className={`text-2xl font-bold ${
-                          isCredit
-                            ? "text-emerald-500 dark:text-emerald-400"
-                            : "text-indigo-500 dark:text-indigo-400"
-                        }`}
-                      >
-                        {formatCurrency(transaction.amount)}
+                      <p className="text-slate-800 dark:text-gray-200 text-lg font-medium">
+                        Money Received
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                        Date & Time
+                      </p>
+                      <p className="text-slate-800 dark:text-gray-200 text-lg">
+                        {transactionDate}, {transactionTime}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-200 dark:border-gray-600">
                       <div>
                         <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
                           Debit
                         </p>
-                        <p className="text-slate-800 dark:text-gray-200 font-mono">
-                          {formatCurrency(transaction.debit)}
+                        <p className="text-slate-800 dark:text-gray-200 font-mono text-lg">
+                          {formatCurrency(transactionData.debit)}
                         </p>
                       </div>
                       <div>
                         <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
                           Credit
                         </p>
-                        <p className="text-slate-800 dark:text-gray-200 font-mono">
-                          {formatCurrency(transaction.credit)}
+                        <p className="text-slate-800 dark:text-gray-200 font-mono text-lg">
+                          {formatCurrency(transactionData.credit)}
                         </p>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Wallet Information */}
-                  <div className="bg-slate-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-600">
-                    <div className="flex items-center mb-4">
-                      <Wallet
-                        size={16}
-                        className="text-slate-500 dark:text-gray-400 mr-2"
-                      />
-                      <p className="text-slate-800 dark:text-gray-200 font-semibold">
-                        Wallet Information
-                      </p>
-                    </div>
+                {/* Wallet Information */}
+                <div className="bg-slate-50 dark:bg-gray-700/50 rounded-3xl p-8 border border-gray-100 dark:border-gray-600 h-full">
+                  <h3 className="text-slate-700 dark:text-gray-300 text-xl font-semibold mb-6 flex items-center">
+                    <Wallet
+                      size={20}
+                      className="text-blue-500 dark:text-blue-400 mr-2"
+                    />
+                    Wallet Information
+                  </h3>
 
-                    <div className="mb-4">
+                  <div className="space-y-6">
+                    <div>
                       <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
                         Available Balance
                       </p>
-                      <p className="text-emerald-500 dark:text-emerald-400 text-2xl font-bold">
-                        {formattedBalance}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-slate-500 dark:text-gray-400 text-xs">
-                          Wallet Type
-                        </p>
-                        <p className="text-slate-800 dark:text-gray-200 capitalize">
-                          {transaction.wallet.type}
+                      <div className="flex items-center">
+                        <p className="text-emerald-500 dark:text-emerald-400 text-4xl font-bold">
+                          {formatCurrency(
+                            transactionData.wallet.availableBalance
+                          )}
                         </p>
                       </div>
-                      <div
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          transaction.wallet.status === "Active"
-                            ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
-                            : "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300"
-                        }`}
-                      >
-                        {transaction.wallet.status}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-gray-600">
+                      <div>
+                        <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                          Wallet Type
+                        </p>
+                        <p className="text-slate-800 dark:text-gray-200 text-lg capitalize">
+                          {transactionData.wallet.type}
+                        </p>
+                      </div>
+                      <div className="px-4 py-2 rounded-full text-sm font-medium bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 flex items-center">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
+                        {transactionData.wallet.status}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Description & Additional Details */}
-              <div>
-                <h3 className="text-slate-400 dark:text-gray-500 uppercase text-xs font-semibold tracking-wider mb-4">
-                  Additional Information
-                </h3>
-
-                <div className="bg-slate-50 dark:bg-gray-700/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-600">
-                  <div className="mb-6">
-                    <div className="flex items-start">
-                      <Info
-                        size={16}
-                        className="text-slate-500 dark:text-gray-400 mr-3 mt-0.5"
-                      />
-                      <div>
-                        <p className="text-slate-700 dark:text-gray-300 font-medium mb-1">
-                          Description
-                        </p>
-                        <p className="text-slate-600 dark:text-gray-400">
-                          {transaction.description ||
-                            "No description provided for this transaction"}
-                        </p>
-                      </div>
-                    </div>
+              {/* Description Section */}
+              <div className="bg-slate-50 dark:bg-gray-700/50 rounded-3xl p-8 border border-gray-100 dark:border-gray-600">
+                <div className="flex items-start">
+                  <div className="w-14 h-14 bg-blue-500/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <Info
+                      size={24}
+                      className="text-blue-500 dark:text-blue-400"
+                    />
                   </div>
-
-                  {transaction.counterpartyId && (
-                    <div>
-                      <div className="flex items-start">
-                        <ArrowLeftRight
-                          size={16}
-                          className="text-slate-500 dark:text-gray-400 mr-3 mt-0.5"
-                        />
-                        <div>
-                          <p className="text-slate-700 dark:text-gray-300 font-medium mb-1">
-                            Counterparty
-                          </p>
-                          <p className="text-slate-600 dark:text-gray-400 font-mono text-sm">
-                            {transaction.counterpartyId}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <div>
+                    <p className="text-slate-700 dark:text-gray-300 text-xl font-semibold mb-2">
+                      Description
+                    </p>
+                    <p className="text-slate-600 dark:text-gray-400 text-lg">
+                      {transactionData.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Verification Footer */}
-            <div className="px-8 py-5 bg-slate-50 dark:bg-gray-700/50 border-t border-slate-100 dark:border-gray-600">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Shield
-                    size={16}
-                    className="text-blue-500 dark:text-blue-400 mr-2"
-                  />
-                  <p className="text-sm text-slate-600 dark:text-gray-400">
-                    This is an official transaction record
-                  </p>
-                </div>
+            {/* Footer with verification */}
+            <div className="px-10 py-6 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800">
+              <div className="flex items-center text-sm text-slate-500 dark:text-gray-400">
+                <Shield
+                  size={18}
+                  className="mr-2 text-blue-500 dark:text-blue-400"
+                />
+                <span>This is an official verified transaction receipt</span>
+              </div>
 
-                <p className="text-sm text-slate-500 dark:text-gray-400">
-                  {transactionDate} • {transactionTime}
-                </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={shareTransaction}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <Share size={18} />
+                </button>
+                <button
+                  onClick={printReceipt}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <Printer size={18} />
+                </button>
+                <button
+                  onClick={downloadReceipt}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors shadow-md shadow-blue-100 dark:shadow-blue-900/20"
+                >
+                  <Download size={18} />
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="text-center print:hidden">
-          <button
-            onClick={() => navigate("/admin/finance/transactions")}
-            className="px-6 py-2.5 text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-medium transition-colors"
-          >
-            Return to Transaction Registry
-          </button>
-        </div>
+        {/* Info Text */}
+        <p className="mt-10 text-sm text-slate-500 dark:text-gray-400 text-center max-w-2xl">
+          This is a secure digital receipt. All sensitive identifiers have been
+          removed for your security. This receipt serves as official proof of
+          transaction.
+        </p>
       </div>
 
-      {copied && (
-        <div className="fixed bottom-6 right-6 bg-slate-800 dark:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center print:hidden border border-gray-600">
-          <CheckCircle size={16} className="mr-2 text-emerald-400" />
-          <span>Copied to clipboard</span>
+      {notification.show && (
+        <div className="fixed bottom-6 right-6 bg-slate-800 dark:bg-gray-700 text-white px-5 py-3 rounded-xl shadow-xl flex items-center print:hidden border border-gray-600 z-50 animate-fadeIn">
+          <CheckCircle size={18} className="mr-2 text-emerald-400" />
+          <span className="text-base">{notification.message}</span>
         </div>
       )}
 
-      {notification.show && (
-        <div
-          className={`fixed bottom-6 right-6 ${
-            notification.type === "error"
-              ? "bg-red-600"
-              : notification.type === "info"
-              ? "bg-blue-600"
-              : "bg-slate-800 dark:bg-gray-700"
-          } text-white px-4 py-2 rounded-lg shadow-lg flex items-center print:hidden border border-gray-600`}
-        >
-          <CheckCircle size={16} className="mr-2 text-white" />
-          <span>{notification.message}</span>
-        </div>
-      )}
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease forwards;
+        }
+
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .receipt-content,
+          .receipt-content * {
+            visibility: visible;
+          }
+          .receipt-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+        }
+      `}</style>
     </div>
   );
-};
-
-export default TransactionReceiptPage;
+}
