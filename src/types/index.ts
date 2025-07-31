@@ -64,3 +64,36 @@ export interface AuditLog {
   timestamp?: string;
   __v: number;
 }
+
+export interface FlaggedContact {
+  _count: {
+    contact_id: number;
+  };
+  contact_id: string;
+  user_details: {
+    id: string;
+    username: string;
+    phone_number: string;
+    email: string;
+    profile_picture: string | null;
+    profile_background: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    kyc_status: boolean;
+    preferences: any;
+    devices: Array<{
+      id: number;
+      fcm_token: string;
+      trust_status: string;
+    }>;
+  };
+  flagged_by?: {
+    id: string;
+    username: string;
+    first_name?: string;
+    last_name?: string;
+  }[];
+  reason?: string;
+  status?: "pending" | "reviewed" | "cleared";
+  flagged_at?: string;
+}

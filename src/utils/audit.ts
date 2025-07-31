@@ -19,25 +19,20 @@ export const getUsernameDisplay = (log: any): string => {
     return log.username.trim();
   }
 
-  // Safely handle response_body
   if (log.response_body) {
-    // Handle the case where response_body is a string (JSON string)
     let responseBody = log.response_body;
     if (typeof responseBody === "string") {
       try {
         responseBody = JSON.parse(responseBody);
       } catch (e) {
-        // If parsing fails, continue with the original value
       }
     }
 
-    // Check if we have a users array
     if (
       isObject(responseBody) &&
       responseBody.users &&
       isArray(responseBody.users)
     ) {
-      // Safe to iterate over users array
       for (const user of responseBody.users) {
         if (user && user.id === log.user_id) {
           const firstName = user.first_name || "";
@@ -49,7 +44,6 @@ export const getUsernameDisplay = (log: any): string => {
       }
     }
 
-    // Check for contacts in response body
     if (
       isObject(responseBody) &&
       responseBody.contacts &&
@@ -70,7 +64,6 @@ export const getUsernameDisplay = (log: any): string => {
       }
     }
 
-    // Check for results array (friend requests structure)
     if (
       isObject(responseBody) &&
       responseBody.results &&
@@ -92,7 +85,6 @@ export const getUsernameDisplay = (log: any): string => {
     }
   }
 
-  // Fallback to showing truncated user ID
   if (log.user_id && typeof log.user_id === "string") {
     return `User ${log.user_id.substring(0, 8)}...`;
   }
@@ -129,15 +121,12 @@ export const formatJSON = (json: any): string => {
       if (!isObject(obj)) return obj;
 
       Object.keys(obj).forEach((key) => {
-        // Sanitize sensitive fields
         if (key === "fcm_token" || key === "password" || key === "api_key") {
           obj[key] = "********";
         }
-        // Recursively process nested objects
         else if (isObject(obj[key])) {
           obj[key] = sanitizeObject(obj[key]);
         }
-        // Process arrays
         else if (Array.isArray(obj[key])) {
           obj[key] = obj[key].map((item: any) =>
             isObject(item) ? sanitizeObject(item) : item
@@ -151,7 +140,6 @@ export const formatJSON = (json: any): string => {
     return JSON.stringify(sanitizeObject(sanitized), null, 2);
   } catch (e) {
     console.error("Error formatting JSON:", e);
-    // Return a simple stringified version as fallback
     return typeof json === "object" ? JSON.stringify(json) : String(json);
   }
 };
@@ -230,27 +218,22 @@ export const getDeviceInfo = (log: any): string => {
 };
 
 /**
- * Extract user email from log
  */
 export const getUserEmail = (log: any): string | null => {
   if (!log) return null;
 
   if (log.user_email) return log.user_email;
 
-  // Try to find email in response body
   if (log.response_body) {
     let responseBody = log.response_body;
 
-    // If string, try to parse it
     if (typeof responseBody === "string") {
       try {
         responseBody = JSON.parse(responseBody);
       } catch (e) {
-        // Continue with original
       }
     }
 
-    // Check various response structures
     if (isObject(responseBody)) {
       // Check users array
       if (responseBody.users && isArray(responseBody.users)) {
@@ -261,7 +244,6 @@ export const getUserEmail = (log: any): string | null => {
         }
       }
 
-      // Check contact structure
       if (
         responseBody.contacts &&
         isArray(responseBody.contacts) &&
@@ -277,7 +259,6 @@ export const getUserEmail = (log: any): string | null => {
         }
       }
 
-      // Check friend requests structure
       if (
         responseBody.results &&
         isArray(responseBody.results) &&
@@ -295,7 +276,6 @@ export const getUserEmail = (log: any): string | null => {
     }
   }
 
-  // Check request body
   if (isObject(log.request_body) && log.request_body.email) {
     return log.request_body.email;
   }
@@ -310,20 +290,16 @@ export const safeGetUserEmailDisplay = (log) => {
     return log.user_email;
   }
 
-  // Safely handle response_body
   if (log.response_body) {
     let responseBody = log.response_body;
 
-    // Handle the case where response_body is a string (JSON string)
     if (typeof responseBody === "string") {
       try {
         responseBody = JSON.parse(responseBody);
       } catch (e) {
-        // If parsing fails, continue with the original value
       }
     }
 
-    // Check if responseBody is an object and has users property that is an array
     if (
       responseBody &&
       typeof responseBody === "object" &&
@@ -331,7 +307,6 @@ export const safeGetUserEmailDisplay = (log) => {
       responseBody.users &&
       Array.isArray(responseBody.users)
     ) {
-      // Safe to iterate over users array
       for (const user of responseBody.users) {
         if (user && user.id === log.user_id && user.email) {
           return user.email;
@@ -346,7 +321,6 @@ export const safeGetUserEmailDisplay = (log) => {
 export const safeGetUsernameDisplay = (log) => {
   if (!log) return "Unknown User";
 
-  // Use username if it exists and is valid
   if (
     log.username &&
     log.username !== "undefined undefined" &&
@@ -355,20 +329,16 @@ export const safeGetUsernameDisplay = (log) => {
     return log.username.trim();
   }
 
-  // Safely handle response_body with type checking before iteration
   if (log.response_body) {
     let responseBody = log.response_body;
 
-    // Parse if string
     if (typeof responseBody === "string") {
       try {
         responseBody = JSON.parse(responseBody);
       } catch (e) {
-        // Continue if parse fails
       }
     }
 
-    // Only iterate if we have a proper structure
     if (
       responseBody &&
       typeof responseBody === "object" &&
