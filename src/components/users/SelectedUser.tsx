@@ -1,73 +1,126 @@
-import { Ban, CheckCircle, Clock, Eye, Flag, Lock, Mail, Phone, User, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import {
+  Ban,
+  CheckCircle,
+  Clock,
+  Eye,
+  Flag,
+  Lock,
+  Mail,
+  Phone,
+  User,
+  X,
+  Shield,
+  AlertTriangle,
+} from "lucide-react";
+import { motion } from "framer-motion";
+
 const SelectedUser = ({
-    selectedContact,
-    handleCloseModal,
-    handleBlockContact,
-    getUserFullName,
-    getUserInitials,
-    getStatusColor,
-    handleLockContact,
-    formatDate
+  selectedContact,
+  handleCloseModal,
+  handleBlockContact,
+  getUserFullName,
+  getUserInitials,
+  getStatusColor,
+  handleLockContact,
+  formatDate,
 }) => {
+  // Enhanced status styling
+  const getEnhancedStatusStyle = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800";
+      case "reviewed":
+        return "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800";
+      case "cleared":
+        return "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800";
+      default:
+        return "bg-gray-50 text-gray-700 border border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800";
+    }
+  };
+
+  const getStatusIcon = (status: string | any) => {
+    switch (status) {
+      case "pending":
+        return <Clock size={14} className="mr-1.5" />;
+      case "reviewed":
+        return <Eye size={14} className="mr-1.5" />;
+      case "cleared":
+        return <CheckCircle size={14} className="mr-1.5" />;
+      default:
+        return <AlertTriangle size={14} className="mr-1.5" />;
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
+        className="bg-white/95 dark:bg-gray-900/95 max-h-[85vh] backdrop-blur-xl mt-[85px] rounded-2xl shadow-2xl border border-white/20 dark:border-gray-800/50 w-full max-w-4xl overflow-hidden flex flex-col"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ duration: 0.2, ease: [0.4, 0.0, 0.2, 1] }}
       >
-        <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700">
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-            Contact Details
-          </h3>
-          <button
-            className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={handleCloseModal}
-          >
-            <X size={20} strokeWidth={1.8} />
-          </button>
+        <div className="relative px-6 py-5 bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-gray-800/50 dark:to-gray-900/50 border-b border-slate-200/50 dark:border-gray-700/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Contact Details
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                Review flagged contact information
+              </p>
+            </div>
+            <button
+              className="p-2 rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 transition-all duration-200"
+              onClick={handleCloseModal}
+            >
+              <X size={20} strokeWidth={2} />
+            </button>
+          </div>
         </div>
 
-        <div className="p-5 overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <div className="mb-6">
-                <div className="flex items-center mb-4">
-                  {selectedContact.user_details.profile_picture ? (
-                    <img
-                      src={selectedContact.user_details.profile_picture}
-                      alt={getUserFullName(selectedContact)}
-                      className="w-20 h-20 rounded-full object-cover mr-4"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center text-xl font-medium mr-4">
-                      {getUserInitials(selectedContact)}
-                    </div>
-                  )}
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-1">
+                <div className="bg-gradient-to-br from-white to-slate-50/50 dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-6 border border-slate-200/50 dark:border-gray-700/50 shadow-sm">
+                  <div className="text-center mb-6">
+                    {selectedContact.user_details.profile_picture ? (
+                      <div className="relative inline-block">
+                        <img
+                          src={selectedContact.user_details.profile_picture}
+                          alt={getUserFullName(selectedContact)}
+                          className="w-24 h-24 rounded-2xl object-cover mx-auto shadow-lg ring-4 ring-white dark:ring-gray-800"
+                        />
+                        <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-red-500 rounded-xl flex items-center justify-center shadow-lg">
+                          <Flag size={14} className="text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative inline-block">
+                        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 text-white flex items-center justify-center text-2xl font-bold mx-auto shadow-lg ring-4 ring-white dark:ring-gray-800">
+                          {getUserInitials(selectedContact)}
+                        </div>
+                        <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-red-500 rounded-xl flex items-center justify-center shadow-lg">
+                          <Flag size={14} className="text-white" />
+                        </div>
+                      </div>
+                    )}
+
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-white mt-4">
                       {getUserFullName(selectedContact)}
                     </h4>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">
                       @{selectedContact.user_details.username}
                     </p>
-                    <div className="mt-2">
+
+                    <div className="mt-4">
                       <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                        className={`inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-medium ${getEnhancedStatusStyle(
                           selectedContact.status || "pending"
                         )}`}
                       >
-                        {selectedContact.status === "pending" && (
-                          <Clock size={12} className="mr-1.5" />
-                        )}
-                        {selectedContact.status === "reviewed" && (
-                          <Eye size={12} className="mr-1.5" />
-                        )}
-                        {selectedContact.status === "cleared" && (
-                          <CheckCircle size={12} className="mr-1.5" />
-                        )}
+                        {getStatusIcon(selectedContact.status || "pending")}
                         {selectedContact.status
                           ? selectedContact.status.charAt(0).toUpperCase() +
                             selectedContact.status.slice(1)
@@ -75,198 +128,231 @@ const SelectedUser = ({
                       </span>
                     </div>
                   </div>
-                </div>
 
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
-                  <div className="flex items-center">
-                    <Phone
-                      size={16}
-                      className="text-gray-500 dark:text-gray-400 mr-3"
-                    />
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Phone Number
-                      </p>
-                      <p className="text-gray-800 dark:text-gray-200">
-                        {selectedContact.user_details.phone_number}
-                      </p>
-                    </div>
-                  </div>
-
-                  {selectedContact.user_details.email && (
-                    <div className="flex items-center">
-                      <Mail
-                        size={16}
-                        className="text-gray-500 dark:text-gray-400 mr-3"
-                      />
-                      <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Email
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3 p-3 rounded-xl bg-white/50 dark:bg-gray-800/30">
+                      <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                        <Phone
+                          size={16}
+                          className="text-blue-600 dark:text-blue-400"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                          Phone Number
                         </p>
-                        <p className="text-gray-800 dark:text-gray-200">
-                          {selectedContact.user_details.email}
+                        <p className="text-gray-900 dark:text-white font-medium mt-0.5">
+                          {selectedContact.user_details.phone_number}
                         </p>
                       </div>
                     </div>
-                  )}
 
-                  <div className="flex items-center">
-                    <Flag
-                      size={16}
-                      className="text-red-500 dark:text-red-400 mr-3"
-                    />
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Flag Count
-                      </p>
-                      <p className="text-gray-800 dark:text-gray-200">
-                        {selectedContact._count.contact_id || 1} time(s)
-                      </p>
+                    {selectedContact.user_details.email && (
+                      <div className="flex items-start space-x-3 p-3 rounded-xl bg-white/50 dark:bg-gray-800/30">
+                        <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
+                          <Mail
+                            size={16}
+                            className="text-green-600 dark:text-green-400"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                            Email Address
+                          </p>
+                          <p className="text-gray-900 dark:text-white font-medium mt-0.5 truncate">
+                            {selectedContact.user_details.email}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex items-start space-x-3 p-3 rounded-xl bg-red-50/50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30">
+                      <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
+                        <Flag
+                          size={16}
+                          className="text-red-600 dark:text-red-400"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wide">
+                          Flag Count
+                        </p>
+                        <p className="text-red-900 dark:text-red-100 font-bold mt-0.5">
+                          {selectedContact._count.contact_id || 1} time(s)
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mb-6">
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  Flag Information
-                </h4>
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-600 dark:text-gray-400 text-sm">
-                      Status:
-                    </span>
-                    <span
-                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        selectedContact.status || "pending"
-                      )}`}
-                    >
-                      {selectedContact.status === "pending" && (
-                        <Clock size={12} className="mr-1.5" />
-                      )}
-                      {selectedContact.status === "reviewed" && (
-                        <Eye size={12} className="mr-1.5" />
-                      )}
-                      {selectedContact.status === "cleared" && (
-                        <CheckCircle size={12} className="mr-1.5" />
-                      )}
-                      {selectedContact.status
-                        ? selectedContact.status.charAt(0).toUpperCase() +
-                          selectedContact.status.slice(1)
-                        : "Pending"}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-600 dark:text-gray-400 text-sm">
-                      Flagged At:
-                    </span>
-                    <span className="text-gray-800 dark:text-gray-200 text-sm">
-                      {
-                        formatDate(
-                          selectedContact.flagged_at || new Date().toISOString()
-                        ).formattedDate
-                      }
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-600 dark:text-gray-400 text-sm">
-                      Contact ID:
-                    </span>
-                    <span className="text-gray-800 dark:text-gray-200 font-mono text-xs">
-                      {selectedContact.contact_id}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="mb-6">
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  Flag Reason
-                </h4>
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
-                    {selectedContact.reason ||
-                      "This contact has been flagged for review."}
-                  </p>
-                </div>
-              </div>
-
-              {selectedContact.flagged_by &&
-                selectedContact.flagged_by.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                      Flagged By
+              <div className="lg:col-span-2 space-y-6">
+                <div className="bg-gradient-to-br from-white to-slate-50/50 dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-6 border border-slate-200/50 dark:border-gray-700/50 shadow-sm">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                      <Shield
+                        size={18}
+                        className="text-amber-600 dark:text-amber-400"
+                      />
+                    </div>
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Flag Information
                     </h4>
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                      <ul className="space-y-2">
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-white/50 dark:bg-gray-800/30">
+                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                        Current Status
+                      </p>
+                      <span
+                        className={`inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-medium ${getEnhancedStatusStyle(
+                          selectedContact.status || "pending"
+                        )}`}
+                      >
+                        {getStatusIcon(selectedContact.status || "pending")}
+                        {selectedContact.status
+                          ? selectedContact.status.charAt(0).toUpperCase() +
+                            selectedContact.status.slice(1)
+                          : "Pending"}
+                      </span>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-white/50 dark:bg-gray-800/30">
+                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                        Flagged Date
+                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">
+                        {
+                          formatDate(
+                            selectedContact.flagged_at ||
+                              new Date().toISOString()
+                          ).formattedDate
+                        }
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-4 rounded-xl bg-white/50 dark:bg-gray-800/30">
+                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                      Contact ID
+                    </p>
+                    <p className="text-gray-900 dark:text-white font-mono text-sm bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg inline-block">
+                      {selectedContact.contact_id}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Flag Reason */}
+                <div className="bg-gradient-to-br from-white to-slate-50/50 dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-6 border border-slate-200/50 dark:border-gray-700/50 shadow-sm">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                      <AlertTriangle
+                        size={18}
+                        className="text-orange-600 dark:text-orange-400"
+                      />
+                    </div>
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Flag Reason
+                    </h4>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-orange-50/50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/30">
+                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-line">
+                      {selectedContact.reason ||
+                        "This contact has been flagged for review."}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Flagged By */}
+                {selectedContact.flagged_by &&
+                  selectedContact.flagged_by.length > 0 && (
+                    <div className="bg-gradient-to-br from-white to-slate-50/50 dark:from-gray-800/50 dark:to-gray-900/50 rounded-2xl p-6 border border-slate-200/50 dark:border-gray-700/50 shadow-sm">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                          <User
+                            size={18}
+                            className="text-purple-600 dark:text-purple-400"
+                          />
+                        </div>
+                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Flagged By
+                        </h4>
+                      </div>
+
+                      <div className="space-y-3">
                         {selectedContact.flagged_by.map((flagger, index) => (
-                          <li key={index} className="flex items-center">
-                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center mr-3">
+                          <div
+                            key={index}
+                            className="flex items-center space-x-3 p-3 rounded-xl bg-white/50 dark:bg-gray-800/30"
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
                               <User
-                                size={14}
+                                size={16}
                                 className="text-gray-500 dark:text-gray-400"
                               />
                             </div>
                             <div>
-                              <p className="text-gray-800 dark:text-gray-200 text-sm">
+                              <p className="text-gray-900 dark:text-white font-medium">
                                 {flagger.first_name && flagger.last_name
                                   ? `${flagger.first_name} ${flagger.last_name}`
                                   : flagger.username}
                               </p>
                             </div>
-                          </li>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
-                  </div>
-                )}
-
-              <div>
-                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  Actions
-                </h4>
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex flex-wrap gap-2">
-                  {(selectedContact.status === "pending" ||
-                    selectedContact.status === "reviewed") && (
-                    <>
-                      <button
-                        className="flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm"
-                        onClick={() => {
-                          handleBlockContact(selectedContact.user_details.id);
-                          handleCloseModal();
-                        }}
-                      >
-                        <Ban size={16} className="mr-2" strokeWidth={1.8} />
-                        Suspend Account
-                      </button>
-                      <button onClick={() => {
-                        handleLockContact(selectedContact.user_details.id);
-                        handleCloseModal();
-                      }} className="flex items-center px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm">
-                        <Lock size={16} className="mr-2" strokeWidth={1.8} />
-                        Lock Account
-                      </button>
-                    </>
                   )}
-
-                  <button
-                    className="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500 rounded-lg text-sm ml-auto"
-                    onClick={handleCloseModal}
-                  >
-                    Close
-                  </button>
-                </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Actions Footer */}
+        <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-gray-800/50 dark:to-gray-900/50 border-t border-slate-200/50 dark:border-gray-700/50">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-3">
+              {(selectedContact.status === "pending" ||
+                selectedContact.status === "reviewed") && (
+                <>
+                  <button
+                    className="flex items-center px-4 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    onClick={() => {
+                      handleBlockContact(selectedContact.user_details.id);
+                      handleCloseModal();
+                    }}
+                  >
+                    <Ban size={16} className="mr-2" strokeWidth={2} />
+                    Suspend Account
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleLockContact(selectedContact.user_details.id);
+                      handleCloseModal();
+                    }}
+                    className="flex items-center px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    <Lock size={16} className="mr-2" strokeWidth={2} />
+                    Lock Account
+                  </button>
+                </>
+              )}
+            </div>
+
+            <button
+              className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium transition-all duration-200"
+              onClick={handleCloseModal}
+            >
+              Close
+            </button>
           </div>
         </div>
       </motion.div>
     </div>
   );
-}
+};
 
-export default SelectedUser
+export default SelectedUser;
