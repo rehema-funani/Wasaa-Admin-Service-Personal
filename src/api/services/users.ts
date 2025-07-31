@@ -311,6 +311,42 @@ export const userService = {
     }
   },
 
+  async suspendUser(userId: string): Promise<any> {
+    try {
+      const response = await api.put(`/users/${userId}/update-status`, { status: 'inactive' });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to suspend user');
+      }
+      throw new Error('Failed to block user. Please check your network connection.');
+    }
+  },
+
+  async lockUserAccount(userId: string): Promise<any> {
+    try {
+      const response = await api.put(`/users/${userId}/update-status`, { status: 'locked' });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to lock user account');
+      }
+      throw new Error('Failed to lock user account. Please check your network connection.');
+    }
+  },
+
+  async unsuspendUser(userId: string): Promise<any> {
+    try {
+      const response = await api.put(`/users/${userId}/update-status`, { status: 'active' });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || 'Failed to unsuspend user');
+      }
+      throw new Error('Failed to unblock user. Please check your network connection.');
+    }
+  },
+
   async deleteUser(userId: string): Promise<any> {
     try {
       const response = await api.delete(`/users/${userId}`);

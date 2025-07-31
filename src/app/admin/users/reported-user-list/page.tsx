@@ -1,311 +1,132 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Download,
   Calendar,
   Eye,
   Ban,
   CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Shield,
-  User,
   Flag,
   Clock,
-  FileText,
-  UserX,
-  AlertCircle,
-  UserCheck,
-  Bell,
-  X,
   Loader,
+  Filter,
+  ChevronDown,
+  Phone,
+  Mail,
+  Users,
 } from "lucide-react";
-import StatusBadge from "../../../../components/common/StatusBadge";
 import SearchBox from "../../../../components/common/SearchBox";
 import Pagination from "../../../../components/common/Pagination";
-import userService from "../../../../api/services/users";
 import { contactService } from "../../../../api/services/contact";
+import { FlaggedContact } from "../../../../types";
+import SelectedUser from "../../../../components/users/SelectedUser";
+import userService from "../../../../api/services/users";
+import toast from "react-hot-toast";
 
-interface ReportedUser {
-  id: string;
-  reportedUser: {
-    id: string;
-    name: string;
-    username: string;
-    email: string;
-    joinDate: string;
-    profileImage?: string;
-    previousViolations: number;
-  };
-  reportedBy: {
-    id: string;
-    name: string;
-    username: string;
-    email: string;
-  };
-  reportType: string;
-  reportReason: string;
-  priority: "high" | "medium" | "low";
-  status: "pending" | "under_review" | "resolved" | "dismissed";
-  resolution?: string;
-  dateReported: string;
-  lastUpdated: string;
-  notes?: string;
-  evidence?: any[];
-  additionalReports: number;
-  assignedTo?: {
-    id: string;
-    name: string;
-    email: string;
-  } | null;
-}
-
-const ReportedUsersPage = () => {
+const FlaggedContactsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [reportedUsers, setReportedUsers] = useState<ReportedUser[]>([]);
-  const [filteredReports, setFilteredReports] = useState<ReportedUser[]>([]);
+  const [flaggedContacts, setFlaggedContacts] = useState<FlaggedContact[]>([]);
+  const [filteredContacts, setFilteredContacts] = useState<FlaggedContact[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([
-    "harassment",
+    "safaricom",
     "pending",
-    "high priority",
+    "business",
   ]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "pending" | "reviewed" | "cleared"
+  >("all");
 
-  const [selectedReport, setSelectedReport] = useState<ReportedUser | null>(
+  const [selectedContact, setSelectedContact] = useState<FlaggedContact | null>(
     null
   );
   const [showModal, setShowModal] = useState(false);
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchReportedUsers = async () => {
+    const fetchFlaggedContacts = async () => {
       try {
         setIsLoading(true);
         const response = await contactService.getReportedUsers();
 
-        const reportedUsersData = response?.data?.reportedUsers || [];
+        const contactsData = response?.contacts || [];
+        const contactsWithStatus = contactsData.map(
+          (contact: FlaggedContact) => ({
+            ...contact,
+            status: (contact.status || "pending") as
+              | "pending"
+              | "reviewed"
+              | "cleared",
+            flagged_at: contact.flagged_at || new Date().toISOString(),
+            reason:
+              contact.reason || "Contact has been flagged by system for review",
+            flagged_by: contact.flagged_by || [
+              {
+                id: "system",
+                username: "system",
+                first_name: "System",
+                last_name: "Monitor",
+              },
+            ],
+          })
+        );
 
-        setReportedUsers(reportedUsersData);
-        setFilteredReports(reportedUsersData);
+        setFlaggedContacts(contactsWithStatus);
+        setFilteredContacts(contactsWithStatus);
         setError(null);
       } catch (err) {
-        console.error("Error fetching reported users:", err);
-        setError("Failed to load reported users. Please try again later.");
+        console.error("Error fetching flagged contacts:", err);
+        setError("Failed to load flagged contacts. Please try again later.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchReportedUsers();
+    fetchFlaggedContacts();
   }, []);
 
-  const getReportTypeColor = (type: string) => {
-    switch (type) {
-      case "harassment":
-        return "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300";
-      case "impersonation":
-        return "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300";
-      case "inappropriate_content":
-        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300";
-      case "spam":
-        return "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300";
-      case "harmful_misinformation":
-        return "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300";
-      case "hate_speech":
-        return "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300";
-      case "scam":
-        return "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300";
-      case "copyright_violation":
-        return "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300";
-      default:
-        return "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
+  useEffect(() => {
+    let filtered = [...flaggedContacts];
+
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((contact) => contact.status === statusFilter);
     }
-  };
 
-  const formatReportType = (type: string) => {
-    return type
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300";
-      case "medium":
-        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300";
-      case "low":
-        return "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300";
-      default:
-        return "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
+    if (searchQuery.trim() !== "") {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (contact) =>
+          (contact.user_details.username &&
+            contact.user_details.username.toLowerCase().includes(query)) ||
+          (contact.user_details.first_name &&
+            contact.user_details.first_name.toLowerCase().includes(query)) ||
+          (contact.user_details.last_name &&
+            contact.user_details.last_name.toLowerCase().includes(query)) ||
+          (contact.user_details.email &&
+            contact.user_details.email.toLowerCase().includes(query)) ||
+          (contact.user_details.phone_number &&
+            contact.user_details.phone_number.includes(query)) ||
+          (contact.contact_id &&
+            contact.contact_id.toLowerCase().includes(query))
+      );
     }
-  };
 
-  const getResolutionIcon = (resolution: string | undefined) => {
-    if (!resolution) return null;
-
-    switch (resolution) {
-      case "warning_issued":
-        return (
-          <AlertTriangle
-            size={14}
-            className="text-yellow-500 dark:text-yellow-400 mr-1"
-            strokeWidth={1.8}
-          />
-        );
-      case "content_removed":
-        return (
-          <XCircle
-            size={14}
-            className="text-orange-500 dark:text-orange-400 mr-1"
-            strokeWidth={1.8}
-          />
-        );
-      case "account_suspended":
-        return (
-          <Ban
-            size={14}
-            className="text-red-500 dark:text-red-400 mr-1"
-            strokeWidth={1.8}
-          />
-        );
-      case "account_banned":
-        return (
-          <UserX
-            size={14}
-            className="text-red-700 dark:text-red-400 mr-1"
-            strokeWidth={1.8}
-          />
-        );
-      case "account_verified":
-        return (
-          <UserCheck
-            size={14}
-            className="text-green-500 dark:text-green-400 mr-1"
-            strokeWidth={1.8}
-          />
-        );
-      case "no_action":
-        return (
-          <CheckCircle
-            size={14}
-            className="text-gray-500 dark:text-gray-400 mr-1"
-            strokeWidth={1.8}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const reportStats = React.useMemo(() => {
-    const pendingReports = reportedUsers.filter(
-      (report) => report.status === "pending"
-    ).length;
-    const highPriorityReports = reportedUsers.filter(
-      (report) => report.priority === "high"
-    ).length;
-    const underReviewReports = reportedUsers.filter(
-      (report) => report.status === "under_review"
-    ).length;
-    const resolvedReports = reportedUsers.filter(
-      (report) => report.status === "resolved"
-    ).length;
-
-    return [
-      {
-        title: "Pending Review",
-        value: pendingReports.toString(),
-        change: `${pendingReports > 0 ? "Needs attention" : "All clear"}`,
-        icon: (
-          <Clock
-            size={20}
-            className="text-yellow-500 dark:text-yellow-400"
-            strokeWidth={1.8}
-          />
-        ),
-        color: "yellow",
-      },
-      {
-        title: "High Priority",
-        value: highPriorityReports.toString(),
-        change: `${
-          highPriorityReports > 0 ? "Urgent action needed" : "No urgent reports"
-        }`,
-        icon: (
-          <AlertTriangle
-            size={20}
-            className="text-red-500 dark:text-red-400"
-            strokeWidth={1.8}
-          />
-        ),
-        color: "red",
-      },
-      {
-        title: "Under Review",
-        value: underReviewReports.toString(),
-        change: "In progress",
-        icon: (
-          <Shield
-            size={20}
-            className="text-primary-500 dark:text-primary-400"
-            strokeWidth={1.8}
-          />
-        ),
-        color: "primary",
-      },
-      {
-        title: "Resolved",
-        value: resolvedReports.toString(),
-        change: `${Math.round(
-          (resolvedReports / (reportedUsers.length || 1)) * 100
-        )}% completion rate`,
-        icon: (
-          <CheckCircle
-            size={20}
-            className="text-green-500 dark:text-green-400"
-            strokeWidth={1.8}
-          />
-        ),
-        color: "green",
-      },
-    ];
-  }, [reportedUsers]);
+    setFilteredContacts(filtered);
+    setCurrentPage(1);
+  }, [flaggedContacts, statusFilter, searchQuery]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
 
-    if (query.trim() === "") {
-      setFilteredReports(reportedUsers);
-      return;
-    }
-
-    const lowercasedQuery = query.toLowerCase();
-
-    const filtered = reportedUsers.filter(
-      (report) =>
-        report.id.toLowerCase().includes(lowercasedQuery) ||
-        report.reportedUser.name.toLowerCase().includes(lowercasedQuery) ||
-        report.reportedUser.username.toLowerCase().includes(lowercasedQuery) ||
-        report.reportedBy.name.toLowerCase().includes(lowercasedQuery) ||
-        report.reportedBy.username.toLowerCase().includes(lowercasedQuery) ||
-        report.reportType.toLowerCase().includes(lowercasedQuery) ||
-        report.reportReason.toLowerCase().includes(lowercasedQuery) ||
-        (report.notes && report.notes.toLowerCase().includes(lowercasedQuery))
-    );
-
-    setFilteredReports(filtered);
-
     if (query.trim() !== "" && !recentSearches.includes(query)) {
       setRecentSearches((prev) => [query, ...prev.slice(0, 4)]);
     }
-
-    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -317,21 +138,13 @@ const ReportedUsersPage = () => {
     setCurrentPage(1);
   };
 
-  const handleExport = () => {
-    if (filteredReports.length === 0) {
-      alert("No reports to export");
-      return;
-    }
-    alert("Export functionality would go here");
-  };
-
-  const handleViewReport = (report: ReportedUser) => {
-    setSelectedReport(report);
+  const handleViewContact = (contact: FlaggedContact) => {
+    setSelectedContact(contact);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
-    setSelectedReport(null);
+    setSelectedContact(null);
     setShowModal(false);
   };
 
@@ -343,16 +156,20 @@ const ReportedUsersPage = () => {
 
   const handleSelectAll = () => {
     const currentPageData = getCurrentPageData();
-    const allSelected = currentPageData.every((report) =>
-      selectedRows.includes(report.id)
+    const allSelected = currentPageData.every((contact) =>
+      selectedRows.includes(contact.contact_id)
     );
 
     if (allSelected) {
       setSelectedRows((prev) =>
-        prev.filter((id) => !currentPageData.some((report) => report.id === id))
+        prev.filter(
+          (id) => !currentPageData.some((contact) => contact.contact_id === id)
+        )
       );
     } else {
-      const newSelections = currentPageData.map((report) => report.id);
+      const newSelections = currentPageData.map(
+        (contact) => contact.contact_id
+      );
       setSelectedRows((prev) => [...new Set([...prev, ...newSelections])]);
     }
   };
@@ -360,153 +177,133 @@ const ReportedUsersPage = () => {
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return filteredReports.slice(startIndex, endIndex);
+    return filteredContacts.slice(startIndex, endIndex);
   };
 
-  const handleReviewReport = async (id: string) => {
+  const handleReviewContact = async (id: string) => {
     try {
       setActionInProgress(id);
-      await userService.updateReportStatus(id, "under_review");
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-      const updatedReports = reportedUsers.map((report) =>
-        report.id === id
-          ? { ...report, status: "under_review" as const }
-          : report
+      const updatedContacts = flaggedContacts.map((contact) =>
+        contact.contact_id === id
+          ? { ...contact, status: "reviewed" as const }
+          : contact
       );
 
-      setReportedUsers(updatedReports);
-      setFilteredReports((prevFiltered) =>
-        prevFiltered.map((report) =>
-          report.id === id ? { ...report, status: "under_review" } : report
-        )
-      );
+      setFlaggedContacts(updatedContacts);
 
-      alert("Report status updated to Under Review");
+      alert("Contact marked as reviewed");
     } catch (error) {
-      console.error("Error updating report status:", error);
-      alert("Failed to update report status. Please try again.");
+      console.error("Error updating contact status:", error);
+      alert("Failed to update contact status. Please try again.");
     } finally {
       setActionInProgress(null);
     }
   };
 
-  const handleActionReport = async (id: string) => {
+  const handleClearContact = async (id: string) => {
     try {
       setActionInProgress(id);
-      await userService.resolveReport(id);
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-      const updatedReports = reportedUsers.map((report) =>
-        report.id === id
-          ? {
-              ...report,
-              status: "resolved" as const,
-              resolution: "warning_issued",
-            }
-          : report
+      const updatedContacts = flaggedContacts.map((contact) =>
+        contact.contact_id === id
+          ? { ...contact, status: "cleared" as const }
+          : contact
       );
 
-      setReportedUsers(updatedReports);
-      setFilteredReports((prevFiltered) =>
-        prevFiltered.map((report) =>
-          report.id === id
-            ? { ...report, status: "resolved", resolution: "warning_issued" }
-            : report
-        )
-      );
+      setFlaggedContacts(updatedContacts);
 
-      alert("Report resolved with warning issued");
+      alert("Contact cleared from flagged list");
     } catch (error) {
-      console.error("Error resolving report:", error);
-      alert("Failed to resolve report. Please try again.");
+      console.error("Error clearing contact:", error);
+      alert("Failed to clear contact. Please try again.");
     } finally {
       setActionInProgress(null);
     }
   };
 
-  const handleDismissReport = async (id: string) => {
+  const handleBlockContact = async (id: string) => {
     try {
       setActionInProgress(id);
-      await userService.dismissReport(id);
-
-      const updatedReports = reportedUsers.map((report) =>
-        report.id === id ? { ...report, status: "dismissed" as const } : report
-      );
-
-      setReportedUsers(updatedReports);
-      setFilteredReports((prevFiltered) =>
-        prevFiltered.map((report) =>
-          report.id === id ? { ...report, status: "dismissed" } : report
-        )
-      );
-
-      alert("Report dismissed");
+      await userService.suspendUser(id);
+      toast.success("Contact suspended successfully");
     } catch (error) {
-      console.error("Error dismissing report:", error);
-      alert("Failed to dismiss report. Please try again.");
+      console.error("Error blocking contact:", error);
+      toast.error("Failed to block contact. Please try again.");
     } finally {
       setActionInProgress(null);
     }
   };
 
-  const handleReopenReport = async (id: string) => {
+  const handleLockContact = async (id: string) => {
     try {
       setActionInProgress(id);
-      await userService.reopenReport(id);
-
-      const updatedReports = reportedUsers.map((report) =>
-        report.id === id
-          ? {
-              ...report,
-              status: "under_review" as const,
-              resolution: undefined,
-            }
-          : report
-      );
-
-      setReportedUsers(updatedReports);
-      setFilteredReports((prevFiltered) =>
-        prevFiltered.map((report) =>
-          report.id === id
-            ? { ...report, status: "under_review", resolution: undefined }
-            : report
-        )
-      );
-
-      alert("Report reopened for review");
+      await userService.lockUserAccount(id);
+      toast.success("Contact locked successfully");
     } catch (error) {
-      console.error("Error reopening report:", error);
-      alert("Failed to reopen report. Please try again.");
+      console.error("Error locking contact:", error);
+      toast.error("Failed to lock contact. Please try again.");
     } finally {
       setActionInProgress(null);
     }
   };
 
   const formatDate = (dateString: string) => {
-    let formattedDate = dateString;
-    let formattedTime = "";
-
     try {
-      if (dateString.includes("T")) {
-        const date = new Date(dateString);
-        formattedDate = date.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        });
-        formattedTime = date.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-      } else if (dateString.includes(" ")) {
-        const parts = dateString.split(" ");
-        formattedDate = parts.slice(0, 3).join(" ");
-        formattedTime = parts[3];
-      }
+      const date = new Date(dateString);
+      const formattedDate = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+      const formattedTime = date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      return { formattedDate, formattedTime };
     } catch (error) {
       console.error("Error formatting date:", error);
+      return { formattedDate: "Invalid date", formattedTime: "" };
+    }
+  };
+
+  const getUserFullName = (contact: FlaggedContact) => {
+    if (!contact.user_details) return "Unknown User";
+
+    const firstName = contact.user_details.first_name || "";
+    const lastName = contact.user_details.last_name || "";
+
+    if (firstName || lastName) {
+      return `${firstName} ${lastName}`.trim();
     }
 
-    return { formattedDate, formattedTime };
+    return contact.user_details.username || "Unknown User";
+  };
+
+  const getUserInitials = (contact: FlaggedContact) => {
+    const fullName = getUserFullName(contact);
+
+    return fullName
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-100 dark:border-yellow-800/50";
+      case "reviewed":
+        return "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800/50";
+      case "cleared":
+        return "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-100 dark:border-green-800/50";
+      default:
+        return "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-gray-600";
+    }
   };
 
   return (
@@ -519,81 +316,176 @@ const ReportedUsersPage = () => {
       >
         <div>
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-            Reported Users
+            Flagged Contacts
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Review and manage user reports
+            Review and manage contacts that have been flagged for suspicious
+            activity
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-          >
-            <Bell size={16} className="mr-2" strokeWidth={1.8} />
-            Notification Settings
-          </motion.button>
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-            onClick={handleExport}
-          >
-            <Download size={16} className="mr-2" strokeWidth={1.8} />
-            Export
-          </motion.button>
+      </motion.div>
+
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center"
+          whileHover={{
+            y: -4,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)",
+          }}
+        >
+          <div className="mr-4 p-2 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
+            <Flag
+              size={20}
+              className="text-yellow-500 dark:text-yellow-400"
+              strokeWidth={1.8}
+            />
+          </div>
+          <div>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">
+              Pending Review
+            </p>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              {flaggedContacts.filter((c) => c.status === "pending").length}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-xs">
+              Needs attention
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center"
+          whileHover={{
+            y: -4,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)",
+          }}
+        >
+          <div className="mr-4 p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+            <Eye
+              size={20}
+              className="text-blue-500 dark:text-blue-400"
+              strokeWidth={1.8}
+            />
+          </div>
+          <div>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">Reviewed</p>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              {flaggedContacts.filter((c) => c.status === "reviewed").length}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-xs">
+              Under investigation
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center"
+          whileHover={{
+            y: -4,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)",
+          }}
+        >
+          <div className="mr-4 p-2 bg-green-50 dark:bg-green-900/30 rounded-lg">
+            <CheckCircle
+              size={20}
+              className="text-green-500 dark:text-green-400"
+              strokeWidth={1.8}
+            />
+          </div>
+          <div>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">Cleared</p>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              {flaggedContacts.filter((c) => c.status === "cleared").length}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-xs">
+              No issues found
+            </p>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      <motion.div
+        className="flex flex-col md:flex-row gap-4 mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <div className="flex-grow">
+          <SearchBox
+            placeholder="Search contacts by name, email, or phone..."
+            onSearch={handleSearch}
+            suggestions={["business", "suspicious", "pending"]}
+            recentSearches={recentSearches}
+            showRecentByDefault={true}
+          />
         </div>
-      </motion.div>
 
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        {reportStats.map((stat, index) => (
-          <motion.div
-            key={index}
-            className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center"
-            whileHover={{
-              y: -4,
-              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)",
-            }}
-          >
-            <div
-              className={`mr-4 p-2 bg-${stat.color}-50 dark:bg-${stat.color}-900/30 rounded-lg`}
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-xl border transition-all 
+              ${
+                statusFilter !== "all"
+                  ? "bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300"
+                  : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+              }`}
             >
-              {stat.icon}
-            </div>
-            <div>
-              <p className="text-gray-500 dark:text-gray-400 text-xs">
-                {stat.title}
-              </p>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                {stat.value}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-xs">
-                {stat.change}
-              </p>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+              <Filter size={16} strokeWidth={1.8} />
+              <span>Status</span>
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${
+                  showFilters ? "rotate-180" : ""
+                }`}
+              />
+            </button>
 
-      <motion.div
-        className="mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        <SearchBox
-          placeholder="Search by user, report ID, reason or content..."
-          onSearch={handleSearch}
-          suggestions={["harassment", "high priority", "impersonation", "spam"]}
-          recentSearches={recentSearches}
-          showRecentByDefault={true}
-        />
+            {showFilters && (
+              <div className="absolute right-0 mt-2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-48 z-10 p-2">
+                <div className="p-2 border-b border-gray-100 dark:border-gray-700 mb-2">
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Filter by Status
+                  </h3>
+                </div>
+                <div className="space-y-1">
+                  {["all", "pending", "reviewed", "cleared"].map((status) => (
+                    <div
+                      key={status}
+                      className={`flex items-center px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                        statusFilter === status
+                          ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
+                          : "hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                      }`}
+                      onClick={() => {
+                        setStatusFilter(status as any);
+                        setShowFilters(false);
+                      }}
+                    >
+                      <div
+                        className={`w-4 h-4 rounded-sm mr-3 flex items-center justify-center ${
+                          statusFilter === status
+                            ? "bg-indigo-500 dark:bg-indigo-600 text-white"
+                            : "border border-gray-300 dark:border-gray-600"
+                        }`}
+                      >
+                        {statusFilter === status && <CheckCircle size={12} />}
+                      </div>
+                      <span className="text-sm capitalize">
+                        {status === "all" ? "All Statuses" : status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </motion.div>
 
       <motion.div
@@ -616,19 +508,21 @@ const ReportedUsersPage = () => {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
-                <Loader className="h-8 w-8 text-teal-500 dark:text-teal-400 animate-spin" />
+                <Loader className="h-8 w-8 text-indigo-500 dark:text-indigo-400 animate-spin" />
                 <span className="ml-2 text-gray-500 dark:text-gray-400">
-                  Loading reports...
+                  Loading flagged contacts...
                 </span>
               </div>
-            ) : filteredReports.length === 0 ? (
+            ) : filteredContacts.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-center p-6">
-                <FileText className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-4" />
+                <Users className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
-                  No reports found
+                  No flagged contacts found
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 max-w-md">
-                  No reports found. Try adjusting your search terms.
+                  {searchQuery
+                    ? "No contacts match your search criteria."
+                    : "There are currently no flagged contacts to review."}
                 </p>
               </div>
             ) : (
@@ -639,11 +533,11 @@ const ReportedUsersPage = () => {
                       <th scope="col" className="px-6 py-3 text-left">
                         <input
                           type="checkbox"
-                          className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-primary-600 focus:ring-primary-500"
+                          className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-indigo-600 focus:ring-indigo-500"
                           checked={
                             getCurrentPageData().length > 0 &&
-                            getCurrentPageData().every((report) =>
-                              selectedRows.includes(report.id)
+                            getCurrentPageData().every((contact) =>
+                              selectedRows.includes(contact.contact_id)
                             )
                           }
                           onChange={handleSelectAll}
@@ -653,25 +547,13 @@ const ReportedUsersPage = () => {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                       >
-                        Report ID
+                        Contact
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                       >
-                        Reported User
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                      >
-                        Report Details
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                      >
-                        Reported By
+                        Contact Info
                       </th>
                       <th
                         scope="col"
@@ -683,13 +565,13 @@ const ReportedUsersPage = () => {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                       >
-                        Date Reported
+                        Flag Count
                       </th>
                       <th
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                       >
-                        Assigned To
+                        Date Flagged
                       </th>
                       <th
                         scope="col"
@@ -700,135 +582,97 @@ const ReportedUsersPage = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {getCurrentPageData().map((report) => {
+                    {getCurrentPageData().map((contact) => {
                       const { formattedDate, formattedTime } = formatDate(
-                        report.dateReported
+                        contact.flagged_at || new Date().toISOString()
                       );
-                      const { formattedDate: lastUpdatedDate } = formatDate(
-                        report.lastUpdated
-                      );
+                      const fullName = getUserFullName(contact);
+                      const initials = getUserInitials(contact);
 
                       return (
                         <tr
-                          key={report.id}
+                          key={contact.contact_id}
                           className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <input
                               type="checkbox"
-                              className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-primary-600 focus:ring-primary-500"
-                              checked={selectedRows.includes(report.id)}
-                              onChange={() => handleSelectRow(report.id)}
+                              className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-indigo-600 focus:ring-indigo-500"
+                              checked={selectedRows.includes(
+                                contact.contact_id
+                              )}
+                              onChange={() =>
+                                handleSelectRow(contact.contact_id)
+                              }
                             />
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="font-medium text-gray-800 dark:text-gray-200">
-                              {report.id}
+                            <div className="flex items-center">
+                              {contact.user_details.profile_picture ? (
+                                <img
+                                  src={contact.user_details.profile_picture}
+                                  alt={fullName}
+                                  className="w-10 h-10 rounded-full object-cover mr-3"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center font-medium text-sm mr-3">
+                                  {initials}
+                                </div>
+                              )}
+                              <div>
+                                <p className="font-medium text-gray-800 dark:text-gray-200">
+                                  {fullName}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  @{contact.user_details.username}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="space-y-1">
+                              <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                                <Phone size={14} className="mr-2" />
+                                {contact.user_details.phone_number}
+                              </div>
+                              {contact.user_details.email && (
+                                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                                  <Mail size={14} className="mr-2" />
+                                  {contact.user_details.email}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                                contact.status || "pending"
+                              )}`}
+                            >
+                              {contact.status === "pending" && (
+                                <Clock size={12} className="mr-1.5" />
+                              )}
+                              {contact.status === "reviewed" && (
+                                <Eye size={12} className="mr-1.5" />
+                              )}
+                              {contact.status === "cleared" && (
+                                <CheckCircle size={12} className="mr-1.5" />
+                              )}
+                              {contact.status
+                                ? contact.status.charAt(0).toUpperCase() +
+                                  contact.status.slice(1)
+                                : "Pending"}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white flex items-center justify-center font-medium text-sm mr-3">
-                                {report.reportedUser.name
-                                  .split(" ")
-                                  .map((n: string) => n[0])
-                                  .join("")}
-                              </div>
-                              <div>
-                                <p className="font-medium text-gray-800 dark:text-gray-200">
-                                  {report.reportedUser.name}
-                                </p>
-                                <div className="flex items-center">
-                                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {report.reportedUser.username}
-                                  </p>
-                                  {report.reportedUser.previousViolations >
-                                    0 && (
-                                    <span className="ml-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-xs px-1.5 py-0.5 rounded-md">
-                                      {report.reportedUser.previousViolations}{" "}
-                                      prev. violations
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex flex-col">
-                              <div className="flex items-center">
-                                <span
-                                  className={`text-xs px-2 py-1 rounded-md ${getReportTypeColor(
-                                    report.reportType
-                                  )}`}
-                                >
-                                  {formatReportType(report.reportType)}
-                                </span>
-                                <span
-                                  className={`ml-2 text-xs px-2 py-1 rounded-md ${getPriorityColor(
-                                    report.priority
-                                  )}`}
-                                >
-                                  {report.priority.charAt(0).toUpperCase() +
-                                    report.priority.slice(1)}{" "}
-                                  Priority
-                                </span>
-                              </div>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
-                                {report.reportReason}
-                              </p>
-                              {report.additionalReports > 0 && (
-                                <div className="mt-1 text-xs text-amber-600 dark:text-amber-400 flex items-center">
-                                  <Flag
-                                    size={12}
-                                    className="mr-1"
-                                    strokeWidth={1.8}
-                                  />
-                                  {report.additionalReports} additional reports
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-cyan-500 text-white flex items-center justify-center font-medium text-xs mr-2">
-                                {report.reportedBy.name
-                                  .split(" ")
-                                  .map((n: string) => n[0])
-                                  .join("")}
-                              </div>
-                              <div>
-                                <p className="font-medium text-gray-800 dark:text-gray-200">
-                                  {report.reportedBy.name}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {report.reportedBy.username}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex flex-col">
-                              <StatusBadge
-                                status={report.status as any}
-                                size="sm"
-                                withIcon
-                                withDot={report.status === "under_review"}
+                              <Flag
+                                size={14}
+                                className="text-red-500 dark:text-red-400 mr-2"
                               />
-                              {report.resolution && (
-                                <div className="flex items-center mt-2 text-xs text-gray-700 dark:text-gray-300">
-                                  {getResolutionIcon(report.resolution)}
-                                  <span>
-                                    {report.resolution
-                                      .split("_")
-                                      .map(
-                                        (word: string) =>
-                                          word.charAt(0).toUpperCase() +
-                                          word.slice(1)
-                                      )
-                                      .join(" ")}
-                                  </span>
-                                </div>
-                              )}
+                              <span className="text-gray-700 dark:text-gray-300 font-medium">
+                                {contact._count.contact_id || 1}
+                              </span>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -855,103 +699,22 @@ const ReportedUsersPage = () => {
                                   </span>
                                 </div>
                               )}
-                              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                                Last updated: {lastUpdatedDate}
-                              </div>
                             </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {report.assignedTo ? (
-                              <div className="flex items-center">
-                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500 to-teal-500 text-white flex items-center justify-center font-medium text-xs mr-2">
-                                  {report.assignedTo.name
-                                    .split(" ")
-                                    .map((n: string) => n[0])
-                                    .join("")}
-                                </div>
-                                <span className="text-sm text-gray-800 dark:text-gray-200">
-                                  {report.assignedTo.name}
-                                </span>
-                              </div>
-                            ) : (
-                              <span className="text-sm text-gray-400 dark:text-gray-500 flex items-center">
-                                <User
-                                  size={14}
-                                  className="mr-1.5"
-                                  strokeWidth={1.8}
-                                />
-                                Unassigned
-                              </span>
-                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center space-x-1">
                               <motion.button
-                                className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400"
+                                className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
-                                aria-label="View report details"
-                                onClick={() => handleViewReport(report)}
-                                disabled={actionInProgress === report.id}
+                                aria-label="View contact details"
+                                onClick={() => handleViewContact(contact)}
+                                disabled={
+                                  actionInProgress === contact.contact_id
+                                }
                               >
                                 <Eye size={16} strokeWidth={1.8} />
                               </motion.button>
-
-                              {report.status === "pending" && (
-                                <motion.button
-                                  className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400"
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  aria-label="Review this report"
-                                  onClick={() => handleReviewReport(report.id)}
-                                  disabled={actionInProgress === report.id}
-                                >
-                                  <Shield size={16} strokeWidth={1.8} />
-                                </motion.button>
-                              )}
-
-                              {(report.status === "pending" ||
-                                report.status === "under_review") && (
-                                <>
-                                  <motion.button
-                                    className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400"
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    aria-label="Take action"
-                                    onClick={() =>
-                                      handleActionReport(report.id)
-                                    }
-                                    disabled={actionInProgress === report.id}
-                                  >
-                                    <Ban size={16} strokeWidth={1.8} />
-                                  </motion.button>
-                                  <motion.button
-                                    className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400"
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    aria-label="Dismiss report"
-                                    onClick={() =>
-                                      handleDismissReport(report.id)
-                                    }
-                                    disabled={actionInProgress === report.id}
-                                  >
-                                    <CheckCircle size={16} strokeWidth={1.8} />
-                                  </motion.button>
-                                </>
-                              )}
-
-                              {report.status === "resolved" && (
-                                <motion.button
-                                  className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:text-purple-600 dark:hover:text-purple-400"
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  aria-label="Reopen report"
-                                  onClick={() => handleReopenReport(report.id)}
-                                  disabled={actionInProgress === report.id}
-                                >
-                                  <AlertCircle size={16} strokeWidth={1.8} />
-                                </motion.button>
-                              )}
                             </div>
                           </td>
                         </tr>
@@ -971,7 +734,7 @@ const ReportedUsersPage = () => {
         transition={{ duration: 0.3, delay: 0.3 }}
       >
         <Pagination
-          totalItems={filteredReports.length}
+          totalItems={filteredContacts.length}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
           onPageChange={handlePageChange}
@@ -983,382 +746,21 @@ const ReportedUsersPage = () => {
       </motion.div>
 
       <AnimatePresence>
-        {showModal && selectedReport && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <motion.div
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-            >
-              <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700">
-                <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                  Report Details
-                </h3>
-                <button
-                  className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={handleCloseModal}
-                >
-                  <X size={20} strokeWidth={1.8} />
-                </button>
-              </div>
-
-              <div className="p-5 overflow-y-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                        Report Information
-                      </h4>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                        <div className="flex justify-between mb-2">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Report ID:
-                          </span>
-                          <span className="font-medium text-gray-800 dark:text-gray-200">
-                            {selectedReport.id}
-                          </span>
-                        </div>
-                        <div className="flex justify-between mb-2">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Type:
-                          </span>
-                          <span
-                            className={`text-xs px-2 py-1 rounded-md ${getReportTypeColor(
-                              selectedReport.reportType
-                            )}`}
-                          >
-                            {formatReportType(selectedReport.reportType)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between mb-2">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Priority:
-                          </span>
-                          <span
-                            className={`text-xs px-2 py-1 rounded-md ${getPriorityColor(
-                              selectedReport.priority
-                            )}`}
-                          >
-                            {selectedReport.priority.charAt(0).toUpperCase() +
-                              selectedReport.priority.slice(1)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between mb-2">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Status:
-                          </span>
-                          <StatusBadge
-                            status={selectedReport.status as any}
-                            size="sm"
-                            withIcon
-                            withDot={selectedReport.status === "under_review"}
-                          />
-                        </div>
-                        {selectedReport.resolution && (
-                          <div className="flex justify-between mb-2">
-                            <span className="text-gray-600 dark:text-gray-400 text-sm">
-                              Resolution:
-                            </span>
-                            <div className="flex items-center text-sm">
-                              {getResolutionIcon(selectedReport.resolution)}
-                              <span className="text-gray-800 dark:text-gray-200">
-                                {selectedReport.resolution
-                                  .split("_")
-                                  .map(
-                                    (word: string) =>
-                                      word.charAt(0).toUpperCase() +
-                                      word.slice(1)
-                                  )
-                                  .join(" ")}
-                              </span>
-                            </div>
-                          </div>
-                        )}
-                        <div className="flex justify-between mb-2">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Date Reported:
-                          </span>
-                          <span className="text-gray-800 dark:text-gray-200 text-sm">
-                            {selectedReport.dateReported}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600 dark:text-gray-400 text-sm">
-                            Last Updated:
-                          </span>
-                          <span className="text-gray-800 dark:text-gray-200 text-sm">
-                            {selectedReport.lastUpdated}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                        Reported User
-                      </h4>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                        <div className="flex items-center mb-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white flex items-center justify-center font-medium text-sm mr-3">
-                            {selectedReport.reportedUser.name
-                              .split(" ")
-                              .map((n: string) => n[0])
-                              .join("")}
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-800 dark:text-gray-200">
-                              {selectedReport.reportedUser.name}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {selectedReport.reportedUser.username}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-sm space-y-2">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">
-                              Email:
-                            </span>
-                            <span className="text-gray-800 dark:text-gray-200">
-                              {selectedReport.reportedUser.email}
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">
-                              Joined:
-                            </span>
-                            <span className="text-gray-800 dark:text-gray-200">
-                              {selectedReport.reportedUser.joinDate}
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">
-                              Previous Violations:
-                            </span>
-                            <span
-                              className={`font-medium ${
-                                selectedReport.reportedUser.previousViolations >
-                                0
-                                  ? "text-red-600 dark:text-red-400"
-                                  : "text-gray-800 dark:text-gray-200"
-                              }`}
-                            >
-                              {selectedReport.reportedUser.previousViolations}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                        Reported By
-                      </h4>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                        <div className="flex items-center mb-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-cyan-500 text-white flex items-center justify-center font-medium text-sm mr-3">
-                            {selectedReport.reportedBy.name
-                              .split(" ")
-                              .map((n: string) => n[0])
-                              .join("")}
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-800 dark:text-gray-200">
-                              {selectedReport.reportedBy.name}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {selectedReport.reportedBy.username}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-sm space-y-2">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">
-                              Email:
-                            </span>
-                            <span className="text-gray-800 dark:text-gray-200">
-                              {selectedReport.reportedBy.email}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                        Report Reason
-                      </h4>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                        <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
-                          {selectedReport.reportReason}
-                        </p>
-                      </div>
-                    </div>
-
-                    {selectedReport.notes && (
-                      <div className="mb-6">
-                        <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                          Notes
-                        </h4>
-                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                          <p className="text-gray-800 dark:text-gray-200 whitespace-pre-line">
-                            {selectedReport.notes}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    {selectedReport.evidence &&
-                      selectedReport.evidence.length > 0 && (
-                        <div className="mb-6">
-                          <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                            Evidence
-                          </h4>
-                          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                            <ul className="space-y-2">
-                              {selectedReport.evidence.map((item, index) => (
-                                <li key={index} className="flex items-start">
-                                  <div className="p-1 bg-gray-200 dark:bg-gray-600 rounded mr-2 mt-0.5">
-                                    <FileText
-                                      size={14}
-                                      className="text-gray-600 dark:text-gray-400"
-                                      strokeWidth={1.8}
-                                    />
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                                      {item.type} {item.id ? `#${item.id}` : ""}
-                                    </p>
-                                    {item.timestamp && (
-                                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        {item.timestamp}
-                                      </p>
-                                    )}
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      )}
-
-                    {selectedReport.additionalReports > 0 && (
-                      <div className="mb-6">
-                        <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                          Additional Reports
-                        </h4>
-                        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-100 dark:border-amber-700">
-                          <div className="flex items-center">
-                            <Flag
-                              size={16}
-                              className="text-amber-500 dark:text-amber-400 mr-2"
-                              strokeWidth={1.8}
-                            />
-                            <span className="text-amber-700 dark:text-amber-300">
-                              This user has been reported{" "}
-                              {selectedReport.additionalReports} additional time
-                              {selectedReport.additionalReports !== 1
-                                ? "s"
-                                : ""}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                        Actions
-                      </h4>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex flex-wrap gap-2">
-                        {selectedReport.status === "pending" && (
-                          <button
-                            className="flex items-center px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm"
-                            onClick={() => {
-                              handleReviewReport(selectedReport.id);
-                              handleCloseModal();
-                            }}
-                          >
-                            <Shield
-                              size={16}
-                              className="mr-2"
-                              strokeWidth={1.8}
-                            />
-                            Start Review
-                          </button>
-                        )}
-
-                        {(selectedReport.status === "pending" ||
-                          selectedReport.status === "under_review") && (
-                          <>
-                            <button
-                              className="flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm"
-                              onClick={() => {
-                                handleActionReport(selectedReport.id);
-                                handleCloseModal();
-                              }}
-                            >
-                              <Ban
-                                size={16}
-                                className="mr-2"
-                                strokeWidth={1.8}
-                              />
-                              Take Action
-                            </button>
-                            <button
-                              className="flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm"
-                              onClick={() => {
-                                handleDismissReport(selectedReport.id);
-                                handleCloseModal();
-                              }}
-                            >
-                              <CheckCircle
-                                size={16}
-                                className="mr-2"
-                                strokeWidth={1.8}
-                              />
-                              Dismiss Report
-                            </button>
-                          </>
-                        )}
-
-                        {selectedReport.status === "resolved" && (
-                          <button
-                            className="flex items-center px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm"
-                            onClick={() => {
-                              handleReopenReport(selectedReport.id);
-                              handleCloseModal();
-                            }}
-                          >
-                            <AlertCircle
-                              size={16}
-                              className="mr-2"
-                              strokeWidth={1.8}
-                            />
-                            Reopen Report
-                          </button>
-                        )}
-
-                        <button
-                          className="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500 rounded-lg text-sm ml-auto"
-                          onClick={handleCloseModal}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+        {showModal && selectedContact && (
+          <SelectedUser
+            selectedContact={selectedContact}
+            handleCloseModal={handleCloseModal}
+            handleBlockContact={handleBlockContact}
+            getUserFullName={getUserFullName}
+            getUserInitials={getUserInitials}
+            handleLockContact={handleLockContact}
+            getStatusColor={getStatusColor}
+            formatDate={formatDate}
+          />
         )}
       </AnimatePresence>
     </div>
   );
 };
 
-export default ReportedUsersPage;
+export default FlaggedContactsPage;
