@@ -35,6 +35,11 @@ import {
   X,
   ArrowLeft,
   IdCardIcon,
+  UserX,
+  UserCheck,
+  Lock,
+  Unlock,
+  Ban,
 } from "lucide-react";
 import userService from "../../../../api/services/users";
 import { useParams } from "react-router-dom";
@@ -50,6 +55,12 @@ export default function ResponsiveUserProfile() {
     social: true,
     security: true,
   });
+  const [actionLoading, setActionLoading] = useState({
+    suspend: false,
+    unsuspend: false,
+    lock: false,
+  });
+  const [actionMessage, setActionMessage] = useState("");
   const { id } = useParams();
 
   useEffect(() => {
@@ -97,6 +108,62 @@ export default function ResponsiveUserProfile() {
   const handleBackClick = () => {
     // We would normally use navigation here
     console.log("Back button clicked");
+  };
+
+  const showMessage = (message, type = "info") => {
+    setActionMessage(message);
+    setTimeout(() => setActionMessage(""), 5000);
+  };
+
+  const handleSuspendUser = async () => {
+    if (!userData?.id) return;
+
+    setActionLoading((prev) => ({ ...prev, suspend: true }));
+    try {
+      await userService.suspendUser(userData.id);
+      setUserData((prev) => ({ ...prev, status: "inactive" }));
+      showMessage("User has been suspended successfully", "success");
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to suspend user:", error);
+      showMessage(error.message || "Failed to suspend user", "error");
+    } finally {
+      setActionLoading((prev) => ({ ...prev, suspend: false }));
+    }
+  };
+
+  const handleUnsuspendUser = async () => {
+    if (!userData?.id) return;
+
+    setActionLoading((prev) => ({ ...prev, unsuspend: true }));
+    try {
+      await userService.unsuspendUser(userData.id);
+      setUserData((prev) => ({ ...prev, status: "active" }));
+      showMessage("User has been unsuspended successfully", "success");
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to unsuspend user:", error);
+      showMessage(error.message || "Failed to unsuspend user", "error");
+    } finally {
+      setActionLoading((prev) => ({ ...prev, unsuspend: false }));
+    }
+  };
+
+  const handleLockUser = async () => {
+    if (!userData?.id) return;
+
+    setActionLoading((prev) => ({ ...prev, lock: true }));
+    try {
+      await userService.lockUserAccount(userData.id);
+      setUserData((prev) => ({ ...prev, status: "locked" }));
+      showMessage("User account has been locked successfully", "success");
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to lock user:", error);
+      showMessage(error.message || "Failed to lock user account", "error");
+    } finally {
+      setActionLoading((prev) => ({ ...prev, lock: false }));
+    }
   };
 
   // Loading state
@@ -194,6 +261,41 @@ export default function ResponsiveUserProfile() {
       >
         <Shield size={14} className="mr-1.5" />
         KYC: {level?.charAt(0).toUpperCase() + level?.slice(1) || "None"}
+      </span>
+    );
+  };
+
+  const renderStatusBadge = (status) => {
+    const statusConfig = {
+      active: {
+        color:
+          "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700",
+        icon: CheckCircle,
+        text: "Active",
+      },
+      inactive: {
+        color:
+          "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700",
+        icon: Ban,
+        text: "Suspended",
+      },
+      locked: {
+        color:
+          "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-700",
+        icon: Lock,
+        text: "Locked",
+      },
+    };
+
+    const config = statusConfig[status] || statusConfig.active;
+    const Icon = config.icon;
+
+    return (
+      <span
+        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${config.color}`}
+      >
+        <Icon size={14} className="mr-1.5" />
+        {config.text}
       </span>
     );
   };
@@ -297,6 +399,20 @@ export default function ResponsiveUserProfile() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-12">
+      {/* Action Message */}
+      {actionMessage && (
+        <div className="fixed top-4 right-4 z-50 max-w-sm">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
+            <div className="flex items-center">
+              <CheckCircle size={20} className="text-green-500 mr-3" />
+              <p className="text-gray-800 dark:text-gray-200">
+                {actionMessage}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="relative">
         <div className="absolute top-4 left-4 z-10">
           <button
@@ -322,7 +438,15 @@ export default function ResponsiveUserProfile() {
                 </div>
               )}
               <div className="absolute bottom-3 right-3">
-                <div className="w-4 h-4 bg-emerald-500 rounded-full border-2 border-white dark:border-gray-700"></div>
+                <div
+                  className={`w-4 h-4 rounded-full border-2 border-white dark:border-gray-700 ${
+                    userData.status === "active"
+                      ? "bg-emerald-500"
+                      : userData.status === "locked"
+                      ? "bg-orange-500"
+                      : "bg-red-500"
+                  }`}
+                ></div>
               </div>
             </div>
 
@@ -335,6 +459,7 @@ export default function ResponsiveUserProfile() {
               </p>
               <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
                 {renderKycBadge(userData.kyc_level)}
+                {renderStatusBadge(userData.account_status)}
               </div>
             </div>
           </div>
@@ -416,6 +541,93 @@ export default function ResponsiveUserProfile() {
                   </p>
                 </InfoCard>
               )}
+
+              <InfoCard
+                title="Admin Actions"
+                icon={Settings}
+                toggleExpand={undefined}
+              >
+                <div className="space-y-2">
+                  <button
+                    onClick={handleSuspendUser}
+                    disabled={
+                      userData.status === "inactive" || actionLoading.suspend
+                    }
+                    className="w-full flex items-center justify-between p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-200 dark:hover:border-red-600 hover:text-red-700 dark:hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="flex items-center">
+                      {actionLoading.suspend ? (
+                        <Loader
+                          size={18}
+                          className="mr-3 animate-spin text-red-500"
+                        />
+                      ) : (
+                        <Ban
+                          size={18}
+                          className="mr-3 text-red-500 dark:text-red-400"
+                        />
+                      )}
+                      <span className="font-medium">
+                        {actionLoading.suspend
+                          ? "Suspending..."
+                          : "Suspend User"}
+                      </span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={handleUnsuspendUser}
+                    disabled={
+                      userData.status === "active" || actionLoading.unsuspend
+                    }
+                    className="w-full flex items-center justify-between p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-200 dark:hover:border-green-600 hover:text-green-700 dark:hover:text-green-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="flex items-center">
+                      {actionLoading.unsuspend ? (
+                        <Loader
+                          size={18}
+                          className="mr-3 animate-spin text-green-500"
+                        />
+                      ) : (
+                        <UserCheck
+                          size={18}
+                          className="mr-3 text-green-500 dark:text-green-400"
+                        />
+                      )}
+                      <span className="font-medium">
+                        {actionLoading.unsuspend
+                          ? "Unsuspending..."
+                          : "Unsuspend User"}
+                      </span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={handleLockUser}
+                    disabled={
+                      userData.status === "locked" || actionLoading.lock
+                    }
+                    className="w-full flex items-center justify-between p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:border-orange-200 dark:hover:border-orange-600 hover:text-orange-700 dark:hover:text-orange-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="flex items-center">
+                      {actionLoading.lock ? (
+                        <Loader
+                          size={18}
+                          className="mr-3 animate-spin text-orange-500"
+                        />
+                      ) : (
+                        <Lock
+                          size={18}
+                          className="mr-3 text-orange-500 dark:text-orange-400"
+                        />
+                      )}
+                      <span className="font-medium">
+                        {actionLoading.lock ? "Locking..." : "Lock Account"}
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              </InfoCard>
 
               <InfoCard
                 title="Quick Actions"
@@ -537,6 +749,16 @@ export default function ResponsiveUserProfile() {
                     icon={MapPin}
                   />
                   <InfoItem label="City" value={userData.city} icon={MapPin} />
+                  <InfoItem
+                    label="Account Status"
+                    value={
+                      userData.status
+                        ? userData.status.charAt(0).toUpperCase() +
+                          userData.status.slice(1)
+                        : "Active"
+                    }
+                    icon={Shield}
+                  />
                 </div>
               </InfoCard>
 
@@ -741,9 +963,27 @@ export default function ResponsiveUserProfile() {
                     />
                     Account Status
                   </h4>
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
-                    <CheckCircle size={14} className="mr-1.5" />
-                    Active
+                  <span
+                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium ${
+                      userData.status === "active"
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
+                        : userData.status === "locked"
+                        ? "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300"
+                        : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
+                    }`}
+                  >
+                    {userData.status === "active" ? (
+                      <CheckCircle size={14} className="mr-1.5" />
+                    ) : userData.status === "locked" ? (
+                      <Lock size={14} className="mr-1.5" />
+                    ) : (
+                      <Ban size={14} className="mr-1.5" />
+                    )}
+                    {userData.status === "active"
+                      ? "Active"
+                      : userData.status === "locked"
+                      ? "Locked"
+                      : "Suspended"}
                   </span>
                 </div>
 

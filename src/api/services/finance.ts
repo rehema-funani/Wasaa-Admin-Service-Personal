@@ -187,7 +187,7 @@ class FinanceService {
     }
   }
 
-  async getTransaction(transactionId: string): Promise<Transaction> {
+  async getTransaction(transactionId: string): Promise<any> {
     try {
       const response = await finance.get(`/transactions/${transactionId}`);
       return response.data;

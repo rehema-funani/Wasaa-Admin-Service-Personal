@@ -14,54 +14,68 @@ import {
   Info,
   Wallet,
   ArrowLeft,
+  AlertCircle,
+  Loader,
 } from "lucide-react";
+import financeService from "../../../../api/services/finance";
+import { useParams } from "react-router-dom";
 
-// Sample transaction data based on the provided JSON
-const transactionData = {
-  amount: "10",
-  description:
-    "You have received KES 10 from 254705984640 at a transaction fee of KES 0",
-  type: "RECEIVE",
-  debit: "3000010",
-  credit: "400",
-  status: "COMPLETED",
-  reference: "TX-1753940332670",
-  createdAt: "2025-07-31T05:38:52.611Z",
-  wallet: {
-    type: "user",
-    status: "Active",
-    availableBalance: "2999610",
-  },
-};
-
-export default function EnhancedTransactionReceipt() {
+export default function TransactionReceipt() {
   const [copied, setCopied] = useState(false);
+  const [transactionData, setTransactionData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [notification, setNotification] = useState({
     show: false,
     message: "",
     type: "",
   });
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const { id } = useParams();
 
-  // Handle scroll effects
+  const getTransactionData = async () => {
+    if (!id) {
+      setError("Transaction ID is missing");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await financeService.getTransaction(id);
+      console.log("Transaction Data:", res);
+
+      const data = res.transaction;
+
+      if (!data || Object.keys(data).length === 0) {
+        throw new Error("No transaction data found");
+      }
+
+      setTransactionData(data);
+    } catch (error) {
+      console.error("Error fetching transaction data:", error);
+      setError(
+        error.message || "Failed to fetch transaction data. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollPosition(window.scrollY);
-    };
+    getTransactionData();
+  }, [id]);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const copyToClipboard = (text: string) => {
+    if (!text) return;
 
-  // Copy to clipboard function
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text.toString());
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
     showNotification("Copied to clipboard");
   };
 
-  // Show notification
   const showNotification = (message, type = "success") => {
     setNotification({ show: true, message, type });
     setTimeout(
@@ -70,13 +84,16 @@ export default function EnhancedTransactionReceipt() {
     );
   };
 
-  // Share functionality
   const shareTransaction = async () => {
+    if (!transactionData) return;
+
     const shareData = {
-      title: `Transaction Receipt: ${transactionData.reference}`,
+      title: `Transaction Receipt: ${transactionData.reference || "N/A"}`,
       text: `Transaction of ${formatCurrency(
-        transactionData.amount
-      )} on ${formatDate(transactionData.createdAt)}`,
+        transactionData.amount || 0
+      )} on ${formatDate(
+        transactionData.createdAt || transactionData.created_at
+      )}`,
       url: window.location.href,
     };
 
@@ -85,24 +102,20 @@ export default function EnhancedTransactionReceipt() {
         await navigator.share(shareData);
         showNotification("Transaction shared successfully");
       } else {
-        // Fallback to copying URL to clipboard
         copyToClipboard(window.location.href);
         showNotification("Transaction URL copied to clipboard");
       }
     } catch (error) {
-      // Fallback to copying URL
       copyToClipboard(window.location.href);
       showNotification("Transaction URL copied to clipboard");
     }
   };
 
-  // Print functionality
   const printReceipt = () => {
     window.print();
     showNotification("Printing receipt...");
   };
 
-  // Download functionality (mock)
   const downloadReceipt = () => {
     showNotification("Receipt downloaded successfully");
   };
@@ -118,8 +131,12 @@ export default function EnhancedTransactionReceipt() {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return "Invalid Date";
+
     try {
       const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "Invalid Date";
+
       return date.toLocaleDateString("en-US", {
         weekday: "long",
         year: "numeric",
@@ -132,8 +149,12 @@ export default function EnhancedTransactionReceipt() {
   };
 
   const formatTime = (dateString) => {
+    if (!dateString) return "--:--";
+
     try {
       const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "--:--";
+
       return date.toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
@@ -144,21 +165,120 @@ export default function EnhancedTransactionReceipt() {
     }
   };
 
-  // Transaction type and styling logic
-  const isCredit = transactionData.type === "RECEIVE";
-  const transactionDate = formatDate(transactionData.createdAt);
-  const transactionTime = formatTime(transactionData.createdAt);
+  const getTransactionType = () => {
+    if (!transactionData) return "Transaction";
+
+    // Determine transaction type based on available data
+    if (transactionData.type) return transactionData.type;
+    if (transactionData.transaction_type)
+      return transactionData.transaction_type;
+    if (parseFloat(transactionData.credit || 0) > 0) return "Money Received";
+    if (parseFloat(transactionData.debit || 0) > 0) return "Money Sent";
+    return "Transaction";
+  };
+
+  const getTransactionStatus = () => {
+    if (!transactionData) return "pending";
+    return (
+      transactionData.status ||
+      transactionData.transaction_status ||
+      "completed"
+    );
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center">
+        <div className="text-center">
+          <Loader
+            size={48}
+            className="text-blue-500 dark:text-blue-400 animate-spin mx-auto mb-4"
+          />
+          <h2 className="text-xl font-semibold text-slate-700 dark:text-gray-300 mb-2">
+            Loading Transaction
+          </h2>
+          <p className="text-slate-500 dark:text-gray-400">
+            Please wait while we fetch your transaction details...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <AlertCircle
+            size={48}
+            className="text-red-500 dark:text-red-400 mx-auto mb-4"
+          />
+          <h2 className="text-xl font-semibold text-slate-700 dark:text-gray-300 mb-2">
+            Unable to Load Transaction
+          </h2>
+          <p className="text-slate-500 dark:text-gray-400 mb-6">{error}</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => window.history.back()}
+              className="flex items-center justify-center px-4 py-2 text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 border border-slate-300 dark:border-gray-600 rounded-lg transition"
+            >
+              <ArrowLeft size={16} className="mr-2" />
+              Go Back
+            </button>
+            <button
+              onClick={getTransactionData}
+              className="flex items-center justify-center px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No data state
+  if (!transactionData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <Info
+            size={48}
+            className="text-slate-400 dark:text-gray-500 mx-auto mb-4"
+          />
+          <h2 className="text-xl font-semibold text-slate-700 dark:text-gray-300 mb-2">
+            No Transaction Data
+          </h2>
+          <p className="text-slate-500 dark:text-gray-400 mb-6">
+            We couldn't find any transaction data to display.
+          </p>
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center justify-center px-4 py-2 text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 border border-slate-300 dark:border-gray-600 rounded-lg transition mx-auto"
+          >
+            <ArrowLeft size={16} className="mr-2" />
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const transactionDate = formatDate(
+    transactionData.createdAt || transactionData.created_at
+  );
+  const transactionTime = formatTime(
+    transactionData.createdAt || transactionData.created_at
+  );
+  const transactionType = getTransactionType();
+  const transactionStatus = getTransactionStatus();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex flex-col">
-      {/* Fixed top navigation bar with blur effect */}
-      <div
-        className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-slate-100 dark:border-gray-700 shadow-sm print:hidden"
-        style={{
-          transform: scrollPosition > 100 ? "translateY(0)" : "translateY(0)",
-          transition: "transform 0.3s ease",
-        }}
-      >
+      {/* Fixed top navigation bar */}
+      <div className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-slate-100 dark:border-gray-700 shadow-sm print:hidden">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <button
@@ -196,17 +316,26 @@ export default function EnhancedTransactionReceipt() {
         </div>
       </div>
 
-      {/* Full-height main content */}
+      {/* Main content */}
       <div className="flex-grow flex flex-col items-center justify-center px-4 py-12 md:py-20">
         <div className="text-center mb-12">
           <h1 className="text-blue-500 dark:text-blue-400 text-2xl md:text-3xl font-medium mb-2">
             Transaction Receipt
           </h1>
           <h2 className="text-4xl md:text-5xl font-bold text-slate-800 dark:text-gray-100 mb-2">
-            Money Received
+            {transactionType}
           </h2>
-          <div className="inline-flex items-center px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium rounded-full">
-            {transactionData.status}
+          <div
+            className={`inline-flex items-center px-4 py-1.5 text-sm font-medium rounded-full ${
+              transactionStatus?.toLowerCase() === "completed" ||
+              transactionStatus?.toLowerCase() === "success"
+                ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300"
+                : transactionStatus?.toLowerCase() === "pending"
+                ? "bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300"
+                : "bg-gray-50 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300"
+            }`}
+          >
+            {transactionStatus}
           </div>
         </div>
 
@@ -231,7 +360,7 @@ export default function EnhancedTransactionReceipt() {
                         Transaction Type
                       </p>
                       <h3 className="text-white text-2xl font-bold">
-                        Money Received
+                        {transactionType}
                       </h3>
                     </div>
                   </div>
@@ -250,12 +379,12 @@ export default function EnhancedTransactionReceipt() {
                 <div className="text-center">
                   <p className="text-white/80 text-lg mb-2">Amount</p>
                   <div className="text-6xl md:text-7xl font-bold mb-3">
-                    {formatCurrency(transactionData.amount)}
+                    {formatCurrency(transactionData.amount || 0)}
                   </div>
                   <div className="inline-flex items-center px-4 py-1.5 bg-white/10 rounded-full">
                     <CircleDollarSign size={16} className="mr-2" />
                     <span className="text-white/90">
-                      Transaction Completed Successfully
+                      Transaction {transactionStatus}
                     </span>
                   </div>
                 </div>
@@ -265,33 +394,42 @@ export default function EnhancedTransactionReceipt() {
             {/* Transaction Details Content */}
             <div className="p-8 md:p-10">
               {/* Reference Number with Copy */}
-              <div className="mb-10">
-                <div
-                  className="flex items-center justify-between p-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800/40 group cursor-pointer transition-all duration-300 hover:bg-blue-100 dark:hover:bg-blue-900/30"
-                  onClick={() => copyToClipboard(transactionData.reference)}
-                >
-                  <div className="flex items-center">
-                    <div className="w-14 h-14 bg-blue-500/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mr-4">
-                      <Tag
-                        size={24}
-                        className="text-blue-500 dark:text-blue-400"
-                      />
+              {(transactionData.reference ||
+                transactionData.transaction_reference) && (
+                <div className="mb-10">
+                  <div
+                    className="flex items-center justify-between p-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800/40 group cursor-pointer transition-all duration-300 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                    onClick={() =>
+                      copyToClipboard(
+                        transactionData.reference ||
+                          transactionData.transaction_reference
+                      )
+                    }
+                  >
+                    <div className="flex items-center">
+                      <div className="w-14 h-14 bg-blue-500/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mr-4">
+                        <Tag
+                          size={24}
+                          className="text-blue-500 dark:text-blue-400"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
+                          Reference Number
+                        </p>
+                        <p className="text-slate-800 dark:text-gray-200 text-xl font-medium">
+                          {transactionData.reference ||
+                            transactionData.transaction_reference}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-slate-500 dark:text-gray-400 text-sm mb-1">
-                        Reference Number
-                      </p>
-                      <p className="text-slate-800 dark:text-gray-200 text-xl font-medium">
-                        {transactionData.reference}
-                      </p>
+                    <div className="flex items-center text-blue-500 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Copy size={20} className="mr-2" />
+                      <span className="text-sm font-medium">Copy</span>
                     </div>
-                  </div>
-                  <div className="flex items-center text-blue-500 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Copy size={20} className="mr-2" />
-                    <span className="text-sm font-medium">Copy</span>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Two Column Layout for Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
@@ -311,7 +449,7 @@ export default function EnhancedTransactionReceipt() {
                         Transaction Type
                       </p>
                       <p className="text-slate-800 dark:text-gray-200 text-lg font-medium">
-                        Money Received
+                        {transactionType}
                       </p>
                     </div>
 
@@ -330,7 +468,7 @@ export default function EnhancedTransactionReceipt() {
                           Debit
                         </p>
                         <p className="text-slate-800 dark:text-gray-200 font-mono text-lg">
-                          {formatCurrency(transactionData.debit)}
+                          {formatCurrency(transactionData.debit || 0)}
                         </p>
                       </div>
                       <div>
@@ -338,7 +476,7 @@ export default function EnhancedTransactionReceipt() {
                           Credit
                         </p>
                         <p className="text-slate-800 dark:text-gray-200 font-mono text-lg">
-                          {formatCurrency(transactionData.credit)}
+                          {formatCurrency(transactionData.credit || 0)}
                         </p>
                       </div>
                     </div>
@@ -363,7 +501,10 @@ export default function EnhancedTransactionReceipt() {
                       <div className="flex items-center">
                         <p className="text-emerald-500 dark:text-emerald-400 text-4xl font-bold">
                           {formatCurrency(
-                            transactionData.wallet.availableBalance
+                            transactionData.wallet?.availableBalance ||
+                              transactionData.available_balance ||
+                              transactionData.balance ||
+                              0
                           )}
                         </p>
                       </div>
@@ -375,12 +516,16 @@ export default function EnhancedTransactionReceipt() {
                           Wallet Type
                         </p>
                         <p className="text-slate-800 dark:text-gray-200 text-lg capitalize">
-                          {transactionData.wallet.type}
+                          {transactionData.wallet?.type ||
+                            transactionData.wallet_type ||
+                            "Standard"}
                         </p>
                       </div>
                       <div className="px-4 py-2 rounded-full text-sm font-medium bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 flex items-center">
                         <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
-                        {transactionData.wallet.status}
+                        {transactionData.wallet?.status ||
+                          transactionData.wallet_status ||
+                          "Active"}
                       </div>
                     </div>
                   </div>
@@ -388,24 +533,28 @@ export default function EnhancedTransactionReceipt() {
               </div>
 
               {/* Description Section */}
-              <div className="bg-slate-50 dark:bg-gray-700/50 rounded-3xl p-8 border border-gray-100 dark:border-gray-600">
-                <div className="flex items-start">
-                  <div className="w-14 h-14 bg-blue-500/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <Info
-                      size={24}
-                      className="text-blue-500 dark:text-blue-400"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-slate-700 dark:text-gray-300 text-xl font-semibold mb-2">
-                      Description
-                    </p>
-                    <p className="text-slate-600 dark:text-gray-400 text-lg">
-                      {transactionData.description}
-                    </p>
+              {(transactionData.description ||
+                transactionData.transaction_description) && (
+                <div className="bg-slate-50 dark:bg-gray-700/50 rounded-3xl p-8 border border-gray-100 dark:border-gray-600">
+                  <div className="flex items-start">
+                    <div className="w-14 h-14 bg-blue-500/10 dark:bg-blue-400/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                      <Info
+                        size={24}
+                        className="text-blue-500 dark:text-blue-400"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-slate-700 dark:text-gray-300 text-xl font-semibold mb-2">
+                        Description
+                      </p>
+                      <p className="text-slate-600 dark:text-gray-400 text-lg">
+                        {transactionData.description ||
+                          transactionData.transaction_description}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Footer with verification */}
@@ -450,6 +599,7 @@ export default function EnhancedTransactionReceipt() {
         </p>
       </div>
 
+      {/* Notification */}
       {notification.show && (
         <div className="fixed bottom-6 right-6 bg-slate-800 dark:bg-gray-700 text-white px-5 py-3 rounded-xl shadow-xl flex items-center print:hidden border border-gray-600 z-50 animate-fadeIn">
           <CheckCircle size={18} className="mr-2 text-emerald-400" />
