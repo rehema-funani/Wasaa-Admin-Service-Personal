@@ -754,8 +754,6 @@ const FlaggedContactsPage: React.FC = () => {
             getUserFullName={getUserFullName}
             getUserInitials={getUserInitials}
             handleLockContact={handleLockContact}
-            getStatusColor={getStatusColor}
-            formatDate={formatDate}
           />
         )}
       </AnimatePresence>
