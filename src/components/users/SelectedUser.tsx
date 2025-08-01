@@ -7,7 +7,6 @@ import {
   Lock,
   Mail,
   Phone,
-  User,
   X,
   Shield,
   AlertTriangle,
@@ -179,7 +178,6 @@ const SelectedUser = ({
                       </div>
                     )}
 
-                    {/* Reports Summary */}
                     <div className="grid grid-cols-1 gap-3">
                       <div className="flex items-start space-x-3 p-3 rounded-xl bg-red-50/50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30">
                         <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
