@@ -42,7 +42,7 @@ import {
   Ban,
 } from "lucide-react";
 import userService from "../../../../api/services/users";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function ResponsiveUserProfile() {
   const [userData, setUserData] = useState(null);
@@ -62,6 +62,7 @@ export default function ResponsiveUserProfile() {
   });
   const [actionMessage, setActionMessage] = useState("");
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -106,8 +107,7 @@ export default function ResponsiveUserProfile() {
   };
 
   const handleBackClick = () => {
-    // We would normally use navigation here
-    console.log("Back button clicked");
+    navigate(-1);
   };
 
   const showMessage = (message, type = "info") => {

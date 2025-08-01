@@ -323,14 +323,14 @@ const AuditLogDetailsPage: React.FC = () => {
                   {error ||
                     "Something went wrong while loading the audit log details. The log may have been deleted or you might not have the necessary permissions."}
                 </p>
-                <Button
-                  variant="outline"
+                <button
+                  // variant="outline"
                   className="bg-white/80 dark:bg-red-900/20 border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 shadow-lg"
                   onClick={handleGoBack}
                 >
                   <ArrowLeft size={16} className="mr-2" />
                   Return to Audit Logs
-                </Button>
+                </button>
               </div>
             </div>
           </Card>
