@@ -420,6 +420,22 @@ export const userService = {
     }
   },
 
+  async deleteUserAccount(userId: string): Promise<any> {
+    try {
+      const response = await api.delete(`/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(
+          error.response.data.message || "Failed to delete user account"
+        );
+      }
+      throw new Error(
+        "Failed to delete user account. Please check your network connection."
+      );
+    }
+  },
+
   async lockUserAccount(userId: string): Promise<any> {
     try {
       const response = await api.put(`/users/${userId}/update-status`, {
