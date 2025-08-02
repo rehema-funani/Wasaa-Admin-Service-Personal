@@ -25,6 +25,7 @@ import {
   UserCheck,
   Lock,
   Ban,
+  Delete,
 } from "lucide-react";
 import userService from "../../../../api/services/users";
 import { useNavigate, useParams } from "react-router-dom";
@@ -44,6 +45,7 @@ export default function ResponsiveUserProfile() {
     suspend: false,
     unsuspend: false,
     lock: false,
+    delete: false,
   });
   const [actionMessage, setActionMessage] = useState("");
   const { id } = useParams();
@@ -114,6 +116,22 @@ export default function ResponsiveUserProfile() {
       showMessage(error.message || "Failed to suspend user", "error");
     } finally {
       setActionLoading((prev) => ({ ...prev, suspend: false }));
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userData?.id) return;
+
+    setActionLoading((prev) => ({ ...prev, delete: true }));
+    try {
+      await userService.deleteUserAccount(userData.id);
+      showMessage("User account has been deleted successfully", "success");
+      window.location.reload();
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+      showMessage(error.message || "Failed to delete user account", "error");
+    } finally {
+      setActionLoading((prev) => ({ ...prev, delete: false }));
     }
   };
 
@@ -502,7 +520,6 @@ export default function ResponsiveUserProfile() {
         {activeTab === "profile" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
-
               {userData.about && (
                 <InfoCard title="About" icon={User} toggleExpand={undefined}>
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
@@ -544,6 +561,29 @@ export default function ResponsiveUserProfile() {
                     </div>
                   </button>
 
+                  <button
+                    onClick={handleDeleteUser}
+                    className="w-full flex items-center justify-between p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-200 dark:hover:border-red-600 hover:text-red-700 dark:hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="flex items-center">
+                      {actionLoading.delete ? (
+                        <Loader
+                          size={18}
+                          className="mr-3 animate-spin text-red-500"
+                        />
+                      ) : (
+                        <Delete
+                          size={18}
+                          className="mr-3 text-red-500 dark:text-red-400"
+                        />
+                      )}
+                      <span className="font-medium">
+                        {actionLoading.delete
+                          ? "Deleting..."
+                          : "Delete User"}
+                      </span>
+                    </div>
+                  </button>
                   <button
                     onClick={handleUnsuspendUser}
                     disabled={
