@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
   Eye,
-  Ban,
   CheckCircle,
   Flag,
   Clock,
@@ -197,28 +196,6 @@ const FlaggedContactsPage: React.FC = () => {
     } catch (error) {
       console.error("Error updating contact status:", error);
       alert("Failed to update contact status. Please try again.");
-    } finally {
-      setActionInProgress(null);
-    }
-  };
-
-  const handleClearContact = async (id: string) => {
-    try {
-      setActionInProgress(id);
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      const updatedContacts = flaggedContacts.map((contact) =>
-        contact.contact_id === id
-          ? { ...contact, status: "cleared" as const }
-          : contact
-      );
-
-      setFlaggedContacts(updatedContacts);
-
-      alert("Contact cleared from flagged list");
-    } catch (error) {
-      console.error("Error clearing contact:", error);
-      alert("Failed to clear contact. Please try again.");
     } finally {
       setActionInProgress(null);
     }
