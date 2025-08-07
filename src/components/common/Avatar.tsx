@@ -22,7 +22,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         sm: 'w-8 h-8 text-sm',
         md: 'w-10 h-10 text-base',
         lg: 'w-12 h-12 text-lg',
-        xl: 'w-16 h-16 text-xl'
+        xl: 'w-16 h-16 text-xl',
     };
 
     if (src) {
@@ -39,7 +39,6 @@ export const Avatar: React.FC<AvatarProps> = ({
         );
     }
 
-    // If no src is provided, show initials
     return (
         <div
             className={`flex items-center justify-center rounded-full bg-primary-100 text-primary-700 font-medium ${sizeStyles[size]} ${className}`}

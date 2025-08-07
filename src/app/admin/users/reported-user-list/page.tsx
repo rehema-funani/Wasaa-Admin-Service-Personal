@@ -179,28 +179,6 @@ const FlaggedContactsPage: React.FC = () => {
     return filteredContacts.slice(startIndex, endIndex);
   };
 
-  const handleReviewContact = async (id: string) => {
-    try {
-      setActionInProgress(id);
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      const updatedContacts = flaggedContacts.map((contact) =>
-        contact.contact_id === id
-          ? { ...contact, status: "reviewed" as const }
-          : contact
-      );
-
-      setFlaggedContacts(updatedContacts);
-
-      alert("Contact marked as reviewed");
-    } catch (error) {
-      console.error("Error updating contact status:", error);
-      alert("Failed to update contact status. Please try again.");
-    } finally {
-      setActionInProgress(null);
-    }
-  };
-
   const handleBlockContact = async (id: string) => {
     try {
       setActionInProgress(id);
