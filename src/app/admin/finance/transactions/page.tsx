@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,7 +15,6 @@ import {
   Filter,
   Minus,
   Calendar,
-  FileSpreadsheet,
   ArrowUpDown,
   CircleDollarSign,
   BarChart2,
@@ -28,7 +27,6 @@ import {
   Download,
   Copy,
   X,
-  File,
   Lock,
 } from "lucide-react";
 import { FilterOptions } from "../../../../types/finance";
@@ -82,6 +80,110 @@ const STORAGE_KEY = "mylocalstoragetransactionsstoragekey";
 
 const TransactionsPage: React.FC = () => {
   const navigate = useNavigate();
+  const contentRef = useRef(null);
+  const [isBlocked, setIsBlocked] = useState(false);
+
+  const enableProtection = true;
+
+  useEffect(() => {
+    if (!enableProtection) return;
+
+    const disableRightClick = (e: MouseEvent) => {
+      e.preventDefault();
+      return false;
+    };
+
+    const disableKeyboardShortcuts = (e: KeyboardEvent) => {
+      if (e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+      }
+
+      if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+        e.preventDefault();
+        return false;
+      }
+
+      if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+        e.preventDefault();
+        return false;
+      }
+
+      if (e.ctrlKey && e.keyCode === 85) {
+        e.preventDefault();
+        return false;
+      }
+
+      if (e.keyCode === 44) {
+        e.preventDefault();
+        setIsBlocked(true);
+        setTimeout(() => setIsBlocked(false), 2000);
+        return false;
+      }
+
+      if (e.ctrlKey && e.keyCode === 80) {
+        e.preventDefault();
+        return false;
+      }
+
+      if (e.ctrlKey && e.keyCode === 83) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log("Potential screenshot attempt detected");
+      }
+    };
+
+    const disableSelection = () => {
+      document.onselectstart = () => false;
+      document.onmousedown = () => false;
+    };
+
+    let devtools = { open: false, orientation: null };
+    const threshold = 160;
+
+    const checkDevTools = () => {
+      if (
+        window.outerHeight - window.innerHeight > threshold ||
+        window.outerWidth - window.innerWidth > threshold
+      ) {
+        if (!devtools.open) {
+          devtools.open = true;
+          console.log("DevTools detected");
+          if (contentRef.current) {
+            contentRef.current.style.filter = "blur(10px)";
+          }
+        }
+      } else {
+        if (devtools.open) {
+          devtools.open = false;
+          if (contentRef.current) {
+            contentRef.current.style.filter = "none";
+          }
+        }
+      }
+    };
+
+    document.addEventListener("contextmenu", disableRightClick);
+    document.addEventListener("keydown", disableKeyboardShortcuts);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    disableSelection();
+
+    const devToolsInterval = setInterval(checkDevTools, 500);
+
+    return () => {
+      document.removeEventListener("contextmenu", disableRightClick);
+      document.removeEventListener("keydown", disableKeyboardShortcuts);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.onselectstart = null;
+      document.onmousedown = null;
+      clearInterval(devToolsInterval);
+    };
+  }, [enableProtection]);
 
   const loadInitialState = () => {
     try {
@@ -1003,7 +1105,6 @@ const TransactionsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Export Modal */}
       {exportModalOpen && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 w-full max-w-md border border-gray-200 dark:border-gray-700">
@@ -1073,7 +1174,6 @@ const TransactionsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Passcode Display Modal */}
       {showPasscodeModal && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 w-full max-w-md border border-gray-200 dark:border-gray-700">
