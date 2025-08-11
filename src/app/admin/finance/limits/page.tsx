@@ -207,7 +207,6 @@ const KycManagementPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Delete Confirmation Modal */}
             <AnimatePresence>
                 {showDeleteModal && configToDelete && (
                     <motion.div
@@ -225,17 +224,14 @@ const KycManagementPage: React.FC = () => {
                             className="bg-white/95 max-h-[90vh] overflow-y-auto backdrop-blur-xl rounded-3xl border border-gray-200/50 p-8 max-w-md w-full mx-4 shadow-2xl"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            {/* Warning Icon */}
                             <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                                 <AlertTriangle size={28} className="text-red-600" />
                             </div>
 
-                            {/* Title */}
                             <h3 className="text-xl font-bold text-gray-900 text-center mb-3">
                                 Delete KYC Level
                             </h3>
 
-                            {/* KYC Config Info */}
                             <div className="bg-gray-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-gray-100">
                                 <div className="text-center">
                                     <h4 className="font-semibold text-gray-900 mb-1">{configToDelete.name}</h4>
@@ -244,7 +240,6 @@ const KycManagementPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Warning Message */}
                             <div className="bg-red-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-red-100">
                                 <h4 className="font-semibold text-red-900 mb-2 flex items-center">
                                     <AlertTriangle size={16} className="mr-2" />
@@ -259,7 +254,6 @@ const KycManagementPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Recommendation */}
                             <div className="bg-primary-50/80 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-primary-100">
                                 <h4 className="font-semibold text-primary-900 mb-2">💡 Recommendation</h4>
                                 <p className="text-sm text-primary-800">
@@ -268,7 +262,6 @@ const KycManagementPage: React.FC = () => {
                                 </p>
                             </div>
 
-                            {/* Confirmation Checkbox */}
                             <div className="mb-6">
                                 <label className="flex items-center">
                                     <input
@@ -283,7 +276,6 @@ const KycManagementPage: React.FC = () => {
                                 </label>
                             </div>
 
-                            {/* Action Buttons */}
                             <div className="flex items-center space-x-3">
                                 <motion.button
                                     onClick={handleCancelDelete}
