@@ -63,7 +63,6 @@ const TransactionLimitForm: React.FC<TransactionLimitFormProps> = ({
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Stylish Header with Transaction Type Selection */}
             <div className="bg-gradient-to-r from-primary-50 to-primary-50 p-4 -mx-6 -mt-6 mb-6 border-b border-primary-100">
                 <div className="max-w-3xl mx-auto">
                     {isAdd ? (

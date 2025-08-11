@@ -72,6 +72,7 @@ export const PATHS = {
         ADD: 'admin/finance/limits/add',
         EDIT: 'admin/finance/limits/edit/:id',
         VERIFICATION: 'admin/finance/limits/verification',
+        KYC_LIMITS: 'admin/finance/kyc-limits'
       },
       COMPLIANCE: {
         LIST: 'admin/finance/compliance',

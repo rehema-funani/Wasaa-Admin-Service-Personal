@@ -183,7 +183,6 @@ const useDeviceDetection = () => {
   useEffect(() => {
     const detectDevice = () => {
       const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight;
 
       const userAgent = navigator.userAgent.toLowerCase();
 
@@ -218,7 +217,6 @@ const useDeviceDetection = () => {
       setIsLoading(false);
     };
 
-    // Initial detection
     detectDevice();
 
     const handleResize = () => {
@@ -227,7 +225,6 @@ const useDeviceDetection = () => {
 
     window.addEventListener("resize", handleResize);
 
-    // Cleanup
     return () => {
       window.removeEventListener("resize", handleResize);
     };

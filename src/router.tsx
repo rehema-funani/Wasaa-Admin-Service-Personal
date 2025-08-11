@@ -62,28 +62,41 @@ const ForexModule = {
 };
 
 const FinanceModule = {
-  Transactions: lazy(() => import('./app/admin/finance/transactions/page')),
-  Receipt: lazy(() => import('./app/admin/finance/transactions/receipt')),
-  Tarrifs: lazy(() => import('./app/admin/finance/tariffs/page')),
-  EditTariff: lazy(() => import('./app/admin/finance/tariffs/edittariff')),
-  AddTarrif: lazy(() => import('./app/admin/finance/tariffs/addtariff')),
-  Limits: lazy(() => import('./app/admin/finance/limits/page')),
-  AddLimit: lazy(() => import('./app/admin/finance/limits/addkyc')),
-  EditLimit: lazy(() => import('./app/admin/finance/limits/editkyc')),
-  Compliance: lazy(() => import('./app/admin/finance/system-wallets/amlcompliance')),
-  ViewRule: lazy(() => import('./app/admin/finance/system-wallets/view-rule')),
-  Verification: lazy(() => import('./app/admin/finance/limits/verification')),
-  Wallets: lazy(() => import('./app/admin/finance/system-wallets/page')),
-  ReversalRequests: lazy(() => import('./app/admin/finance/system-wallets/reversalrequests')),
-  ReversalRequestDetails: lazy(() => import('./app/admin/finance/system-wallets/reversal-detail')),
-  Banks: lazy(() => import('./app/admin/finance/banks/page')),
-  UserWallets: lazy(() => import('./app/admin/finance/user-wallets/page')),
-  WalletDetail: lazy(() => import('./app/admin/finance/user-wallets/walletdetail')),
-  Withdrawals: lazy(() => import('./app/admin/finance/withdrawals/page')),
-  TopUps: lazy(() => import('./app/admin/finance/top-ups/page')),
-  PaymentMethods: lazy(() => import('./app/admin/finance/payment-methods/page')),
-  FinancialReports: lazy(() => import('./app/admin/finance/reports/page')),
-  GiftHistory: lazy(() => import('./app/admin/finance/gift-history/page')),
+  Transactions: lazy(() => import("./app/admin/finance/transactions/page")),
+  Receipt: lazy(() => import("./app/admin/finance/transactions/receipt")),
+  Tarrifs: lazy(() => import("./app/admin/finance/tariffs/page")),
+  EditTariff: lazy(() => import("./app/admin/finance/tariffs/edittariff")),
+  AddTarrif: lazy(() => import("./app/admin/finance/tariffs/addtariff")),
+  Limits: lazy(() => import("./app/admin/finance/limits/page")),
+  AddLimit: lazy(() => import("./app/admin/finance/limits/addkyc")),
+  EditLimit: lazy(() => import("./app/admin/finance/limits/editkyc")),
+  Compliance: lazy(
+    () => import("./app/admin/finance/system-wallets/amlcompliance")
+  ),
+  ViewRule: lazy(() => import("./app/admin/finance/system-wallets/view-rule")),
+  Verification: lazy(() => import("./app/admin/finance/limits/verification")),
+  Wallets: lazy(() => import("./app/admin/finance/system-wallets/page")),
+  ReversalRequests: lazy(
+    () => import("./app/admin/finance/system-wallets/reversalrequests")
+  ),
+  ReversalRequestDetails: lazy(
+    () => import("./app/admin/finance/system-wallets/reversal-detail")
+  ),
+  Banks: lazy(() => import("./app/admin/finance/banks/page")),
+  UserWallets: lazy(() => import("./app/admin/finance/user-wallets/page")),
+  WalletDetail: lazy(
+    () => import("./app/admin/finance/user-wallets/walletdetail")
+  ),
+  Withdrawals: lazy(() => import("./app/admin/finance/withdrawals/page")),
+  TopUps: lazy(() => import("./app/admin/finance/top-ups/page")),
+  PaymentMethods: lazy(
+    () => import("./app/admin/finance/payment-methods/page")
+  ),
+  FinancialReports: lazy(() => import("./app/admin/finance/reports/page")),
+  GiftHistory: lazy(() => import("./app/admin/finance/gift-history/page")),
+  KYCLimits: lazy(() => import("./app/admin/finance/limits/page")),
+  AddKYCLimit: lazy(() => import("./app/admin/finance/limits/addkyc")),
+  EditKYCLimit: lazy(() => import("./app/admin/finance/limits/editkyc")),
 };
 
 const MediaModule = {
@@ -443,6 +456,11 @@ const financeRoutes = [
   {
     path: PATHS.ADMIN.FINANCE.GIFT_HISTORY,
     element: FinanceModule.GiftHistory,
+    permissions: PermissionMap.Transactions.view,
+  },
+  {
+    path: PATHS.ADMIN.FINANCE.LIMITS.KYC_LIMITS,
+    element: FinanceModule.KYCLimits,
     permissions: PermissionMap.Transactions.view,
   },
 ];

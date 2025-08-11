@@ -26,7 +26,6 @@ import {
   Server,
   Cpu,
   FileText,
-  X,
   Edit,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
@@ -223,7 +222,6 @@ const UserDetailsPage = () => {
     try {
       await userService.resetUserMFA(id);
       toast.success("MFA has been reset successfully");
-      // Refresh user data
       const userData = await userService.getUserById(id);
       setUser({
         ...userData,
