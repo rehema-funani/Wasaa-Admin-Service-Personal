@@ -16,7 +16,6 @@ const KycManagementPage: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
     const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
-    // Delete modal states
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [configToDelete, setConfigToDelete] = useState<KycConfig | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -53,7 +52,6 @@ const KycManagementPage: React.FC = () => {
         }));
     };
 
-    // Navigation handlers
     const handleAddKycConfig = () => {
         navigate('/admin/finance/limits/add');
     };
@@ -70,7 +68,6 @@ const KycManagementPage: React.FC = () => {
         navigate(`/admin/finance/limits/${config.id}/limits/edit/${transactionType}`);
     };
 
-    // Delete modal handlers
     const handleDeleteClick = (config: KycConfig) => {
         setConfigToDelete(config);
         setDeleteConfirmed(false);
