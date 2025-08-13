@@ -33,27 +33,22 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { Modal } from '../../../../components/common/Modal';
-import { SystemWallet, WalletTransaction } from '../../../../types/finance';
-import { mockTransactions } from '../../../../data/finance';
 import TopUpWallet from '../../../../components/finance/TopUpWallet';
 import TransferWallet from '../../../../components/finance/TransferWallet';
 import WalletHistory from '../../../../components/finance/WalletHistory';
 import WalletSettings from '../../../../components/finance/WalletSettings';
 import financeService from '../../../../api/services/finance';
 
-// Helper to get a readable name from the wallet type
-const getWalletName = (type) => {
+const getWalletName = (type: string) => {
   if (!type) return 'System Wallet';
 
-  // Replace underscores with spaces and capitalize each word
   return type.split('_')
     .map(word => word.charAt(0) + word.slice(1).toLowerCase())
     .join(' ');
 };
 
-// Helper to get a meaningful description for each wallet type
-const getWalletDescription = (type) => {
-  const descriptions = {
+const getWalletDescription = (type: string) => {
+  const descriptions: Record<string, string> = {
     'FLOAT': 'Main liquidity pool for platform operations',
     'COMMISSIONS': 'Collects platform fees from transactions',
     'OPERATIONS': 'Funds for day-to-day platform operations',
@@ -83,6 +78,12 @@ const SystemWalletsPage = () => {
   const [totalBalance, setTotalBalance] = useState(0);
   const [totalVolume, setTotalVolume] = useState(0);
   const [showDropdown, setShowDropdown] = useState(null);
+
+  const mockTransactions = [
+    { id: 'tx1', walletId: 'WASAA-FLOAT-12345678', amount: 100, date: '2023-01-01', type: 'credit', status: 'completed', reference: 'REF123', timestamp: '2023-01-01T10:00:00Z' },
+    { id: 'tx2', walletId: 'WASAA-COMMISSIONS-12345678', amount: 200, date: '2023-01-02', type: 'debit', status: 'pending', reference: 'REF124', timestamp: '2023-01-02T11:00:00Z' },
+    { id: 'tx3', walletId: 'WASAA-OPERATIONS-12345678', amount: 300, date: '2023-01-03', type: 'credit', status: 'failed', reference: 'REF125', timestamp: '2023-01-03T12:00:00Z' },
+  ];
 
   useEffect(() => {
     const fetchSystemWallets = async () => {
@@ -144,40 +145,36 @@ const SystemWalletsPage = () => {
   });
 
   const fetchWalletTransactions = (walletId) => {
-    // In a real implementation, this would be:
-    // const transactions = await walletService.getWalletTransactions(walletId);
-
-    // For now, filtering mock data
     return mockTransactions.filter(tx => tx.walletId === walletId);
   };
 
-  const showSuccess = (message) => {
+  const showSuccess = (message: string) => {
     setSuccessMessage(message);
     setTimeout(() => {
       setSuccessMessage(null);
     }, 3000);
   };
 
-  const openTopUpModal = (wallet) => {
+  const openTopUpModal = (wallet: any) => {
     setSelectedWallet(wallet);
     setModalType('topup');
     setIsModalOpen(true);
   };
 
-  const openTransferModal = (wallet) => {
+  const openTransferModal = (wallet: any) => {
     setSelectedWallet(wallet);
     setModalType('transfer');
     setIsModalOpen(true);
   };
 
-  const openHistoryModal = (wallet) => {
+  const openHistoryModal = (wallet: any) => {
     setSelectedWallet(wallet);
     setTransactions(fetchWalletTransactions(wallet.id));
     setModalType('history');
     setIsModalOpen(true);
   };
 
-  const openSettingsModal = (wallet) => {
+  const openSettingsModal = (wallet: any) => {
     setSelectedWallet(wallet);
     setModalType('settings');
     setIsModalOpen(true);
@@ -204,7 +201,7 @@ const SystemWalletsPage = () => {
     });
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'active':
         return 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30';
@@ -399,7 +396,6 @@ const SystemWalletsPage = () => {
           </div>
         )}
 
-        {/* System Wallets Overview */}
         <div className="mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
             <div className="bg-white dark:bg-neutral-800 rounded-lg p-4 border border-neutral-100 dark:border-neutral-700 shadow-sm">
@@ -465,7 +461,6 @@ const SystemWalletsPage = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {isLoading ? (
-              // Loading skeleton
               Array(6).fill(0).map((_, index) => (
                 <div key={index} className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 border-l-[3px] border-l-blue-200 dark:border-l-blue-700 shadow-sm animate-pulse">
                   <div className="p-4">
