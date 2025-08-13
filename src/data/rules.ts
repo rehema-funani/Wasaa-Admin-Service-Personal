@@ -1,497 +1,503 @@
 import { AMLRule, RuleEffectiveness } from "../types/compliance";
 
 export const mockRules: AMLRule[] = [
-    {
-        id: 'rule-001',
-        name: 'High Volume Transaction Monitoring',
-        description: 'Detects unusually high transaction volumes from a single user in a short time period',
-        ruleType: 'velocity',
-        category: 'monitoring',
-        status: 'active',
-        severity: 'high',
-        createdAt: '2025-01-15T10:30:00Z',
-        updatedAt: '2025-03-22T14:15:00Z',
-        createdBy: 'System Administrator',
-        updatedBy: 'Compliance Manager',
-        parameters: [
-            {
-                id: 'param-001',
-                name: 'transactionCountThreshold',
-                dataType: 'number',
-                value: 10,
-                description: 'Number of transactions that triggers the rule',
-                unit: 'transactions'
-            },
-            {
-                id: 'param-002',
-                name: 'timeWindow',
-                dataType: 'number',
-                value: 24,
-                description: 'Time window to analyze',
-                unit: 'hours'
-            },
-            {
-                id: 'param-003',
-                name: 'userAverageMultiplier',
-                dataType: 'number',
-                value: 5,
-                description: 'Multiplier of user average transaction volume',
-                minValue: 2,
-                maxValue: 10
-            }
-        ],
-        conditions: [
-            {
-                id: 'cond-001',
-                field: 'transaction.count',
-                operator: '>',
-                value: 'transactionCountThreshold',
-                valueType: 'parameter',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-002',
-                field: 'transaction.timeWindow',
-                operator: '<=',
-                value: 'timeWindow',
-                valueType: 'parameter'
-            }
-        ],
-        actions: [
-            {
-                id: 'action-001',
-                actionType: 'generate_alert',
-                parameters: {
-                    alertType: 'high_volume',
-                    riskLevel: 'high'
-                }
-            }
-        ],
-        triggerCount: 152,
-        lastTriggered: '2025-05-19T08:30:00Z',
-        falsePositiveRate: 0.23,
-        version: 2.1,
-        isSystemRule: true
-    },
-    {
-        id: 'rule-002',
-        name: 'Sanctioned Countries Detection',
-        description: 'Blocks transactions involving sanctioned countries or regions',
-        ruleType: 'geographic',
-        category: 'screening',
-        status: 'active',
-        severity: 'critical',
-        createdAt: '2025-02-10T09:45:00Z',
-        updatedAt: '2025-04-15T16:20:00Z',
-        createdBy: 'Compliance Officer',
-        parameters: [
-            {
-                id: 'param-004',
-                name: 'sanctionedCountries',
-                dataType: 'list',
-                value: ['NK', 'IR', 'CU', 'SY', 'RU', 'BY'],
-                description: 'List of sanctioned countries (ISO codes)'
-            }
-        ],
-        conditions: [
-            {
-                id: 'cond-003',
-                field: 'transaction.originCountry',
-                operator: 'in',
-                value: 'sanctionedCountries',
-                valueType: 'parameter',
-                logicalOperator: 'OR'
-            },
-            {
-                id: 'cond-004',
-                field: 'transaction.destinationCountry',
-                operator: 'in',
-                value: 'sanctionedCountries',
-                valueType: 'parameter'
-            }
-        ],
-        actions: [
-            {
-                id: 'action-002',
-                actionType: 'block_transaction',
-                parameters: {
-                    reason: 'Sanctioned country involved'
-                }
-            },
-            {
-                id: 'action-003',
-                actionType: 'generate_alert',
-                parameters: {
-                    alertType: 'restricted_country',
-                    riskLevel: 'critical'
-                }
-            }
-        ],
-        triggerCount: 18,
-        lastTriggered: '2025-05-18T10:45:00Z',
-        falsePositiveRate: 0.05,
-        version: 1.2,
-        isSystemRule: true
-    },
-    {
-        id: 'rule-003',
-        name: 'Structured Transaction Detection',
-        description: 'Identifies multiple small transactions that appear designed to avoid reporting thresholds',
-        ruleType: 'pattern',
-        category: 'detection',
-        status: 'active',
-        severity: 'high',
-        createdAt: '2025-03-05T13:20:00Z',
-        updatedAt: '2025-04-20T11:10:00Z',
-        createdBy: 'System Administrator',
-        updatedBy: 'Compliance Manager',
-        parameters: [
-            {
-                id: 'param-005',
-                name: 'reportingThreshold',
-                dataType: 'number',
-                value: 10000,
-                description: 'Regulatory reporting threshold amount',
-                unit: 'KES'
-            },
-            {
-                id: 'param-006',
-                name: 'transactionCountThreshold',
-                dataType: 'number',
-                value: 3,
-                description: 'Minimum number of transactions to trigger the rule'
-            },
-            {
-                id: 'param-007',
-                name: 'timeWindow',
-                dataType: 'number',
-                value: 48,
-                description: 'Time window to analyze',
-                unit: 'hours'
-            }
-        ],
-        conditions: [
-            {
-                id: 'cond-005',
-                field: 'transaction.count',
-                operator: '>=',
-                value: 'transactionCountThreshold',
-                valueType: 'parameter',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-006',
-                field: 'transaction.amount',
-                operator: '<',
-                value: 'reportingThreshold',
-                valueType: 'parameter',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-007',
-                field: 'transaction.total',
-                operator: '>=',
-                value: 'reportingThreshold',
-                valueType: 'parameter'
-            }
-        ],
-        actions: [
-            {
-                id: 'action-004',
-                actionType: 'generate_alert',
-                parameters: {
-                    alertType: 'structured_transactions',
-                    riskLevel: 'high'
-                }
-            }
-        ],
-        triggerCount: 42,
-        lastTriggered: '2025-05-16T13:10:00Z',
-        falsePositiveRate: 0.18,
-        version: 2.0,
-        isSystemRule: true
-    },
-    {
-        id: 'rule-004',
-        name: 'New Account Rapid Withdrawal',
-        description: 'Detects when a new account makes a deposit followed by a rapid withdrawal',
-        ruleType: 'behavior',
-        category: 'detection',
-        status: 'testing',
-        severity: 'medium',
-        createdAt: '2025-04-12T15:30:00Z',
-        updatedAt: '2025-05-02T10:25:00Z',
-        createdBy: 'Compliance Analyst',
-        parameters: [
-            {
-                id: 'param-008',
-                name: 'accountAgeDays',
-                dataType: 'number',
-                value: 30,
-                description: 'Maximum age of account in days'
-            },
-            {
-                id: 'param-009',
-                name: 'withdrawalTimeHours',
-                dataType: 'number',
-                value: 48,
-                description: 'Maximum time between deposit and withdrawal',
-                unit: 'hours'
-            },
-            {
-                id: 'param-010',
-                name: 'minAmount',
-                dataType: 'number',
-                value: 5000,
-                description: 'Minimum amount to trigger the rule',
-                unit: 'KES'
-            }
-        ],
-        conditions: [
-            {
-                id: 'cond-008',
-                field: 'account.age',
-                operator: '<',
-                value: 'accountAgeDays',
-                valueType: 'parameter',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-009',
-                field: 'transaction.sequence',
-                operator: '=',
-                value: 'deposit_then_withdrawal',
-                valueType: 'static',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-010',
-                field: 'transaction.timeBetween',
-                operator: '<',
-                value: 'withdrawalTimeHours',
-                valueType: 'parameter',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-011',
-                field: 'transaction.amount',
-                operator: '>=',
-                value: 'minAmount',
-                valueType: 'parameter'
-            }
-        ],
-        actions: [
-            {
-                id: 'action-005',
-                actionType: 'generate_alert',
-                parameters: {
-                    alertType: 'unusual_pattern',
-                    riskLevel: 'medium'
-                }
-            },
-            {
-                id: 'action-006',
-                actionType: 'reduce_limits',
-                parameters: {
-                    limitFactor: 0.5,
-                    durationDays: 7
-                }
-            }
-        ],
-        triggerCount: 15,
-        lastTriggered: '2025-05-18T14:15:00Z',
-        falsePositiveRate: 0.33,
-        version: 1.0
-    },
-    {
-        id: 'rule-005',
-        name: 'Multiple Registration Attempts',
-        description: 'Identifies multiple account registration attempts from the same device or IP address',
-        ruleType: 'identity',
-        category: 'verification',
-        status: 'active',
-        severity: 'medium',
-        createdAt: '2025-02-25T11:40:00Z',
-        updatedAt: '2025-04-10T09:15:00Z',
-        createdBy: 'Security Team Lead',
-        parameters: [
-            {
-                id: 'param-011',
-                name: 'attemptThreshold',
-                dataType: 'number',
-                value: 3,
-                description: 'Number of registration attempts that triggers the rule'
-            },
-            {
-                id: 'param-012',
-                name: 'timeWindow',
-                dataType: 'number',
-                value: 72,
-                description: 'Time window to analyze',
-                unit: 'hours'
-            }
-        ],
-        conditions: [
-            {
-                id: 'cond-012',
-                field: 'registration.count',
-                operator: '>',
-                value: 'attemptThreshold',
-                valueType: 'parameter',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-013',
-                field: 'registration.timeWindow',
-                operator: '<=',
-                value: 'timeWindow',
-                valueType: 'parameter',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-014',
-                field: 'registration.uniqueEmails',
-                operator: '>',
-                value: 1,
-                valueType: 'static'
-            }
-        ],
-        actions: [
-            {
-                id: 'action-007',
-                actionType: 'request_verification',
-                parameters: {
-                    verificationType: 'enhanced_kyc',
-                    reason: 'Multiple registration attempts detected'
-                }
-            },
-            {
-                id: 'action-008',
-                actionType: 'generate_alert',
-                parameters: {
-                    alertType: 'multiple_accounts',
-                    riskLevel: 'medium'
-                }
-            }
-        ],
-        triggerCount: 38,
-        lastTriggered: '2025-05-17T09:20:00Z',
-        falsePositiveRate: 0.15,
-        version: 1.5,
-        isSystemRule: true
-    },
-    {
-        id: 'rule-006',
-        name: 'Custom High Risk Transaction Rule',
-        description: 'Customer-defined rule for detecting specific transaction patterns',
-        ruleType: 'transaction',
-        category: 'detection',
-        status: 'inactive',
-        severity: 'high',
-        createdAt: '2025-05-10T14:20:00Z',
-        updatedAt: '2025-05-10T14:20:00Z',
-        createdBy: 'Compliance Manager',
-        parameters: [
-            {
-                id: 'param-013',
-                name: 'amountThreshold',
-                dataType: 'number',
-                value: 50000,
-                description: 'Transaction amount threshold',
-                unit: 'KES'
-            },
-            {
-                id: 'param-014',
-                name: 'highRiskCountries',
-                dataType: 'list',
-                value: ['AF', 'IQ', 'LY', 'SO', 'SD', 'YE'],
-                description: 'List of high-risk countries'
-            }
-        ],
-        conditions: [
-            {
-                id: 'cond-015',
-                field: 'transaction.amount',
-                operator: '>=',
-                value: 'amountThreshold',
-                valueType: 'parameter',
-                logicalOperator: 'AND'
-            },
-            {
-                id: 'cond-016',
-                field: 'transaction.destinationCountry',
-                operator: 'in',
-                value: 'highRiskCountries',
-                valueType: 'parameter'
-            }
-        ],
-        actions: [
-            {
-                id: 'action-009',
-                actionType: 'escalate',
-                parameters: {
-                    escalationLevel: 'compliance_manager',
-                    priority: 'high'
-                }
-            },
-            {
-                id: 'action-010',
-                actionType: 'generate_alert',
-                parameters: {
-                    alertType: 'high_risk_transaction',
-                    riskLevel: 'high'
-                }
-            }
-        ],
-        triggerCount: 0,
-        version: 1.0
-    }
+  {
+    id: "rule-001",
+    name: "High Volume Transaction Monitoring",
+    description:
+      "Detects unusually high transaction volumes from a single user in a short time period",
+    ruleType: "velocity",
+    category: "monitoring",
+    status: "active",
+    severity: "high",
+    createdAt: "2025-01-15T10:30:00Z",
+    updatedAt: "2025-03-22T14:15:00Z",
+    createdBy: "System Administrator",
+    updatedBy: "Compliance Manager",
+    parameters: [
+      {
+        id: "param-001",
+        name: "transactionCountThreshold",
+        dataType: "number",
+        value: 10,
+        description: "Number of transactions that triggers the rule",
+        unit: "transactions",
+      },
+      {
+        id: "param-002",
+        name: "timeWindow",
+        dataType: "number",
+        value: 24,
+        description: "Time window to analyze",
+        unit: "hours",
+      },
+      {
+        id: "param-003",
+        name: "userAverageMultiplier",
+        dataType: "number",
+        value: 5,
+        description: "Multiplier of user average transaction volume",
+        minValue: 2,
+        maxValue: 10,
+      },
+    ],
+    conditions: [
+      {
+        id: "cond-001",
+        field: "transaction.count",
+        operator: ">",
+        value: "transactionCountThreshold",
+        valueType: "parameter",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-002",
+        field: "transaction.timeWindow",
+        operator: "<=",
+        value: "timeWindow",
+        valueType: "parameter",
+      },
+    ],
+    actions: [
+      {
+        id: "action-001",
+        actionType: "generate_alert",
+        parameters: {
+          alertType: "high_volume",
+          riskLevel: "high",
+        },
+      },
+    ],
+    triggerCount: 152,
+    lastTriggered: "2025-05-19T08:30:00Z",
+    falsePositiveRate: 0.23,
+    version: 2.1,
+    isSystemRule: true,
+  },
+  {
+    id: "rule-002",
+    name: "Sanctioned Countries Detection",
+    description:
+      "Blocks transactions involving sanctioned countries or regions",
+    ruleType: "geographic",
+    category: "screening",
+    status: "active",
+    severity: "critical",
+    createdAt: "2025-02-10T09:45:00Z",
+    updatedAt: "2025-04-15T16:20:00Z",
+    createdBy: "Compliance Officer",
+    parameters: [
+      {
+        id: "param-004",
+        name: "sanctionedCountries",
+        dataType: "list",
+        value: ["NK", "IR", "CU", "SY", "RU", "BY"],
+        description: "List of sanctioned countries (ISO codes)",
+      },
+    ],
+    conditions: [
+      {
+        id: "cond-003",
+        field: "transaction.originCountry",
+        operator: "in",
+        value: "sanctionedCountries",
+        valueType: "parameter",
+        logicalOperator: "OR",
+      },
+      {
+        id: "cond-004",
+        field: "transaction.destinationCountry",
+        operator: "in",
+        value: "sanctionedCountries",
+        valueType: "parameter",
+      },
+    ],
+    actions: [
+      {
+        id: "action-002",
+        actionType: "block_transaction",
+        parameters: {
+          reason: "Sanctioned country involved",
+        },
+      },
+      {
+        id: "action-003",
+        actionType: "generate_alert",
+        parameters: {
+          alertType: "restricted_country",
+          riskLevel: "critical",
+        },
+      },
+    ],
+    triggerCount: 18,
+    lastTriggered: "2025-05-18T10:45:00Z",
+    falsePositiveRate: 0.05,
+    version: 1.2,
+    isSystemRule: true,
+  },
+  {
+    id: "rule-003",
+    name: "Structured Transaction Detection",
+    description:
+      "Identifies multiple small transactions that appear designed to avoid reporting thresholds",
+    ruleType: "pattern",
+    category: "detection",
+    status: "active",
+    severity: "high",
+    createdAt: "2025-03-05T13:20:00Z",
+    updatedAt: "2025-04-20T11:10:00Z",
+    createdBy: "System Administrator",
+    updatedBy: "Compliance Manager",
+    parameters: [
+      {
+        id: "param-005",
+        name: "reportingThreshold",
+        dataType: "number",
+        value: 10000,
+        description: "Regulatory reporting threshold amount",
+        unit: "KES",
+      },
+      {
+        id: "param-006",
+        name: "transactionCountThreshold",
+        dataType: "number",
+        value: 3,
+        description: "Minimum number of transactions to trigger the rule",
+      },
+      {
+        id: "param-007",
+        name: "timeWindow",
+        dataType: "number",
+        value: 48,
+        description: "Time window to analyze",
+        unit: "hours",
+      },
+    ],
+    conditions: [
+      {
+        id: "cond-005",
+        field: "transaction.count",
+        operator: ">=",
+        value: "transactionCountThreshold",
+        valueType: "parameter",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-006",
+        field: "transaction.amount",
+        operator: "<",
+        value: "reportingThreshold",
+        valueType: "parameter",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-007",
+        field: "transaction.total",
+        operator: ">=",
+        value: "reportingThreshold",
+        valueType: "parameter",
+      },
+    ],
+    actions: [
+      {
+        id: "action-004",
+        actionType: "generate_alert",
+        parameters: {
+          alertType: "structured_transactions",
+          riskLevel: "high",
+        },
+      },
+    ],
+    triggerCount: 42,
+    lastTriggered: "2025-05-16T13:10:00Z",
+    falsePositiveRate: 0.18,
+    version: 2.0,
+    isSystemRule: true,
+  },
+  {
+    id: "rule-004",
+    name: "New Account Rapid Withdrawal",
+    description:
+      "Detects when a new account makes a deposit followed by a rapid withdrawal",
+    ruleType: "behavior",
+    category: "detection",
+    status: "testing",
+    severity: "medium",
+    createdAt: "2025-04-12T15:30:00Z",
+    updatedAt: "2025-05-02T10:25:00Z",
+    createdBy: "Compliance Analyst",
+    parameters: [
+      {
+        id: "param-008",
+        name: "accountAgeDays",
+        dataType: "number",
+        value: 30,
+        description: "Maximum age of account in days",
+      },
+      {
+        id: "param-009",
+        name: "withdrawalTimeHours",
+        dataType: "number",
+        value: 48,
+        description: "Maximum time between deposit and withdrawal",
+        unit: "hours",
+      },
+      {
+        id: "param-010",
+        name: "minAmount",
+        dataType: "number",
+        value: 5000,
+        description: "Minimum amount to trigger the rule",
+        unit: "KES",
+      },
+    ],
+    conditions: [
+      {
+        id: "cond-008",
+        field: "account.age",
+        operator: "<",
+        value: "accountAgeDays",
+        valueType: "parameter",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-009",
+        field: "transaction.sequence",
+        operator: "=",
+        value: "deposit_then_withdrawal",
+        valueType: "static",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-010",
+        field: "transaction.timeBetween",
+        operator: "<",
+        value: "withdrawalTimeHours",
+        valueType: "parameter",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-011",
+        field: "transaction.amount",
+        operator: ">=",
+        value: "minAmount",
+        valueType: "parameter",
+      },
+    ],
+    actions: [
+      {
+        id: "action-005",
+        actionType: "generate_alert",
+        parameters: {
+          alertType: "unusual_pattern",
+          riskLevel: "medium",
+        },
+      },
+      {
+        id: "action-006",
+        actionType: "reduce_limits",
+        parameters: {
+          limitFactor: 0.5,
+          durationDays: 7,
+        },
+      },
+    ],
+    triggerCount: 15,
+    lastTriggered: "2025-05-18T14:15:00Z",
+    falsePositiveRate: 0.33,
+    version: 1.0,
+  },
+  {
+    id: "rule-005",
+    name: "Multiple Registration Attempts",
+    description:
+      "Identifies multiple account registration attempts from the same device or IP address",
+    ruleType: "identity",
+    category: "verification",
+    status: "active",
+    severity: "medium",
+    createdAt: "2025-02-25T11:40:00Z",
+    updatedAt: "2025-04-10T09:15:00Z",
+    createdBy: "Security Team Lead",
+    parameters: [
+      {
+        id: "param-011",
+        name: "attemptThreshold",
+        dataType: "number",
+        value: 3,
+        description: "Number of registration attempts that triggers the rule",
+      },
+      {
+        id: "param-012",
+        name: "timeWindow",
+        dataType: "number",
+        value: 72,
+        description: "Time window to analyze",
+        unit: "hours",
+      },
+    ],
+    conditions: [
+      {
+        id: "cond-012",
+        field: "registration.count",
+        operator: ">",
+        value: "attemptThreshold",
+        valueType: "parameter",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-013",
+        field: "registration.timeWindow",
+        operator: "<=",
+        value: "timeWindow",
+        valueType: "parameter",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-014",
+        field: "registration.uniqueEmails",
+        operator: ">",
+        value: 1,
+        valueType: "static",
+      },
+    ],
+    actions: [
+      {
+        id: "action-007",
+        actionType: "request_verification",
+        parameters: {
+          verificationType: "enhanced_kyc",
+          reason: "Multiple registration attempts detected",
+        },
+      },
+      {
+        id: "action-008",
+        actionType: "generate_alert",
+        parameters: {
+          alertType: "multiple_accounts",
+          riskLevel: "medium",
+        },
+      },
+    ],
+    triggerCount: 38,
+    lastTriggered: "2025-05-17T09:20:00Z",
+    falsePositiveRate: 0.15,
+    version: 1.5,
+    isSystemRule: true,
+  },
+  {
+    id: "rule-006",
+    name: "Custom High Risk Transaction Rule",
+    description:
+      "Customer-defined rule for detecting specific transaction patterns",
+    ruleType: "transaction",
+    category: "detection",
+    status: "inactive",
+    severity: "high",
+    createdAt: "2025-05-10T14:20:00Z",
+    updatedAt: "2025-05-10T14:20:00Z",
+    createdBy: "Compliance Manager",
+    parameters: [
+      {
+        id: "param-013",
+        name: "amountThreshold",
+        dataType: "number",
+        value: 50000,
+        description: "Transaction amount threshold",
+        unit: "KES",
+      },
+      {
+        id: "param-014",
+        name: "highRiskCountries",
+        dataType: "list",
+        value: ["AF", "IQ", "LY", "SO", "SD", "YE"],
+        description: "List of high-risk countries",
+      },
+    ],
+    conditions: [
+      {
+        id: "cond-015",
+        field: "transaction.amount",
+        operator: ">=",
+        value: "amountThreshold",
+        valueType: "parameter",
+        logicalOperator: "AND",
+      },
+      {
+        id: "cond-016",
+        field: "transaction.destinationCountry",
+        operator: "in",
+        value: "highRiskCountries",
+        valueType: "parameter",
+      },
+    ],
+    actions: [
+      {
+        id: "action-009",
+        actionType: "escalate",
+        parameters: {
+          escalationLevel: "compliance_manager",
+          priority: "high",
+        },
+      },
+      {
+        id: "action-010",
+        actionType: "generate_alert",
+        parameters: {
+          alertType: "high_risk_transaction",
+          riskLevel: "high",
+        },
+      },
+    ],
+    triggerCount: 0,
+    version: 1.0,
+  },
 ];
 
-export    const mockRuleEffectiveness: RuleEffectiveness[] = [
-        {
-            ruleId: 'rule-001',
-            ruleName: 'High Volume Transaction Monitoring',
-            totalTriggers: 152,
-            truePositives: 117,
-            falsePositives: 35,
-            efficiency: 0.77,
-            lastEvaluated: '2025-05-19T08:30:00Z'
-        },
-        {
-            ruleId: 'rule-002',
-            ruleName: 'Sanctioned Countries Detection',
-            totalTriggers: 18,
-            truePositives: 17,
-            falsePositives: 1,
-            efficiency: 0.95,
-            lastEvaluated: '2025-05-18T10:45:00Z'
-        },
-        {
-            ruleId: 'rule-003',
-            ruleName: 'Structured Transaction Detection',
-            totalTriggers: 42,
-            truePositives: 34,
-            falsePositives: 8,
-            efficiency: 0.82,
-            lastEvaluated: '2025-05-16T13:10:00Z'
-        },
-        {
-            ruleId: 'rule-004',
-            ruleName: 'New Account Rapid Withdrawal',
-            totalTriggers: 15,
-            truePositives: 10,
-            falsePositives: 5,
-            efficiency: 0.67,
-            lastEvaluated: '2025-05-18T14:15:00Z'
-        },
-        {
-            ruleId: 'rule-005',
-            ruleName: 'Multiple Registration Attempts',
-            totalTriggers: 38,
-            truePositives: 32,
-            falsePositives: 6,
-            efficiency: 0.85,
-            lastEvaluated: '2025-05-17T09:20:00Z'
-        }
-    ];
+export const mockRuleEffectiveness: RuleEffectiveness[] = [
+  {
+    ruleId: "rule-001",
+    ruleName: "High Volume Transaction Monitoring",
+    totalTriggers: 152,
+    truePositives: 117,
+    falsePositives: 35,
+    efficiency: 0.77,
+    lastEvaluated: "2025-05-19T08:30:00Z",
+  },
+  {
+    ruleId: "rule-002",
+    ruleName: "Sanctioned Countries Detection",
+    totalTriggers: 18,
+    truePositives: 17,
+    falsePositives: 1,
+    efficiency: 0.95,
+    lastEvaluated: "2025-05-18T10:45:00Z",
+  },
+  {
+    ruleId: "rule-003",
+    ruleName: "Structured Transaction Detection",
+    totalTriggers: 42,
+    truePositives: 34,
+    falsePositives: 8,
+    efficiency: 0.82,
+    lastEvaluated: "2025-05-16T13:10:00Z",
+  },
+  {
+    ruleId: "rule-004",
+    ruleName: "New Account Rapid Withdrawal",
+    totalTriggers: 15,
+    truePositives: 10,
+    falsePositives: 5,
+    efficiency: 0.67,
+    lastEvaluated: "2025-05-18T14:15:00Z",
+  },
+  {
+    ruleId: "rule-005",
+    ruleName: "Multiple Registration Attempts",
+    totalTriggers: 38,
+    truePositives: 32,
+    falsePositives: 6,
+    efficiency: 0.85,
+    lastEvaluated: "2025-05-17T09:20:00Z",
+  },
+];
