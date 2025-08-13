@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
   Wallet,
-  RefreshCw,
   ArrowUpRight,
   ArrowDownLeft,
   MoreHorizontal,
   Search,
   Filter,
   ShieldCheck,
-  BarChart3,
   Clock,
   Eye,
   Settings,
@@ -18,7 +16,6 @@ import {
   BadgeDollarSign,
   BanknoteIcon,
   ArrowDownUp,
-  LayoutDashboard,
   Shield,
   CircleDollarSign,
   Building2,
@@ -29,8 +26,6 @@ import {
   Users,
   PencilRuler,
   Plus,
-  X,
-  ChevronDown
 } from 'lucide-react';
 import { Modal } from '../../../../components/common/Modal';
 import TopUpWallet from '../../../../components/finance/TopUpWallet';
