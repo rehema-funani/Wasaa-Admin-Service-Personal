@@ -398,11 +398,22 @@ const AMLComplianceDashboard: React.FC = () => {
           filterOpen,
           setFilterOpen,
           statusFilter,
-          setStatusFilter: (filter: string) => setStatusFilter(filter as "all" | "new" | "under_review" | "escalated" | "resolved" | "false_positive"),
+          setStatusFilter: (filter: string) =>
+            setStatusFilter(
+              filter as
+                | "all"
+                | "new"
+                | "under_review"
+                | "escalated"
+                | "resolved"
+                | "false_positive"
+            ),
           riskFilter,
-          setRiskFilter: (filter: string) => setRiskFilter(filter as "all" | "low" | "medium" | "high"),
+          setRiskFilter: (filter: string) =>
+            setRiskFilter(filter as "all" | "low" | "medium" | "high"),
           timeframeFilter,
-          setTimeframeFilter: (filter: string) => setTimeframeFilter(filter as "all" | "24h" | "7d" | "30d"),
+          setTimeframeFilter: (filter: string) =>
+            setTimeframeFilter(filter as "all" | "24h" | "7d" | "30d"),
           filteredAlerts,
           fetchAMLData,
           openAlertViewModal,
