@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Wallet,
   ArrowUpRight,
@@ -26,45 +26,46 @@ import {
   Users,
   PencilRuler,
   Plus,
-} from 'lucide-react';
-import { Modal } from '../../../../components/common/Modal';
-import TopUpWallet from '../../../../components/finance/TopUpWallet';
-import TransferWallet from '../../../../components/finance/TransferWallet';
-import WalletHistory from '../../../../components/finance/WalletHistory';
-import WalletSettings from '../../../../components/finance/WalletSettings';
-import financeService from '../../../../api/services/finance';
+} from "lucide-react";
+import { Modal } from "../../../../components/common/Modal";
+import TopUpWallet from "../../../../components/finance/TopUpWallet";
+import TransferWallet from "../../../../components/finance/TransferWallet";
+import WalletHistory from "../../../../components/finance/WalletHistory";
+import WalletSettings from "../../../../components/finance/WalletSettings";
+import financeService from "../../../../api/services/finance";
 
 const getWalletName = (type: string) => {
-  if (!type) return 'System Wallet';
+  if (!type) return "System Wallet";
 
-  return type.split('_')
-    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(' ');
+  return type
+    .split("_")
+    .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(" ");
 };
 
 const getWalletDescription = (type: string) => {
   const descriptions: Record<string, string> = {
-    'FLOAT': 'Main liquidity pool for platform operations',
-    'COMMISSIONS': 'Collects platform fees from transactions',
-    'OPERATIONS': 'Funds for day-to-day platform operations',
-    'ESCROW': 'Holds funds during transaction processing',
-    'RESERVE': 'Emergency funds and financial reserves',
-    'TAX': 'Collects and manages tax obligations',
-    'PROMOTIONAL': 'Funds for marketing and user rewards',
-    'SETTLEMENT': 'For merchant and partner settlements',
-    'LIQUIDITY': 'Additional liquidity for high-volume periods',
-    'USER_HOLDING': 'Temporary storage for user deposits',
-    'CUSTOM': 'Configurable wallet for special initiatives'
+    FLOAT: "Main liquidity pool for platform operations",
+    COMMISSIONS: "Collects platform fees from transactions",
+    OPERATIONS: "Funds for day-to-day platform operations",
+    ESCROW: "Holds funds during transaction processing",
+    RESERVE: "Emergency funds and financial reserves",
+    TAX: "Collects and manages tax obligations",
+    PROMOTIONAL: "Funds for marketing and user rewards",
+    SETTLEMENT: "For merchant and partner settlements",
+    LIQUIDITY: "Additional liquidity for high-volume periods",
+    USER_HOLDING: "Temporary storage for user deposits",
+    CUSTOM: "Configurable wallet for special initiatives",
   };
 
-  return descriptions[type] || 'System wallet for financial operations';
+  return descriptions[type] || "System wallet for financial operations";
 };
 
-const SystemWalletsPage = () => {
+const SystemWalletsPage: React.FC = () => {
   const [systemWallets, setSystemWallets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [successMessage, setSuccessMessage] = useState(null);
   const [selectedWallet, setSelectedWallet] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,9 +76,36 @@ const SystemWalletsPage = () => {
   const [showDropdown, setShowDropdown] = useState(null);
 
   const mockTransactions = [
-    { id: 'tx1', walletId: 'WASAA-FLOAT-12345678', amount: 100, date: '2023-01-01', type: 'credit', status: 'completed', reference: 'REF123', timestamp: '2023-01-01T10:00:00Z' },
-    { id: 'tx2', walletId: 'WASAA-COMMISSIONS-12345678', amount: 200, date: '2023-01-02', type: 'debit', status: 'pending', reference: 'REF124', timestamp: '2023-01-02T11:00:00Z' },
-    { id: 'tx3', walletId: 'WASAA-OPERATIONS-12345678', amount: 300, date: '2023-01-03', type: 'credit', status: 'failed', reference: 'REF125', timestamp: '2023-01-03T12:00:00Z' },
+    {
+      id: "tx1",
+      walletId: "WASAA-FLOAT-12345678",
+      amount: 100,
+      date: "2023-01-01",
+      type: "credit",
+      status: "completed",
+      reference: "REF123",
+      timestamp: "2023-01-01T10:00:00Z",
+    },
+    {
+      id: "tx2",
+      walletId: "WASAA-COMMISSIONS-12345678",
+      amount: 200,
+      date: "2023-01-02",
+      type: "debit",
+      status: "pending",
+      reference: "REF124",
+      timestamp: "2023-01-02T11:00:00Z",
+    },
+    {
+      id: "tx3",
+      walletId: "WASAA-OPERATIONS-12345678",
+      amount: 300,
+      date: "2023-01-03",
+      type: "credit",
+      status: "failed",
+      reference: "REF125",
+      timestamp: "2023-01-03T12:00:00Z",
+    },
   ];
 
   useEffect(() => {
@@ -92,23 +120,31 @@ const SystemWalletsPage = () => {
           type: wallet.systemWalletType || wallet.type,
           name: getWalletName(wallet.systemWalletType),
           description: getWalletDescription(wallet.systemWalletType),
-          accountNumber: `WASAA-${wallet.systemWalletType || 'SYS'}-${wallet.id.substring(0, 8)}`,
+          accountNumber: `WASAA-${
+            wallet.systemWalletType || "SYS"
+          }-${wallet.id.substring(0, 8)}`,
           lastUpdated: wallet.updatedAt,
           monthlyVolume: wallet.monthlyVolume || 0,
-          status: wallet.status === 'Active' ? 'active' : 'inactive'
+          status: wallet.status === "Active" ? "active" : "inactive",
         }));
 
         setSystemWallets(processedWallets);
 
-        const balance = processedWallets.reduce((total, wallet) => total + wallet.balance, 0);
-        const volume = processedWallets.reduce((total, wallet) => total + wallet.monthlyVolume, 0);
+        const balance = processedWallets.reduce(
+          (total, wallet) => total + wallet.balance,
+          0
+        );
+        const volume = processedWallets.reduce(
+          (total, wallet) => total + wallet.monthlyVolume,
+          0
+        );
 
         setTotalBalance(balance);
         setTotalVolume(volume);
         setIsLoading(false);
       } catch (error) {
-        console.error('Failed to fetch system wallets', error);
-        showSuccess('Failed to load system wallets');
+        console.error("Failed to fetch system wallets", error);
+        showSuccess("Failed to load system wallets");
         setIsLoading(false);
       }
     };
@@ -121,26 +157,33 @@ const SystemWalletsPage = () => {
       setShowDropdown(null);
     };
 
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
-  const filteredWallets = systemWallets.filter(wallet => {
+  const filteredWallets = systemWallets.filter((wallet) => {
     const matchesSearch =
-      (wallet.name && wallet.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (wallet.systemWalletType && wallet.systemWalletType.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (wallet.description && wallet.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (wallet.id && wallet.id.toLowerCase().includes(searchQuery.toLowerCase()));
+      (wallet.name &&
+        wallet.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (wallet.systemWalletType &&
+        wallet.systemWalletType
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())) ||
+      (wallet.description &&
+        wallet.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (wallet.id &&
+        wallet.id.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const matchesStatus = statusFilter === 'all' || wallet.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || wallet.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
 
   const fetchWalletTransactions = (walletId) => {
-    return mockTransactions.filter(tx => tx.walletId === walletId);
+    return mockTransactions.filter((tx) => tx.walletId === walletId);
   };
 
   const showSuccess = (message: string) => {
@@ -152,69 +195,69 @@ const SystemWalletsPage = () => {
 
   const openTopUpModal = (wallet: any) => {
     setSelectedWallet(wallet);
-    setModalType('topup');
+    setModalType("topup");
     setIsModalOpen(true);
   };
 
   const openTransferModal = (wallet: any) => {
     setSelectedWallet(wallet);
-    setModalType('transfer');
+    setModalType("transfer");
     setIsModalOpen(true);
   };
 
   const openHistoryModal = (wallet: any) => {
     setSelectedWallet(wallet);
     setTransactions(fetchWalletTransactions(wallet.id));
-    setModalType('history');
+    setModalType("history");
     setIsModalOpen(true);
   };
 
   const openSettingsModal = (wallet: any) => {
     setSelectedWallet(wallet);
-    setModalType('settings');
+    setModalType("settings");
     setIsModalOpen(true);
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-KE', {
-      style: 'currency',
-      currency: 'KES',
-      minimumFractionDigits: 2
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
+      minimumFractionDigits: 2,
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
 
     const date = new Date(dateString);
-    return date.toLocaleString('en-KE', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleString("en-KE", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'active':
-        return 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30';
-      case 'inactive':
-        return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/30';
-      case 'pending':
-        return 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800/30';
-      case 'completed':
-        return 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30';
-      case 'failed':
-        return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/30';
+      case "active":
+        return "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30";
+      case "inactive":
+        return "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/30";
+      case "pending":
+        return "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800/30";
+      case "completed":
+        return "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30";
+      case "failed":
+        return "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/30";
       default:
-        return 'bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-100 dark:border-neutral-700';
+        return "bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-100 dark:border-neutral-700";
     }
   };
 
   const getTransactionIcon = (type) => {
-    if (type === 'credit') {
+    if (type === "credit") {
       return <ArrowDownLeft className="w-4 h-4 text-emerald-500" />;
     } else {
       return <ArrowUpRight className="w-4 h-4 text-blue-500" />;
@@ -223,76 +266,76 @@ const SystemWalletsPage = () => {
 
   const getWalletIcon = (type) => {
     switch (type) {
-      case 'FLOAT':
+      case "FLOAT":
         return <BanknoteIcon className="w-4 h-4 text-blue-500" />;
-      case 'COMMISSIONS':
+      case "COMMISSIONS":
         return <BadgeDollarSign className="w-4 h-4 text-indigo-500" />;
-      case 'OPERATIONS':
+      case "OPERATIONS":
         return <Building2 className="w-4 h-4 text-neutral-500" />;
-      case 'ESCROW':
+      case "ESCROW":
         return <Lock className="w-4 h-4 text-violet-500" />;
-      case 'RESERVE':
+      case "RESERVE":
         return <ShieldAlert className="w-4 h-4 text-purple-500" />;
-      case 'TAX':
+      case "TAX":
         return <Receipt className="w-4 h-4 text-red-500" />;
-      case 'PROMOTIONAL':
+      case "PROMOTIONAL":
         return <Sparkles className="w-4 h-4 text-amber-500" />;
-      case 'SETTLEMENT':
+      case "SETTLEMENT":
         return <CircleDollarSign className="w-4 h-4 text-emerald-500" />;
-      case 'LIQUIDITY':
+      case "LIQUIDITY":
         return <PiggyBank className="w-4 h-4 text-cyan-500" />;
-      case 'USER_HOLDING':
+      case "USER_HOLDING":
         return <Users className="w-4 h-4 text-blue-500" />;
-      case 'CUSTOM':
+      case "CUSTOM":
         return <PencilRuler className="w-4 h-4 text-slate-500" />;
       default:
         return <Wallet className="w-4 h-4 text-neutral-500" />;
     }
   };
 
-  const getWalletAccentColor = (type) => {
+  const getWalletAccentColor = (type: string) => {
     switch (type) {
-      case 'FLOAT':
-        return 'border-l-blue-500';
-      case 'COMMISSIONS':
-        return 'border-l-indigo-500';
-      case 'OPERATIONS':
-        return 'border-l-neutral-500';
-      case 'ESCROW':
-        return 'border-l-violet-500';
-      case 'RESERVE':
-        return 'border-l-purple-500';
-      case 'TAX':
-        return 'border-l-red-500';
-      case 'PROMOTIONAL':
-        return 'border-l-amber-500';
-      case 'SETTLEMENT':
-        return 'border-l-emerald-500';
-      case 'LIQUIDITY':
-        return 'border-l-cyan-500';
-      case 'USER_HOLDING':
-        return 'border-l-blue-500';
-      case 'CUSTOM':
-        return 'border-l-slate-500';
+      case "FLOAT":
+        return "border-l-blue-500";
+      case "COMMISSIONS":
+        return "border-l-indigo-500";
+      case "OPERATIONS":
+        return "border-l-neutral-500";
+      case "ESCROW":
+        return "border-l-violet-500";
+      case "RESERVE":
+        return "border-l-purple-500";
+      case "TAX":
+        return "border-l-red-500";
+      case "PROMOTIONAL":
+        return "border-l-amber-500";
+      case "SETTLEMENT":
+        return "border-l-emerald-500";
+      case "LIQUIDITY":
+        return "border-l-cyan-500";
+      case "USER_HOLDING":
+        return "border-l-blue-500";
+      case "CUSTOM":
+        return "border-l-slate-500";
       default:
-        return 'border-l-neutral-500';
+        return "border-l-neutral-500";
     }
   };
 
   const getModalTitle = () => {
-    if (!selectedWallet) return '';
+    if (!selectedWallet) return "";
 
     switch (modalType) {
-      case 'topup':
+      case "topup":
         return `Top Up ${selectedWallet.name}`;
-      case 'transfer':
+      case "transfer":
         return `Transfer from ${selectedWallet.name}`;
-      case 'history':
+      case "history":
         return `Transaction History - ${selectedWallet.name}`;
-      case 'settings':
+      case "settings":
         return `${selectedWallet.name} Settings`;
       default:
-        return '';
+        return "";
     }
   };
 
@@ -301,16 +344,16 @@ const SystemWalletsPage = () => {
     setShowDropdown(null);
 
     switch (action) {
-      case 'topup':
+      case "topup":
         openTopUpModal(wallet);
         break;
-      case 'transfer':
+      case "transfer":
         openTransferModal(wallet);
         break;
-      case 'history':
+      case "history":
         openHistoryModal(wallet);
         break;
-      case 'settings':
+      case "settings":
         openSettingsModal(wallet);
         break;
       default:
@@ -350,29 +393,32 @@ const SystemWalletsPage = () => {
           <div className="flex items-center gap-2">
             <div className="inline-flex h-9 items-center bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-1 shadow-sm">
               <button
-                onClick={() => setStatusFilter('all')}
-                className={`px-3 py-1 rounded-md text-xs transition-all ${statusFilter === 'all'
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
-                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
-                  }`}
+                onClick={() => setStatusFilter("all")}
+                className={`px-3 py-1 rounded-md text-xs transition-all ${
+                  statusFilter === "all"
+                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                }`}
               >
                 All
               </button>
               <button
-                onClick={() => setStatusFilter('active')}
-                className={`px-3 py-1 rounded-md text-xs transition-all ${statusFilter === 'active'
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
-                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
-                  }`}
+                onClick={() => setStatusFilter("active")}
+                className={`px-3 py-1 rounded-md text-xs transition-all ${
+                  statusFilter === "active"
+                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                }`}
               >
                 Active
               </button>
               <button
-                onClick={() => setStatusFilter('inactive')}
-                className={`px-3 py-1 rounded-md text-xs transition-all ${statusFilter === 'inactive'
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
-                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
-                  }`}
+                onClick={() => setStatusFilter("inactive")}
+                className={`px-3 py-1 rounded-md text-xs transition-all ${
+                  statusFilter === "inactive"
+                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium"
+                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200"
+                }`}
               >
                 Inactive
               </button>
@@ -398,7 +444,9 @@ const SystemWalletsPage = () => {
                 <div className="p-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-md">
                   <Wallet size={16} className="text-blue-500" />
                 </div>
-                <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Total Balance</h3>
+                <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                  Total Balance
+                </h3>
               </div>
               <p className="text-xl font-medium text-neutral-900 dark:text-neutral-100 font-mono">
                 {formatCurrency(totalBalance)}
@@ -414,7 +462,9 @@ const SystemWalletsPage = () => {
                 <div className="p-1.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-md">
                   <LineChart size={16} className="text-indigo-500" />
                 </div>
-                <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Transaction Volume</h3>
+                <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                  Transaction Volume
+                </h3>
               </div>
               <p className="text-xl font-medium text-neutral-900 dark:text-neutral-100 font-mono">
                 {formatCurrency(totalVolume)}
@@ -430,9 +480,13 @@ const SystemWalletsPage = () => {
                 <div className="p-1.5 bg-amber-50 dark:bg-amber-900/20 rounded-md">
                   <Clock size={16} className="text-amber-500" />
                 </div>
-                <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">Processing Time</h3>
+                <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                  Processing Time
+                </h3>
               </div>
-              <p className="text-xl font-medium text-neutral-900 dark:text-neutral-100 font-mono">1.2s</p>
+              <p className="text-xl font-medium text-neutral-900 dark:text-neutral-100 font-mono">
+                1.2s
+              </p>
               <p className="text-xs text-emerald-500 mt-1 flex items-center">
                 <ArrowUpRight size={10} className="mr-0.5" />
                 <span>-0.3s from previous period</span>
@@ -444,9 +498,13 @@ const SystemWalletsPage = () => {
                 <div className="p-1.5 bg-violet-50 dark:bg-violet-900/20 rounded-md">
                   <ShieldCheck size={16} className="text-violet-500" />
                 </div>
-                <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">System Health</h3>
+                <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                  System Health
+                </h3>
               </div>
-              <p className="text-xl font-medium text-neutral-900 dark:text-neutral-100 font-mono">99.98%</p>
+              <p className="text-xl font-medium text-neutral-900 dark:text-neutral-100 font-mono">
+                99.98%
+              </p>
               <p className="text-xs text-emerald-500 mt-1 flex items-center">
                 <ArrowUpRight size={10} className="mr-0.5" />
                 <span>+0.06% from previous period</span>
@@ -456,63 +514,86 @@ const SystemWalletsPage = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {isLoading ? (
-              Array(6).fill(0).map((_, index) => (
-                <div key={index} className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 border-l-[3px] border-l-blue-200 dark:border-l-blue-700 shadow-sm animate-pulse">
-                  <div className="p-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 bg-neutral-200 dark:bg-neutral-700 rounded-md"></div>
-                        <div>
-                          <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-24 mb-1"></div>
-                          <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-16"></div>
+              Array(6)
+                .fill(0)
+                .map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 border-l-[3px] border-l-blue-200 dark:border-l-blue-700 shadow-sm animate-pulse"
+                  >
+                    <div className="p-4">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 bg-neutral-200 dark:bg-neutral-700 rounded-md"></div>
+                          <div>
+                            <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-24 mb-1"></div>
+                            <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-16"></div>
+                          </div>
                         </div>
+                        <div className="h-6 w-6 bg-neutral-200 dark:bg-neutral-700 rounded-md"></div>
                       </div>
-                      <div className="h-6 w-6 bg-neutral-200 dark:bg-neutral-700 rounded-md"></div>
-                    </div>
-                    <div className="h-7 bg-neutral-200 dark:bg-neutral-700 rounded w-36 mt-4 mb-3"></div>
-                    <div className="border-t border-neutral-100 dark:border-neutral-700 pt-3 mt-3">
-                      <div className="flex justify-between">
-                        <div>
-                          <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-14 mb-1"></div>
-                          <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
-                        </div>
-                        <div>
-                          <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-14 mb-1"></div>
-                          <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
+                      <div className="h-7 bg-neutral-200 dark:bg-neutral-700 rounded w-36 mt-4 mb-3"></div>
+                      <div className="border-t border-neutral-100 dark:border-neutral-700 pt-3 mt-3">
+                        <div className="flex justify-between">
+                          <div>
+                            <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-14 mb-1"></div>
+                            <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
+                          </div>
+                          <div>
+                            <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-14 mb-1"></div>
+                            <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-20"></div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                ))
             ) : filteredWallets.length === 0 ? (
               <div className="col-span-full bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 p-6 text-center">
                 <div className="flex justify-center mb-3">
                   <Wallet size={32} className="text-neutral-400" />
                 </div>
-                <h3 className="text-base font-medium text-neutral-800 dark:text-neutral-200 mb-1">No wallets found</h3>
-                <p className="text-neutral-500 dark:text-neutral-400 text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-base font-medium text-neutral-800 dark:text-neutral-200 mb-1">
+                  No wallets found
+                </h3>
+                <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+                  Try adjusting your search or filters.
+                </p>
               </div>
             ) : (
               filteredWallets.map((wallet) => (
                 <div
                   key={wallet.id}
-                  className={`group bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 border-l-[3px] ${getWalletAccentColor(wallet.type)} shadow-sm hover:shadow-md transition-shadow`}
+                  className={`group bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 border-l-[3px] ${getWalletAccentColor(
+                    wallet.type
+                  )} shadow-sm hover:shadow-md transition-shadow`}
                 >
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex items-center gap-2">
-                        <div className={`p-1.5 bg-neutral-50 dark:bg-neutral-800 rounded-md`}>
+                        <div
+                          className={`p-1.5 bg-neutral-50 dark:bg-neutral-800 rounded-md`}
+                        >
                           {getWalletIcon(wallet.type)}
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <h3 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{wallet.name}</h3>
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${getStatusColor(wallet.status)}`}>
-                              {wallet.status === 'active' ? 'Active' : 'Inactive'}
+                            <h3 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                              {wallet.name}
+                            </h3>
+                            <span
+                              className={`text-[10px] px-1.5 py-0.5 rounded-full ${getStatusColor(
+                                wallet.status
+                              )}`}
+                            >
+                              {wallet.status === "active"
+                                ? "Active"
+                                : "Inactive"}
                             </span>
                           </div>
-                          <p className="text-xs text-neutral-500 font-mono">{wallet.accountNumber}</p>
+                          <p className="text-xs text-neutral-500 font-mono">
+                            {wallet.accountNumber}
+                          </p>
                         </div>
                       </div>
 
@@ -521,7 +602,9 @@ const SystemWalletsPage = () => {
                           className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors text-neutral-400 dark:text-neutral-500"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setShowDropdown(showDropdown === wallet.id ? null : wallet.id);
+                            setShowDropdown(
+                              showDropdown === wallet.id ? null : wallet.id
+                            );
                           }}
                         >
                           <MoreHorizontal size={14} />
@@ -531,34 +614,46 @@ const SystemWalletsPage = () => {
                           <div className="absolute right-0 mt-1 w-36 bg-white dark:bg-neutral-800 rounded-md shadow-lg border border-neutral-200 dark:border-neutral-700 py-1 z-10">
                             <button
                               disabled={wallet.status === "inactive"}
-                              className={`w-full text-left px-3 py-1.5 text-xs ${wallet.status === "inactive"
-                                ? "text-neutral-400 dark:text-neutral-600 cursor-not-allowed"
-                                : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"} flex items-center`}
-                              onClick={(e) => handleWalletAction(e, wallet, 'topup')}
+                              className={`w-full text-left px-3 py-1.5 text-xs ${
+                                wallet.status === "inactive"
+                                  ? "text-neutral-400 dark:text-neutral-600 cursor-not-allowed"
+                                  : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                              } flex items-center`}
+                              onClick={(e) =>
+                                handleWalletAction(e, wallet, "topup")
+                              }
                             >
                               <Plus size={12} className="mr-1.5" />
                               Top Up
                             </button>
                             <button
                               disabled={wallet.status === "inactive"}
-                              className={`w-full text-left px-3 py-1.5 text-xs ${wallet.status === "inactive"
-                                ? "text-neutral-400 dark:text-neutral-600 cursor-not-allowed"
-                                : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"} flex items-center`}
-                              onClick={(e) => handleWalletAction(e, wallet, 'transfer')}
+                              className={`w-full text-left px-3 py-1.5 text-xs ${
+                                wallet.status === "inactive"
+                                  ? "text-neutral-400 dark:text-neutral-600 cursor-not-allowed"
+                                  : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                              } flex items-center`}
+                              onClick={(e) =>
+                                handleWalletAction(e, wallet, "transfer")
+                              }
                             >
                               <ArrowUpRight size={12} className="mr-1.5" />
                               Transfer
                             </button>
                             <button
                               className="w-full text-left px-3 py-1.5 text-xs text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 flex items-center"
-                              onClick={(e) => handleWalletAction(e, wallet, 'history')}
+                              onClick={(e) =>
+                                handleWalletAction(e, wallet, "history")
+                              }
                             >
                               <Clock size={12} className="mr-1.5" />
                               History
                             </button>
                             <button
                               className="w-full text-left px-3 py-1.5 text-xs text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 flex items-center"
-                              onClick={(e) => handleWalletAction(e, wallet, 'settings')}
+                              onClick={(e) =>
+                                handleWalletAction(e, wallet, "settings")
+                              }
                             >
                               <Settings size={12} className="mr-1.5" />
                               Settings
@@ -569,7 +664,9 @@ const SystemWalletsPage = () => {
                     </div>
 
                     <div className="mt-2.5 mb-3">
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Current Balance</p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                        Current Balance
+                      </p>
                       <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100 font-mono">
                         {formatCurrency(wallet.balance)}
                       </h2>
@@ -577,12 +674,20 @@ const SystemWalletsPage = () => {
 
                     <div className="flex items-start justify-between pt-3 border-t border-neutral-100 dark:border-neutral-700">
                       <div>
-                        <p className="text-[10px] text-neutral-500 mb-0.5">Last Updated</p>
-                        <p className="text-xs text-neutral-700 dark:text-neutral-300 font-mono">{formatDate(wallet.lastUpdated)}</p>
+                        <p className="text-[10px] text-neutral-500 mb-0.5">
+                          Last Updated
+                        </p>
+                        <p className="text-xs text-neutral-700 dark:text-neutral-300 font-mono">
+                          {formatDate(wallet.lastUpdated)}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-[10px] text-neutral-500 mb-0.5">Monthly Volume</p>
-                        <p className="text-xs text-neutral-700 dark:text-neutral-300 font-medium font-mono text-right">{formatCurrency(wallet.monthlyVolume)}</p>
+                        <p className="text-[10px] text-neutral-500 mb-0.5">
+                          Monthly Volume
+                        </p>
+                        <p className="text-xs text-neutral-700 dark:text-neutral-300 font-medium font-mono text-right">
+                          {formatCurrency(wallet.monthlyVolume)}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -598,33 +703,55 @@ const SystemWalletsPage = () => {
               <ArrowDownUp size={16} className="mr-1.5 text-blue-500" />
               Recent Transactions
             </h2>
-            <button className="text-xs text-blue-500 hover:text-blue-600 font-medium">View All</button>
+            <button className="text-xs text-blue-500 hover:text-blue-600 font-medium">
+              View All
+            </button>
           </div>
 
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-neutral-100 dark:divide-neutral-700">
               <thead>
                 <tr className="bg-neutral-50 dark:bg-neutral-700">
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Transaction</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Wallet</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Amount</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Date</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Actions</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Transaction
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Wallet
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Amount
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                 {mockTransactions.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-3 py-3 text-center text-neutral-500 dark:text-neutral-400 text-sm">
+                    <td
+                      colSpan={6}
+                      className="px-3 py-3 text-center text-neutral-500 dark:text-neutral-400 text-sm"
+                    >
                       No recent transactions found
                     </td>
                   </tr>
                 ) : (
                   mockTransactions.slice(0, 5).map((transaction) => {
-                    const wallet = systemWallets.find(w => w.id === transaction.walletId);
+                    const wallet = systemWallets.find(
+                      (w) => w.id === transaction.walletId
+                    );
                     return (
-                      <tr key={transaction.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                      <tr
+                        key={transaction.id}
+                        className="hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                      >
                         <td className="px-3 py-3 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-7 w-7 rounded-md bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mr-2">
@@ -632,26 +759,41 @@ const SystemWalletsPage = () => {
                             </div>
                             <div>
                               <div className="text-xs font-medium text-neutral-900 dark:text-neutral-200">
-                                {transaction.type === 'credit' ? 'Incoming' : 'Outgoing'}
+                                {transaction.type === "credit"
+                                  ? "Incoming"
+                                  : "Outgoing"}
                               </div>
-                              <div className="text-[10px] text-neutral-500 dark:text-neutral-400 font-mono">{transaction.reference}</div>
+                              <div className="text-[10px] text-neutral-500 dark:text-neutral-400 font-mono">
+                                {transaction.reference}
+                              </div>
                             </div>
                           </div>
                         </td>
                         <td className="px-3 py-3 whitespace-nowrap">
-                          <div className="text-xs text-neutral-800 dark:text-neutral-300">{wallet?.name || 'Unknown Wallet'}</div>
-                        </td>
-                        <td className="px-3 py-3 whitespace-nowrap">
-                          <div className={`text-xs font-medium font-mono ${transaction.type === 'credit'
-                            ? 'text-emerald-500 dark:text-emerald-400'
-                            : 'text-blue-500 dark:text-blue-400'
-                            }`}>
-                            {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                          <div className="text-xs text-neutral-800 dark:text-neutral-300">
+                            {wallet?.name || "Unknown Wallet"}
                           </div>
                         </td>
                         <td className="px-3 py-3 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium ${getStatusColor(transaction.status)}`}>
-                            {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                          <div
+                            className={`text-xs font-medium font-mono ${
+                              transaction.type === "credit"
+                                ? "text-emerald-500 dark:text-emerald-400"
+                                : "text-blue-500 dark:text-blue-400"
+                            }`}
+                          >
+                            {transaction.type === "credit" ? "+" : "-"}
+                            {formatCurrency(transaction.amount)}
+                          </div>
+                        </td>
+                        <td className="px-3 py-3 whitespace-nowrap">
+                          <span
+                            className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium ${getStatusColor(
+                              transaction.status
+                            )}`}
+                          >
+                            {transaction.status.charAt(0).toUpperCase() +
+                              transaction.status.slice(1)}
                           </span>
                         </td>
                         <td className="px-3 py-3 whitespace-nowrap text-xs text-neutral-500 dark:text-neutral-400 font-mono">
@@ -676,7 +818,12 @@ const SystemWalletsPage = () => {
             <Shield size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs text-blue-600 dark:text-blue-400 leading-relaxed">
-                <span className="font-medium">About System Wallets:</span> Dedicated internal accounts for specific financial functions including Float (liquidity reserves), Commissions (platform fees), Operations (day-to-day platform costs), Escrow (holds funds during processing), Reserve (emergency funds), Tax (tax obligations), and Promotional (marketing initiatives).
+                <span className="font-medium">About System Wallets:</span>{" "}
+                Dedicated internal accounts for specific financial functions
+                including Float (liquidity reserves), Commissions (platform
+                fees), Operations (day-to-day platform costs), Escrow (holds
+                funds during processing), Reserve (emergency funds), Tax (tax
+                obligations), and Promotional (marketing initiatives).
               </p>
             </div>
           </div>
@@ -691,9 +838,9 @@ const SystemWalletsPage = () => {
           setSelectedWallet(null);
         }}
         title={getModalTitle()}
-        size={modalType === 'history' ? 'lg' : 'md'}
+        size={modalType === "history" ? "lg" : "md"}
       >
-        {modalType === 'topup' && selectedWallet && (
+        {modalType === "topup" && selectedWallet && (
           <TopUpWallet
             selectedWallet={selectedWallet}
             setIsModalOpen={setIsModalOpen}
@@ -701,7 +848,7 @@ const SystemWalletsPage = () => {
           />
         )}
 
-        {modalType === 'transfer' && selectedWallet && (
+        {modalType === "transfer" && selectedWallet && (
           <TransferWallet
             selectedWallet={selectedWallet}
             setIsModalOpen={setIsModalOpen}
@@ -710,7 +857,7 @@ const SystemWalletsPage = () => {
           />
         )}
 
-        {modalType === 'history' && selectedWallet && (
+        {modalType === "history" && selectedWallet && (
           <WalletHistory
             selectedWallet={selectedWallet}
             transactions={transactions}
@@ -723,7 +870,7 @@ const SystemWalletsPage = () => {
           />
         )}
 
-        {modalType === 'settings' && selectedWallet && (
+        {modalType === "settings" && selectedWallet && (
           <WalletSettings
             selectedWallet={selectedWallet}
             setIsModalOpen={setIsModalOpen}
