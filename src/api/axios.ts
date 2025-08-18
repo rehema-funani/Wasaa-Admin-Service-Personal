@@ -1,59 +1,79 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import axios from "axios";
+import Cookies from "js-cookie";
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://138.68.190.213:3010/';
-const apiKey = import.meta.env.VITE_API_KEY || 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==';
+const baseURL = import.meta.env.VITE_API_URL || "http://138.68.190.213:3010/";
+const apiKey =
+  import.meta.env.VITE_API_KEY ||
+  "QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==";
 
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
 const DEBUG_TOKEN_REFRESH = false;
 
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem("deviceId");
+  if (!deviceId) {
+    deviceId =
+      "device_" +
+      Date.now() +
+      "_" +
+      Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("deviceId", deviceId);
+  }
+  return deviceId;
+};
+
 const addSubscriber = (callback: (token: string) => void) => {
   refreshSubscribers.push(callback);
 };
 
 const onRefreshed = (token: string) => {
-  refreshSubscribers.forEach(callback => callback(token));
+  refreshSubscribers.forEach((callback) => callback(token));
   refreshSubscribers = [];
 };
 
 const refreshAuthToken = async () => {
   try {
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshToken = localStorage.getItem("refreshToken");
 
     if (!refreshToken) {
-      throw new Error('No refresh token available');
+      throw new Error("No refresh token available");
     }
 
-    const userType = 'admin';
-    const source = 'web';
+    const userType = "admin";
+    const source = "web";
 
-    const response = await axios.post(`${baseURL}auth/refresh-token`, {
-      refresh_token: refreshToken,
-      source: source,
-      user_type: userType
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'x-api-key': apiKey
+    const response = await axios.post(
+      `${baseURL}auth/refresh-token`,
+      {
+        refresh_token: refreshToken,
+        source: source,
+        user_type: userType,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "x-api-key": apiKey,
+          "x-device-id": getDeviceId(),
+        },
       }
-    });
+    );
 
     if (response.data && response.data.new_access_token) {
-      localStorage.setItem('authToken', response.data.new_access_token);
+      localStorage.setItem("authToken", response.data.new_access_token);
 
       if (response.data.new_refresh_token) {
-        localStorage.setItem('refreshToken', response.data.new_refresh_token);
+        localStorage.setItem("refreshToken", response.data.new_refresh_token);
       }
 
       return response.data.new_access_token;
     } else {
-      throw new Error('Failed to refresh token');
+      throw new Error("Failed to refresh token");
     }
   } catch (error) {
-    console.error('Token refresh failed:', error);
+    console.error("Token refresh failed:", error);
     handleLogout();
     throw error;
   }
@@ -62,9 +82,9 @@ const refreshAuthToken = async () => {
 export const api = axios.create({
   baseURL,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'x-api-key': apiKey
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "x-api-key": apiKey,
   },
   timeout: 30_000,
 });
@@ -72,13 +92,13 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     try {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem("authToken");
 
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
 
         if (DEBUG_TOKEN_REFRESH) {
-          config.headers.Authorization = 'Bearer invalid_token_for_testing';
+          config.headers.Authorization = "Bearer invalid_token_for_testing";
         }
       }
 
@@ -102,8 +122,9 @@ api.interceptors.response.use(
     if (
       error.response &&
       (error.response.status === 401 ||
-       (error.response.data &&
-        error.response.data.message === "Authorization token invalid or expired!"))
+        (error.response.data &&
+          error.response.data.message ===
+            "Authorization token invalid or expired!"))
     ) {
       if (!originalRequest._retry) {
         originalRequest._retry = true;
@@ -111,7 +132,7 @@ api.interceptors.response.use(
         if (isRefreshing) {
           try {
             const newToken = await new Promise<string>((resolve, reject) => {
-              addSubscriber(token => {
+              addSubscriber((token) => {
                 resolve(token);
               });
             });
@@ -147,12 +168,12 @@ api.interceptors.response.use(
 );
 
 function handleLogout() {
-  Cookies.remove('authToken');
-  Cookies.remove('refreshToken');
-  Cookies.remove('user');
-  Cookies.remove('userType');
-  Cookies.remove('source');
-  window.location.href = '/auth/login';
+  Cookies.remove("authToken");
+  Cookies.remove("refreshToken");
+  Cookies.remove("user");
+  Cookies.remove("userType");
+  Cookies.remove("source");
+  window.location.href = "/auth/login";
 }
 
 export default api;
