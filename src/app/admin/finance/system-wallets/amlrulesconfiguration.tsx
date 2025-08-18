@@ -156,7 +156,6 @@ const AMLRulesConfiguration: React.FC = () => {
     setRules(updatedRules);
     showSuccess(`Rule "${selectedRule.name}" deleted successfully`);
 
-    // Reset states
     setIsModalOpen(false);
     setModalType(null);
     setSelectedRule(null);
@@ -183,7 +182,6 @@ const AMLRulesConfiguration: React.FC = () => {
     setRules([...rules, newRule]);
     showSuccess(`Rule "${newRule.name}" added successfully`);
 
-    // Reset states
     setIsModalOpen(false);
     setModalType(null);
     setRuleFormData({
@@ -225,7 +223,6 @@ const AMLRulesConfiguration: React.FC = () => {
     setRules(updatedRules);
     showSuccess(`Rule "${selectedRule.name}" updated successfully`);
 
-    // Reset states
     setIsModalOpen(false);
     setModalType(null);
     setSelectedRule(null);
@@ -250,15 +247,6 @@ const AMLRulesConfiguration: React.FC = () => {
     }, 3000);
   };
 
-  // Show error message with a timeout
-  const showError = (message: string) => {
-    setErrorMessage(message);
-    setSuccessMessage(null);
-    setTimeout(() => {
-      setErrorMessage(null);
-    }, 3000);
-  };
-
   const navigateToRuleDetail = (rule: AMLRule) => {
     navigate(`/admin/finance/compliance/rules/${rule.id}`, { state: { rule } });
   };
@@ -280,7 +268,6 @@ const AMLRulesConfiguration: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  // Open add rule modal
   const openAddRuleModal = () => {
     setRuleFormData({
       name: "",
@@ -297,14 +284,12 @@ const AMLRulesConfiguration: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  // Open delete rule confirmation modal
   const openDeleteRuleModal = (rule: AMLRule) => {
     setSelectedRule(rule);
     setModalType("delete");
     setIsModalOpen(true);
   };
 
-  // Format date
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
 
@@ -318,7 +303,6 @@ const AMLRulesConfiguration: React.FC = () => {
     });
   };
 
-  // Format rule type
   const formatRuleType = (type: string) => {
     switch (type) {
       case "transaction":
@@ -338,7 +322,6 @@ const AMLRulesConfiguration: React.FC = () => {
     }
   };
 
-  // Format category
   const formatCategory = (category: string) => {
     switch (category) {
       case "monitoring":
@@ -354,7 +337,6 @@ const AMLRulesConfiguration: React.FC = () => {
     }
   };
 
-  // Get rule type icon
   const getRuleTypeIcon = (type: string) => {
     switch (type) {
       case "transaction":
@@ -374,7 +356,6 @@ const AMLRulesConfiguration: React.FC = () => {
     }
   };
 
-  // Get category icon
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "monitoring":
@@ -390,7 +371,6 @@ const AMLRulesConfiguration: React.FC = () => {
     }
   };
 
-  // Get status badge color
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
@@ -406,7 +386,6 @@ const AMLRulesConfiguration: React.FC = () => {
     }
   };
 
-  // Get status icon
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "active":
@@ -437,7 +416,6 @@ const AMLRulesConfiguration: React.FC = () => {
     }
   };
 
-  // Get modal title
   const getModalTitle = () => {
     switch (modalType) {
       case "edit":
@@ -469,7 +447,6 @@ const AMLRulesConfiguration: React.FC = () => {
         </div>
       )}
 
-      {/* Dashboard Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 rounded-xl shadow-xl mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -598,7 +575,6 @@ const AMLRulesConfiguration: React.FC = () => {
         </div>
       </div>
 
-      {/* AML Rules Table */}
       <div className="bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden mb-8">
         <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-slate-50 to-white">
           <h2 className="text-lg font-semibold text-slate-800">AML Rules</h2>
