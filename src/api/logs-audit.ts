@@ -13,6 +13,19 @@ export const logsaudit = axios.create({
   timeout: 30_000,
 });
 
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem("deviceId");
+  if (!deviceId) {
+    deviceId =
+      "device_" +
+      Date.now() +
+      "_" +
+      Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("deviceId", deviceId);
+  }
+  return deviceId;
+};
+
 logsaudit.interceptors.request.use(
   (config) => {
     try {
@@ -21,6 +34,7 @@ logsaudit.interceptors.request.use(
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      config.headers['x-device-id'] = getDeviceId();
 
       return config;
     } catch (error) {
