@@ -1,11 +1,11 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import React, { Suspense, lazy, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import React, { Suspense, lazy, useEffect } from "react";
 
-import AdminLayout from './components/layout/AdminLayout';
-import Cookies from 'js-cookie';
-import { PATHS } from './constants/paths';
-import { PermissionMap } from './utils/permissions';
-import PermissionRouteGuard from './components/PermissionGuard';
+import AdminLayout from "./components/layout/AdminLayout";
+import Cookies from "js-cookie";
+import { PATHS } from "./constants/paths";
+import { PermissionMap } from "./utils/permissions";
+import PermissionRouteGuard from "./components/PermissionGuard";
 
 type RouteConfig = {
   path: string;
@@ -15,50 +15,64 @@ type RouteConfig = {
 };
 
 const AuthModule = {
-  Login: lazy(() => import('./app/auth/login/page')),
-  VerifyOtp: lazy(() => import('./app/auth/verify/page')),
-  ForgotPassword: lazy(() => import('./app/auth/forgot-password/page')),
-  Reset: lazy(() => import('./app/auth/forgot-password/reset')),
-  Set: lazy(() => import('./app/auth/password/page')),
+  Login: lazy(() => import("./app/auth/login/page")),
+  VerifyOtp: lazy(() => import("./app/auth/verify/page")),
+  ForgotPassword: lazy(() => import("./app/auth/forgot-password/page")),
+  Reset: lazy(() => import("./app/auth/forgot-password/reset")),
+  Set: lazy(() => import("./app/auth/password/page")),
 };
 
 const CoreModule = {
-  Dashboard: lazy(() => import('./app/dashboard/page')),
-  ErrorPage: lazy(() => import('./app/error/error-page')),
-  UnauthorizedPage: lazy(() => import('./app/error/unauthorized-page')),
-  UserProfile: lazy(() => import('./app/auth/profile/page')),
+  Dashboard: lazy(() => import("./app/dashboard/page")),
+  ErrorPage: lazy(() => import("./app/error/error-page")),
+  UnauthorizedPage: lazy(() => import("./app/error/unauthorized-page")),
+  UserProfile: lazy(() => import("./app/auth/profile/page")),
 };
 
 const UserModule = {
-  UserDetails: lazy(() => import('./app/admin/users/user-details/page')),
-  Userdetail: lazy(() => import('./app/admin/users/user-details/userdetail')),
-  CountrywiseUsers: lazy(() => import('./app/admin/users/countrywise-Analysis/page')),
-  ReportedUsers: lazy(() => import('./app/admin/users/reported-user-list/page')),
-  CountryDetailPage: lazy(() => import('./app/admin/users/countrywise-Analysis/CountryDetailPage')),
+  UserDetails: lazy(() => import("./app/admin/users/user-details/page")),
+  Userdetail: lazy(() => import("./app/admin/users/user-details/userdetail")),
+  CountrywiseUsers: lazy(
+    () => import("./app/admin/users/countrywise-Analysis/page")
+  ),
+  ReportedUsers: lazy(
+    () => import("./app/admin/users/reported-user-list/page")
+  ),
+  CountryDetailPage: lazy(
+    () => import("./app/admin/users/countrywise-Analysis/CountryDetailPage")
+  ),
 };
 
 const GroupModule = {
-  GroupList: lazy(() => import('./app/admin/Group/all-group-list/page')),
-  GroupDetailPage: lazy(() => import('./app/admin/Group/all-group-list/groupdetail')),
-  ReportedGroups: lazy(() => import('./app/admin/Group/all-reported-group-list/page')),
+  GroupList: lazy(() => import("./app/admin/Group/all-group-list/page")),
+  GroupDetailPage: lazy(
+    () => import("./app/admin/Group/all-group-list/groupdetail")
+  ),
+  ReportedGroups: lazy(
+    () => import("./app/admin/Group/all-reported-group-list/page")
+  ),
 };
 
 const RoleModule = {
-  RolesPage: lazy(() => import('./app/admin/roles/roles')),
-  RoleDetail: lazy(() => import('./app/admin/roles/roledetail')),
-  CreateRole: lazy(() => import('./app/admin/roles/createrole')),
-  EditRole: lazy(() => import('./app/admin/roles/editrole')),
-  SystemUsers: lazy(() => import('./app/admin/roles/user-settings')),
-  AdminUserDetails: lazy(() => import('./app/admin/roles/userdetail')),
+  RolesPage: lazy(() => import("./app/admin/roles/roles")),
+  RoleDetail: lazy(() => import("./app/admin/roles/roledetail")),
+  CreateRole: lazy(() => import("./app/admin/roles/createrole")),
+  EditRole: lazy(() => import("./app/admin/roles/editrole")),
+  SystemUsers: lazy(() => import("./app/admin/roles/user-settings")),
+  AdminUserDetails: lazy(() => import("./app/admin/roles/userdetail")),
 };
 
 const ForexModule = {
-  ForexDashboard: lazy(() => import('./app/admin/finance/forex/dashboard')),
-  Currencies: lazy(() => import('./app/admin/finance/forex/currency-management')),
-  CurrencyPairs: lazy(() => import('./app/admin/finance/forex/currency-pair')),
-  ExchangeRates: lazy(() => import('./app/admin/finance/forex/exchange-rate-viewer')),
-  UserAlerts: lazy(() => import('./app/admin/finance/forex/user-alerts')),
-  ForexSettings: lazy(() => import('./app/admin/finance/forex/settings')),
+  ForexDashboard: lazy(() => import("./app/admin/finance/forex/dashboard")),
+  Currencies: lazy(
+    () => import("./app/admin/finance/forex/currency-management")
+  ),
+  CurrencyPairs: lazy(() => import("./app/admin/finance/forex/currency-pair")),
+  ExchangeRates: lazy(
+    () => import("./app/admin/finance/forex/exchange-rate-viewer")
+  ),
+  UserAlerts: lazy(() => import("./app/admin/finance/forex/user-alerts")),
+  ForexSettings: lazy(() => import("./app/admin/finance/forex/settings")),
 };
 
 const FinanceModule = {
@@ -100,48 +114,59 @@ const FinanceModule = {
 };
 
 const MediaModule = {
-  WallpaperList: lazy(() => import('./app/admin/Wallpaper/list-all-wallpaper/page')),
-  AddWallpaper: lazy(() => import('./app/admin/Wallpaper/add-a-new-wallpaper/page')),
-  AvatarList: lazy(() => import('./app/admin/Avatar/list-all-avatar/page')),
-  AddAvatar: lazy(() => import('./app/admin/Avatar/add-a-new-avatar/page')),
+  WallpaperList: lazy(
+    () => import("./app/admin/Wallpaper/list-all-wallpaper/page")
+  ),
+  AddWallpaper: lazy(
+    () => import("./app/admin/Wallpaper/add-a-new-wallpaper/page")
+  ),
+  AvatarList: lazy(() => import("./app/admin/Avatar/list-all-avatar/page")),
+  AddAvatar: lazy(() => import("./app/admin/Avatar/add-a-new-avatar/page")),
 
-  GeneralSettings: lazy(() => import('./app/admin/Settings/page')),
-  Emoji: lazy(() => import('./app/admin/Settings/emoji')),
-  Languages: lazy(() => import('./app/admin/languages/all-languages/page')),
-  Translations: lazy(() => import('./app/admin/languages/all-languages/details')),
+  GeneralSettings: lazy(() => import("./app/admin/Settings/page")),
+  Emoji: lazy(() => import("./app/admin/Settings/emoji")),
+  Languages: lazy(() => import("./app/admin/languages/all-languages/page")),
+  Translations: lazy(
+    () => import("./app/admin/languages/all-languages/details")
+  ),
 
-
-  AddGift: lazy(() => import('./app/admin/Gift/add-new-gift/page')),
-  GiftList: lazy(() => import('./app/admin/Gift/gift-list/page')),
-  GiftCategories: lazy(() => import('./app/admin/Gift/gift-categories/page')),
-  NotificationsPage: lazy(() => import('./app/admin/notification/notifications')),
-  Broadcasts: lazy(() => import('./app/admin/notification/broadcast')),
-  AddBroadcast: lazy(() => import('./app/admin/notification/addbroadcast')),
-  EditBroadcast: lazy(() => import('./app/admin/notification/editbroadcast')),
+  AddGift: lazy(() => import("./app/admin/Gift/add-new-gift/page")),
+  GiftList: lazy(() => import("./app/admin/Gift/gift-list/page")),
+  GiftCategories: lazy(() => import("./app/admin/Gift/gift-categories/page")),
+  NotificationsPage: lazy(
+    () => import("./app/admin/notification/notifications")
+  ),
+  Broadcasts: lazy(() => import("./app/admin/notification/broadcast")),
+  AddBroadcast: lazy(() => import("./app/admin/notification/addbroadcast")),
+  EditBroadcast: lazy(() => import("./app/admin/notification/editbroadcast")),
 };
 
 const SupportAuditModule = {
-  TicketDashboard: lazy(() => import('./app/admin/support/ticketdashboard')),
-  Tickets: lazy(() => import('./app/admin/support/tickets')),
-  NewTicket: lazy(() => import('./app/admin/support/newticket')),
-  TicketDetail: lazy(() => import('./app/admin/support/ticketdetail')),
-  SLAList: lazy(() => import('./app/admin/support/sla')),
-  SLADetail: lazy(() => import('./app/admin/support/sladetail')),
-  SLAEdit: lazy(() => import('./app/admin/support/slaedit')),
-  SLACreate: lazy(() => import('./app/admin/support/slacreate')),
-  Categories: lazy(() => import('./app/admin/support/categories')),
-  CategoryCreate: lazy(() => import('./app/admin/support/categorycreate')),
-  CannedResponses: lazy(() => import('./app/admin/support/cannedresponse')),
-  CreateCannedResponse: lazy(() => import('./app/admin/support/cannedresponseaddedit')),
-  ResponseDetail: lazy(() => import('./app/admin/support/cannedresponsedetail')),
-  Agents: lazy(() => import('./app/admin/support/agents')),
-  CreateAgent: lazy(() => import('./app/admin/support/createagent')),
-  FAQs: lazy(() => import('./app/admin/support/faq')),
-  FAQCreate: lazy(() => import('./app/admin/support/faqcreate')),
-  FAQDetail: lazy(() => import('./app/admin/support/faqdetail')),
-  SupportReports: lazy(() => import('./app/admin/support/reports')),
-  Logs: lazy(() => import('./app/admin/audits/page')),
-  AuditDetails: lazy(() => import('./app/admin/audits/auditdetails')),
+  TicketDashboard: lazy(() => import("./app/admin/support/ticketdashboard")),
+  Tickets: lazy(() => import("./app/admin/support/tickets")),
+  NewTicket: lazy(() => import("./app/admin/support/newticket")),
+  TicketDetail: lazy(() => import("./app/admin/support/ticketdetail")),
+  SLAList: lazy(() => import("./app/admin/support/sla")),
+  SLADetail: lazy(() => import("./app/admin/support/sladetail")),
+  SLAEdit: lazy(() => import("./app/admin/support/slaedit")),
+  SLACreate: lazy(() => import("./app/admin/support/slacreate")),
+  Categories: lazy(() => import("./app/admin/support/categories")),
+  CategoryCreate: lazy(() => import("./app/admin/support/categorycreate")),
+  CannedResponses: lazy(() => import("./app/admin/support/cannedresponse")),
+  CreateCannedResponse: lazy(
+    () => import("./app/admin/support/cannedresponseaddedit")
+  ),
+  ResponseDetail: lazy(
+    () => import("./app/admin/support/cannedresponsedetail")
+  ),
+  Agents: lazy(() => import("./app/admin/support/agents")),
+  CreateAgent: lazy(() => import("./app/admin/support/createagent")),
+  FAQs: lazy(() => import("./app/admin/support/faq")),
+  FAQCreate: lazy(() => import("./app/admin/support/faqcreate")),
+  FAQDetail: lazy(() => import("./app/admin/support/faqdetail")),
+  SupportReports: lazy(() => import("./app/admin/support/reports")),
+  Logs: lazy(() => import("./app/admin/audits/page")),
+  AuditDetails: lazy(() => import("./app/admin/audits/auditdetails")),
 };
 
 const fundraisingModule = {
@@ -150,7 +175,10 @@ const fundraisingModule = {
   FundraisingWithdrawals: lazy(
     () => import("./app/admin/fundraiser/withdrawals")
   ),
-  FundraisingContributions: lazy(() => import("./app/admin/fundraiser/contributions")),
+  FundraisingContributions: lazy(
+    () => import("./app/admin/fundraiser/contributions")
+  ),
+  FundraisingReports: lazy(() => import("./app/admin/fundraiser/reports")),
 };
 
 const LoadingFallback = () => {
@@ -172,10 +200,10 @@ const LoadingFallback = () => {
 };
 
 class RouteErrorBoundary extends React.Component<
-  { children: React.ReactNode, fallback: React.ReactNode },
+  { children: React.ReactNode; fallback: React.ReactNode },
   { hasError: boolean }
 > {
-  constructor(props: { children: React.ReactNode, fallback: React.ReactNode }) {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -196,7 +224,9 @@ class RouteErrorBoundary extends React.Component<
   }
 }
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const location = useLocation();
   const authToken = localStorage.getItem("authToken");
   const isAuthenticated = !!authToken;
@@ -212,7 +242,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }, [isAuthenticated]);
 
   if (!isAuthenticated) {
-    return <Navigate to={PATHS.AUTH.LOGIN} state={{ from: location }} replace />;
+    return (
+      <Navigate to={PATHS.AUTH.LOGIN} state={{ from: location }} replace />
+    );
   }
 
   return <>{children}</>;
@@ -224,9 +256,13 @@ const renderRoutes = (routes: RouteConfig[]) => {
       key={route.path}
       path={route.path}
       element={
-        route.permissions
-          ? <PermissionRouteGuard permissions={route.permissions}>{<route.element />}</PermissionRouteGuard>
-          : <route.element />
+        route.permissions ? (
+          <PermissionRouteGuard permissions={route.permissions}>
+            {<route.element />}
+          </PermissionRouteGuard>
+        ) : (
+          <route.element />
+        )
       }
     >
       {route.children && renderRoutes(route.children)}
@@ -656,6 +692,10 @@ const fundraisingRoutes = [
   {
     path: PATHS.ADMIN.FUNDRAISING.CONTRIBUTIONS,
     element: fundraisingModule.FundraisingContributions,
+  },
+  {
+    path: PATHS.ADMIN.FUNDRAISING.REPORTS,
+    element: fundraisingModule.FundraisingReports,
   },
 ];
 
