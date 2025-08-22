@@ -352,17 +352,17 @@ const routes: Route[] = [
     items: [
       {
         type: "link",
-        path: "/admin/fundraising/campaigns",
-        title: "All Campaigns",
+        path: "/admin/fundraising/dashboard",
+        title: "Dashboard",
         icon: Building,
-        description: "View all fundraising campaigns",
+        description: "Overview of all fundraising campaigns",
       },
       {
         type: "link",
-        path: "/admin/fundraising/campaign-details",
+        path: "/admin/fundraising/campaigns",
         title: "Campaign Details",
         icon: FileText,
-        description: "View detailed campaign information",
+        description: "View all fundraising campaigns",
       },
       {
         type: "dropdown",

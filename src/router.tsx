@@ -657,14 +657,6 @@ const fundraisingRoutes = [
     path: PATHS.ADMIN.FUNDRAISING.CONTRIBUTIONS,
     element: fundraisingModule.FundraisingContributions,
   },
-  // {
-  //   path: PATHS.ADMIN.FUNDRAISING.DONORS,
-  //   element: FundraisingDonors,
-  // },
-  // {
-  //   path: PATHS.ADMIN.FUNDRAISING.REPORTS,
-  //   element: FundraisingReports,
-  // },
 ];
 
 const protectedRoutes = [
