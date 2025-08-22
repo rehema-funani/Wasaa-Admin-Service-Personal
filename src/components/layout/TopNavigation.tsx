@@ -17,7 +17,6 @@ import {
   Wallet,
   Sparkles,
   TrendingUp,
-  Eye,
   Lock,
   Sun,
   Moon,
@@ -317,48 +316,6 @@ const TopNavigation = () => {
     closeAllMenus();
   };
 
-  const markAllAsRead = () => {
-    setUnreadNotifications(0);
-  };
-
-  const getNotificationIcon = (type: any) => {
-    switch (type) {
-      case "transaction":
-        return (
-          <div className="p-2 rounded-full bg-emerald-50/80 dark:bg-emerald-900/50 border border-emerald-400/30 dark:border-emerald-500/30 backdrop-blur-sm shadow-inner shadow-emerald-400/10 dark:shadow-emerald-500/10">
-            <CreditCard
-              size={16}
-              className="text-emerald-500 dark:text-emerald-400"
-            />
-          </div>
-        );
-      case "alert":
-        return (
-          <div className="p-2 rounded-full bg-amber-50/80 dark:bg-amber-900/50 border border-amber-400/30 dark:border-amber-500/30 backdrop-blur-sm shadow-inner shadow-amber-400/10 dark:shadow-amber-500/10">
-            <AlertCircle
-              size={16}
-              className="text-amber-500 dark:text-amber-400"
-            />
-          </div>
-        );
-      case "system":
-        return (
-          <div className="p-2 rounded-full bg-violet-50/80 dark:bg-violet-900/50 border border-violet-400/30 dark:border-violet-500/30 backdrop-blur-sm shadow-inner shadow-violet-400/10 dark:shadow-violet-500/10">
-            <Shield
-              size={16}
-              className="text-violet-500 dark:text-violet-400"
-            />
-          </div>
-        );
-      default:
-        return (
-          <div className="p-2 rounded-full bg-indigo-50/80 dark:bg-indigo-900/50 border border-indigo-400/30 dark:border-indigo-500/30 backdrop-blur-sm shadow-inner shadow-indigo-400/10 dark:shadow-indigo-500/10">
-            <Bell size={16} className="text-indigo-500 dark:text-indigo-400" />
-          </div>
-        );
-    }
-  };
-
   const handleNestedDropdownToggle = (key: any) => {
     setActiveNestedDropdown(activeNestedDropdown === key ? null : key);
   };
@@ -499,13 +456,12 @@ const TopNavigation = () => {
         <div className="absolute -top-20 -left-20 w-40 h-40 bg-indigo-400/30 dark:bg-indigo-500/20 rounded-full blur-3xl animate-blob"></div>
         <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-sky-400/20 dark:bg-sky-500/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
 
-        {/* Dynamic glow effect that follows cursor */}
         <div
-          className="absolute w-40 h-40 rounded-full blur-3xl bg-indigo-400/10 dark:bg-indigo-500/5 pointer-events-none transition-all duration-300 ease-out"
+          className="absolute w-40 h-40 rounded-full blur-[150px] bg-indigo-400/10 dark:bg-indigo-500/5 pointer-events-none transition-all duration-300 ease-out"
           style={{
             left: mousePosition.x - 350,
             top: mousePosition.y - 200,
-            opacity: 0.3,
+            opacity: 0.1,
             transform: "translate3d(0, 0, 0)",
           }}
         ></div>
