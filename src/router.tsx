@@ -144,6 +144,12 @@ const SupportAuditModule = {
   AuditDetails: lazy(() => import('./app/admin/audits/auditdetails')),
 };
 
+const fundraisingModule = {
+  FundraisingDashboard: lazy(() => import("./app/admin/fundraiser/dashboard")),
+  FundraisingCampaigns: lazy(() => import("./app/admin/fundraiser/campaigns")),
+  FundraisingWithdrawals: lazy(() => import("./app/admin/fundraiser/withdrawals")),
+};
+
 const LoadingFallback = () => {
   const [isLongLoad, setIsLongLoad] = React.useState(false);
 
@@ -631,6 +637,29 @@ const supportAuditRoutes = [
   },
 ];
 
+const fundraisingRoutes = [
+  {
+    path: PATHS.ADMIN.FUNDRAISING.DASHBOARD,
+    element: fundraisingModule.FundraisingDashboard,
+  },
+  {
+    path: PATHS.ADMIN.FUNDRAISING.CAMPAIGNS,
+    element: fundraisingModule.FundraisingCampaigns,
+  },
+  {
+    path: PATHS.ADMIN.FUNDRAISING.WITHDRAWALS,
+    element: fundraisingModule.FundraisingWithdrawals,
+  },
+  // {
+  //   path: PATHS.ADMIN.FUNDRAISING.DONORS,
+  //   element: FundraisingDonors,
+  // },
+  // {
+  //   path: PATHS.ADMIN.FUNDRAISING.REPORTS,
+  //   element: FundraisingReports,
+  // },
+];
+
 const protectedRoutes = [
   { path: PATHS.ADMIN.DASHBOARD, element: CoreModule.Dashboard },
   ...userRoutes,
@@ -640,6 +669,7 @@ const protectedRoutes = [
   ...financeRoutes,
   ...mediaRoutes,
   ...supportAuditRoutes,
+  ...fundraisingRoutes,
 ];
 
 const AppRouter: React.FC = () => {
