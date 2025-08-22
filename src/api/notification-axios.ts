@@ -9,6 +9,19 @@ let refreshSubscribers: Array<(token: string) => void> = [];
 
 const DEBUG_TOKEN_REFRESH = false;
 
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem("deviceId");
+  if (!deviceId) {
+    deviceId =
+      "device_" +
+      Date.now() +
+      "_" +
+      Math.random().toString(36).substring(2, 15);
+    localStorage.setItem("deviceId", deviceId);
+  }
+  return deviceId;
+};
+
 const addSubscriber = (callback: (token: string) => void) => {
   refreshSubscribers.push(callback);
 };
@@ -29,17 +42,22 @@ const refreshAuthToken = async () => {
     const userType = 'admin';
     const source = 'web';
 
-    const response = await axios.post(`${baseURL}auth/refresh-token`, {
-      refresh_token: refreshToken,
-      source: source,
-      user_type: userType
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'x-api-key': apiKey
+    const response = await axios.post(
+      `${baseURL}auth/refresh-token`,
+      {
+        refresh_token: refreshToken,
+        source: source,
+        user_type: userType,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "x-api-key": apiKey,
+          "x-device-id": getDeviceId(),
+        },
       }
-    });
+    );
 
     if (response.data && response.data.new_access_token) {
       Cookies.set('authToken', response.data.new_access_token);

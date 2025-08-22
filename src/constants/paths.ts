@@ -180,5 +180,15 @@ export const PATHS = {
       LOGS: 'admin/logs',
       DETAILS: 'admin/audit-logs/:id',
     },
+
+    FUNDRAISING: {
+      DASHBOARD: 'admin/fundraising/dashboard',
+      CAMPAIGNS: 'admin/fundraising/campaigns',
+      DONATIONS: 'admin/fundraising/donations',
+      WITHDRAWALS: 'admin/fundraising/withdrawals',
+      CONTRIBUTIONS: 'admin/fundraising/contributions',
+      REPORTS: 'admin/fundraising/reports',
+      METRICS: 'admin/fundraising/performance',
+    },
   },
 };
