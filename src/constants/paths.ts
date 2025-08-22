@@ -188,6 +188,7 @@ export const PATHS = {
       WITHDRAWALS: 'admin/fundraising/withdrawals',
       CONTRIBUTIONS: 'admin/fundraising/contributions',
       REPORTS: 'admin/fundraising/reports',
+      METRICS: 'admin/fundraising/performance',
     },
   },
 };
