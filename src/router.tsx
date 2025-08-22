@@ -147,7 +147,10 @@ const SupportAuditModule = {
 const fundraisingModule = {
   FundraisingDashboard: lazy(() => import("./app/admin/fundraiser/dashboard")),
   FundraisingCampaigns: lazy(() => import("./app/admin/fundraiser/campaigns")),
-  FundraisingWithdrawals: lazy(() => import("./app/admin/fundraiser/withdrawals")),
+  FundraisingWithdrawals: lazy(
+    () => import("./app/admin/fundraiser/withdrawals")
+  ),
+  FundraisingContributions: lazy(() => import("./app/admin/fundraiser/contributions")),
 };
 
 const LoadingFallback = () => {
@@ -649,6 +652,10 @@ const fundraisingRoutes = [
   {
     path: PATHS.ADMIN.FUNDRAISING.WITHDRAWALS,
     element: fundraisingModule.FundraisingWithdrawals,
+  },
+  {
+    path: PATHS.ADMIN.FUNDRAISING.CONTRIBUTIONS,
+    element: fundraisingModule.FundraisingContributions,
   },
   // {
   //   path: PATHS.ADMIN.FUNDRAISING.DONORS,
