@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ArrowUpRight, Eye, Play, Clock } from "lucide-react";
-import CustomTooltip from "./CustomTooltip";
 
 const LivestreamMetrics = () => {
   const data = [
@@ -49,7 +48,6 @@ const LivestreamMetrics = () => {
 
   return (
     <div>
-      {/* Metrics cards */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {metrics.map((metric, index) => (
           <motion.div
@@ -87,8 +85,6 @@ const LivestreamMetrics = () => {
           </motion.div>
         ))}
       </div>
-
-      {/* Bar chart */}
       <motion.div
         className="mt-2 h-[140px] bg-white p-4 rounded-xl border border-gray-100 shadow-sm"
         initial={{ opacity: 0, y: 10 }}
@@ -134,7 +130,6 @@ const LivestreamMetrics = () => {
               tick={{ fill: "#94a3b8", fontSize: 11 }}
               dx={5}
             />
-            {/* <Tooltip content={<CustomTooltip />} /> */}
             <Bar
               yAxisId="left"
               dataKey="streams"
