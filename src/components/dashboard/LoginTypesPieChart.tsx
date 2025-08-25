@@ -1,13 +1,20 @@
-import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, TooltipProps } from 'recharts';
-import { motion } from 'framer-motion';
+import React from "react";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipProps,
+} from "recharts";
+import { motion } from "framer-motion";
 
 const LoginTypesPieChart = () => {
   // Updated color scheme to match fintech aesthetic
   const data = [
-    { name: 'Mobile', value: 68, color: '#3b82f6' }, // blue-500
-    { name: 'Desktop', value: 26, color: '#6366f1' }, // indigo-500
-    { name: 'Tablet', value: 6, color: '#8b5cf6' }   // violet-500
+    { name: "Mobile", value: 68, color: "#3b82f6" }, // blue-500
+    { name: "Desktop", value: 26, color: "#6366f1" }, // indigo-500
+    { name: "Tablet", value: 6, color: "#8b5cf6" }, // violet-500
   ];
 
   const RADIAN = Math.PI / 180;
@@ -18,7 +25,7 @@ const LoginTypesPieChart = () => {
     innerRadius,
     outerRadius,
     percent,
-    index
+    index,
   }) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -43,10 +50,13 @@ const LoginTypesPieChart = () => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 rounded-xl shadow-md border border-gray-100">
-          <p className="text-sm font-medium mb-1" style={{ color: payload[0].payload.color }}>
+          <p
+            className="text-sm font-medium mb-1"
+            style={{ color: payload[0].payload.color }}
+          >
             {payload[0].name}
           </p>
-          <p className="text-lg font-semibold" style={{ color: '#1f2937' }}>
+          <p className="text-lg font-semibold" style={{ color: "#1f2937" }}>
             {payload[0].value}%
           </p>
         </div>
@@ -87,7 +97,6 @@ const LoginTypesPieChart = () => {
               />
             ))}
           </Pie>
-          {/* <Tooltip content={<CustomTooltip />} /> */}
         </PieChart>
       </ResponsiveContainer>
     </motion.div>
