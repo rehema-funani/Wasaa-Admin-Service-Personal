@@ -244,13 +244,6 @@ const routes: Route[] = [
           },
         ],
       },
-      {
-        type: "link",
-        path: "/admin/languages",
-        title: "Languages",
-        icon: Languages,
-        description: "Manage platform languages",
-      },
     ],
   },
   {

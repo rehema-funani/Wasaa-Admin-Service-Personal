@@ -9,10 +9,7 @@ import {
   Lock,
   Database,
   DollarSign,
-  ChevronRight,
   Activity,
-  Zap,
-  Sparkles,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
