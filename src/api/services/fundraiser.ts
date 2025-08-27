@@ -21,8 +21,8 @@ export const fundraiserService = {
     const response = await fundraiser.get(`/campaigns/${id}/donations`);
     return response.data;
   },
-  publishCampaign: async (id: string) => {
-    const response = await fundraiser.post(`/campaigns/${id}/publish`);
+  publishCampaign: async (id: string, data: any) => {
+    const response = await fundraiser.post(`/admin/campaigns/${id}/moderate`, {data});
     return response.data;
   },
   getAllDonations: async () => {

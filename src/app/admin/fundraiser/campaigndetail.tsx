@@ -30,7 +30,6 @@ import {
   Twitter,
   Instagram,
   Linkedin,
-  FileText,
   RefreshCw,
   Star,
   TrendingUp,
@@ -42,6 +41,7 @@ import { format, formatDistance } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 import DonationsTab from "../../../components/fundraiser/DonationsTab";
+import ApproveCampaignModal from "../../../components/fundraiser/ApproveCampaignModal";
 
 const StatusBadge = ({ status }) => {
   const statusConfig = {
@@ -162,6 +162,7 @@ const CampaignDetailsPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [comments, setComments] = useState([]);
   const [donations, setDonations] = useState([]);
+  const [approveModal, setApproveModal] = useState(false);
 
   useEffect(() => {
     const fetchCampaignData = async () => {
@@ -292,9 +293,10 @@ const CampaignDetailsPage = () => {
             className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
+            onClick={() => setApproveModal(true)}
           >
-            <Edit size={16} className="mr-2" />
-            <span>Edit</span>
+            <CheckCircle size={16} className="mr-2" />
+            <span>Approve</span>
           </motion.button>
           <motion.button
             className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -377,7 +379,7 @@ const CampaignDetailsPage = () => {
                     Raised
                   </p>
                   <p className="font-bold text-xl text-gray-900 dark:text-white">
-                    $
+                    Kes{" "}
                     {parseFloat(campaign.raisedAmount || 0).toLocaleString(
                       undefined,
                       { maximumFractionDigits: 2 }
@@ -389,7 +391,7 @@ const CampaignDetailsPage = () => {
                     Goal
                   </p>
                   <p className="font-bold text-xl text-gray-900 dark:text-white">
-                    $
+                    Kes{" "}
                     {parseFloat(campaign.goalAmount || 0).toLocaleString(
                       undefined,
                       { maximumFractionDigits: 2 }
@@ -404,7 +406,7 @@ const CampaignDetailsPage = () => {
                     <Users size={16} />
                   </div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {campaign.donorsCount || 0}
+                    {/* {stats.totalDonors.toLocaleString()} */}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Donors
@@ -764,29 +766,22 @@ const CampaignDetailsPage = () => {
         {activeTab === "donations" && (
           <DonationsTab campaignId={id} fundraiserService={fundraiserService} />
         )}
-
-        {activeTab !== "overview" && activeTab !== "analytics" && (
-          <motion.div
-            className="flex items-center justify-center py-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="text-center">
-              <FileText
-                size={40}
-                className="text-gray-400 dark:text-gray-500 mx-auto mb-4"
-              />
-              <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">
-                {tabs.find((tab) => tab.id === activeTab)?.label} content
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400">
-                This section would show {activeTab} for the campaign.
-              </p>
-            </div>
-          </motion.div>
-        )}
       </div>
+
+      <AnimatePresence>
+        {approveModal && (
+          <ApproveCampaignModal
+            campaignId={id}
+            onClose={() => setApproveModal(false)}
+            fundraiserService={fundraiserService}
+            onApproved={() => {
+              setCampaign((prev) => ({ ...prev, status: "active" }));
+              setApproveModal(false);
+              toast.success("Campaign approved successfully");
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {showDeleteModal && (
@@ -840,7 +835,7 @@ const CampaignDetailsPage = () => {
                     <span>Status: {campaign.status.replace(/_/g, " ")}</span>
                     <span className="mx-2">•</span>
                     <span>
-                      Raised: $
+                      Raised: Kes{" "}
                       {parseFloat(campaign.raisedAmount || 0).toLocaleString(
                         undefined,
                         {
