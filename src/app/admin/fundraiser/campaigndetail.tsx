@@ -36,11 +36,12 @@ import {
   TrendingUp,
   PieChart,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
 } from "lucide-react";
 import { format, formatDistance } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
+import DonationsTab from "../../../components/fundraiser/DonationsTab";
 
 const StatusBadge = ({ status }) => {
   const statusConfig = {
@@ -163,37 +164,36 @@ const CampaignDetailsPage = () => {
   const [donations, setDonations] = useState([]);
 
   useEffect(() => {
-  const fetchCampaignData = async () => {
-    setIsLoading(true);
-    try {
-      const [campaignRes, commentsRes, donationsRes] = await Promise.all([
-        fundraiserService.getCampaignById(id),
-        fundraiserService.getCampaignComments(id),
-        fundraiserService.getCampaignDonations(id),
-      ]);
+    const fetchCampaignData = async () => {
+      setIsLoading(true);
+      try {
+        const [campaignRes, commentsRes, donationsRes] = await Promise.all([
+          fundraiserService.getCampaignById(id),
+          fundraiserService.getCampaignComments(id),
+          fundraiserService.getCampaignDonations(id),
+        ]);
 
-      setCampaign({
-        ...campaignRes.data,
-        progress: calculateProgress(
-          campaignRes.data.raisedAmount,
-          campaignRes.data.goalAmount
-        ),
-      });
+        setCampaign({
+          ...campaignRes.data,
+          progress: calculateProgress(
+            campaignRes.data.raisedAmount,
+            campaignRes.data.goalAmount
+          ),
+        });
 
-      setComments(commentsRes.data); 
-      setDonations(donationsRes.data);
+        setComments(commentsRes.data || []);
 
-    } catch (error) {
-      console.error("Error loading campaign data:", error);
-      toast.error("Failed to load campaign data");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        setDonations(donationsRes.data);
+      } catch (error) {
+        console.error("Error loading campaign data:", error);
+        toast.error("Failed to load campaign data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  fetchCampaignData();
-}, [id]);
-
+    fetchCampaignData();
+  }, [id]);
 
   const calculateProgress = (raised: string, goal: string) => {
     const raisedNum = parseFloat(raised);
@@ -761,7 +761,10 @@ const CampaignDetailsPage = () => {
           </motion.div>
         )}
 
-        {/* Other tabs would be implemented similarly */}
+        {activeTab === "donations" && (
+          <DonationsTab campaignId={id} fundraiserService={fundraiserService} />
+        )}
+
         {activeTab !== "overview" && activeTab !== "analytics" && (
           <motion.div
             className="flex items-center justify-center py-12"

@@ -1,8 +1,11 @@
-import React from 'react'
-import { PlayCircle, PauseCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { PlayCircle, PauseCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
-const getActionButtons = (broadcast: any, handleActionClick: (action: string, id: any) => void) => {
+const getActionButtons = (
+  broadcast: any,
+  handleActionClick: (action: string, id: any) => void
+) => {
   switch (broadcast.status) {
     case "draft":
     case "scheduled":
@@ -40,4 +43,4 @@ const getActionButtons = (broadcast: any, handleActionClick: (action: string, id
   }
 };
 
-export default getActionButtons
+export default getActionButtons;
