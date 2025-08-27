@@ -31,10 +31,11 @@ import {
   Award,
   Menu,
 } from "lucide-react";
-import { format, formatDistanceToNow, subDays, addDays } from "date-fns";
+import { format, subDays, addDays } from "date-fns";
 import { toast } from "react-hot-toast";
+import financeService from "../../../api/services/finance";
+import { fundraiserService } from "../../../api/services/fundraiser";
 
-// Dummy data generator for campaigns
 const generateDummyCampaigns = () => {
   const categories = ["Medical", "Education", "Disaster Relief", "Community", "Arts", "Sports", "Business", "Technology"];
   const statusOptions = ["active", "completed", "draft", "pending_review", "rejected", "paused"];
@@ -149,15 +150,13 @@ const generateDummyCampaigns = () => {
   });
 };
 
-// Helper functions for dummy data
-function getRandomTags(categories, min, max) {
+function getRandomTags(categories: string[], min: number, max: number) {
   const count = Math.floor(Math.random() * (max - min + 1)) + min;
   const shuffled = [...categories].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 }
 
-function getRandomImage(index) {
-  // Simulate image URLs - in a real app, these would be actual image URLs
+function getRandomImage(index: number) {
   const colorOptions = ['4f46e5', '0ea5e9', '10b981', 'f59e0b', 'ef4444', '8b5cf6', 'ec4899'];
   const color = colorOptions[index % colorOptions.length];
   return `https://placehold.co/800x400/${color}/ffffff/png?text=Campaign+${index + 1}`;
@@ -166,6 +165,7 @@ function getRandomImage(index) {
 const AllCampaignsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [campaigns, setCampaigns] = useState([]);
+  const [data, setData] = useState([]);
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
@@ -178,27 +178,22 @@ const AllCampaignsPage = () => {
     sortBy: "newest",
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState("grid"); // grid or list
+  const [viewMode, setViewMode] = useState("grid");
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showFeaturedModal, setShowFeaturedModal] = useState(false);
 
-  // Campaign bulk actions
   const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [showBulkActionMenu, setShowBulkActionMenu] = useState(false);
 
   useEffect(() => {
-    // Simulate API request
     const loadData = async () => {
       setIsLoading(true);
       
       try {
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        const dummyCampaigns = generateDummyCampaigns();
-        setCampaigns(dummyCampaigns);
-        setFilteredCampaigns(dummyCampaigns);
+        const response = await fundraiserService.getCampaigns();
+        setCampaigns(response.data);
+        setFilteredCampaigns(response.data);
       } catch (error) {
         console.error("Error loading campaigns:", error);
         toast.error("Failed to load campaign data");
@@ -210,7 +205,7 @@ const AllCampaignsPage = () => {
     loadData();
   }, []);
 
-  const handleSearch = (query) => {
+  const handleSearch = (query: string) => {
     setSearchQuery(query);
     
     if (!query.trim()) {
