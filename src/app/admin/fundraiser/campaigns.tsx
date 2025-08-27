@@ -647,17 +647,6 @@ const CampaignsPage = () => {
         </div>
         <div className="flex gap-2 flex-wrap justify-end">
           <motion.button
-            className="flex items-center px-4 py-2.5 bg-[#FF6B81] text-white rounded-xl text-sm shadow-sm hover:bg-[#ff5673] transition-colors"
-            whileHover={{
-              y: -2,
-              boxShadow: "0 4px 12px rgba(255, 107, 129, 0.2)",
-            }}
-            whileTap={{ y: 0 }}
-          >
-            <Plus size={16} className="mr-2" />
-            <span>Create Campaign</span>
-          </motion.button>
-          <motion.button
             className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
@@ -682,7 +671,6 @@ const CampaignsPage = () => {
         </div>
       </motion.div>
 
-      {/* Stats Overview */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
