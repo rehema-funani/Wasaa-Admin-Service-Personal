@@ -41,6 +41,7 @@ import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 import DonationsTab from "../../../components/fundraiser/DonationsTab";
 import ApproveCampaignModal from "../../../components/fundraiser/ApproveCampaignModal";
+import DeleteCampaignModal from "../../../components/fundraiser/DeleteCampaignModal";
 
 const StatusBadge = ({ status }) => {
   const statusConfig = {
@@ -782,85 +783,11 @@ const CampaignDetailsPage = () => {
 
       <AnimatePresence>
         {showDeleteModal && (
-          <motion.div
-            className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowDeleteModal(false)}
-          >
-            <motion.div
-              className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full shadow-xl overflow-hidden"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                  Delete Campaign
-                </h2>
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className="p-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                >
-                  <XCircle size={20} />
-                </button>
-              </div>
-
-              <div className="p-4">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400 mr-4">
-                    <AlertTriangle size={20} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      Confirm Deletion
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
-                      Are you sure you want to delete this campaign? This action
-                      cannot be undone.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-4">
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {campaign.title}
-                  </p>
-                  <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span>Status: {campaign.status.replace(/_/g, " ")}</span>
-                    <span className="mx-2">•</span>
-                    <span>
-                      Raised: Kes{" "}
-                      {parseFloat(campaign.raisedAmount || 0).toLocaleString(
-                        undefined,
-                        {
-                          maximumFractionDigits: 2,
-                        }
-                      )}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex justify-end space-x-3">
-                  <button
-                    className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    onClick={() => setShowDeleteModal(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors flex items-center"
-                    onClick={handleDeleteCampaign}
-                  >
-                    <Trash2 size={14} className="mr-2" />
-                    Delete Campaign
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+          <DeleteCampaignModal
+            campaign={campaign}
+            onClose={() => setShowDeleteModal(false)}
+            onDelete={handleDeleteCampaign}
+          />
         )}
       </AnimatePresence>
 
