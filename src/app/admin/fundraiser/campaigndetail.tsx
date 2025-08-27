@@ -136,11 +136,10 @@ const StatCard = ({ title, value, icon, color, subtitle }) => (
   </motion.div>
 );
 
-// Tab navigation component
 const TabNavigation = ({ tabs, activeTab, setActiveTab }) => {
   return (
     <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
-      {tabs.map((tab) => (
+      {tabs.map((tab: { id: string; label: string }) => (
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
@@ -163,11 +162,9 @@ const CampaignDetailsPage = () => {
   const [campaign, setCampaign] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
-  const [showDonationModal, setShowDonationModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showImageGallery, setShowImageGallery] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [donationAmount, setDonationAmount] = useState(50);
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -201,7 +198,7 @@ const CampaignDetailsPage = () => {
 
   const handleDeleteCampaign = async () => {
     try {
-      // await fundraiserService.deleteCampaign(id);
+      await fundraiserService.deleteCampaign(id);
       toast.success("Campaign deleted successfully");
       navigate("/admin/fundraising/campaigns");
     } catch (error) {
@@ -209,24 +206,6 @@ const CampaignDetailsPage = () => {
       console.error("Error deleting campaign:", error);
     } finally {
       setShowDeleteModal(false);
-    }
-  };
-
-  const handleDonate = async () => {
-    try {
-      // await fundraiserService.donateToCampaign(id, donationAmount);
-      toast.success(`Thank you for your $${donationAmount} donation!`);
-      setShowDonationModal(false);
-
-      // Refresh campaign data
-      const response = await fundraiserService.getCampaignById(id);
-      setCampaign({
-        ...response,
-        progress: calculateProgress(response.raisedAmount, response.goalAmount),
-      });
-    } catch (error) {
-      toast.error("Failed to process donation");
-      console.error("Error processing donation:", error);
     }
   };
 
@@ -280,7 +259,6 @@ const CampaignDetailsPage = () => {
 
   return (
     <div className="p-4 sm:p-6 w-full mx-auto max-w-[1600px]">
-      {/* Header with back button and actions */}
       <motion.div
         className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4"
         initial={{ opacity: 0, y: -10 }}
@@ -296,7 +274,6 @@ const CampaignDetailsPage = () => {
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-              <Gift className="mr-3 text-[#FF6B81]" />
               Campaign Details
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
@@ -317,18 +294,9 @@ const CampaignDetailsPage = () => {
             className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
-            onClick={() => setShowDonationModal(true)}
           >
-            <DollarSign size={16} className="mr-2" />
-            <span>Donate</span>
-          </motion.button>
-          <motion.button
-            className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-          >
-            <Share2 size={16} className="mr-2" />
-            <span>Share</span>
+            <Edit size={16} className="mr-2" />
+            <span>Edit</span>
           </motion.button>
           <motion.button
             className="flex items-center px-4 py-2.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-sm hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
@@ -548,20 +516,12 @@ const CampaignDetailsPage = () => {
                     </div>
                   )}
                 </div>
-
-                <button
-                  className="w-full mt-4 px-4 py-2 bg-[#FF6B81] text-white rounded-lg text-sm font-medium hover:bg-[#ff5673] transition-colors"
-                  onClick={() => setShowDonationModal(true)}
-                >
-                  Donate Now
-                </button>
               </div>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Tab navigation and content */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-6">
         <TabNavigation
           tabs={tabs}
@@ -820,109 +780,6 @@ const CampaignDetailsPage = () => {
         )}
       </div>
 
-      {/* Donation Modal */}
-      <AnimatePresence>
-        {showDonationModal && (
-          <motion.div
-            className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowDonationModal(false)}
-          >
-            <motion.div
-              className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full shadow-xl overflow-hidden"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                  Make a Donation
-                </h2>
-                <button
-                  onClick={() => setShowDonationModal(false)}
-                  className="p-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                >
-                  <XCircle size={20} />
-                </button>
-              </div>
-
-              <div className="p-4">
-                <div className="mb-4">
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">
-                    {campaign.title}
-                  </h3>
-                  <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
-                    <span>
-                      Organized by {campaign.organizer?.name || "Unknown"}
-                    </span>
-                    <span>{campaign.progress}% funded</span>
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Donation Amount
-                  </label>
-                  <div className="grid grid-cols-4 gap-2 mb-2">
-                    {[25, 50, 100, 250].map((amount) => (
-                      <button
-                        key={amount}
-                        className={`py-2 rounded-lg border ${
-                          donationAmount === amount
-                            ? "border-[#FF6B81] bg-[#FF6B81]/10 text-[#FF6B81]"
-                            : "border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                        } transition-colors`}
-                        onClick={() => setDonationAmount(amount)}
-                      >
-                        ${amount}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      $
-                    </span>
-                    <input
-                      type="number"
-                      className="w-full pl-8 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B81] focus:border-transparent"
-                      value={donationAmount}
-                      onChange={(e) =>
-                        setDonationAmount(parseFloat(e.target.value) || 0)
-                      }
-                      min="1"
-                    />
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-[#FF6B81] mr-2 focus:ring-[#FF6B81]"
-                      defaultChecked
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
-                      Cover processing fees so 100% goes to the campaign
-                    </span>
-                  </label>
-                </div>
-
-                <button
-                  className="w-full py-3 bg-[#FF6B81] text-white rounded-lg font-medium hover:bg-[#ff5673] transition-colors"
-                  onClick={handleDonate}
-                >
-                  Donate ${donationAmount}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {showDeleteModal && (
           <motion.div

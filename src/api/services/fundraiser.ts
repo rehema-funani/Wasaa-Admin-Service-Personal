@@ -9,4 +9,9 @@ export const fundraiserService = {
     const response = await fundraiser.get(`/campaigns/${id}`);
     return response.data;
   },
+  deleteCampaign: async (id: string) => {
+    const response = await fundraiser.delete(`/campaigns/${id}`);
+    return response.data;
+  },
+  
 };
