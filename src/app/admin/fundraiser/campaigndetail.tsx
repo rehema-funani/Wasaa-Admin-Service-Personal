@@ -14,7 +14,6 @@ import {
   DollarSign,
   Target,
   Percent,
-  Heart,
   MessageSquare,
   Zap,
   CheckCircle,
@@ -289,23 +288,20 @@ const CampaignDetailsPage = () => {
           </div>
         </div>
         <div className="flex gap-2 flex-wrap justify-end">
-          <motion.button
-            className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-            onClick={() => setApproveModal(true)}
-          >
-            <CheckCircle size={16} className="mr-2" />
-            <span>Approve</span>
-          </motion.button>
-          <motion.button
-            className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-          >
-            <Edit size={16} className="mr-2" />
-            <span>Edit</span>
-          </motion.button>
+          {campaign.status === "pending_approval" && (
+            <motion.button
+              className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
+              whileTap={{ y: 0 }}
+              onClick={() => setApproveModal(true)}
+            >
+              <CheckCircle size={16} className="mr-2" />
+              <span>Approve</span>
+            </motion.button>
+          )}
           <motion.button
             className="flex items-center px-4 py-2.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-sm hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
             whileHover={{
@@ -400,13 +396,13 @@ const CampaignDetailsPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
                   <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-1">
                     <Users size={16} />
                   </div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {/* {stats.totalDonors.toLocaleString()} */}
+                    {stats.totalDonors.toLocaleString()}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Donors
@@ -445,7 +441,7 @@ const CampaignDetailsPage = () => {
                     Views
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="md:w-1/3">
@@ -564,7 +560,6 @@ const CampaignDetailsPage = () => {
                   )}
                 </div>
 
-                {/* Image gallery */}
                 {campaign.images && campaign.images.length > 0 && (
                   <div className="mt-6">
                     <h3 className="text-md font-medium text-gray-900 dark:text-white mb-4">
@@ -771,9 +766,7 @@ const CampaignDetailsPage = () => {
       <AnimatePresence>
         {approveModal && (
           <ApproveCampaignModal
-            campaignId={id}
             onClose={() => setApproveModal(false)}
-            fundraiserService={fundraiserService}
             onApproved={() => {
               setCampaign((prev) => ({ ...prev, status: "active" }));
               setApproveModal(false);

@@ -22,7 +22,7 @@ export const fundraiserService = {
     return response.data;
   },
   publishCampaign: async (id: string, data: any) => {
-    const response = await fundraiser.post(`/admin/campaigns/${id}/moderate`, {data});
+    const response = await fundraiser.post(`/admin/campaigns/${id}/moderate`, data);
     return response.data;
   },
   getAllDonations: async () => {

@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { X, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { useParams } from "react-router-dom";
+import { fundraiserService } from "../../api/services/fundraiser";
 
 const ApproveCampaignModal = ({
-  campaignId,
   onClose,
-  fundraiserService,
   onApproved,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +15,7 @@ const ApproveCampaignModal = ({
     reason: "",
     notes: "",
   });
+  const { id } = useParams();
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -29,7 +30,7 @@ const ApproveCampaignModal = ({
 
     setIsLoading(true);
     try {
-      await fundraiserService.publishCampaign(campaignId, formData);
+      await fundraiserService.publishCampaign(id, formData);
       onApproved?.();
     } catch (error) {
       console.error("Error approving campaign:", error);
