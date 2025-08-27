@@ -223,8 +223,7 @@ const CampaignsPage = () => {
 
     loadData();
 
-    // Close menus when clicking outside
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: any) => {
       if (
         actionMenuRef.current &&
         !actionMenuRef.current.contains(event.target)
@@ -252,7 +251,6 @@ const CampaignsPage = () => {
         page: newPage,
       });
 
-      // Scroll to top when changing pages
       if (containerRef.current) {
         containerRef.current.scrollTop = 0;
       } else {
@@ -320,7 +318,6 @@ const CampaignsPage = () => {
       );
     }
 
-    // Apply sorting
     if (newFilters.sortBy) {
       switch (newFilters.sortBy) {
         case "newest":
@@ -369,7 +366,7 @@ const CampaignsPage = () => {
     setSelectedCampaigns([]);
   };
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = (newFilters: any) => {
     applyFilters(newFilters);
   };
 
@@ -417,10 +414,8 @@ const CampaignsPage = () => {
   const confirmDeleteCampaign = async () => {
     setIsFetching(true);
     try {
-      // In a real app, this would call the API
       // await fundraiserService.deleteCampaign(selectedCampaign.id);
 
-      // Update UI optimistically
       setCampaigns((prev) => prev.filter((c) => c.id !== selectedCampaign.id));
       setFilteredCampaigns((prev) =>
         prev.filter((c) => c.id !== selectedCampaign.id)
@@ -449,7 +444,6 @@ const CampaignsPage = () => {
   const confirmAction = async () => {
     setIsFetching(true);
     try {
-      // Simulate API call based on action type
       let successMessage = "";
 
       switch (actionType) {
@@ -510,7 +504,6 @@ const CampaignsPage = () => {
 
     setIsFetching(true);
 
-    // Simulate bulk actions
     setTimeout(() => {
       switch (action) {
         case "approve":
@@ -594,11 +587,11 @@ const CampaignsPage = () => {
   };
 
   const handleViewCampaign = (campaignId: string) => {
-    navigate(`/admin/fundraiser/campaigns/${campaignId}`);
+    navigate(`/admin/fundraising/campaigns/${campaignId}`);
   };
 
   const handleEditCampaign = (campaignId: string) => {
-    navigate(`/admin/fundraiser/campaigns/${campaignId}/edit`);
+    navigate(`/admin/fundraising/campaigns/${campaignId}/edit`);
   };
 
   const getTimeAgo = (dateString: string) => {
@@ -1636,7 +1629,6 @@ const CampaignsPage = () => {
             </div>
           </motion.div>
 
-          {/* Pagination */}
           {pagination.total > pagination.limit && (
             <div className="flex justify-center items-center mt-8 space-x-2">
               <button

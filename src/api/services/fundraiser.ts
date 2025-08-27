@@ -5,4 +5,8 @@ export const fundraiserService = {
     const response = await fundraiser.get(`/campaigns?page=${page}&limit=${limit}`)
     return response.data;
   },
+  getCampaignById: async (id: string) => {
+    const response = await fundraiser.get(`/campaigns/${id}`);
+    return response.data;
+  },
 };

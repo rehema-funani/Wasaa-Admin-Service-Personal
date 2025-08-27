@@ -180,6 +180,7 @@ const fundraisingModule = {
   ),
   FundraisingReports: lazy(() => import("./app/admin/fundraiser/reports")),
   FundraisingMetrics: lazy(() => import("./app/admin/fundraiser/metrics")),
+  CampaignDetail: lazy(() => import("./app/admin/fundraiser/campaigndetail")),
 };
 
 const LoadingFallback = () => {
@@ -685,6 +686,10 @@ const fundraisingRoutes = [
   {
     path: PATHS.ADMIN.FUNDRAISING.CAMPAIGNS,
     element: fundraisingModule.FundraisingCampaigns,
+  },
+  {
+    path: PATHS.ADMIN.FUNDRAISING.CAMPAIGN_DETAIL,
+    element: fundraisingModule.CampaignDetail,
   },
   {
     path: PATHS.ADMIN.FUNDRAISING.WITHDRAWALS,
