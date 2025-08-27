@@ -159,29 +159,41 @@ const CampaignDetailsPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showImageGallery, setShowImageGallery] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [comments, setComments] = useState([]);
+  const [donations, setDonations] = useState([]);
 
   useEffect(() => {
-    const fetchCampaign = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fundraiserService.getCampaignById(id);
-        setCampaign({
-          ...response.data,
-          progress: calculateProgress(
-            response.raisedAmount,
-            response.goalAmount
-          ),
-        });
-      } catch (error) {
-        console.error("Error loading campaign:", error);
-        toast.error("Failed to load campaign data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchCampaignData = async () => {
+    setIsLoading(true);
+    try {
+      const [campaignRes, commentsRes, donationsRes] = await Promise.all([
+        fundraiserService.getCampaignById(id),
+        fundraiserService.getCampaignComments(id),
+        fundraiserService.getCampaignDonations(id),
+      ]);
 
-    fetchCampaign();
-  }, [id]);
+      setCampaign({
+        ...campaignRes.data,
+        progress: calculateProgress(
+          campaignRes.data.raisedAmount,
+          campaignRes.data.goalAmount
+        ),
+      });
+
+      setComments(commentsRes.data); 
+      setDonations(donationsRes.data);
+
+    } catch (error) {
+      console.error("Error loading campaign data:", error);
+      toast.error("Failed to load campaign data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchCampaignData();
+}, [id]);
+
 
   const calculateProgress = (raised: string, goal: string) => {
     const raisedNum = parseFloat(raised);
