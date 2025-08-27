@@ -923,7 +923,7 @@ const CampaignDetailsPage = () => {
 
             <div className="absolute bottom-4 left-0 right-0 flex justify-center">
               <div className="flex space-x-2">
-                {campaign.images.map((_, index) => (
+                {campaign.images.map((_, index: number) => (
                   <button
                     key={index}
                     className={`w-2 h-2 rounded-full ${
