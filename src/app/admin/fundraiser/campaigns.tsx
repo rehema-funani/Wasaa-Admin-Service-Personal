@@ -435,7 +435,7 @@ const CampaignsPage = () => {
     }
   };
 
-  const handleAction = (campaign, type) => {
+  const handleAction = (campaign: any, type: any) => {
     setSelectedCampaign(campaign);
     setActionType(type);
     setShowActionModal(true);

@@ -16,14 +16,10 @@ import {
   Percent,
   Heart,
   MessageSquare,
-  Gift,
   Zap,
   CheckCircle,
   XCircle,
   AlertTriangle,
-  MoreVertical,
-  ChevronDown,
-  ChevronUp,
   Link,
   MapPin,
   User,
@@ -42,7 +38,7 @@ import {
   ChevronRight,
   ChevronLeft
 } from "lucide-react";
-import { format, formatDistance, parseISO } from "date-fns";
+import { format, formatDistance } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 
@@ -101,7 +97,6 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-// Progress bar component
 const ProgressBar = ({ progress }) => {
   return (
     <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -113,7 +108,6 @@ const ProgressBar = ({ progress }) => {
   );
 };
 
-// Stats card component
 const StatCard = ({ title, value, icon, color, subtitle }) => (
   <motion.div
     className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm"
