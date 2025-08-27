@@ -189,7 +189,7 @@ const CampaignDetailsPage = () => {
     fetchCampaign();
   }, [id]);
 
-  const calculateProgress = (raised, goal) => {
+  const calculateProgress = (raised: string, goal: string) => {
     const raisedNum = parseFloat(raised);
     const goalNum = parseFloat(goal);
     if (goalNum <= 0) return 0;
@@ -313,7 +313,6 @@ const CampaignDetailsPage = () => {
         </div>
       </motion.div>
 
-      {/* Hero section with campaign image and basic info */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -864,7 +863,6 @@ const CampaignDetailsPage = () => {
         )}
       </AnimatePresence>
 
-      {/* Image Gallery Modal */}
       <AnimatePresence>
         {showImageGallery && campaign.images && campaign.images.length > 0 && (
           <motion.div
