@@ -22,7 +22,7 @@ import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 import { useNavigate } from "react-router-dom";
 
-const getPlaceholderImage = (title, id) => {
+const getPlaceholderImage = (title: string, id: string) => {
   const colorOptions = [
     "4f46e5",
     "0ea5e9",
@@ -72,9 +72,9 @@ const QueuedCampaignsPage = () => {
       setIsLoading(true);
 
       try {
-        const response = await fundraiserService.getCampaigns(
+        const response = await fundraiserService.getPendingCampaigns(
           pagination.page,
-          pagination.limit,
+          pagination.limit
         );
 
         setCampaigns(response.data);
@@ -205,9 +205,9 @@ const QueuedCampaignsPage = () => {
   const refreshData = async () => {
     setIsFetching(true);
     try {
-      const response = await fundraiserService.getCampaigns(
+      const response = await fundraiserService.getPendingCampaigns(
         pagination.page,
-        pagination.limit,
+        pagination.limit
       );
 
       setCampaigns(response.data);
