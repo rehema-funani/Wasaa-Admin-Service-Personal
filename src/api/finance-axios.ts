@@ -1,4 +1,11 @@
 import axios from "axios";
+import {
+  TokenStorageType,
+  tokenRefreshState,
+  getDeviceId,
+  getToken,
+  refreshAuthToken,
+} from "./tokenRefresh";
 
 const baseURL =
   import.meta.env.VITE_API_URL || "http://138.68.190.213:3030/api";
@@ -6,77 +13,11 @@ const apiKey =
   import.meta.env.VITE_API_KEY ||
   "QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==";
 
-let isRefreshing = false;
-let refreshSubscribers: Array<(token: string) => void> = [];
-
-const DEBUG_TOKEN_REFRESH = false;
-
-const getDeviceId = () => {
-  let deviceId = localStorage.getItem("deviceId");
-  if (!deviceId) {
-    deviceId =
-      "device_" +
-      Date.now() +
-      "_" +
-      Math.random().toString(36).substring(2, 15);
-    localStorage.setItem("deviceId", deviceId);
-  }
-  return deviceId;
-};
-
-const addSubscriber = (callback: (token: string) => void) => {
-  refreshSubscribers.push(callback);
-};
-
-const onRefreshed = (token: string) => {
-  refreshSubscribers.forEach((callback) => callback(token));
-  refreshSubscribers = [];
-};
-
-const refreshAuthToken = async () => {
-  try {
-    const refreshToken = localStorage.getItem("refreshToken");
-
-    if (!refreshToken) {
-      throw new Error("No refresh token available");
-    }
-
-    const userType = "admin";
-    const source = "web";
-
-    const response = await axios.post(
-      `http://138.68.190.213:3010/auth/refresh-token`,
-      {
-        refresh_token: refreshToken,
-        source: source,
-        user_type: userType,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "x-api-key": apiKey,
-          "x-device-id": getDeviceId(),
-        },
-      }
-    );
-
-    if (response.data && response.data.new_access_token) {
-      localStorage.setItem("authToken", response.data.new_access_token);
-
-      if (response.data.new_refresh_token) {
-        localStorage.setItem("refreshToken", response.data.new_refresh_token);
-      }
-
-      return response.data.new_access_token;
-    } else {
-      throw new Error("Failed to refresh token");
-    }
-  } catch (error) {
-    console.error("Token refresh failed:", error);
-    handleLogout();
-    throw error;
-  }
+const tokenConfig = {
+  apiKey,
+  storageType: TokenStorageType.LOCAL_STORAGE,
+  authRefreshURL: "http://138.68.190.213:3010/auth/refresh-token",
+  includeDeviceId: true,
 };
 
 export const finance = axios.create({
@@ -85,7 +26,7 @@ export const finance = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
     "x-api-key": apiKey,
-    "x-device-id": getDeviceId(), // Add device ID to default headers
+    "x-device-id": getDeviceId(),
   },
   timeout: 30_000,
 });
@@ -93,17 +34,17 @@ export const finance = axios.create({
 finance.interceptors.request.use(
   (config) => {
     try {
-      const token = localStorage.getItem("authToken");
+      const token = getToken(tokenConfig.storageType);
 
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
 
-        if (DEBUG_TOKEN_REFRESH) {
+        if (tokenRefreshState.DEBUG_TOKEN_REFRESH) {
           config.headers.Authorization = "Bearer invalid_token_for_testing";
         }
       }
 
-      // Ensure device ID is always included (in case it wasn't set in defaults)
+      // Ensure device ID is always included
       if (config.headers && !config.headers["x-device-id"]) {
         config.headers["x-device-id"] = getDeviceId();
       }
@@ -135,10 +76,10 @@ finance.interceptors.response.use(
       if (!originalRequest._retry) {
         originalRequest._retry = true;
 
-        if (isRefreshing) {
+        if (tokenRefreshState.isRefreshing) {
           try {
-            const newToken = await new Promise<string>((resolve, reject) => {
-              addSubscriber((token) => {
+            const newToken = await new Promise<string>((resolve) => {
+              tokenRefreshState.addSubscriber((token) => {
                 resolve(token);
               });
             });
@@ -150,20 +91,20 @@ finance.interceptors.response.use(
           }
         }
 
-        isRefreshing = true;
+        tokenRefreshState.isRefreshing = true;
 
         try {
-          const newToken = await refreshAuthToken();
+          const newToken = await refreshAuthToken(tokenConfig);
 
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
 
-          onRefreshed(newToken);
+          tokenRefreshState.onRefreshed(newToken);
 
-          isRefreshing = false;
+          tokenRefreshState.isRefreshing = false;
 
           return finance(originalRequest);
         } catch (refreshError) {
-          isRefreshing = false;
+          tokenRefreshState.isRefreshing = false;
           return Promise.reject(refreshError);
         }
       }
@@ -172,14 +113,5 @@ finance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-function handleLogout() {
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("user");
-  localStorage.removeItem("userType");
-  localStorage.removeItem("source");
-  window.location.href = "/auth/login";
-}
 
 export default finance;

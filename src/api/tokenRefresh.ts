@@ -1,25 +1,24 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-// Types
-export enum StorageType {
+export enum TokenStorageType {
   LOCAL_STORAGE,
   COOKIES,
+  MIXED,
 }
 
 export interface TokenRefreshConfig {
   apiKey: string;
-  storageType: StorageType;
-  authRefreshURL?: string;
+  storageType: TokenStorageType;
+  authRefreshURL: string;
+  includeDeviceId?: boolean;
 }
 
-// State to be shared across all instances
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
 const DEBUG_TOKEN_REFRESH = false;
 
-// Helper functions
 export const getDeviceId = (): string => {
   let deviceId = localStorage.getItem("deviceId");
   if (!deviceId) {
@@ -33,29 +32,53 @@ export const getDeviceId = (): string => {
   return deviceId;
 };
 
-export const addSubscriber = (callback: (token: string) => void): void => {
+const addSubscriber = (callback: (token: string) => void): void => {
   refreshSubscribers.push(callback);
 };
 
-export const onRefreshed = (token: string): void => {
+const onRefreshed = (token: string): void => {
   refreshSubscribers.forEach((callback) => callback(token));
   refreshSubscribers = [];
 };
 
-export const handleLogout = (storageType: StorageType): void => {
-  if (storageType === StorageType.LOCAL_STORAGE) {
+export const getToken = (storageType: TokenStorageType): string | null => {
+  switch (storageType) {
+    case TokenStorageType.LOCAL_STORAGE:
+      return localStorage.getItem("authToken");
+    case TokenStorageType.COOKIES:
+      return Cookies.get("authToken") || null;
+    case TokenStorageType.MIXED:
+      return (
+        localStorage.getItem("authToken") || Cookies.get("authToken") || null
+      );
+    default:
+      return null;
+  }
+};
+
+export const handleLogout = (storageType: TokenStorageType): void => {
+  if (
+    storageType === TokenStorageType.LOCAL_STORAGE ||
+    storageType === TokenStorageType.MIXED
+  ) {
     localStorage.removeItem("authToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     localStorage.removeItem("userType");
     localStorage.removeItem("source");
-  } else {
+  }
+
+  if (
+    storageType === TokenStorageType.COOKIES ||
+    storageType === TokenStorageType.MIXED
+  ) {
     Cookies.remove("authToken");
     Cookies.remove("refreshToken");
     Cookies.remove("user");
     Cookies.remove("userType");
     Cookies.remove("source");
   }
+
   window.location.href = "/auth/login";
 };
 
@@ -63,12 +86,21 @@ export const refreshAuthToken = async (
   config: TokenRefreshConfig
 ): Promise<string> => {
   try {
-    let refreshToken: string | null;
+    let refreshToken: string | null = null;
 
-    if (config.storageType === StorageType.LOCAL_STORAGE) {
-      refreshToken = localStorage.getItem("refreshToken");
-    } else {
-      refreshToken = Cookies.get("refreshToken") || null;
+    switch (config.storageType) {
+      case TokenStorageType.LOCAL_STORAGE:
+        refreshToken = localStorage.getItem("refreshToken");
+        break;
+      case TokenStorageType.COOKIES:
+        refreshToken = Cookies.get("refreshToken") || null;
+        break;
+      case TokenStorageType.MIXED:
+        refreshToken =
+          localStorage.getItem("refreshToken") ||
+          Cookies.get("refreshToken") ||
+          null;
+        break;
     }
 
     if (!refreshToken) {
@@ -77,39 +109,74 @@ export const refreshAuthToken = async (
 
     const userType = "admin";
     const source = "web";
-    const authRefreshURL =
-      config.authRefreshURL || "http://138.68.190.213:3010/auth/refresh-token";
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "x-api-key": config.apiKey,
+    };
+
+    if (config.includeDeviceId) {
+      headers["x-device-id"] = getDeviceId();
+    }
 
     const response = await axios.post(
-      authRefreshURL,
+      config.authRefreshURL,
       {
         refresh_token: refreshToken,
         source: source,
         user_type: userType,
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "x-api-key": config.apiKey,
-          "x-device-id": getDeviceId(),
-        },
-      }
+      { headers }
     );
 
     if (response.data && response.data.new_access_token) {
-      if (config.storageType === StorageType.LOCAL_STORAGE) {
-        localStorage.setItem("authToken", response.data.new_access_token);
-        if (response.data.new_refresh_token) {
-          localStorage.setItem("refreshToken", response.data.new_refresh_token);
-        }
-      } else {
-        Cookies.set("authToken", response.data.new_access_token);
-        if (response.data.new_refresh_token) {
-          Cookies.set("refreshToken", response.data.new_refresh_token);
-        }
+      const newToken = response.data.new_access_token;
+
+      switch (config.storageType) {
+        case TokenStorageType.LOCAL_STORAGE:
+          localStorage.setItem("authToken", newToken);
+          if (response.data.new_refresh_token) {
+            localStorage.setItem(
+              "refreshToken",
+              response.data.new_refresh_token
+            );
+          }
+          break;
+        case TokenStorageType.COOKIES:
+          Cookies.set("authToken", newToken);
+          if (response.data.new_refresh_token) {
+            Cookies.set("refreshToken", response.data.new_refresh_token);
+          }
+          break;
+        case TokenStorageType.MIXED:
+          localStorage.setItem("authToken", newToken);
+          if (response.data.new_refresh_token) {
+            localStorage.setItem(
+              "refreshToken",
+              response.data.new_refresh_token
+            );
+          }
+          break;
       }
-      return response.data.new_access_token;
+
+      return newToken;
+    } else if (response.data && response.data.token) {
+      const newToken = response.data.token;
+
+      switch (config.storageType) {
+        case TokenStorageType.LOCAL_STORAGE:
+          localStorage.setItem("authToken", newToken);
+          break;
+        case TokenStorageType.COOKIES:
+          Cookies.set("authToken", newToken);
+          break;
+        case TokenStorageType.MIXED:
+          localStorage.setItem("authToken", newToken);
+          break;
+      }
+
+      return newToken;
     } else {
       throw new Error("Failed to refresh token");
     }
@@ -120,14 +187,10 @@ export const refreshAuthToken = async (
   }
 };
 
-// Export variables to be used by the original files
-export const tokenRefreshUtils = {
+export const tokenRefreshState = {
   isRefreshing,
   refreshSubscribers,
   DEBUG_TOKEN_REFRESH,
-  getDeviceId,
   addSubscriber,
   onRefreshed,
-  refreshAuthToken,
-  handleLogout,
 };
