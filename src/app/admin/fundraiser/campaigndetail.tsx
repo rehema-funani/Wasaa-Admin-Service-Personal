@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  Edit,
   Trash2,
   Eye,
   Share2,
@@ -777,6 +776,8 @@ const CampaignDetailsPage = () => {
               setApproveModal(false);
               toast.success("Campaign approved successfully");
             }}
+            campaignTitle={campaign.title}
+            id={id}
           />
         )}
       </AnimatePresence>

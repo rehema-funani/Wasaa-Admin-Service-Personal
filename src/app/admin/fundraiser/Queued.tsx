@@ -21,6 +21,8 @@ import { format, formatDistanceToNow } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 import { useNavigate } from "react-router-dom";
+import ApproveCampaignModal from "../../../components/fundraiser/ApproveCampaignModal";
+import RejectCampaignModal from "../../../components/fundraiser/RejectCampaignModal";
 
 const getPlaceholderImage = (title: string, id: string) => {
   const colorOptions = [
@@ -899,146 +901,43 @@ const QueuedCampaignsPage = () => {
         </div>
       )}
 
-      {/* Action Modal */}
       <AnimatePresence>
-        {showActionModal && selectedCampaign && actionType && (
-          <motion.div
-            className="fixed inset-0 bg-black/60 dark:bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowActionModal(false)}
-          >
-            <motion.div
-              className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700"
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {actionType === "approve"
-                    ? "Approve Campaign"
-                    : "Reject Campaign"}
-                </h2>
-                <motion.button
-                  onClick={() => setShowActionModal(false)}
-                  className="p-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 rounded-lg transition-colors"
-                  whileHover={{ scale: 1.1, rotate: 90 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <X size={20} />
-                </motion.button>
-              </div>
-
-              <div className="p-5">
-                <div className="flex items-center mb-5">
-                  <div
-                    className={`w-12 h-12 rounded-xl ${
-                      actionType === "approve"
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                        : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
-                    } flex items-center justify-center mr-4`}
-                  >
-                    {actionType === "approve" ? (
-                      <CheckCircle size={24} />
-                    ) : (
-                      <XCircle size={24} />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      {actionType === "approve"
-                        ? "Approve this campaign?"
-                        : "Reject this campaign?"}
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
-                      {actionType === "approve"
-                        ? "This will make the campaign visible to all users."
-                        : "This will notify the creator that their campaign was rejected."}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-5">
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {selectedCampaign.title}
-                  </p>
-                  <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    <span>
-                      Creator: {selectedCampaign.creatorName || "Anonymous"}
-                    </span>
-                    <span className="mx-2">•</span>
-                    <span>
-                      Goal: $
-                      {parseFloat(
-                        selectedCampaign.goalAmount || 0
-                      ).toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  </div>
-                </div>
-
-                {actionType === "reject" && (
-                  <div className="mb-5">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Rejection Reason (optional)
-                    </label>
-                    <textarea
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all shadow-sm"
-                      rows={3}
-                      placeholder="Provide a reason for rejection to help the creator understand why..."
-                    ></textarea>
-                  </div>
-                )}
-
-                <div className="flex justify-end space-x-3">
-                  <motion.button
-                    className="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
-                    onClick={() => setShowActionModal(false)}
-                    disabled={isFetching}
-                    whileHover={{ y: -2 }}
-                    whileTap={{ y: 0 }}
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    className={`px-5 py-2.5 ${
-                      actionType === "approve"
-                        ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
-                        : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
-                    } text-white rounded-xl text-sm transition-colors flex items-center shadow-md`}
-                    onClick={confirmAction}
-                    disabled={isFetching}
-                    whileHover={{ y: -2 }}
-                    whileTap={{ y: 0 }}
-                  >
-                    {isFetching ? (
-                      <>
-                        <Loader size={14} className="animate-spin mr-2" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        {actionType === "approve" ? (
-                          <CheckCircle size={14} className="mr-2" />
-                        ) : (
-                          <XCircle size={14} className="mr-2" />
-                        )}
-                        {actionType === "approve"
-                          ? "Approve Campaign"
-                          : "Reject Campaign"}
-                      </>
-                    )}
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
+        {showActionModal &&
+          selectedCampaign &&
+          (actionType === "approve" ? (
+            <ApproveCampaignModal
+              onClose={() => setShowActionModal(false)}
+              id={selectedCampaign.id}
+              onApproved={() => {
+                setCampaigns((prev) =>
+                  prev.filter((c) => c.id !== selectedCampaign.id)
+                );
+                setFilteredCampaigns((prev) =>
+                  prev.filter((c) => c.id !== selectedCampaign.id)
+                );
+                setPagination((prev) => ({ ...prev, total: prev.total - 1 }));
+                setShowActionModal(false);
+                toast.success("Campaign approved successfully");
+              }}
+              campaignTitle={selectedCampaign.title}
+            />
+          ) : (
+            <RejectCampaignModal
+              onClose={() => setShowActionModal(false)}
+              onRejected={() => {
+                setCampaigns((prev) =>
+                  prev.filter((c) => c.id !== selectedCampaign.id)
+                );
+                setFilteredCampaigns((prev) =>
+                  prev.filter((c) => c.id !== selectedCampaign.id)
+                );
+                setPagination((prev) => ({ ...prev, total: prev.total - 1 }));
+                setShowActionModal(false);
+                toast.success("Campaign rejected successfully");
+              }}
+              campaignTitle={selectedCampaign.title}
+            />
+          ))}
       </AnimatePresence>
     </div>
   );

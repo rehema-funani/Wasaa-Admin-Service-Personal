@@ -1,24 +1,25 @@
 import { motion } from "framer-motion";
-import { X, CheckCircle } from "lucide-react";
+import { X, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { fundraiserService } from "../../api/services/fundraiser";
 
-const ApproveCampaignModal = ({ id, onClose, onApproved, campaignTitle }) => {
+const RejectCampaignModal = ({ onClose, onRejected, campaignTitle }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    action: "approve",
+    action: "reject",
     reason: "",
-    notes: "",
+    feedback: "",
   });
-  
+  const { id } = useParams();
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleApprove = async () => {
+  const handleReject = async () => {
     if (!formData.reason.trim()) {
       toast.error("Reason is required");
       return;
@@ -27,11 +28,9 @@ const ApproveCampaignModal = ({ id, onClose, onApproved, campaignTitle }) => {
     setIsLoading(true);
     try {
       await fundraiserService.publishCampaign(id, formData);
-      toast.success("Campaign approved successfully");
-      onApproved?.();
+      onRejected?.();
     } catch (error) {
-      console.error("Error approving campaign:", error);
-      toast.error("Failed to approve campaign");
+      toast.error("Failed to reject campaign");
     } finally {
       setIsLoading(false);
     }
@@ -53,6 +52,7 @@ const ApproveCampaignModal = ({ id, onClose, onApproved, campaignTitle }) => {
         transition={{ duration: 0.2 }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close button */}
         <motion.button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -62,49 +62,62 @@ const ApproveCampaignModal = ({ id, onClose, onApproved, campaignTitle }) => {
           <X size={20} />
         </motion.button>
 
+        {/* Icon */}
         <div className="flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 mx-auto mb-4">
-          <CheckCircle size={28} />
+          <XCircle size={28} />
         </div>
 
+        {/* Title */}
         <h2 className="text-xl font-semibold text-center text-gray-900 dark:text-white mb-2">
-          Approve Campaign
+          Reject Campaign
         </h2>
         <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
           {campaignTitle ? `"${campaignTitle}"` : "This campaign"} will be
-          visible to all users after approval.
+          rejected and the creator will be notified.
         </p>
 
         {/* Form */}
         <div className="space-y-4">
           {/* Action (hidden) */}
-          <input type="hidden" name="action" value="approve" />
+          <input type="hidden" name="action" value="reject" />
 
           {/* Reason */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Approval Reason <span className="text-gray-500">(required)</span>
+              Rejection Reason <span className="text-gray-500">(required)</span>
             </label>
-            <input
-              type="text"
+            <select
               name="reason"
               value={formData.reason}
               onChange={handleChange}
-              placeholder="E.g. Campaign meets all community guidelines"
               className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none transition-all"
-            />
+            >
+              <option value="">Select a reason</option>
+              <option value="inappropriate_content">
+                Inappropriate Content
+              </option>
+              <option value="incomplete_information">
+                Incomplete Information
+              </option>
+              <option value="policy_violation">Policy Violation</option>
+              <option value="duplicate">Duplicate Campaign</option>
+              <option value="suspicious_activity">Suspicious Activity</option>
+              <option value="other">Other</option>
+            </select>
           </div>
 
-          {/* Notes */}
+          {/* Feedback */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Internal Notes <span className="text-gray-500">(optional)</span>
+              Feedback for Creator{" "}
+              <span className="text-gray-500">(recommended)</span>
             </label>
             <textarea
-              name="notes"
-              value={formData.notes}
+              name="feedback"
+              value={formData.feedback}
               onChange={handleChange}
-              placeholder="Add additional notes here for internal reference..."
-              rows={3}
+              placeholder="Provide feedback to help the creator understand why their campaign was rejected..."
+              rows={4}
               className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2.5 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:outline-none transition-all"
             />
           </div>
@@ -122,7 +135,7 @@ const ApproveCampaignModal = ({ id, onClose, onApproved, campaignTitle }) => {
             Cancel
           </motion.button>
           <motion.button
-            onClick={handleApprove}
+            onClick={handleReject}
             disabled={isLoading}
             className="px-5 py-2.5 rounded-xl bg-gray-800 dark:bg-gray-600 text-white text-sm font-medium flex items-center gap-2 hover:bg-gray-700 dark:hover:bg-gray-500 transition-all shadow-sm"
             whileHover={{ y: -2 }}
@@ -135,9 +148,9 @@ const ApproveCampaignModal = ({ id, onClose, onApproved, campaignTitle }) => {
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
             ) : (
-              <CheckCircle size={16} className="mr-1" />
+              <XCircle size={16} className="mr-1" />
             )}
-            {isLoading ? "Processing..." : "Approve Campaign"}
+            {isLoading ? "Processing..." : "Reject Campaign"}
           </motion.button>
         </div>
       </motion.div>
@@ -145,4 +158,4 @@ const ApproveCampaignModal = ({ id, onClose, onApproved, campaignTitle }) => {
   );
 };
 
-export default ApproveCampaignModal;
+export default RejectCampaignModal;

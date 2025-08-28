@@ -29,6 +29,10 @@ export const fundraiserService = {
     const response = await fundraiser.post(`/admin/campaigns/${id}/moderate`, data);
     return response.data;
   },
+  rejectCampaign: async (id: string, data: any) => {
+    const response = await fundraiser.post(`/admin/campaigns/${id}/reject`, data);
+    return response.data;
+  },
   getAllDonations: async () => {
     const response = await fundraiser.get(`/donations`);
     return response.data;
