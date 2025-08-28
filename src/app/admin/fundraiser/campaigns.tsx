@@ -74,7 +74,6 @@ const CampaignsPage = () => {
     sortBy: "newest",
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState("grid");
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
@@ -82,7 +81,6 @@ const CampaignsPage = () => {
   const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [showBulkActionMenu, setShowBulkActionMenu] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [hoveredCard, setHoveredCard] = useState(null);
   const [statsData, setStatsData] = useState({
     pending: 0,
     active: 0,
@@ -184,7 +182,7 @@ const CampaignsPage = () => {
     }
   };
 
-  const handleSearch = (query) => {
+  const handleSearch = (query: any) => {
     setSearchQuery(query);
 
     if (!query.trim()) {
@@ -323,14 +321,6 @@ const CampaignsPage = () => {
     });
   };
 
-  const handleSelectAll = () => {
-    if (selectedCampaigns.length === filteredCampaigns.length) {
-      setSelectedCampaigns([]);
-    } else {
-      setSelectedCampaigns(filteredCampaigns.map((c) => c.id));
-    }
-  };
-
   const handleDeleteCampaign = (campaign) => {
     setSelectedCampaign(campaign);
     setShowDeleteModal(true);
@@ -419,70 +409,6 @@ const CampaignsPage = () => {
       setIsFetching(false);
       setShowActionModal(false);
     }
-  };
-
-  const handleBulkAction = (action) => {
-    if (selectedCampaigns.length === 0) {
-      toast.error("No campaigns selected");
-      return;
-    }
-
-    setIsFetching(true);
-
-    setTimeout(() => {
-      switch (action) {
-        case "approve":
-          toast.success(`${selectedCampaigns.length} campaigns approved`);
-          setCampaigns((prev) =>
-            prev.map((c) =>
-              selectedCampaigns.includes(c.id)
-                ? { ...c, status: "approved" }
-                : c
-            )
-          );
-          break;
-        case "feature":
-          toast.success(`${selectedCampaigns.length} campaigns featured`);
-          setCampaigns((prev) =>
-            prev.map((c) =>
-              selectedCampaigns.includes(c.id) ? { ...c, featured: true } : c
-            )
-          );
-          break;
-        case "reject":
-          toast.success(`${selectedCampaigns.length} campaigns rejected`);
-          setCampaigns((prev) =>
-            prev.map((c) =>
-              selectedCampaigns.includes(c.id)
-                ? { ...c, status: "rejected" }
-                : c
-            )
-          );
-          break;
-        case "delete":
-          toast.success(`${selectedCampaigns.length} campaigns deleted`);
-          setCampaigns((prev) =>
-            prev.filter((c) => !selectedCampaigns.includes(c.id))
-          );
-          setFilteredCampaigns((prev) =>
-            prev.filter((c) => !selectedCampaigns.includes(c.id))
-          );
-          setPagination((prev) => ({
-            ...prev,
-            total: prev.total - selectedCampaigns.length,
-          }));
-          break;
-        case "export":
-          toast.success(`${selectedCampaigns.length} campaigns exported`);
-          break;
-        default:
-          break;
-      }
-
-      setSelectedCampaigns([]);
-      setShowBulkActionMenu(false);
-      setIsFetching(false);
-    }, 800);
   };
 
   const refreshData = async () => {
@@ -666,7 +592,7 @@ const CampaignsPage = () => {
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {isLoading
               ? "..."
-              : `$${statsData.totalRaised.toLocaleString(undefined, {
+              : `Kes ${statsData.totalRaised.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 })}`}
           </p>
@@ -710,59 +636,6 @@ const CampaignsPage = () => {
                 }`}
               />
             </button>
-
-            {selectedCampaigns.length > 0 && (
-              <div className="relative">
-                <button
-                  id="bulk-action-button"
-                  onClick={() => setShowBulkActionMenu(!showBulkActionMenu)}
-                  className="px-4 py-2.5 bg-[#FF6B81]/10 text-[#FF6B81] border border-[#FF6B81]/20 rounded-xl flex items-center text-sm hover:bg-[#FF6B81]/20 transition-colors"
-                >
-                  <Menu size={16} className="mr-2" />
-                  <span>Bulk Actions ({selectedCampaigns.length})</span>
-                  <ChevronDown
-                    size={16}
-                    className={`ml-1 transition-transform ${
-                      showBulkActionMenu ? "transform rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                {showBulkActionMenu && (
-                  <div className="absolute z-10 mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-xl py-1 border border-gray-100 dark:border-gray-700">
-                    <button
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#FF6B81]/10 hover:text-[#FF6B81] flex items-center"
-                      onClick={() => handleBulkAction("approve")}
-                    >
-                      <CheckCircle size={14} className="inline mr-2" />
-                      Approve Selected
-                    </button>
-                    <button
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#FF6B81]/10 hover:text-[#FF6B81] flex items-center"
-                      onClick={() => handleBulkAction("feature")}
-                    >
-                      <Star size={14} className="inline mr-2" />
-                      Feature Selected
-                    </button>
-                    <button
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#FF6B81]/10 hover:text-[#FF6B81] flex items-center"
-                      onClick={() => handleBulkAction("export")}
-                    >
-                      <Download size={14} className="inline mr-2" />
-                      Export Selected
-                    </button>
-                    <div className="border-t border-gray-100 dark:border-gray-700 my-1"></div>
-                    <button
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center"
-                      onClick={() => handleBulkAction("delete")}
-                    >
-                      <Trash2 size={14} className="inline mr-2" />
-                      Delete Selected
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
@@ -946,17 +819,6 @@ const CampaignsPage = () => {
             <span className="ml-2">({selectedCampaigns.length} selected)</span>
           )}
         </div>
-
-        {filteredCampaigns.length > 0 && (
-          <button
-            onClick={handleSelectAll}
-            className="text-[#FF6B81] hover:underline text-xs font-medium"
-          >
-            {selectedCampaigns.length === filteredCampaigns.length
-              ? "Deselect All"
-              : "Select All"}
-          </button>
-        )}
       </motion.div>
 
       {isLoading ? (
