@@ -1,6 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
+const AUTH_REFRESH_URL = "http://138.68.190.213:3010/auth/refresh-token";
+
 export enum TokenStorageType {
   LOCAL_STORAGE,
   COOKIES,
@@ -10,14 +12,13 @@ export enum TokenStorageType {
 export interface TokenRefreshConfig {
   apiKey: string;
   storageType: TokenStorageType;
-  authRefreshURL: string;
   includeDeviceId?: boolean;
 }
 
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
-const DEBUG_TOKEN_REFRESH = false;
+const DEBUG_TOKEN_REFRESH = true;
 
 export const getDeviceId = (): string => {
   let deviceId = localStorage.getItem("deviceId");
@@ -42,65 +43,49 @@ const onRefreshed = (token: string): void => {
 };
 
 export const getToken = (storageType: TokenStorageType): string | null => {
+  // Always check localStorage first
+  const localToken = localStorage.getItem("authToken");
+  if (localToken) return localToken;
+
+  // Fall back to other storage methods if configured
   switch (storageType) {
     case TokenStorageType.LOCAL_STORAGE:
-      return localStorage.getItem("authToken");
+      return null; // Already checked
     case TokenStorageType.COOKIES:
       return Cookies.get("authToken") || null;
     case TokenStorageType.MIXED:
-      return (
-        localStorage.getItem("authToken") || Cookies.get("authToken") || null
-      );
+      return Cookies.get("authToken") || null;
     default:
       return null;
   }
 };
 
-export const handleLogout = (storageType: TokenStorageType): void => {
-  if (
-    storageType === TokenStorageType.LOCAL_STORAGE ||
-    storageType === TokenStorageType.MIXED
-  ) {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
-    localStorage.removeItem("userType");
-    localStorage.removeItem("source");
-  }
-
-  if (
-    storageType === TokenStorageType.COOKIES ||
-    storageType === TokenStorageType.MIXED
-  ) {
-    Cookies.remove("authToken");
-    Cookies.remove("refreshToken");
-    Cookies.remove("user");
-    Cookies.remove("userType");
-    Cookies.remove("source");
-  }
-
-  window.location.href = "/auth/login";
+export const handleLogout = (): void => {
+  //   localStorage.removeItem("authToken");
+  //   localStorage.removeItem("refreshToken");
+  //   localStorage.removeItem("user");
+  //   localStorage.removeItem("userType");
+  //   localStorage.removeItem("source");
+  //   window.location.href = "/auth/login";
 };
 
 export const refreshAuthToken = async (
   config: TokenRefreshConfig
 ): Promise<string> => {
   try {
-    let refreshToken: string | null = null;
+    // Always try to get refresh token from localStorage first
+    let refreshToken = localStorage.getItem("refreshToken");
 
-    switch (config.storageType) {
-      case TokenStorageType.LOCAL_STORAGE:
-        refreshToken = localStorage.getItem("refreshToken");
-        break;
-      case TokenStorageType.COOKIES:
-        refreshToken = Cookies.get("refreshToken") || null;
-        break;
-      case TokenStorageType.MIXED:
-        refreshToken =
-          localStorage.getItem("refreshToken") ||
-          Cookies.get("refreshToken") ||
-          null;
-        break;
+    // Fall back to other storage if not found in localStorage
+    if (!refreshToken) {
+      switch (config.storageType) {
+        case TokenStorageType.COOKIES:
+          refreshToken = Cookies.get("refreshToken") || null;
+          break;
+        case TokenStorageType.MIXED:
+          refreshToken = Cookies.get("refreshToken") || null;
+          break;
+      }
     }
 
     if (!refreshToken) {
@@ -121,7 +106,7 @@ export const refreshAuthToken = async (
     }
 
     const response = await axios.post(
-      config.authRefreshURL,
+      AUTH_REFRESH_URL,
       {
         refresh_token: refreshToken,
         source: source,
@@ -129,60 +114,14 @@ export const refreshAuthToken = async (
       },
       { headers }
     );
+    const newToken = response.data.new_access_token;
 
-    if (response.data && response.data.new_access_token) {
-      const newToken = response.data.new_access_token;
-
-      switch (config.storageType) {
-        case TokenStorageType.LOCAL_STORAGE:
-          localStorage.setItem("authToken", newToken);
-          if (response.data.new_refresh_token) {
-            localStorage.setItem(
-              "refreshToken",
-              response.data.new_refresh_token
-            );
-          }
-          break;
-        case TokenStorageType.COOKIES:
-          Cookies.set("authToken", newToken);
-          if (response.data.new_refresh_token) {
-            Cookies.set("refreshToken", response.data.new_refresh_token);
-          }
-          break;
-        case TokenStorageType.MIXED:
-          localStorage.setItem("authToken", newToken);
-          if (response.data.new_refresh_token) {
-            localStorage.setItem(
-              "refreshToken",
-              response.data.new_refresh_token
-            );
-          }
-          break;
-      }
-
-      return newToken;
-    } else if (response.data && response.data.token) {
-      const newToken = response.data.token;
-
-      switch (config.storageType) {
-        case TokenStorageType.LOCAL_STORAGE:
-          localStorage.setItem("authToken", newToken);
-          break;
-        case TokenStorageType.COOKIES:
-          Cookies.set("authToken", newToken);
-          break;
-        case TokenStorageType.MIXED:
-          localStorage.setItem("authToken", newToken);
-          break;
-      }
-
-      return newToken;
-    } else {
-      throw new Error("Failed to refresh token");
-    }
+    localStorage.setItem("authToken", newToken);
+    localStorage.setItem("refreshToken", response.data.new_refresh_token);
+    return newToken;
   } catch (error) {
     console.error("Token refresh failed:", error);
-    handleLogout(config.storageType);
+    handleLogout();
     throw error;
   }
 };

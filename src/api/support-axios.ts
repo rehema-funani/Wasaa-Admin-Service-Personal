@@ -43,7 +43,7 @@ supportaxios.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      handleLogout(storageType);
+      handleLogout();
     }
 
     if (
@@ -51,7 +51,7 @@ supportaxios.interceptors.response.use(
       error.response.data &&
       error.response.data.message === "Authorization token invalid or expired!"
     ) {
-      handleLogout(storageType);
+      handleLogout();
     }
 
     return Promise.reject(error);

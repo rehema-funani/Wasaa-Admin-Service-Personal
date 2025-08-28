@@ -15,7 +15,7 @@ const apiKey =
 const tokenConfig = {
   apiKey,
   storageType: TokenStorageType.MIXED,
-  authRefreshURL: `${baseURL}auth/refresh-token`,
+  authRefreshURL: `${baseURL}/auth/refresh-token`,
   includeDeviceId: true,
 };
 
