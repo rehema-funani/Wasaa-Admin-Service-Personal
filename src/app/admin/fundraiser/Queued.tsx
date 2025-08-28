@@ -527,9 +527,11 @@ const QueuedCampaignsPage = () => {
                       }
                     >
                       <option value="all">All Amounts</option>
-                      <option value="small">Small (&lt; $10,000)</option>
-                      <option value="medium">Medium ($10,000 - $50,000)</option>
-                      <option value="large">Large (&gt; $50,000)</option>
+                      <option value="small">Small (&lt; Kes 10,000)</option>
+                      <option value="medium">
+                        Medium (Kes 10,000 - Kes 50,000)
+                      </option>
+                      <option value="large">Large (&gt; Kes 50,000)</option>
                     </select>
                   </div>
 
@@ -684,7 +686,7 @@ const QueuedCampaignsPage = () => {
                         Goal Amount
                       </span>
                       <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                        $
+                        Kes{" "}
                         {parseFloat(campaign.goalAmount || 0).toLocaleString(
                           undefined,
                           {
