@@ -23,7 +23,7 @@ import { fundraiserService } from "../../../api/services/fundraiser";
 import { useNavigate } from "react-router-dom";
 import StatusBadge from "../../../components/fundraiser/StatusBadge";
 
-const getPlaceholderImage = (title, id) => {
+const getPlaceholderImage = (title: string, id: string) => {
   const colorOptions = [
     "4f46e5",
     "0ea5e9",

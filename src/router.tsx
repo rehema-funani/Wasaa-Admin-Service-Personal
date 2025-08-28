@@ -172,6 +172,7 @@ const SupportAuditModule = {
 const fundraisingModule = {
   FundraisingDashboard: lazy(() => import("./app/admin/fundraiser/dashboard")),
   FundraisingCampaigns: lazy(() => import("./app/admin/fundraiser/campaigns")),
+  QueuedCampaigns: lazy(() => import("./app/admin/fundraiser/Queued")),
   FundraisingWithdrawals: lazy(
     () => import("./app/admin/fundraiser/withdrawals")
   ),
@@ -686,6 +687,10 @@ const fundraisingRoutes = [
   {
     path: PATHS.ADMIN.FUNDRAISING.CAMPAIGNS,
     element: fundraisingModule.FundraisingCampaigns,
+  },
+  {
+    path: PATHS.ADMIN.FUNDRAISING.QUEUED,
+    element: fundraisingModule.QueuedCampaigns,
   },
   {
     path: PATHS.ADMIN.FUNDRAISING.CAMPAIGN_DETAIL,

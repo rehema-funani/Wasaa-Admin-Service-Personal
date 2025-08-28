@@ -18,7 +18,8 @@ import {
   FilePieChart,
   FileCheck,
   Shield,
-  Candy
+  Candy,
+  ListEnd
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -353,9 +354,16 @@ const routes: Route[] = [
       {
         type: "link",
         path: "/admin/fundraising/campaigns",
-        title: "Campaign Details",
+        title: "All Campaign",
         icon: FileText,
         description: "View all fundraising campaigns",
+      },
+      {
+        type: "link",
+        path: "/admin/fundraising/campaigns/queued",
+        title: "Queued Campaigns",
+        icon: ListEnd,
+        description: "View all queued campaigns",
       },
       {
         type: "dropdown",
