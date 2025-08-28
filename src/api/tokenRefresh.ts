@@ -18,7 +18,7 @@ export interface TokenRefreshConfig {
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
-const DEBUG_TOKEN_REFRESH = true;
+const DEBUG_TOKEN_REFRESH = false;
 
 export const getDeviceId = (): string => {
   let deviceId = localStorage.getItem("deviceId");
