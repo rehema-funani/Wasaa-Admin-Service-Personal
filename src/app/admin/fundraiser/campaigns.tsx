@@ -7,19 +7,11 @@ import {
   ChevronDown,
   Calendar,
   Clock,
-  X,
   Gift,
   CheckCircle,
-  AlertTriangle,
-  XCircle,
-  Edit,
-  Trash2,
-  Eye,
   Zap,
   Loader,
-  Star,
   DollarSign,
-  Menu,
   ArrowRight,
   ArrowLeft,
   RefreshCw,
@@ -31,7 +23,7 @@ import { fundraiserService } from "../../../api/services/fundraiser";
 import { useNavigate } from "react-router-dom";
 import StatusBadge from "../../../components/fundraiser/StatusBadge";
 
-const getPlaceholderImage = (title: string, id: string) => {
+const getPlaceholderImage = (title, id) => {
   const colorOptions = [
     "4f46e5",
     "0ea5e9",
@@ -49,7 +41,7 @@ const getPlaceholderImage = (title: string, id: string) => {
   return `https://placehold.co/800x400/${color}/ffffff/png?text=${text}`;
 };
 
-const calculateProgress = (raised: string, goal: string) => {
+const calculateProgress = (raised, goal) => {
   const raisedNum = parseFloat(raised);
   const goalNum = parseFloat(goal);
   if (goalNum <= 0) return 0;
@@ -76,8 +68,6 @@ const CampaignsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showActionModal, setShowActionModal] = useState(false);
-  const [actionType, setActionType] = useState("");
   const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [showBulkActionMenu, setShowBulkActionMenu] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -164,7 +154,7 @@ const CampaignsPage = () => {
     };
   }, [pagination.page, pagination.limit]);
 
-  const changePage = (newPage) => {
+  const changePage = (newPage: any) => {
     if (
       newPage > 0 &&
       newPage <= Math.ceil(pagination.total / pagination.limit)
@@ -182,7 +172,7 @@ const CampaignsPage = () => {
     }
   };
 
-  const handleSearch = (query: any) => {
+  const handleSearch = (query) => {
     setSearchQuery(query);
 
     if (!query.trim()) {
@@ -289,7 +279,7 @@ const CampaignsPage = () => {
     setSelectedCampaigns([]);
   };
 
-  const handleFilterChange = (newFilters: any) => {
+  const handleFilterChange = (newFilters) => {
     applyFilters(newFilters);
   };
 
@@ -311,7 +301,7 @@ const CampaignsPage = () => {
     toast.success("Campaign data exported successfully");
   };
 
-  const toggleCampaignSelection = (campaignId) => {
+  const toggleCampaignSelection = (campaignId: string) => {
     setSelectedCampaigns((prev) => {
       if (prev.includes(campaignId)) {
         return prev.filter((id) => id !== campaignId);
@@ -319,96 +309,6 @@ const CampaignsPage = () => {
         return [...prev, campaignId];
       }
     });
-  };
-
-  const handleDeleteCampaign = (campaign) => {
-    setSelectedCampaign(campaign);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDeleteCampaign = async () => {
-    setIsFetching(true);
-    try {
-      // await fundraiserService.deleteCampaign(selectedCampaign.id);
-
-      setCampaigns((prev) => prev.filter((c) => c.id !== selectedCampaign.id));
-      setFilteredCampaigns((prev) =>
-        prev.filter((c) => c.id !== selectedCampaign.id)
-      );
-      setPagination((prev) => ({
-        ...prev,
-        total: prev.total - 1,
-      }));
-
-      toast.success("Campaign deleted successfully");
-    } catch (error) {
-      toast.error("Failed to delete campaign");
-      console.error("Error deleting campaign:", error);
-    } finally {
-      setIsFetching(false);
-      setShowDeleteModal(false);
-    }
-  };
-
-  const handleAction = (campaign: any, type: any) => {
-    setSelectedCampaign(campaign);
-    setActionType(type);
-    setShowActionModal(true);
-  };
-
-  const confirmAction = async () => {
-    setIsFetching(true);
-    try {
-      let successMessage = "";
-
-      switch (actionType) {
-        case "approve":
-          // await fundraiserService.approveCampaign(selectedCampaign.id);
-          successMessage = "Campaign approved successfully";
-          break;
-        case "reject":
-          // await fundraiserService.rejectCampaign(selectedCampaign.id);
-          successMessage = "Campaign rejected successfully";
-          break;
-        case "feature":
-          // await fundraiserService.featureCampaign(selectedCampaign.id);
-          successMessage = "Campaign featured successfully";
-          break;
-        default:
-          successMessage = "Action completed successfully";
-      }
-
-      // Update UI optimistically
-      const updatedCampaigns = campaigns.map((c) =>
-        c.id === selectedCampaign.id
-          ? {
-              ...c,
-              status:
-                actionType === "approve"
-                  ? "approved"
-                  : actionType === "reject"
-                  ? "rejected"
-                  : c.status,
-              featured: actionType === "feature" ? true : c.featured,
-            }
-          : c
-      );
-
-      setCampaigns(updatedCampaigns);
-      setFilteredCampaigns(
-        updatedCampaigns.filter((c) =>
-          filteredCampaigns.some((fc) => fc.id === c.id)
-        )
-      );
-
-      toast.success(successMessage);
-    } catch (error) {
-      toast.error(`Failed to ${actionType} campaign`);
-      console.error(`Error during ${actionType}:`, error);
-    } finally {
-      setIsFetching(false);
-      setShowActionModal(false);
-    }
   };
 
   const refreshData = async () => {
@@ -437,58 +337,40 @@ const CampaignsPage = () => {
     }
   };
 
-  const handleViewCampaign = (campaignId: string) => {
-    navigate(`/admin/fundraising/campaigns/${campaignId}`);
-  };
-
-  const handleEditCampaign = (campaignId: string) => {
-    navigate(`/admin/fundraising/campaigns/${campaignId}/edit`);
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.25,
-        delay: i * 0.05,
-        ease: [0.25, 0.1, 0.25, 1],
-      },
-    }),
-    hover: {
-      y: -10,
-      boxShadow:
-        "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-      transition: { duration: 0.2 },
-    },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
+  const handleViewCampaign = (id: string) => {
+    navigate(`/admin/fundraising/campaigns/${id}`);
   };
 
   return (
     <div
       ref={containerRef}
-      className="p-4 sm:p-6 w-full mx-auto max-w-[1600px]"
+      className="p-6 sm:p-8 w-full mx-auto max-w-[1600px] bg-gray-50 dark:bg-gray-900 min-h-screen"
     >
       <motion.div
-        className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4"
+        className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
       >
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-            <Gift className="mr-3 text-[#FF6B81]" />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+            <span className="mr-4 bg-gradient-to-br from-[#FF6B81] to-[#B75BFF] w-10 h-10 rounded-xl flex items-center justify-center shadow-md">
+              <Gift className="text-white" size={20} />
+            </span>
             Campaigns
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 ml-14">
             Manage and monitor all fundraising campaigns
           </p>
         </div>
-        <div className="flex gap-2 flex-wrap justify-end">
+        <div className="flex gap-3 flex-wrap justify-end">
           <motion.button
-            className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+            className="flex items-center px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm"
+            whileHover={{
+              y: -3,
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.06)",
+              backgroundColor: "#f9fafb",
+            }}
             whileTap={{ y: 0 }}
             onClick={handleExport}
           >
@@ -496,8 +378,12 @@ const CampaignsPage = () => {
             <span>Export</span>
           </motion.button>
           <motion.button
-            className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+            className="flex items-center px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm"
+            whileHover={{
+              y: -3,
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.06)",
+              backgroundColor: "#f9fafb",
+            }}
             whileTap={{ y: 0 }}
             onClick={refreshData}
             disabled={isFetching}
@@ -512,24 +398,24 @@ const CampaignsPage = () => {
       </motion.div>
 
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
+        transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 0.61, 0.36, 1] }}
       >
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm"
-          whileHover={{ y: -5, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
+          whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
         >
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
               Pending Approval
             </p>
-            <div className="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
-              <Clock size={16} />
+            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
+              <Clock size={18} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {isLoading ? "..." : statsData.pending}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -538,18 +424,18 @@ const CampaignsPage = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm"
-          whileHover={{ y: -5, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
+          whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
         >
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
               Active Campaigns
             </p>
-            <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-              <Zap size={16} />
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <Zap size={18} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {isLoading ? "..." : statsData.active}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -558,18 +444,18 @@ const CampaignsPage = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm"
-          whileHover={{ y: -5, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
+          whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
         >
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
               Completed
             </p>
-            <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-              <CheckCircle size={16} />
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <CheckCircle size={18} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
             {isLoading ? "..." : statsData.completed}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -578,18 +464,18 @@ const CampaignsPage = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm"
-          whileHover={{ y: -5, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
+          whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
         >
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
               Total Raised
             </p>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF6B81]/20 to-[#B75BFF]/20 flex items-center justify-center text-[#FF6B81]">
-              <DollarSign size={16} />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF6B81]/20 to-[#B75BFF]/20 flex items-center justify-center text-[#FF6B81]">
+              <DollarSign size={18} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF6B81] to-[#B75BFF]">
             {isLoading
               ? "..."
               : `Kes ${statsData.totalRaised.toLocaleString(undefined, {
@@ -603,39 +489,45 @@ const CampaignsPage = () => {
       </motion.div>
 
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-4 mb-6"
+        className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 mb-8"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
+        transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 0.61, 0.36, 1] }}
       >
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-grow">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Search size={16} className="text-gray-400 dark:text-gray-500" />
             </div>
             <input
               type="text"
               placeholder="Search campaigns by title, description, category..."
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF6B81] focus:border-transparent transition-all"
+              className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF6B81]/50 focus:border-transparent transition-all shadow-sm"
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <button
+            <motion.button
               onClick={() => setShowFilters(!showFilters)}
-              className="px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl flex items-center text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="px-5 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl flex items-center text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.06)",
+                backgroundColor: "#f9fafb",
+              }}
+              whileTap={{ y: 0 }}
             >
               <Filter size={16} className="mr-2" />
               <span>Filter</span>
               <ChevronDown
                 size={16}
-                className={`ml-1 transition-transform ${
+                className={`ml-2 transition-transform ${
                   showFilters ? "transform rotate-180" : ""
                 }`}
               />
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -645,13 +537,13 @@ const CampaignsPage = () => {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
               className="overflow-hidden"
             >
-              <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Status
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -668,7 +560,7 @@ const CampaignsPage = () => {
                         >
                           <input
                             type="checkbox"
-                            className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-[#FF6B81] mr-1.5 focus:ring-[#FF6B81]"
+                            className="rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-[#FF6B81] mr-1.5 focus:ring-[#FF6B81]/50 h-4 w-4"
                             checked={filters.status.includes(status)}
                             onChange={(e) => {
                               const newStatus = e.target.checked
@@ -689,11 +581,11 @@ const CampaignsPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Category
                     </label>
                     <select
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81] transition-all"
+                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81]/50 transition-all shadow-sm"
                       value={filters.category}
                       onChange={(e) =>
                         handleFilterChange({
@@ -712,11 +604,11 @@ const CampaignsPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Date Range
                     </label>
                     <select
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81] transition-all"
+                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81]/50 transition-all shadow-sm"
                       value={filters.dateRange}
                       onChange={(e) =>
                         handleFilterChange({
@@ -733,11 +625,11 @@ const CampaignsPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Goal Amount
                     </label>
                     <select
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81] transition-all"
+                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81]/50 transition-all shadow-sm"
                       value={filters.amountRange}
                       onChange={(e) =>
                         handleFilterChange({
@@ -754,11 +646,11 @@ const CampaignsPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Sort By
                     </label>
                     <select
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81] transition-all"
+                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81]/50 transition-all shadow-sm"
                       value={filters.sortBy}
                       onChange={(e) =>
                         handleFilterChange({
@@ -779,13 +671,15 @@ const CampaignsPage = () => {
                     </select>
                   </div>
 
-                  <div className="lg:col-span-4 flex justify-end">
-                    <button
+                  <div className="lg:col-span-5 flex justify-end">
+                    <motion.button
                       onClick={handleResetFilters}
-                      className="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm hover:text-[#FF6B81] transition-colors"
+                      className="px-5 py-2.5 text-[#FF6B81] dark:text-[#FF6B81] bg-[#FF6B81]/5 hover:bg-[#FF6B81]/10 rounded-xl text-sm transition-colors"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       Reset Filters
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               </div>
@@ -795,7 +689,7 @@ const CampaignsPage = () => {
       </motion.div>
 
       <motion.div
-        className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400"
+        className="flex items-center justify-between mb-5 text-sm text-gray-500 dark:text-gray-400"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
@@ -822,66 +716,72 @@ const CampaignsPage = () => {
       </motion.div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader size={30} className="text-[#FF6B81] animate-spin mr-3" />
-          <span className="text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-center py-20">
+          <Loader size={36} className="text-[#FF6B81] animate-spin mr-4" />
+          <span className="text-gray-500 dark:text-gray-400 text-lg font-medium">
             Loading campaigns...
           </span>
         </div>
       ) : filteredCampaigns.length === 0 ? (
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm py-12 px-4 text-center"
+          className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm py-16 px-4 text-center"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="inline-flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
-            <Gift size={24} className="text-gray-400 dark:text-gray-500" />
+          <div className="inline-flex items-center justify-center p-5 bg-gray-100 dark:bg-gray-700 rounded-full mb-5">
+            <Gift size={28} className="text-gray-400 dark:text-gray-500" />
           </div>
-          <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">
+          <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-3">
             No campaigns found
           </h3>
           <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
             Try adjusting your search or filters to find what you're looking
             for.
           </p>
-          <button
+          <motion.button
             onClick={handleResetFilters}
-            className="px-4 py-2 bg-[#FF6B81]/10 text-[#FF6B81] rounded-lg text-sm hover:bg-[#FF6B81]/20 transition-colors"
+            className="px-6 py-3 bg-[#FF6B81]/10 text-[#FF6B81] rounded-xl text-sm hover:bg-[#FF6B81]/20 transition-colors shadow-sm"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
             Clear filters
-          </button>
+          </motion.button>
         </motion.div>
       ) : (
         <div className="space-y-6">
           <motion.div
-            className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden"
+            className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
+            transition={{
+              duration: 0.4,
+              delay: 0.3,
+              ease: [0.22, 0.61, 0.36, 1],
+            }}
           >
             <div className="divide-y divide-gray-100 dark:divide-gray-700">
               {filteredCampaigns.map((campaign, index) => (
                 <motion.div
                   key={campaign.id}
-                  className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 ${
+                  className={`p-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all ${
                     selectedCampaigns.includes(campaign.id)
                       ? "bg-[#FF6B81]/5"
                       : ""
                   }`}
                   initial="hidden"
                   animate="visible"
-                  variants={cardVariants}
+                  onClick={() => handleViewCampaign(campaign.id)}
                   custom={index}
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
                   <div className="flex flex-col md:flex-row md:items-center">
                     <div className="flex items-center mb-4 md:mb-0">
-                      <div className="mr-3">
+                      <div className="mr-4">
                         <label className="inline-flex items-center">
                           <input
                             type="checkbox"
-                            className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-[#FF6B81] w-5 h-5 focus:ring-[#FF6B81]"
+                            className="rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-[#FF6B81] w-5 h-5 focus:ring-[#FF6B81]/50"
                             checked={selectedCampaigns.includes(campaign.id)}
                             onChange={() =>
                               toggleCampaignSelection(campaign.id)
@@ -891,7 +791,7 @@ const CampaignsPage = () => {
                       </div>
 
                       <div
-                        className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg bg-center bg-cover mr-3 relative overflow-hidden"
+                        className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-xl bg-center bg-cover mr-4 relative overflow-hidden shadow-md"
                         style={{
                           backgroundImage: `url(${
                             campaign.images && campaign.images.length > 0
@@ -900,21 +800,21 @@ const CampaignsPage = () => {
                           })`,
                         }}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                       </div>
 
                       <div className="flex-grow">
-                        <div className="flex items-center mb-1">
+                        <div className="flex items-center mb-2">
                           <StatusBadge status={campaign.status} />
                         </div>
 
-                        <h3 className="font-medium text-gray-900 dark:text-white text-md mb-1 line-clamp-1">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-lg mb-1.5 line-clamp-1">
                           {campaign.title}
                         </h3>
 
-                        <div className="flex flex-wrap items-center text-xs text-gray-500 dark:text-gray-400 gap-2">
+                        <div className="flex flex-wrap items-center text-xs text-gray-500 dark:text-gray-400 gap-3">
                           <span className="flex items-center">
-                            <Calendar size={12} className="mr-1" />
+                            <Calendar size={12} className="mr-1.5" />
                             {campaign.endDate
                               ? format(
                                   new Date(campaign.endDate),
@@ -924,80 +824,46 @@ const CampaignsPage = () => {
                           </span>
 
                           {campaign.category && (
-                            <span className="capitalize px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded-full">
+                            <span className="capitalize px-2.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-full font-medium">
                               {campaign.category}
                             </span>
                           )}
 
                           <span className="flex items-center">
-                            <ThumbsUp size={12} className="mr-1" />
+                            <ThumbsUp size={12} className="mr-1.5" />
                             {campaign.likesCount || 0}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row items-start md:items-center ml-0 md:ml-auto md:space-x-4">
-                      <div className="mb-3 md:mb-0 md:w-36">
-                        <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
-                          <span>
-                            $
+                    <div className="flex flex-col md:flex-row items-start md:items-center ml-0 md:ml-auto md:space-x-5">
+                      <div className="mb-3 md:mb-0 md:w-40">
+                        <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1.5">
+                          <span className="font-medium">
+                            Kes{" "}
                             {parseFloat(campaign.raisedAmount).toLocaleString(
                               undefined,
                               { maximumFractionDigits: 2 }
                             )}
                           </span>
-                          <span>{campaign.progress}%</span>
+                          <span className="font-medium">
+                            {campaign.progress}%
+                          </span>
                         </div>
-                        <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div className="w-full h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                           <div
                             className="h-full rounded-full bg-gradient-to-r from-[#FF6B81] to-[#B75BFF]"
                             style={{ width: `${campaign.progress}%` }}
                           ></div>
                         </div>
-                        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          of $
+                        <div className="text-right text-xs text-gray-500 dark:text-gray-400 mt-1.5">
+                          of Kes{" "}
                           {parseFloat(campaign.goalAmount).toLocaleString(
                             undefined,
                             { maximumFractionDigits: 2 }
                           )}
                         </div>
-                      </div>
-
-                      <div className="flex items-center space-x-1">
-                        {campaign.status === "pending_approval" && (
-                          <button
-                            className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                            onClick={() => handleAction(campaign, "approve")}
-                            title="Approve"
-                          >
-                            <CheckCircle size={16} />
-                          </button>
-                        )}
-
-                        <button
-                          className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                          onClick={() => handleViewCampaign(campaign.id)}
-                          title="View"
-                        >
-                          <Eye size={16} />
-                        </button>
-
-                        <button
-                          className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                          onClick={() => handleEditCampaign(campaign.id)}
-                          title="Edit"
-                        >
-                          <Edit size={16} />
-                        </button>
-
-                        <button
-                          className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors"
-                          onClick={() => handleDeleteCampaign(campaign)}
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -1007,18 +873,20 @@ const CampaignsPage = () => {
           </motion.div>
 
           {pagination.total > pagination.limit && (
-            <div className="flex justify-center items-center mt-8 space-x-2">
-              <button
-                className={`p-2 rounded-lg border ${
+            <div className="flex justify-center items-center mt-10 space-x-3">
+              <motion.button
+                className={`p-2.5 rounded-xl border ${
                   pagination.page === 1
                     ? "border-gray-200 text-gray-400 cursor-not-allowed"
-                    : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                }`}
+                    : "border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-[#FF6B81]/30"
+                } shadow-sm transition-all`}
                 onClick={() => changePage(pagination.page - 1)}
                 disabled={pagination.page === 1}
+                whileHover={pagination.page !== 1 ? { scale: 1.05, y: -2 } : {}}
+                whileTap={pagination.page !== 1 ? { scale: 0.95 } : {}}
               >
-                <ArrowLeft size={16} />
-              </button>
+                <ArrowLeft size={18} />
+              </motion.button>
 
               {[
                 ...Array(
@@ -1042,278 +910,59 @@ const CampaignsPage = () => {
 
                 if (pageNum > 0 && pageNum <= totalPages) {
                   return (
-                    <button
+                    <motion.button
                       key={pageNum}
-                      className={`w-9 h-9 rounded-lg ${
+                      className={`w-10 h-10 rounded-xl ${
                         pagination.page === pageNum
-                          ? "bg-[#FF6B81] text-white"
+                          ? "bg-gradient-to-r from-[#FF6B81] to-[#B75BFF] text-white shadow-md"
                           : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                      } transition-all`}
                       onClick={() => changePage(pageNum)}
+                      whileHover={
+                        pagination.page !== pageNum
+                          ? { scale: 1.05, y: -2 }
+                          : {}
+                      }
+                      whileTap={{ scale: 0.95 }}
                     >
                       {pageNum}
-                    </button>
+                    </motion.button>
                   );
                 }
                 return null;
               })}
 
-              <button
-                className={`p-2 rounded-lg border ${
+              <motion.button
+                className={`p-2.5 rounded-xl border ${
                   pagination.page >=
                   Math.ceil(pagination.total / pagination.limit)
                     ? "border-gray-200 text-gray-400 cursor-not-allowed"
-                    : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                }`}
+                    : "border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-[#FF6B81]/30"
+                } shadow-sm transition-all`}
                 onClick={() => changePage(pagination.page + 1)}
                 disabled={
                   pagination.page >=
                   Math.ceil(pagination.total / pagination.limit)
                 }
+                whileHover={
+                  pagination.page <
+                  Math.ceil(pagination.total / pagination.limit)
+                    ? { scale: 1.05, y: -2 }
+                    : {}
+                }
+                whileTap={
+                  pagination.page <
+                  Math.ceil(pagination.total / pagination.limit)
+                    ? { scale: 0.95 }
+                    : {}
+                }
               >
-                <ArrowRight size={16} />
-              </button>
+                <ArrowRight size={18} />
+              </motion.button>
             </div>
           )}
         </div>
       )}
-
-      <AnimatePresence>
-        {showDeleteModal && selectedCampaign && (
-          <motion.div
-            className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowDeleteModal(false)}
-          >
-            <motion.div
-              className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full shadow-xl overflow-hidden"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                  Delete Campaign
-                </h2>
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className="p-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="p-4">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400 mr-4">
-                    <AlertTriangle size={20} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      Confirm Deletion
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
-                      Are you sure you want to delete this campaign? This action
-                      cannot be undone.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-4">
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {selectedCampaign.title}
-                  </p>
-                  <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span>
-                      Status: {selectedCampaign.status.replace(/_/g, " ")}
-                    </span>
-                    <span className="mx-2">•</span>
-                    <span>
-                      Goal: $
-                      {parseFloat(selectedCampaign.goalAmount).toLocaleString(
-                        undefined,
-                        { maximumFractionDigits: 2 }
-                      )}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex justify-end space-x-3">
-                  <button
-                    className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    onClick={() => setShowDeleteModal(false)}
-                    disabled={isFetching}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors flex items-center"
-                    onClick={confirmDeleteCampaign}
-                    disabled={isFetching}
-                  >
-                    {isFetching ? (
-                      <>
-                        <Loader size={14} className="animate-spin mr-2" />
-                        Deleting...
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 size={14} className="mr-2" />
-                        Delete Campaign
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showActionModal && selectedCampaign && actionType && (
-          <motion.div
-            className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowActionModal(false)}
-          >
-            <motion.div
-              className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full shadow-xl overflow-hidden"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                  {actionType === "approve"
-                    ? "Approve Campaign"
-                    : actionType === "reject"
-                    ? "Reject Campaign"
-                    : actionType === "feature"
-                    ? "Feature Campaign"
-                    : "Confirm Action"}
-                </h2>
-                <button
-                  onClick={() => setShowActionModal(false)}
-                  className="p-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="p-4">
-                <div className="flex items-center mb-4">
-                  <div
-                    className={`w-10 h-10 rounded-full ${
-                      actionType === "approve"
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                        : actionType === "reject"
-                        ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
-                        : "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
-                    } flex items-center justify-center mr-4`}
-                  >
-                    {actionType === "approve" ? (
-                      <CheckCircle size={20} />
-                    ) : actionType === "reject" ? (
-                      <XCircle size={20} />
-                    ) : (
-                      <Star size={20} />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      {actionType === "approve"
-                        ? "Approve this campaign?"
-                        : actionType === "reject"
-                        ? "Reject this campaign?"
-                        : actionType === "feature"
-                        ? "Feature this campaign?"
-                        : "Confirm action"}
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
-                      {actionType === "approve"
-                        ? "This will make the campaign visible to all users."
-                        : actionType === "reject"
-                        ? "This will notify the creator that their campaign was rejected."
-                        : actionType === "feature"
-                        ? "This will highlight the campaign on the homepage."
-                        : "Are you sure you want to continue?"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-4">
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {selectedCampaign.title}
-                  </p>
-                  <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span>
-                      Status: {selectedCampaign.status.replace(/_/g, " ")}
-                    </span>
-                    <span className="mx-2">•</span>
-                    <span>
-                      Goal: $
-                      {parseFloat(selectedCampaign.goalAmount).toLocaleString(
-                        undefined,
-                        { maximumFractionDigits: 2 }
-                      )}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex justify-end space-x-3">
-                  <button
-                    className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    onClick={() => setShowActionModal(false)}
-                    disabled={isFetching}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className={`px-4 py-2 ${
-                      actionType === "reject"
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-[#FF6B81] hover:bg-[#ff5673]"
-                    } text-white rounded-lg text-sm transition-colors flex items-center`}
-                    onClick={confirmAction}
-                    disabled={isFetching}
-                  >
-                    {isFetching ? (
-                      <>
-                        <Loader size={14} className="animate-spin mr-2" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        {actionType === "approve" ? (
-                          <CheckCircle size={14} className="mr-2" />
-                        ) : actionType === "reject" ? (
-                          <XCircle size={14} className="mr-2" />
-                        ) : (
-                          <Star size={14} className="mr-2" />
-                        )}
-                        {actionType === "approve"
-                          ? "Approve"
-                          : actionType === "reject"
-                          ? "Reject"
-                          : actionType === "feature"
-                          ? "Feature"
-                          : "Confirm"}
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
