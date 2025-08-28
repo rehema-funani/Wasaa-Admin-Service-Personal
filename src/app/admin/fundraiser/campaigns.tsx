@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -8,9 +8,6 @@ import {
   Calendar,
   Clock,
   X,
-  Users,
-  ListFilter,
-  Grid,
   Gift,
   CheckCircle,
   AlertTriangle,
@@ -18,92 +15,21 @@ import {
   Edit,
   Trash2,
   Eye,
-  Flag,
-  MoreHorizontal,
-  BarChart2,
   Zap,
   Loader,
-  Plus,
-  Share2,
   Star,
-  Heart,
   DollarSign,
-  Award,
   Menu,
   ArrowRight,
   ArrowLeft,
-  Link,
-  Settings,
   RefreshCw,
-  ChevronRight,
   ThumbsUp,
-  MessageSquare,
-  ArrowUpRight,
-  Bookmark,
-  MoreVertical,
-  BookOpen,
-  Percent,
 } from "lucide-react";
-import { format, formatDistance, subDays, parseISO } from "date-fns";
+import { format, subDays } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 import { useNavigate } from "react-router-dom";
-
-// Status badge component
-const StatusBadge = ({ status }) => {
-  const statusConfig = {
-    pending_approval: {
-      color:
-        "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400",
-      icon: <Clock size={10} className="mr-1" />,
-      label: "Pending Approval",
-    },
-    approved: {
-      color:
-        "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
-      icon: <CheckCircle size={10} className="mr-1" />,
-      label: "Approved",
-    },
-    active: {
-      color:
-        "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
-      icon: <Zap size={10} className="mr-1" />,
-      label: "Active",
-    },
-    rejected: {
-      color: "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400",
-      icon: <XCircle size={10} className="mr-1" />,
-      label: "Rejected",
-    },
-    completed: {
-      color: "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
-      icon: <CheckCircle size={10} className="mr-1" />,
-      label: "Completed",
-    },
-    paused: {
-      color:
-        "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
-      icon: <AlertTriangle size={10} className="mr-1" />,
-      label: "Paused",
-    },
-  };
-
-  const config = statusConfig[status] || {
-    color:
-      "bg-slate-50 dark:bg-slate-900/30 text-slate-700 dark:text-slate-400",
-    icon: <Clock size={10} className="mr-1" />,
-    label: status.replace(/_/g, " "),
-  };
-
-  return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${config.color}`}
-    >
-      {config.icon}
-      {config.label}
-    </span>
-  );
-};
+import StatusBadge from "../../../components/fundraiser/StatusBadge";
 
 const getPlaceholderImage = (title: string, id: string) => {
   const colorOptions = [
@@ -123,8 +49,7 @@ const getPlaceholderImage = (title: string, id: string) => {
   return `https://placehold.co/800x400/${color}/ffffff/png?text=${text}`;
 };
 
-// Calculate progress percentage
-const calculateProgress = (raised, goal) => {
+const calculateProgress = (raised: string, goal: string) => {
   const raisedNum = parseFloat(raised);
   const goalNum = parseFloat(goal);
   if (goalNum <= 0) return 0;
@@ -594,17 +519,6 @@ const CampaignsPage = () => {
     navigate(`/admin/fundraising/campaigns/${campaignId}/edit`);
   };
 
-  const getTimeAgo = (dateString: string) => {
-    if (!dateString) return "Not available";
-    try {
-      return formatDistance(parseISO(dateString), new Date(), {
-        addSuffix: true,
-      });
-    } catch (error) {
-      return "Invalid date";
-    }
-  };
-
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
@@ -762,7 +676,6 @@ const CampaignsPage = () => {
         </motion.div>
       </motion.div>
 
-      {/* Search and Filters */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -797,29 +710,6 @@ const CampaignsPage = () => {
                 }`}
               />
             </button>
-
-            <div className="flex border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`px-3 py-2 flex items-center ${
-                  viewMode === "grid"
-                    ? "bg-[#FF6B81]/10 text-[#FF6B81]"
-                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                } transition-colors`}
-              >
-                <Grid size={16} />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`px-3 py-2 flex items-center ${
-                  viewMode === "list"
-                    ? "bg-[#FF6B81]/10 text-[#FF6B81]"
-                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                } transition-colors`}
-              >
-                <ListFilter size={16} />
-              </button>
-            </div>
 
             {selectedCampaigns.length > 0 && (
               <div className="relative">
@@ -1031,7 +921,6 @@ const CampaignsPage = () => {
         </AnimatePresence>
       </motion.div>
 
-      {/* Results Summary */}
       <motion.div
         className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400"
         initial={{ opacity: 0 }}
@@ -1070,7 +959,6 @@ const CampaignsPage = () => {
         )}
       </motion.div>
 
-      {/* Campaign Grid/List View */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
           <Loader size={30} className="text-[#FF6B81] animate-spin mr-3" />
@@ -1101,368 +989,7 @@ const CampaignsPage = () => {
             Clear filters
           </button>
         </motion.div>
-      ) : viewMode === "grid" ? (
-        // Grid View
-        <div className="space-y-6">
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
-          >
-            {filteredCampaigns.map((campaign, index) => (
-              <motion.div
-                key={campaign.id}
-                className={`bg-white dark:bg-gray-800 rounded-xl border ${
-                  selectedCampaigns.includes(campaign.id)
-                    ? "border-[#FF6B81] ring-2 ring-[#FF6B81]/20"
-                    : "border-gray-100 dark:border-gray-700"
-                } shadow-sm overflow-hidden`}
-                initial="hidden"
-                animate="visible"
-                variants={cardVariants}
-                custom={index}
-                whileHover="hover"
-                onHoverStart={() => setHoveredCard(campaign.id)}
-                onHoverEnd={() => setHoveredCard(null)}
-              >
-                <div className="relative">
-                  <div
-                    className="h-48 bg-gray-200 dark:bg-gray-700 bg-center bg-cover relative"
-                    style={{
-                      backgroundImage: `url(${
-                        campaign.images && campaign.images.length > 0
-                          ? campaign.images[0]
-                          : getPlaceholderImage(campaign.title, campaign.id)
-                      })`,
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-                    <div className="absolute top-3 left-3">
-                      <label className="inline-flex items-center">
-                        <input
-                          type="checkbox"
-                          className="rounded-full border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 text-[#FF6B81] w-5 h-5 focus:ring-[#FF6B81]"
-                          checked={selectedCampaigns.includes(campaign.id)}
-                          onChange={() => toggleCampaignSelection(campaign.id)}
-                        />
-                      </label>
-                    </div>
-
-                    <div className="absolute top-3 right-3">
-                      <StatusBadge status={campaign.status} />
-                    </div>
-
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                      <div className="text-white text-xs font-medium flex items-center">
-                        <Calendar size={12} className="mr-1" />
-                        {campaign.endDate
-                          ? format(new Date(campaign.endDate), "MMM d, yyyy")
-                          : "No end date"}
-                      </div>
-
-                      <div className="text-white text-xs font-medium flex items-center">
-                        <Clock size={12} className="mr-1" />
-                        {getTimeAgo(campaign.lastActivityAt)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <div className="mb-3">
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-lg mb-1 line-clamp-2">
-                      {campaign.title}
-                    </h3>
-
-                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 mb-1">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 mr-2">
-                        {campaign.category || "No category"}
-                      </span>
-
-                      <div className="flex items-center">
-                        <ThumbsUp size={12} className="mr-1" />
-                        {campaign.likesCount || 0}
-                      </div>
-
-                      <div className="flex items-center ml-2">
-                        <MessageSquare size={12} className="mr-1" />
-                        {campaign.commentsCount || 0}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mb-3">
-                    <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
-                      <span>Progress</span>
-                      <span className="font-medium flex items-center">
-                        <Percent size={12} className="mr-0.5" />
-                        {campaign.progress}%
-                      </span>
-                    </div>
-                    <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#FF6B81] to-[#B75BFF]"
-                        style={{ width: `${campaign.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between mb-4">
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Raised
-                      </p>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        $
-                        {parseFloat(campaign.raisedAmount).toLocaleString(
-                          undefined,
-                          { maximumFractionDigits: 2 }
-                        )}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Goal
-                      </p>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        $
-                        {parseFloat(campaign.goalAmount).toLocaleString(
-                          undefined,
-                          { maximumFractionDigits: 2 }
-                        )}
-                      </p>
-                    </div>
-                  </div>
-
-                  <AnimatePresence>
-                    {hoveredCard === campaign.id && (
-                      <motion.div
-                        className="grid grid-cols-3 gap-1.5 pt-3 border-t border-gray-100 dark:border-gray-700"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <button
-                          className="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
-                          onClick={() => handleViewCampaign(campaign.id)}
-                        >
-                          <Eye size={16} className="mb-1" />
-                          <span className="text-xs">View</span>
-                        </button>
-
-                        <button
-                          className="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
-                          onClick={() => handleEditCampaign(campaign.id)}
-                        >
-                          <Edit size={16} className="mb-1" />
-                          <span className="text-xs">Edit</span>
-                        </button>
-
-                        <button
-                          className="flex flex-col items-center justify-center py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-colors"
-                          onClick={() => handleDeleteCampaign(campaign)}
-                        >
-                          <Trash2 size={16} className="mb-1" />
-                          <span className="text-xs">Delete</span>
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {hoveredCard !== campaign.id && (
-                    <div className="pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          className="p-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                          onClick={() =>
-                            handleAction(
-                              campaign,
-                              campaign.status === "pending_approval"
-                                ? "approve"
-                                : "feature"
-                            )
-                          }
-                        >
-                          {campaign.status === "pending_approval" ? (
-                            <CheckCircle size={18} />
-                          ) : (
-                            <Star size={18} />
-                          )}
-                        </button>
-
-                        <button
-                          className="p-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                          onClick={() => handleViewCampaign(campaign.id)}
-                        >
-                          <Eye size={18} />
-                        </button>
-
-                        <button
-                          className="p-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                          onClick={() => handleEditCampaign(campaign.id)}
-                        >
-                          <Edit size={18} />
-                        </button>
-                      </div>
-
-                      <div className="relative" ref={actionMenuRef}>
-                        <button
-                          onClick={() =>
-                            setSelectedCampaign(
-                              selectedCampaign?.id === campaign.id
-                                ? null
-                                : campaign
-                            )
-                          }
-                          className="p-1.5 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#FF6B81] rounded-lg transition-colors"
-                        >
-                          <MoreVertical size={18} />
-                        </button>
-
-                        {selectedCampaign &&
-                          selectedCampaign.id === campaign.id && (
-                            <div className="absolute right-0 bottom-full mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700 py-1 w-40 z-10">
-                              {campaign.status === "pending_approval" && (
-                                <button
-                                  className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#FF6B81]/10 hover:text-[#FF6B81] flex items-center"
-                                  onClick={() => {
-                                    setSelectedCampaign(null);
-                                    handleAction(campaign, "approve");
-                                  }}
-                                >
-                                  <CheckCircle size={14} className="mr-2" />
-                                  Approve
-                                </button>
-                              )}
-
-                              <button
-                                className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#FF6B81]/10 hover:text-[#FF6B81] flex items-center"
-                                onClick={() => {
-                                  setSelectedCampaign(null);
-                                  handleAction(campaign, "feature");
-                                }}
-                              >
-                                <Star size={14} className="mr-2" />
-                                Feature
-                              </button>
-
-                              {campaign.status === "pending_approval" && (
-                                <button
-                                  className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-[#FF6B81]/10 hover:text-[#FF6B81] flex items-center"
-                                  onClick={() => {
-                                    setSelectedCampaign(null);
-                                    handleAction(campaign, "reject");
-                                  }}
-                                >
-                                  <XCircle size={14} className="mr-2" />
-                                  Reject
-                                </button>
-                              )}
-
-                              <div className="border-t border-gray-100 dark:border-gray-700 my-1"></div>
-
-                              <button
-                                className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center"
-                                onClick={() => {
-                                  setSelectedCampaign(null);
-                                  handleDeleteCampaign(campaign);
-                                }}
-                              >
-                                <Trash2 size={14} className="mr-2" />
-                                Delete
-                              </button>
-                            </div>
-                          )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Pagination */}
-          {pagination.total > pagination.limit && (
-            <div className="flex justify-center items-center mt-8 space-x-2">
-              <button
-                className={`p-2 rounded-lg border ${
-                  pagination.page === 1
-                    ? "border-gray-200 text-gray-400 cursor-not-allowed"
-                    : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                }`}
-                onClick={() => changePage(pagination.page - 1)}
-                disabled={pagination.page === 1}
-              >
-                <ArrowLeft size={16} />
-              </button>
-
-              {[
-                ...Array(
-                  Math.min(5, Math.ceil(pagination.total / pagination.limit))
-                ),
-              ].map((_, i) => {
-                // Calculate page number with logic for showing correct pages
-                let pageNum;
-                const totalPages = Math.ceil(
-                  pagination.total / pagination.limit
-                );
-
-                if (totalPages <= 5) {
-                  // If 5 or fewer pages, show all pages 1 through totalPages
-                  pageNum = i + 1;
-                } else if (pagination.page <= 3) {
-                  // If current page is 1, 2, or 3, show pages 1-5
-                  pageNum = i + 1;
-                } else if (pagination.page >= totalPages - 2) {
-                  // If current page is one of the last 3 pages, show the last 5 pages
-                  pageNum = totalPages - 4 + i;
-                } else {
-                  // Otherwise show current page and 2 pages on each side
-                  pageNum = pagination.page - 2 + i;
-                }
-
-                // Only render the button if the page number is valid
-                if (pageNum > 0 && pageNum <= totalPages) {
-                  return (
-                    <button
-                      key={pageNum}
-                      className={`w-9 h-9 rounded-lg ${
-                        pagination.page === pageNum
-                          ? "bg-[#FF6B81] text-white"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                      onClick={() => changePage(pageNum)}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                }
-                return null;
-              })}
-
-              <button
-                className={`p-2 rounded-lg border ${
-                  pagination.page >=
-                  Math.ceil(pagination.total / pagination.limit)
-                    ? "border-gray-200 text-gray-400 cursor-not-allowed"
-                    : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                }`}
-                onClick={() => changePage(pagination.page + 1)}
-                disabled={
-                  pagination.page >=
-                  Math.ceil(pagination.total / pagination.limit)
-                }
-              >
-                <ArrowRight size={16} />
-              </button>
-            </div>
-          )}
-        </div>
       ) : (
-        // List View
         <div className="space-y-6">
           <motion.div
             className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden"
