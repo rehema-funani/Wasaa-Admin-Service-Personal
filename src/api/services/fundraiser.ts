@@ -5,6 +5,10 @@ export const fundraiserService = {
     const response = await fundraiser.get(`/campaigns?page=${page}&limit=${limit}`)
     return response.data;
   },
+  getPendingCampaigns: async (page: number, limit: number) => {
+    const response = await fundraiser.get(`/admin/campaigns/pending?page=${page}&limit=${limit}`);
+    return response.data;
+  },
   getCampaignById: async (id: string) => {
     const response = await fundraiser.get(`/campaigns/${id}`);
     return response.data;
@@ -30,7 +34,7 @@ export const fundraiserService = {
     return response.data;
   },
   getPayouts: async () => {
-    const response = await fundraiser.get(`/payouts`);
+    const response = await fundraiser.get(`/admin/payouts/pending`);
     return response.data;
   },
   getPayoutById: async (id: string) => {
@@ -38,11 +42,11 @@ export const fundraiserService = {
     return response.data;
   },
   approvePayout: async (id: string) => {
-    const response = await fundraiser.post(`/payouts/${id}/approve`);
+    const response = await fundraiser.post(`/admin/payouts/${id}/approve`);
     return response.data;
   },
   rejectPayout: async (id: string) => {
-    const response = await fundraiser.post(`/payouts/${id}/reject`);
+    const response = await fundraiser.post(`/admin/payouts/${id}/reject`);
     return response.data;
   }
 };
