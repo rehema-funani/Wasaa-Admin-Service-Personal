@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TrendingUp,
@@ -316,18 +316,6 @@ const FundraisingDashboard = () => {
         </div>
         <div className="flex gap-2">
           <motion.button
-            className="flex items-center px-4 py-2.5 bg-primary-600 text-white rounded-lg text-sm shadow-sm"
-            whileHover={{
-              y: -2,
-              boxShadow: "0 4px 12px rgba(79, 70, 229, 0.2)",
-            }}
-            whileTap={{ y: 0 }}
-            onClick={() => toast.success("Navigating to create campaign page")}
-          >
-            <Gift size={16} className="mr-2" />
-            <span>Create Campaign</span>
-          </motion.button>
-          <motion.button
             className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 text-slate-700 dark:text-gray-300 rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
@@ -339,14 +327,12 @@ const FundraisingDashboard = () => {
         </div>
       </motion.div>
 
-      {/* Stats Grid - Updated to show all API data */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        {/* Campaign Stats */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-slate-500 dark:text-gray-400 text-sm">
@@ -433,7 +419,6 @@ const FundraisingDashboard = () => {
         </div>
       </motion.div>
 
-      {/* Revenue and Payout Stats */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -527,7 +512,6 @@ const FundraisingDashboard = () => {
         </div>
       </motion.div>
 
-      {/* Search and Filter Section */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm p-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -685,7 +669,6 @@ const FundraisingDashboard = () => {
         </div>
       ) : (
         <>
-          {/* Campaigns List */}
           <motion.div
             className="mb-8"
             initial={{ opacity: 0, y: -10 }}
@@ -878,14 +861,12 @@ const FundraisingDashboard = () => {
             </div>
           </motion.div>
 
-          {/* Recent Activity */}
           <motion.div
             className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.4 }}
           >
-            {/* Recent Transactions */}
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden">
               <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-gray-700">
                 <h2 className="text-lg font-medium text-slate-900 dark:text-white">
@@ -996,7 +977,6 @@ const FundraisingDashboard = () => {
               </div>
             </div>
 
-            {/* Campaign Performance */}
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden">
               <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-gray-700">
                 <h2 className="text-lg font-medium text-slate-900 dark:text-white">

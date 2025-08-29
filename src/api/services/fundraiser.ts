@@ -43,8 +43,8 @@ export const fundraiserService = {
     );
     return response.data;
   },
-  getAllDonations: async () => {
-    const response = await fundraiser.get(`/donations`);
+  getAllDonations: async (startDate: string, endDate: string) => {
+    const response = await fundraiser.get(`/donations/history?startDate=${startDate}&endDate=${endDate}`);
     return response.data;
   },
   getPayouts: async () => {
@@ -75,5 +75,5 @@ export const fundraiserService = {
   updateSystemSettings: async (data: any) => {
     const response = await fundraiser.put(`/admin/system/settings`, data);
     return response.data;
-  }
+  },
 };

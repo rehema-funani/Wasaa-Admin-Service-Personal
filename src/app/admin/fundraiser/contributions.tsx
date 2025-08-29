@@ -8,28 +8,24 @@ import {
   ChevronDown,
   Clock,
   CreditCard,
-  TrendingUp,
-  Calendar,
   User,
   DollarSign,
   BarChart2,
   PieChart,
   Info,
   AlertTriangle,
-  ArrowUpRight,
   ArrowRight,
   ExternalLink,
   Eye,
-  Zap,
   Flag,
   CheckCircle,
   Loader,
   RefreshCw,
 } from "lucide-react";
-import { format, formatDistanceToNow, subDays, addDays, addHours, startOfMonth, endOfMonth } from "date-fns";
+import { format, subDays, addDays, startOfMonth, endOfMonth } from "date-fns";
 import { toast } from "react-hot-toast";
+import { fundraiserService } from "../../../api/services/fundraiser";
 
-// Dummy data generator for campaign contributions
 const generateDummyContributions = () => {
   const statusOptions = ["completed", "pending", "failed"];
   const paymentMethods = ["credit_card", "bank_transfer", "mobile_money", "paypal"];
@@ -102,7 +98,6 @@ const generateDummyContributions = () => {
   return transactions;
 };
 
-// Generate monthly stats for charts
 const generateMonthlyStats = (transactions) => {
   const sixMonthsAgo = subDays(new Date(), 180);
   const months = [];
@@ -125,7 +120,6 @@ const generateMonthlyStats = (transactions) => {
   return months;
 };
 
-// Generate payment method stats
 const generatePaymentMethodStats = (transactions) => {
   const completedTransactions = transactions.filter(t => t.status === "completed");
   const methods = {};
@@ -172,25 +166,24 @@ const CampaignContributions = () => {
   const [topCampaigns, setTopCampaigns] = useState([]);
   const [topContributors, setTopContributors] = useState([]);
   const [view, setView] = useState("all");
+  const [donations, setDonations] = useState([]);
 
   useEffect(() => {
-    // Simulate API request
     const loadData = async () => {
       setIsLoading(true);
       
       try {
-        // Simulate network delay
+        const response = await fundraiserService.getAllDonations('2023-01-01', '2025-12-31');
+        setDonations(response.data);
         await new Promise(resolve => setTimeout(resolve, 1500));
         
         const dummyContributions = generateDummyContributions();
         setContributions(dummyContributions);
         setFilteredContributions(dummyContributions);
         
-        // Generate stats for charts and insights
         setMonthlyStats(generateMonthlyStats(dummyContributions));
         setPaymentMethodStats(generatePaymentMethodStats(dummyContributions));
         
-        // Generate top campaigns by donation amount
         const campaignStats = {};
         dummyContributions.forEach(c => {
           if (c.status === "completed") {
@@ -264,7 +257,6 @@ const CampaignContributions = () => {
         contribution.contributor.email.toLowerCase().includes(lowercaseQuery) ||
         contribution.id.toLowerCase().includes(lowercaseQuery)
     );
-    
     applyFilters(filters, filtered);
   };
   
@@ -337,7 +329,7 @@ const CampaignContributions = () => {
     toast.success("Contribution data exported successfully");
   };
   
-  const handleSort = (field) => {
+  const handleSort = (field: string) => {
     if (sortBy === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -382,7 +374,6 @@ const CampaignContributions = () => {
     }
   });
   
-  // Get contributions based on view
   const getViewContributions = () => {
     switch (view) {
       case "completed":
@@ -401,7 +392,6 @@ const CampaignContributions = () => {
   
   const viewContributions = getViewContributions();
   
-  // Statistics
   const getTotalRaised = () => {
     return contributions
       .filter(c => c.status === "completed")
@@ -494,7 +484,6 @@ const CampaignContributions = () => {
         </motion.button>
       </motion.div>
 
-      {/* Stats Overview */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -587,7 +576,6 @@ const CampaignContributions = () => {
         </div>
       </motion.div>
 
-      {/* Search and Filters */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm p-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -770,16 +758,13 @@ const CampaignContributions = () => {
         </AnimatePresence>
       </motion.div>
 
-      {/* Main Content */}
       <div className="grid grid-cols-12 gap-6">
-        {/* Analytics Cards */}
         <motion.div 
           className="col-span-12 lg:col-span-4 space-y-6"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
-          {/* Monthly Donations */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-gray-700 flex justify-between items-center">
               <h2 className="text-lg font-medium text-slate-900 dark:text-white">
@@ -822,7 +807,6 @@ const CampaignContributions = () => {
             </div>
           </div>
           
-          {/* Top Campaigns */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-gray-700 flex justify-between items-center">
               <h2 className="text-lg font-medium text-slate-900 dark:text-white">
