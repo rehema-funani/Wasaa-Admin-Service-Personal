@@ -12,28 +12,26 @@ import {
   Users,
   DollarSign,
   Target,
-  Percent,
   MessageSquare,
-  Zap,
   CheckCircle,
   XCircle,
   AlertTriangle,
-  Link,
   MapPin,
   User,
   Mail,
   Phone,
   Globe,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
   RefreshCw,
   Star,
   TrendingUp,
   PieChart,
   ChevronRight,
   ChevronLeft,
+  MoreHorizontal,
+  ExternalLink,
+  Award,
+  Heart,
+  Bookmark,
 } from "lucide-react";
 import { format, formatDistance } from "date-fns";
 import { toast } from "react-hot-toast";
@@ -46,52 +44,54 @@ const StatusBadge = ({ status }) => {
   const statusConfig = {
     pending_approval: {
       color:
-        "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400",
-      icon: <Clock size={10} className="mr-1" />,
+        "bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/50",
       label: "Pending Approval",
+      dot: "bg-amber-400",
     },
     approved: {
       color:
-        "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
-      icon: <CheckCircle size={10} className="mr-1" />,
+        "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 text-green-700 dark:text-green-400 border border-green-200/50 dark:border-green-800/50",
       label: "Approved",
+      dot: "bg-green-400",
     },
     active: {
       color:
-        "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400",
-      icon: <Zap size={10} className="mr-1" />,
+        "bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/50",
       label: "Active",
+      dot: "bg-blue-400",
     },
     rejected: {
-      color: "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400",
-      icon: <XCircle size={10} className="mr-1" />,
+      color:
+        "bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 text-red-700 dark:text-red-400 border border-red-200/50 dark:border-red-800/50",
       label: "Rejected",
+      dot: "bg-red-400",
     },
     completed: {
-      color: "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
-      icon: <CheckCircle size={10} className="mr-1" />,
+      color:
+        "bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 text-purple-700 dark:text-purple-400 border border-purple-200/50 dark:border-purple-800/50",
       label: "Completed",
+      dot: "bg-purple-400",
     },
     paused: {
       color:
-        "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
-      icon: <AlertTriangle size={10} className="mr-1" />,
+        "bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 text-gray-700 dark:text-gray-400 border border-gray-200/50 dark:border-gray-800/50",
       label: "Paused",
+      dot: "bg-gray-400",
     },
   };
 
   const config = statusConfig[status] || {
     color:
-      "bg-slate-50 dark:bg-slate-900/30 text-slate-700 dark:text-slate-400",
-    icon: <Clock size={10} className="mr-1" />,
-    label: status.replace(/_/g, " "),
+      "bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 text-gray-700 dark:text-gray-400 border border-gray-200/50 dark:border-gray-800/50",
+    label: status?.replace(/_/g, " ") || "Unknown",
+    dot: "bg-gray-400",
   };
 
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${config.color}`}
+      className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${config.color}`}
     >
-      {config.icon}
+      <span className={`w-2 h-2 rounded-full ${config.dot} mr-2`}></span>
       {config.label}
     </span>
   );
@@ -99,56 +99,63 @@ const StatusBadge = ({ status }) => {
 
 const ProgressBar = ({ progress }) => {
   return (
-    <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+    <div className="relative w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
       <div
-        className="h-full rounded-full bg-gradient-to-r from-[#FF6B81] to-[#B75BFF] transition-all duration-500"
+        className="absolute h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-700 ease-out rounded-full"
         style={{ width: `${progress}%` }}
-      ></div>
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
     </div>
   );
 };
 
-const StatCard = ({ title, value, icon, color, subtitle }) => (
+type StatCardProps = {
+  title: any;
+  value: any;
+  subtitle?: any;
+  icon: any;
+  color: any;
+  trend?: any;
+};
+
+const StatCard = ({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  color,
+  trend,
+}: StatCardProps) => (
   <motion.div
-    className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm"
-    whileHover={{ y: -5, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+    className="relative bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden"
+    whileHover={{ y: -4 }}
   >
-    <div className="flex items-center justify-between mb-2">
-      <p className="text-gray-500 dark:text-gray-400 text-sm">{title}</p>
-      <div
-        className={`w-8 h-8 rounded-full ${color} flex items-center justify-center`}
-      >
-        {icon}
+    <div
+      className={`absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300 ${color}`}
+    />
+    <div className="relative">
+      <div className="flex items-center justify-between mb-3">
+        <div className={`p-2.5 rounded-lg ${color}`}>
+          <Icon size={18} className="text-white" />
+        </div>
+        {trend && (
+          <span className="text-xs text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
+            {trend}
+          </span>
+        )}
       </div>
-    </div>
-    <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
-    {subtitle && (
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-        {subtitle}
+      <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+        {value}
       </p>
-    )}
+      <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
+      {subtitle && (
+        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+          {subtitle}
+        </p>
+      )}
+    </div>
   </motion.div>
 );
-
-const TabNavigation = ({ tabs, activeTab, setActiveTab }) => {
-  return (
-    <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6">
-      {tabs.map((tab: { id: string; label: string }) => (
-        <button
-          key={tab.id}
-          onClick={() => setActiveTab(tab.id)}
-          className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === tab.id
-              ? "border-[#FF6B81] text-[#FF6B81]"
-              : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-          }`}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-  );
-};
 
 const CampaignDetailsPage = () => {
   const { id } = useParams();
@@ -182,7 +189,6 @@ const CampaignDetailsPage = () => {
         });
 
         setComments(commentsRes.data || []);
-
         setDonations(donationsRes.data);
       } catch (error) {
         console.error("Error loading campaign data:", error);
@@ -216,24 +222,21 @@ const CampaignDetailsPage = () => {
   };
 
   const tabs = [
-    { id: "overview", label: "Overview" },
-    { id: "updates", label: "Updates" },
-    { id: "donations", label: "Donations" },
-    { id: "comments", label: "Comments" },
-    { id: "analytics", label: "Analytics" },
+    { id: "overview", label: "Overview", icon: Eye },
+    { id: "updates", label: "Updates", icon: RefreshCw },
+    { id: "donations", label: "Donations", icon: Heart },
+    { id: "comments", label: "Comments", icon: MessageSquare },
+    { id: "analytics", label: "Analytics", icon: BarChart2 },
   ];
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <RefreshCw
-            size={30}
-            className="text-[#FF6B81] animate-spin mx-auto mb-4"
-          />
-          <p className="text-gray-500 dark:text-gray-400">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-gray-950 dark:via-blue-950/30 dark:to-gray-950 flex items-center justify-center">
+        <div className="flex items-center bg-white dark:bg-gray-900 px-6 py-4 rounded-xl border border-gray-100 dark:border-gray-800">
+          <RefreshCw size={24} className="text-blue-500 animate-spin mr-3" />
+          <span className="text-gray-700 dark:text-gray-300 font-medium">
             Loading campaign details...
-          </p>
+          </span>
         </div>
       </div>
     );
@@ -241,10 +244,10 @@ const CampaignDetailsPage = () => {
 
   if (!campaign) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <AlertTriangle size={40} className="text-amber-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-gray-950 dark:via-blue-950/30 dark:to-gray-950 flex items-center justify-center">
+        <div className="text-center bg-white dark:bg-gray-900 p-8 rounded-xl border border-gray-100 dark:border-gray-800">
+          <AlertTriangle size={48} className="text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Campaign Not Found
           </h2>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
@@ -253,7 +256,7 @@ const CampaignDetailsPage = () => {
           </p>
           <button
             onClick={() => navigate("/admin/fundraising/campaigns")}
-            className="px-4 py-2 bg-[#FF6B81] text-white rounded-lg flex items-center mx-auto"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 hover:shadow-xl"
           >
             <ArrowLeft size={16} className="mr-2" />
             Back to Campaigns
@@ -264,217 +267,169 @@ const CampaignDetailsPage = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 w-full mx-auto max-w-[1600px]">
-      <motion.div
-        className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="flex items-center">
-          <button
-            onClick={() => navigate("/admin/fundraising/campaigns")}
-            className="p-2 mr-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            <ArrowLeft size={16} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-              Campaign Details
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-              View and manage this fundraising campaign
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-2 flex-wrap justify-end items-center">
-          {campaign.status === "pending_approval" ? (
-            <motion.button
-              className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              whileHover={{
-                y: -2,
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-              }}
-              whileTap={{ y: 0 }}
-              onClick={() => setApproveModal(true)}
-            >
-              <CheckCircle size={16} className="mr-2" />
-              <span>Approve</span>
-            </motion.button>
-          ) : (
-            <p className="text-sm border border-green-500 px-2 rounded-full text-green-500 dark:text-green-400">
-              <span>{campaign.status.replace(/_/g, " ")}</span>
-            </p>
-          )}
-          <motion.button
-            className="flex items-center px-4 py-2.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl text-sm hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
-            whileHover={{
-              y: -2,
-              boxShadow: "0 4px 12px rgba(239, 68, 68, 0.1)",
-            }}
-            whileTap={{ y: 0 }}
-            onClick={() => setShowDeleteModal(true)}
-          >
-            <Trash2 size={16} className="mr-2" />
-            <span>Delete</span>
-          </motion.button>
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        <div
-          className="relative h-64 md:h-80 bg-gray-200 dark:bg-gray-700 bg-center bg-cover"
-          style={{
-            backgroundImage: `url(${
-              campaign.images && campaign.images.length > 0
-                ? campaign.images[0]
-                : `https://placehold.co/800x400/4f46e5/ffffff/png?text=${encodeURIComponent(
-                    campaign.title
-                  )}`
-            })`,
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          <div className="absolute bottom-4 left-6 right-6">
-            <div className="flex items-center mb-2">
-              <StatusBadge status={campaign.status} />
-              {campaign.featured && (
-                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium">
-                  <Star size={10} className="mr-1" />
-                  Featured
-                </span>
-              )}
-            </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              {campaign.title}
-            </h1>
-            <p className="text-gray-200 text-sm md:text-base line-clamp-2">
-              {campaign.subtitle || campaign.description}
-            </p>
-          </div>
-        </div>
-
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <div className="mb-4">
-                <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  <span>Progress</span>
-                  <span className="font-medium flex items-center">
-                    <Percent size={14} className="mr-1" />
-                    {campaign.progress}%
-                  </span>
-                </div>
-                <ProgressBar progress={campaign.progress} />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Raised
-                  </p>
-                  <p className="font-bold text-xl text-gray-900 dark:text-white">
-                    Kes{" "}
-                    {parseFloat(campaign.raisedAmount || 0).toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 2 }
-                    )}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Goal
-                  </p>
-                  <p className="font-bold text-xl text-gray-900 dark:text-white">
-                    Kes{" "}
-                    {parseFloat(campaign.goalAmount || 0).toLocaleString(
-                      undefined,
-                      { maximumFractionDigits: 2 }
-                    )}
-                  </p>
-                </div>
-              </div>
-
-              {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-1">
-                    <Users size={16} />
-                  </div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {stats.totalDonors.toLocaleString()}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Donors
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center mx-auto mb-1">
-                    <Heart size={16} />
-                  </div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {campaign.likesCount || 0}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Likes
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-1">
-                    <MessageSquare size={16} />
-                  </div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {campaign.commentsCount || 0}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Comments
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-1">
-                    <Eye size={16} />
-                  </div>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {campaign.viewsCount || 0}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Views
-                  </p>
-                </div>
-              </div> */}
-            </div>
-
-            <div className="md:w-1/3">
-              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 dark:text-white mb-3">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-gray-950 dark:via-blue-950/30 dark:to-gray-950">
+      {/* Header */}
+      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-slate-200/50 dark:border-gray-800/50">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigate("/admin/fundraising/campaigns")}
+                className="p-2.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                   Campaign Details
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Manage and review campaign information
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              {campaign.status === "pending_approval" && (
+                <button
+                  onClick={() => setApproveModal(true)}
+                  className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-200 hover:shadow-xl"
+                >
+                  <CheckCircle size={16} className="mr-2" />
+                  Approve Campaign
+                </button>
+              )}
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="inline-flex items-center px-5 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl transition-all duration-200 hover:shadow-lg"
+              >
+                <Trash2 size={16} className="mr-2" />
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100/50 dark:border-gray-800/50 overflow-hidden mb-8"
+        >
+          <div
+            className="relative h-48 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${
+                campaign.images?.[0] ||
+                `https://placehold.co/800x400/3b82f6/ffffff/png?text=${encodeURIComponent(
+                  campaign.title
+                )}`
+              })`,
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/20" />
+            <div className="absolute top-4 left-6 right-6 flex items-start justify-between">
+              <div className="flex items-center space-x-3">
+                <StatusBadge status={campaign.status} />
+                {campaign.featured && (
+                  <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 text-amber-700 dark:text-amber-400 text-sm font-medium rounded-full border border-amber-200/50 dark:border-amber-800/50">
+                    <Star size={12} className="mr-1.5" />
+                    Featured
+                  </span>
+                )}
+              </div>
+              <div className="flex space-x-2">
+                <button className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors">
+                  <Bookmark size={16} />
+                </button>
+                <button className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors">
+                  <Share2 size={16} />
+                </button>
+              </div>
+            </div>
+            <div className="absolute bottom-4 left-6 right-6">
+              <h1 className="text-2xl font-bold text-white mb-2">
+                {campaign.title}
+              </h1>
+              <p className="text-gray-200 text-sm max-w-2xl line-clamp-2">
+                {campaign.subtitle || campaign.description}
+              </p>
+            </div>
+          </div>
+
+          {/* Enhanced Stats Section */}
+          <div className="p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Progress Section */}
+              <div className="lg:col-span-2">
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Campaign Progress
+                    </h3>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        {campaign.progress}%
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        of goal
+                      </span>
+                    </div>
+                  </div>
+                  <ProgressBar progress={campaign.progress} />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <StatCard
+                    title="Amount Raised"
+                    value={`Kes ${parseFloat(
+                      campaign.raisedAmount || 0
+                    ).toLocaleString()}`}
+                    icon={DollarSign}
+                    color="bg-gradient-to-r from-green-500 to-emerald-500"
+                    trend="+12.3%"
+                  />
+                  <StatCard
+                    title="Goal Amount"
+                    value={`Kes ${parseFloat(
+                      campaign.goalAmount || 0
+                    ).toLocaleString()}`}
+                    icon={Target}
+                    color="bg-gradient-to-r from-blue-500 to-cyan-500"
+                  />
+                  <StatCard
+                    title="Total Donors"
+                    value={(donations?.length || 0).toString()}
+                    icon={Users}
+                    color="bg-gradient-to-r from-purple-500 to-pink-500"
+                    trend="+3 today"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-gray-50/50 to-blue-50/30 dark:from-gray-800/50 dark:to-blue-900/10 rounded-xl p-6">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+                  <Award size={18} className="text-blue-500 mr-2" />
+                  Campaign Info
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex items-center text-sm">
-                    <Calendar
-                      size={14}
-                      className="text-gray-500 dark:text-gray-400 mr-2"
-                    />
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Created:{" "}
-                    </span>
-                    <span className="ml-auto text-gray-900 dark:text-white">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center text-gray-600 dark:text-gray-400">
+                      <Calendar size={16} className="mr-3 text-blue-500" />
+                      Created
+                    </div>
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {format(new Date(campaign.createdAt), "MMM d, yyyy")}
                     </span>
                   </div>
-                  <div className="flex items-center text-sm">
-                    <Clock
-                      size={14}
-                      className="text-gray-500 dark:text-gray-400 mr-2"
-                    />
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Last updated:{" "}
-                    </span>
-                    <span className="ml-auto text-gray-900 dark:text-white">
+
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center text-gray-600 dark:text-gray-400">
+                      <Clock size={16} className="mr-3 text-blue-500" />
+                      Updated
+                    </div>
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {formatDistance(
                         new Date(campaign.updatedAt),
                         new Date(),
@@ -482,42 +437,36 @@ const CampaignDetailsPage = () => {
                       )}
                     </span>
                   </div>
+
                   {campaign.endDate && (
-                    <div className="flex items-center text-sm">
-                      <Target
-                        size={14}
-                        className="text-gray-500 dark:text-gray-400 mr-2"
-                      />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        End date:{" "}
-                      </span>
-                      <span className="ml-auto text-gray-900 dark:text-white">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center text-gray-600 dark:text-gray-400">
+                        <Target size={16} className="mr-3 text-blue-500" />
+                        End date
+                      </div>
+                      <span className="font-medium text-gray-900 dark:text-white">
                         {format(new Date(campaign.endDate), "MMM d, yyyy")}
                       </span>
                     </div>
                   )}
-                  <div className="flex items-center text-sm">
-                    <MapPin
-                      size={14}
-                      className="text-gray-500 dark:text-gray-400 mr-2"
-                    />
-                    <span className="text-gray-600 dark:text-gray-300">
-                      Category:{" "}
-                    </span>
-                    <span className="ml-auto text-gray-900 dark:text-white capitalize">
+
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center text-gray-600 dark:text-gray-400">
+                      <MapPin size={16} className="mr-3 text-blue-500" />
+                      Category
+                    </div>
+                    <span className="font-medium text-gray-900 dark:text-white capitalize">
                       {campaign.category || "General"}
                     </span>
                   </div>
+
                   {campaign.organizer && (
-                    <div className="flex items-center text-sm">
-                      <User
-                        size={14}
-                        className="text-gray-500 dark:text-gray-400 mr-2"
-                      />
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Organizer:{" "}
-                      </span>
-                      <span className="ml-auto text-gray-900 dark:text-white">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center text-gray-600 dark:text-gray-400">
+                        <User size={16} className="mr-3 text-blue-500" />
+                        Organizer
+                      </div>
+                      <span className="font-medium text-gray-900 dark:text-white">
                         {campaign.organizer.name}
                       </span>
                     </div>
@@ -526,247 +475,297 @@ const CampaignDetailsPage = () => {
               </div>
             </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-6">
-        <TabNavigation
-          tabs={tabs}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100/50 dark:border-gray-800/50 overflow-hidden">
+          <div className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+            <nav className="flex space-x-1 p-1">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      activeTab === tab.id
+                        ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    <Icon size={16} className="mr-2" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
 
-        {activeTab === "overview" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  Story
-                </h2>
-                <div className="prose dark:prose-invert max-w-none">
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">
-                    {campaign.description || "No description provided."}
-                  </p>
-
-                  {campaign.story && (
-                    <>
-                      <h3 className="text-md font-medium text-gray-900 dark:text-white mb-2">
-                        Our Story
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        {campaign.story}
+          <div className="p-8">
+            {activeTab === "overview" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-8"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                      <MessageSquare size={20} className="text-blue-500 mr-3" />
+                      Campaign Story
+                    </h2>
+                    <div className="prose max-w-none">
+                      <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-base">
+                        {campaign.description || "No description provided."}
                       </p>
-                    </>
-                  )}
-                </div>
+                      {campaign.story && (
+                        <div className="mt-6 p-6 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10 rounded-xl border border-blue-100/50 dark:border-blue-800/20">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                            Detailed Story
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                            {campaign.story}
+                          </p>
+                        </div>
+                      )}
+                    </div>
 
-                {campaign.images && campaign.images.length > 0 && (
-                  <div className="mt-6">
-                    <h3 className="text-md font-medium text-gray-900 dark:text-white mb-4">
-                      Gallery
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {campaign.images.slice(0, 6).map((image, index) => (
-                        <motion.div
-                          key={index}
-                          className="relative aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden cursor-pointer"
-                          whileHover={{ scale: 1.02 }}
-                          onClick={() => {
-                            setSelectedImage(index);
-                            setShowImageGallery(true);
-                          }}
-                        >
-                          <img
-                            src={image}
-                            alt={`Campaign image ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                          {index === 5 && campaign.images.length > 6 && (
-                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                              <span className="text-white font-medium">
-                                +{campaign.images.length - 6} more
-                              </span>
+                    {campaign.images && campaign.images.length > 0 && (
+                      <div className="mt-8">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                          <Eye size={18} className="text-blue-500 mr-2" />
+                          Gallery ({campaign.images.length} images)
+                        </h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {campaign.images.slice(0, 6).map((image, index) => (
+                            <motion.button
+                              key={index}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="relative aspect-video bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group"
+                              onClick={() => {
+                                setSelectedImage(index);
+                                setShowImageGallery(true);
+                              }}
+                            >
+                              <img
+                                src={image}
+                                alt={`Campaign image ${index + 1}`}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
+                              {index === 5 && campaign.images.length > 6 && (
+                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
+                                  <span className="text-white text-sm font-semibold">
+                                    +{campaign.images.length - 6} more
+                                  </span>
+                                </div>
+                              )}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Enhanced Organizer Info */}
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-gray-800 dark:to-blue-900/10 rounded-xl p-6 border border-gray-100/50 dark:border-gray-700/50">
+                      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <User size={18} className="text-blue-500 mr-2" />
+                        Organizer
+                      </h2>
+                      <div className="flex items-center mb-6">
+                        <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-4">
+                          <User size={24} className="text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            {campaign.organizer?.name || "Unknown Organizer"}
+                          </h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Campaign Creator
+                          </p>
+                        </div>
+                      </div>
+
+                      {campaign.organizer && (
+                        <div className="space-y-3 text-sm">
+                          {campaign.organizer.email && (
+                            <div className="flex items-center text-gray-600 dark:text-gray-300 p-2 bg-white dark:bg-gray-800 rounded-lg">
+                              <Mail size={14} className="mr-3 text-blue-500" />
+                              {campaign.organizer.email}
                             </div>
                           )}
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  Organizer
-                </h2>
-                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-6">
-                  <div className="flex items-center mb-3">
-                    <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center mr-3">
-                      <User
-                        size={20}
-                        className="text-gray-500 dark:text-gray-400"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white">
-                        {campaign.organizer?.name || "Unknown Organizer"}
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Campaign Organizer
-                      </p>
-                    </div>
-                  </div>
-
-                  {campaign.organizer && (
-                    <div className="space-y-2 text-sm">
-                      {campaign.organizer.email && (
-                        <div className="flex items-center text-gray-600 dark:text-gray-300">
-                          <Mail size={14} className="mr-2" />
-                          {campaign.organizer.email}
+                          {campaign.organizer.phone && (
+                            <div className="flex items-center text-gray-600 dark:text-gray-300 p-2 bg-white dark:bg-gray-800 rounded-lg">
+                              <Phone size={14} className="mr-3 text-blue-500" />
+                              {campaign.organizer.phone}
+                            </div>
+                          )}
+                          {campaign.organizer.website && (
+                            <div className="flex items-center text-gray-600 dark:text-gray-300 p-2 bg-white dark:bg-gray-800 rounded-lg">
+                              <Globe size={14} className="mr-3 text-blue-500" />
+                              <a
+                                href={campaign.organizer.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-blue-600 dark:hover:text-blue-400 flex items-center transition-colors"
+                              >
+                                Visit Website
+                                <ExternalLink size={12} className="ml-1" />
+                              </a>
+                            </div>
+                          )}
                         </div>
                       )}
-                      {campaign.organizer.phone && (
-                        <div className="flex items-center text-gray-600 dark:text-gray-300">
-                          <Phone size={14} className="mr-2" />
-                          {campaign.organizer.phone}
-                        </div>
-                      )}
-                      {campaign.organizer.website && (
-                        <div className="flex items-center text-gray-600 dark:text-gray-300">
-                          <Globe size={14} className="mr-2" />
-                          <a
-                            href={campaign.organizer.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-[#FF6B81]"
-                          >
-                            Website
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  )}
 
-                  <div className="flex mt-4 space-x-2">
-                    <button className="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                      <Mail size={16} />
-                    </button>
-                    <button className="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                      <MessageSquare size={16} />
-                    </button>
+                      <div className="flex space-x-3 mt-6">
+                        <button className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg text-sm font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200 hover:shadow-xl">
+                          View Profile
+                        </button>
+                        <button className="p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-sm">
+                          <MoreHorizontal size={16} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </motion.div>
+            )}
 
-                <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  Share This Campaign
-                </h2>
-                <div className="flex space-x-2">
-                  <button className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <Facebook size={16} />
-                  </button>
-                  <button className="p-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors">
-                    <Twitter size={16} />
-                  </button>
-                  <button className="p-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
-                    <Instagram size={16} />
-                  </button>
-                  <button className="p-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors">
-                    <Linkedin size={16} />
-                  </button>
-                  <button className="p-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                    <Link size={16} />
-                  </button>
+            {activeTab === "analytics" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-8"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <StatCard
+                    title="Total Views"
+                    value="1,243"
+                    icon={Eye}
+                    color="bg-gradient-to-r from-blue-500 to-cyan-500"
+                    trend="+12%"
+                    subtitle="This month"
+                  />
+                  <StatCard
+                    title="Conversion Rate"
+                    value="4.2%"
+                    icon={TrendingUp}
+                    color="bg-gradient-to-r from-green-500 to-emerald-500"
+                    trend="+2.1%"
+                    subtitle="Above average"
+                  />
+                  <StatCard
+                    title="Avg. Donation"
+                    value="Kes 86"
+                    icon={DollarSign}
+                    color="bg-gradient-to-r from-amber-500 to-orange-500"
+                    trend="+Kes 4"
+                    subtitle="Per donor"
+                  />
+                  <StatCard
+                    title="Social Shares"
+                    value="327"
+                    icon={Share2}
+                    color="bg-gradient-to-r from-purple-500 to-pink-500"
+                    trend="+43"
+                    subtitle="This week"
+                  />
                 </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
 
-        {activeTab === "analytics" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <StatCard
-                title="Total Visits"
-                value="1,243"
-                icon={<Eye size={16} />}
-                color="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-                subtitle="+12% from last week"
-              />
-              <StatCard
-                title="Conversion Rate"
-                value="4.2%"
-                icon={<TrendingUp size={16} />}
-                color="bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                subtitle="+2.1% from last week"
-              />
-              <StatCard
-                title="Avg. Donation"
-                value="$86.42"
-                icon={<DollarSign size={16} />}
-                color="bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
-                subtitle="+$4.32 from last week"
-              />
-              <StatCard
-                title="Social Shares"
-                value="327"
-                icon={<Share2 size={16} />}
-                color="bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-                subtitle="+43 from last week"
-              />
-            </div>
+                {/* Enhanced Charts */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-gradient-to-br from-blue-50/50 to-cyan-50/50 dark:from-blue-900/10 dark:to-cyan-900/10 rounded-xl p-8 border border-blue-100/50 dark:border-blue-800/20">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+                      <BarChart2 size={18} className="text-blue-500 mr-2" />
+                      Donations Over Time
+                    </h3>
+                    <div className="h-48 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="text-center">
+                        <BarChart2
+                          size={40}
+                          className="mx-auto mb-3 text-blue-400"
+                        />
+                        <p className="text-sm font-medium">
+                          Chart visualization
+                        </p>
+                        <p className="text-xs">would appear here</p>
+                      </div>
+                    </div>
+                  </div>
 
-            <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 mb-6">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-4">
-                Traffic Sources
-              </h3>
-              <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                <div className="text-center">
-                  <PieChart size={40} className="mx-auto mb-2" />
-                  <p>Traffic sources chart would be displayed here</p>
+                  <div className="bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-900/10 dark:to-pink-900/10 rounded-xl p-8 border border-purple-100/50 dark:border-purple-800/20">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+                      <PieChart size={18} className="text-purple-500 mr-2" />
+                      Traffic Sources
+                    </h3>
+                    <div className="h-48 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="text-center">
+                        <PieChart
+                          size={40}
+                          className="mx-auto mb-3 text-purple-400"
+                        />
+                        <p className="text-sm font-medium">
+                          Chart visualization
+                        </p>
+                        <p className="text-xs">would appear here</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 dark:text-white mb-4">
-                  Donations Over Time
+            {activeTab === "donations" && (
+              <DonationsTab
+                campaignId={id}
+                fundraiserService={fundraiserService}
+              />
+            )}
+
+            {activeTab === "comments" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-16"
+              >
+                <div className="w-20 h-20 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MessageSquare size={32} className="text-blue-500" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                  No Comments Yet
                 </h3>
-                <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                  <div className="text-center">
-                    <BarChart2 size={40} className="mx-auto mb-2" />
-                    <p>Donations timeline chart would be displayed here</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 dark:text-white mb-4">
-                  Demographics
-                </h3>
-                <div className="h-64 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                  <div className="text-center">
-                    <Users size={40} className="mx-auto mb-2" />
-                    <p>Demographics chart would be displayed here</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
+                <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                  Comments and feedback from supporters will appear here once
+                  people start engaging with the campaign.
+                </p>
+              </motion.div>
+            )}
 
-        {activeTab === "donations" && (
-          <DonationsTab campaignId={id} fundraiserService={fundraiserService} />
-        )}
+            {activeTab === "updates" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-16"
+              >
+                <div className="w-20 h-20 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <RefreshCw size={32} className="text-green-500" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+                  No Updates Posted
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+                  Campaign updates and progress reports will be displayed here
+                  when the organizer shares them.
+                </p>
+              </motion.div>
+            )}
+          </div>
+        </div>
       </div>
 
+      {/* Modals remain the same */}
       <AnimatePresence>
         {approveModal && (
           <ApproveCampaignModal
@@ -792,70 +791,68 @@ const CampaignDetailsPage = () => {
         )}
       </AnimatePresence>
 
+      {/* Enhanced Image Gallery */}
       <AnimatePresence>
         {showImageGallery && campaign.images && campaign.images.length > 0 && (
           <motion.div
-            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowImageGallery(false)}
           >
             <button
-              className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+              className="absolute top-6 right-6 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
               onClick={() => setShowImageGallery(false)}
             >
-              <XCircle size={24} />
+              <XCircle size={28} />
             </button>
 
             <button
-              className="absolute left-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors z-10"
+              className="absolute left-6 top-1/2 -translate-y-1/2 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
               onClick={() =>
                 setSelectedImage((prev) =>
                   prev === 0 ? campaign.images.length - 1 : prev - 1
                 )
               }
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={28} />
             </button>
 
             <button
-              className="absolute right-4 p-2 text-white hover:bg-white/10 rounded-full transition-colors z-10"
+              className="absolute right-6 top-1/2 -translate-y-1/2 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
               onClick={() =>
                 setSelectedImage((prev) =>
                   prev === campaign.images.length - 1 ? 0 : prev + 1
                 )
               }
             >
-              <ChevronRight size={24} />
+              <ChevronRight size={28} />
             </button>
 
-            <motion.div
-              className="max-w-4xl w-full max-h-full"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+            <div
+              className="max-w-5xl max-h-[85vh] p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={campaign.images[selectedImage]}
                 alt={`Campaign image ${selectedImage + 1}`}
-                className="w-full h-auto max-h-[70vh] object-contain"
+                className="w-full h-full object-contain rounded-xl shadow-2xl"
               />
-            </motion.div>
+            </div>
 
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-              <div className="flex space-x-2">
-                {campaign.images.map((_, index: number) => (
-                  <button
-                    key={index}
-                    className={`w-2 h-2 rounded-full ${
-                      index === selectedImage ? "bg-white" : "bg-white/50"
-                    }`}
-                    onClick={() => setSelectedImage(index)}
-                  />
-                ))}
-              </div>
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-3">
+              {campaign.images.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === selectedImage
+                      ? "bg-white"
+                      : "bg-white/40 hover:bg-white/60"
+                  }`}
+                  onClick={() => setSelectedImage(index)}
+                />
+              ))}
             </div>
           </motion.div>
         )}

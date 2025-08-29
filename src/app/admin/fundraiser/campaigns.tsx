@@ -16,6 +16,8 @@ import {
   ArrowLeft,
   RefreshCw,
   ThumbsUp,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { toast } from "react-hot-toast";
@@ -154,7 +156,7 @@ const CampaignsPage = () => {
     };
   }, [pagination.page, pagination.limit]);
 
-  const changePage = (newPage: any) => {
+  const changePage = (newPage: number) => {
     if (
       newPage > 0 &&
       newPage <= Math.ceil(pagination.total / pagination.limit)
@@ -339,6 +341,44 @@ const CampaignsPage = () => {
 
   const handleViewCampaign = (id: string) => {
     navigate(`/admin/fundraising/campaigns/${id}`);
+  };
+
+  const totalPages = Math.ceil(pagination.total / pagination.limit);
+  const startItem = (pagination.page - 1) * pagination.limit + 1;
+  const endItem = Math.min(
+    pagination.page * pagination.limit,
+    pagination.total
+  );
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+
+    for (
+      let i = Math.max(2, pagination.page - delta);
+      i <= Math.min(totalPages - 1, pagination.page + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+
+    if (pagination.page - delta > 2) {
+      rangeWithDots.push(1, "...");
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    rangeWithDots.push(...range);
+
+    if (pagination.page + delta < totalPages - 1) {
+      rangeWithDots.push("...", totalPages);
+    } else if (totalPages > 1) {
+      rangeWithDots.push(totalPages);
+    }
+
+    return rangeWithDots;
   };
 
   return (
@@ -872,93 +912,79 @@ const CampaignsPage = () => {
             </div>
           </motion.div>
 
-          {pagination.total > pagination.limit && (
-            <div className="flex justify-center items-center mt-10 space-x-3">
-              <motion.button
-                className={`p-2.5 rounded-xl border ${
-                  pagination.page === 1
-                    ? "border-gray-200 text-gray-400 cursor-not-allowed"
-                    : "border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-[#FF6B81]/30"
-                } shadow-sm transition-all`}
-                onClick={() => changePage(pagination.page - 1)}
-                disabled={pagination.page === 1}
-                whileHover={pagination.page !== 1 ? { scale: 1.05, y: -2 } : {}}
-                whileTap={pagination.page !== 1 ? { scale: 0.95 } : {}}
-              >
-                <ArrowLeft size={18} />
-              </motion.button>
+          {/* Enhanced Pagination */}
+          {!isLoading && filteredCampaigns.length > 0 && totalPages > 1 && (
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <span>
+                    Showing{" "}
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {startItem}
+                    </span>{" "}
+                    to{" "}
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {endItem}
+                    </span>{" "}
+                    of{" "}
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {pagination.total}
+                    </span>{" "}
+                    campaigns
+                  </span>
+                </div>
 
-              {[
-                ...Array(
-                  Math.min(5, Math.ceil(pagination.total / pagination.limit))
-                ),
-              ].map((_, i) => {
-                let pageNum;
-                const totalPages = Math.ceil(
-                  pagination.total / pagination.limit
-                );
+                <div className="flex items-center space-x-2">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => changePage(pagination.page - 1)}
+                    disabled={pagination.page === 1}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      pagination.page === 1
+                        ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                        : "text-gray-600 dark:text-gray-400 hover:text-[#FF6B81] dark:hover:text-[#FF6B81] hover:bg-[#FF6B81]/10"
+                    }`}
+                  >
+                    <ChevronLeft size={16} className="mr-1" />
+                    Previous
+                  </button>
 
-                if (totalPages <= 5) {
-                  pageNum = i + 1;
-                } else if (pagination.page <= 3) {
-                  pageNum = i + 1;
-                } else if (pagination.page >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
-                } else {
-                  pageNum = pagination.page - 2 + i;
-                }
+                  <div className="flex items-center space-x-1">
+                    {getPageNumbers().map((pageNumber, index) => (
+                      <button
+                        key={index}
+                        onClick={() =>
+                          typeof pageNumber === "number" &&
+                          changePage(pageNumber)
+                        }
+                        disabled={pageNumber === "..."}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          pageNumber === pagination.page
+                            ? "bg-gradient-to-r from-[#FF6B81] to-[#B75BFF] text-white shadow-sm"
+                            : pageNumber === "..."
+                            ? "text-gray-400 dark:text-gray-500 cursor-default"
+                            : "text-gray-600 dark:text-gray-400 hover:text-[#FF6B81] dark:hover:text-[#FF6B81] hover:bg-[#FF6B81]/10"
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    ))}
+                  </div>
 
-                if (pageNum > 0 && pageNum <= totalPages) {
-                  return (
-                    <motion.button
-                      key={pageNum}
-                      className={`w-10 h-10 rounded-xl ${
-                        pagination.page === pageNum
-                          ? "bg-gradient-to-r from-[#FF6B81] to-[#B75BFF] text-white shadow-md"
-                          : "text-gray-700 hover:bg-gray-100"
-                      } transition-all`}
-                      onClick={() => changePage(pageNum)}
-                      whileHover={
-                        pagination.page !== pageNum
-                          ? { scale: 1.05, y: -2 }
-                          : {}
-                      }
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {pageNum}
-                    </motion.button>
-                  );
-                }
-                return null;
-              })}
-
-              <motion.button
-                className={`p-2.5 rounded-xl border ${
-                  pagination.page >=
-                  Math.ceil(pagination.total / pagination.limit)
-                    ? "border-gray-200 text-gray-400 cursor-not-allowed"
-                    : "border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-[#FF6B81]/30"
-                } shadow-sm transition-all`}
-                onClick={() => changePage(pagination.page + 1)}
-                disabled={
-                  pagination.page >=
-                  Math.ceil(pagination.total / pagination.limit)
-                }
-                whileHover={
-                  pagination.page <
-                  Math.ceil(pagination.total / pagination.limit)
-                    ? { scale: 1.05, y: -2 }
-                    : {}
-                }
-                whileTap={
-                  pagination.page <
-                  Math.ceil(pagination.total / pagination.limit)
-                    ? { scale: 0.95 }
-                    : {}
-                }
-              >
-                <ArrowRight size={18} />
-              </motion.button>
+                  <button
+                    onClick={() => changePage(pagination.page + 1)}
+                    disabled={pagination.page === totalPages}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      pagination.page === totalPages
+                        ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                        : "text-gray-600 dark:text-gray-400 hover:text-[#FF6B81] dark:hover:text-[#FF6B81] hover:bg-[#FF6B81]/10"
+                    }`}
+                  >
+                    Next
+                    <ChevronRight size={16} className="ml-1" />
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
