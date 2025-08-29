@@ -54,7 +54,7 @@ const CampaignsPage = () => {
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 20,
+    limit: 30,
     total: 0,
   });
   const [showFilters, setShowFilters] = useState(false);
@@ -67,7 +67,6 @@ const CampaignsPage = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [showBulkActionMenu, setShowBulkActionMenu] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -348,7 +347,6 @@ const CampaignsPage = () => {
     pagination.total
   );
 
-  // Generate page numbers for pagination
   const getPageNumbers = () => {
     const delta = 2;
     const range = [];

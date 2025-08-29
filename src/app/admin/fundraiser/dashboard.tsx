@@ -5,7 +5,6 @@ import {
   Users,
   Calendar,
   DollarSign,
-  Award,
   Filter,
   Search,
   Download,
@@ -15,7 +14,6 @@ import {
   Gift,
   Zap,
   AlertTriangle,
-  FileText,
   Settings,
   BarChart2,
   Eye,
@@ -24,11 +22,13 @@ import {
   CreditCard,
   RefreshCw,
   Loader,
+  CheckCircle,
+  PiggyBank,
 } from "lucide-react";
-import { format, formatDistanceToNow, subDays, addHours } from "date-fns";
+import { format, subDays, addHours } from "date-fns";
 import { toast } from "react-hot-toast";
+import { fundraiserService } from "../../../api/services/fundraiser";
 
-// Dummy data for campaigns
 const generateDummyCampaigns = () => {
   const categories = [
     "Medical",
@@ -152,13 +152,36 @@ const FundraisingDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [view, setView] = useState("active");
+  const [stats, setStats] = useState({
+    campaigns: {
+      total: 0,
+      pending: 0,
+      active: 0,
+      completed: 0,
+    },
+    payouts: {
+      total: 0,
+      pending: 0,
+      approved: 0,
+    },
+    donations: {
+      total: 0,
+    },
+    revenue: {
+      totalRaised: 0,
+      platformFees: 0,
+    },
+  });
 
   useEffect(() => {
-    // Simulate API request
     const loadData = async () => {
       setIsLoading(true);
 
       try {
+        const response = await fundraiserService.getDashboardStats();
+        setStats(response.data);
+
+        // Generate dummy data for campaigns and transactions
         await new Promise((resolve) => setTimeout(resolve, 1500));
         const dummyCampaigns = generateDummyCampaigns();
         const dummyTransactions = generateDummyTransactions(dummyCampaigns);
@@ -176,34 +199,6 @@ const FundraisingDashboard = () => {
 
     loadData();
   }, []);
-
-  // Calculate stats
-  const getTotalRaised = () => {
-    return transactions
-      .filter((t) => t.type === "donation" && t.status === "completed")
-      .reduce((sum, t) => sum + t.amount, 0);
-  };
-
-  const getActiveCampaignsCount = () => {
-    return campaigns.filter((c) => c.status === "active").length;
-  };
-
-  const getRecentDonorsCount = () => {
-    const oneWeekAgo = subDays(new Date(), 7);
-    return new Set(
-      transactions
-        .filter(
-          (t) => t.type === "donation" && new Date(t.createdAt) >= oneWeekAgo
-        )
-        .map((t) => t.user.id)
-    ).size;
-  };
-
-  const getWithdrawalRequestsCount = () => {
-    return transactions.filter(
-      (t) => t.type === "withdrawal" && t.status === "pending"
-    ).length;
-  };
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -276,17 +271,13 @@ const FundraisingDashboard = () => {
     toast.success("Dashboard data exported successfully");
   };
 
-  // Get featured campaigns
-  const featuredCampaigns = campaigns
-    .filter((c) => c.featured && c.status === "active")
-    .slice(0, 3);
-
-  // Get recent transactions
   const recentTransactions = [...transactions]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
     .slice(0, 5);
 
-  // Get campaigns based on current view
   const getViewCampaigns = () => {
     switch (view) {
       case "active":
@@ -348,24 +339,118 @@ const FundraisingDashboard = () => {
         </div>
       </motion.div>
 
-      {/* Stats Overview */}
+      {/* Stats Grid - Updated to show all API data */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        {/* Campaign Stats */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Total Campaigns
+            </p>
+            <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <Gift size={16} />
+            </div>
+          </div>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {isLoading ? "..." : stats.campaigns.total.toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            All campaigns
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Pending Campaigns
+            </p>
+            <div className="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
+              <Clock size={16} />
+            </div>
+          </div>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {isLoading ? "..." : stats.campaigns.pending.toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            Awaiting review
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Active Campaigns
+            </p>
+            <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <Zap size={16} />
+            </div>
+          </div>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {isLoading ? "..." : stats.campaigns.active.toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            Currently active
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Completed Campaigns
+            </p>
+            <div className="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+              <CheckCircle size={16} />
+            </div>
+          </div>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {isLoading ? "..." : stats.campaigns.completed.toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            Successfully completed
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Total Donations
+            </p>
+            <div className="w-8 h-8 rounded-full bg-pink-50 dark:bg-pink-900/30 flex items-center justify-center text-pink-600 dark:text-pink-400">
+              <Users size={16} />
+            </div>
+          </div>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {isLoading ? "..." : stats.donations.total.toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            Total donations received
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Revenue and Payout Stats */}
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.15 }}
       >
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-slate-500 dark:text-gray-400 text-sm">
               Total Raised
             </p>
-            <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <div className="w-8 h-8 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
               <DollarSign size={16} />
             </div>
           </div>
           <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
-            ${isLoading ? "..." : getTotalRaised().toLocaleString()}
+            Kes {isLoading ? "..." : stats.revenue.totalRaised.toLocaleString()}
           </p>
           <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
             Across all campaigns
@@ -375,61 +460,74 @@ const FundraisingDashboard = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-slate-500 dark:text-gray-400 text-sm">
-              Active Campaigns
+              Platform Fees
             </p>
-            <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-              <Zap size={16} />
+            <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+              <PiggyBank size={16} />
             </div>
           </div>
           <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
-            {isLoading ? "..." : getActiveCampaignsCount()}
+            Kes{" "}
+            {isLoading ? "..." : stats.revenue.platformFees.toLocaleString()}
           </p>
           <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
-            {isLoading
-              ? "..."
-              : Math.round(
-                  (getActiveCampaignsCount() / campaigns.length) * 100
-                )}
-            % of total campaigns
+            Platform commission
           </p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-slate-500 dark:text-gray-400 text-sm">
-              Recent Donors
+              Total Payouts
             </p>
-            <div className="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
-              <Users size={16} />
+            <div className="w-8 h-8 rounded-full bg-cyan-50 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+              <CreditCard size={16} />
             </div>
           </div>
           <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
-            {isLoading ? "..." : getRecentDonorsCount()}
+            {isLoading ? "..." : stats.payouts.total.toLocaleString()}
           </p>
           <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
-            Unique donors in the last 7 days
+            All payout requests
           </p>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <p className="text-slate-500 dark:text-gray-400 text-sm">
-              Pending Withdrawals
+              Pending Payouts
             </p>
-            <div className="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
+            <div className="w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
               <AlertTriangle size={16} />
             </div>
           </div>
           <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
-            {isLoading ? "..." : getWithdrawalRequestsCount()}
+            {isLoading ? "..." : stats.payouts.pending.toLocaleString()}
           </p>
           <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
-            Requests awaiting approval
+            Awaiting approval
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Approved Payouts
+            </p>
+            <div className="w-8 h-8 rounded-full bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-teal-600 dark:text-teal-400">
+              <CheckCircle size={16} />
+            </div>
+          </div>
+          <p className="text-2xl font-light text-slate-900 dark:text-gray-100">
+            {isLoading ? "..." : stats.payouts.approved.toLocaleString()}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-gray-400 mt-1">
+            Successfully processed
           </p>
         </div>
       </motion.div>
 
-      {/* Search and Filters */}
+      {/* Search and Filter Section */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm p-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -587,130 +685,12 @@ const FundraisingDashboard = () => {
         </div>
       ) : (
         <>
-          {/* Featured Campaigns */}
-          <motion.div
-            className="mb-8"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-slate-900 dark:text-white">
-                Featured Campaigns
-              </h2>
-              <button className="text-primary-600 dark:text-primary-400 text-sm hover:underline">
-                View All
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {featuredCampaigns.map((campaign) => (
-                <motion.div
-                  key={campaign.id}
-                  className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-slate-100 dark:border-gray-700 shadow-sm"
-                  whileHover={{
-                    y: -5,
-                    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.05)",
-                  }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="h-32 bg-gradient-to-r from-primary-500 to-indigo-600 relative">
-                    <div className="absolute top-3 right-3 bg-white dark:bg-gray-800 text-amber-500 text-xs font-medium py-1 px-2 rounded-full flex items-center">
-                      <Award size={12} className="mr-1" />
-                      Featured
-                    </div>
-                  </div>
-
-                  <div className="p-4">
-                    <div className="flex items-center text-xs text-slate-500 dark:text-gray-400 mb-2">
-                      <span className="capitalize px-2 py-0.5 bg-slate-100 dark:bg-gray-700 rounded-full mr-2">
-                        {campaign.category}
-                      </span>
-                      <span className="flex items-center">
-                        <Clock size={12} className="mr-1" />
-                        {formatDistanceToNow(new Date(campaign.endDate), {
-                          addSuffix: true,
-                        })}
-                      </span>
-                    </div>
-
-                    <h3 className="font-medium text-slate-900 dark:text-white text-md mb-2 line-clamp-2">
-                      {campaign.title}
-                    </h3>
-
-                    <div className="mb-3">
-                      <div className="flex justify-between text-xs text-slate-600 dark:text-gray-400 mb-1">
-                        <span>Progress</span>
-                        <span className="font-medium">
-                          {campaign.progress}%
-                        </span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary-500 rounded-full"
-                          style={{ width: `${campaign.progress}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between mb-4">
-                      <div>
-                        <p className="text-xs text-slate-500 dark:text-gray-400">
-                          Raised
-                        </p>
-                        <p className="font-medium text-slate-900 dark:text-white">
-                          ${campaign.raised.toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-slate-500 dark:text-gray-400">
-                          Goal
-                        </p>
-                        <p className="font-medium text-slate-900 dark:text-white">
-                          ${campaign.goal.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-medium text-sm mr-2">
-                          {campaign.creator.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </div>
-                        <div className="text-xs">
-                          <p className="text-slate-700 dark:text-gray-300">
-                            {campaign.creator.name}
-                          </p>
-                          <p className="text-slate-500 dark:text-gray-400">
-                            {campaign.location}
-                          </p>
-                        </div>
-                      </div>
-
-                      <button
-                        className="p-2 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
-                        onClick={() =>
-                          toast.success(`Viewing ${campaign.title}`)
-                        }
-                      >
-                        <Eye size={18} />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
           {/* Campaigns List */}
           <motion.div
             className="mb-8"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.4 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
           >
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden">
               <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-gray-700">
@@ -903,7 +883,7 @@ const FundraisingDashboard = () => {
             className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.5 }}
+            transition={{ duration: 0.3, delay: 0.4 }}
           >
             {/* Recent Transactions */}
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden">

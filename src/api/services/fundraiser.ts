@@ -2,11 +2,15 @@ import fundraiser from "../fundraiser-axios";
 
 export const fundraiserService = {
   getCampaigns: async (page: number, limit: number) => {
-    const response = await fundraiser.get(`/campaigns?page=${page}&limit=${limit}`)
+    const response = await fundraiser.get(
+      `/campaigns?page=${page}&limit=${limit}`
+    );
     return response.data;
   },
   getPendingCampaigns: async (page: number, limit: number) => {
-    const response = await fundraiser.get(`/admin/campaigns/pending?page=${page}&limit=${limit}`);
+    const response = await fundraiser.get(
+      `/admin/campaigns/pending?page=${page}&limit=${limit}`
+    );
     return response.data;
   },
   getCampaignById: async (id: string) => {
@@ -26,11 +30,17 @@ export const fundraiserService = {
     return response.data;
   },
   publishCampaign: async (id: string, data: any) => {
-    const response = await fundraiser.post(`/admin/campaigns/${id}/moderate`, data);
+    const response = await fundraiser.post(
+      `/admin/campaigns/${id}/moderate`,
+      data
+    );
     return response.data;
   },
   rejectCampaign: async (id: string, data: any) => {
-    const response = await fundraiser.post(`/admin/campaigns/${id}/reject`, data);
+    const response = await fundraiser.post(
+      `/admin/campaigns/${id}/reject`,
+      data
+    );
     return response.data;
   },
   getAllDonations: async () => {
@@ -51,6 +61,19 @@ export const fundraiserService = {
   },
   rejectPayout: async (id: string) => {
     const response = await fundraiser.post(`/admin/payouts/${id}/reject`);
+    return response.data;
+  },
+
+  getDashboardStats: async () => {
+    const response = await fundraiser.get(`/admin/dashboard/stats`);
+    return response.data;
+  },
+  getSystemSettings: async () => {
+    const response = await fundraiser.get(`/admin/system/settings`);
+    return response.data;
+  },
+  updateSystemSettings: async (data: any) => {
+    const response = await fundraiser.put(`/admin/system/settings`, data);
     return response.data;
   }
 };
