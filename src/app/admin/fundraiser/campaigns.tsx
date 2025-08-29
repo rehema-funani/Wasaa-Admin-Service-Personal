@@ -12,8 +12,6 @@ import {
   Zap,
   Loader,
   DollarSign,
-  ArrowRight,
-  ArrowLeft,
   RefreshCw,
   ThumbsUp,
   ChevronRight,
@@ -912,7 +910,6 @@ const CampaignsPage = () => {
             </div>
           </motion.div>
 
-          {/* Enhanced Pagination */}
           {!isLoading && filteredCampaigns.length > 0 && totalPages > 1 && (
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm px-6 py-4">
               <div className="flex items-center justify-between">
@@ -935,7 +932,6 @@ const CampaignsPage = () => {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  {/* Previous Button */}
                   <button
                     onClick={() => changePage(pagination.page - 1)}
                     disabled={pagination.page === 1}
