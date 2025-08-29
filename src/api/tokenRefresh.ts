@@ -43,14 +43,12 @@ const onRefreshed = (token: string): void => {
 };
 
 export const getToken = (storageType: TokenStorageType): string | null => {
-  // Always check localStorage first
   const localToken = localStorage.getItem("authToken");
   if (localToken) return localToken;
 
-  // Fall back to other storage methods if configured
   switch (storageType) {
     case TokenStorageType.LOCAL_STORAGE:
-      return null; // Already checked
+      return null; 
     case TokenStorageType.COOKIES:
       return Cookies.get("authToken") || null;
     case TokenStorageType.MIXED:
@@ -65,7 +63,6 @@ export const handleLogout = (): void => {
   //   localStorage.removeItem("refreshToken");
   //   localStorage.removeItem("user");
   //   localStorage.removeItem("userType");
-  //   localStorage.removeItem("source");
   //   window.location.href = "/auth/login";
 };
 
@@ -73,10 +70,8 @@ export const refreshAuthToken = async (
   config: TokenRefreshConfig
 ): Promise<string> => {
   try {
-    // Always try to get refresh token from localStorage first
     let refreshToken = localStorage.getItem("refreshToken");
 
-    // Fall back to other storage if not found in localStorage
     if (!refreshToken) {
       switch (config.storageType) {
         case TokenStorageType.COOKIES:

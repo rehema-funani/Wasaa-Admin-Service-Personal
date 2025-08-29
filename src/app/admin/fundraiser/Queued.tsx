@@ -11,10 +11,14 @@ import {
   Eye,
   RefreshCw,
   Loader,
-  SlidersHorizontal,
-  AlertCircle,
   User,
-  AlignLeft,
+  DollarSign,
+  ChevronRight,
+  Tag,
+  AlertCircle,
+  MoreVertical,
+  ArrowUpDown,
+  ChevronLeft,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { toast } from "react-hot-toast";
@@ -25,15 +29,13 @@ import RejectCampaignModal from "../../../components/fundraiser/RejectCampaignMo
 
 const getPlaceholderImage = (title: string, id: string) => {
   const colorOptions = [
-    "4f46e5",
-    "0ea5e9",
+    "3b82f6",
+    "06b6d4",
     "10b981",
     "f59e0b",
     "ef4444",
     "8b5cf6",
     "ec4899",
-    "FF6B81",
-    "B75BFF",
   ];
   const index = id.charCodeAt(0) % colorOptions.length;
   const color = colorOptions[index];
@@ -186,7 +188,7 @@ const QueuedCampaignsPage = () => {
     setFilteredCampaigns(filtered);
   };
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = (newFilters: any) => {
     applyFilters(newFilters);
   };
 
@@ -215,7 +217,7 @@ const QueuedCampaignsPage = () => {
       setFilteredCampaigns(response.data);
       setPagination(response.pagination);
 
-      toast.success("Queue refreshed successfully");
+      toast.success("Queue refreshed");
     } catch (error) {
       toast.error("Failed to refresh data");
       console.error("Error refreshing data:", error);
@@ -224,60 +226,21 @@ const QueuedCampaignsPage = () => {
     }
   };
 
-  const handleAction = (campaign, type) => {
+  const handleAction = (campaign: any, type: string) => {
     setSelectedCampaign(campaign);
     setActionType(type);
     setShowActionModal(true);
   };
 
-  const confirmAction = async () => {
-    setIsFetching(true);
-    try {
-      let successMessage = "";
-
-      switch (actionType) {
-        case "approve":
-          // await fundraiserService.approveCampaign(selectedCampaign.id);
-          successMessage = "Campaign approved successfully";
-          break;
-        case "reject":
-          // await fundraiserService.rejectCampaign(selectedCampaign.id);
-          successMessage = "Campaign rejected successfully";
-          break;
-        default:
-          successMessage = "Action completed successfully";
-      }
-
-      // Update UI optimistically - remove the campaign from the list
-      setCampaigns((prev) => prev.filter((c) => c.id !== selectedCampaign.id));
-      setFilteredCampaigns((prev) =>
-        prev.filter((c) => c.id !== selectedCampaign.id)
-      );
-
-      setPagination((prev) => ({
-        ...prev,
-        total: prev.total - 1,
-      }));
-
-      toast.success(successMessage);
-    } catch (error) {
-      toast.error(`Failed to ${actionType} campaign`);
-      console.error(`Error during ${actionType}:`, error);
-    } finally {
-      setIsFetching(false);
-      setShowActionModal(false);
-    }
+  const handleViewCampaign = (id: string) => {
+    navigate(`/admin/fundraising/campaigns/${id}`);
   };
 
-  const handleViewCampaign = (campaignId) => {
-    navigate(`/admin/fundraising/campaigns/${campaignId}`);
+  const toggleExpandCampaign = (id: string) => {
+    setExpandedCampaign(expandedCampaign === id ? null : id);
   };
 
-  const toggleExpandCampaign = (campaignId) => {
-    setExpandedCampaign(expandedCampaign === campaignId ? null : campaignId);
-  };
-
-  const changePage = (newPage) => {
+  const changePage = (newPage: number) => {
     if (
       newPage > 0 &&
       newPage <= Math.ceil(pagination.total / pagination.limit)
@@ -295,613 +258,702 @@ const QueuedCampaignsPage = () => {
     }
   };
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.3,
-        delay: i * 0.04,
-        ease: [0.22, 0.61, 0.36, 1],
-      },
-    }),
-    hover: {
-      y: -6,
-      boxShadow:
-        "0 18px 35px rgba(0, 0, 0, 0.08), 0 8px 15px rgba(0, 0, 0, 0.06)",
-      transition: { duration: 0.25, ease: [0.22, 0.61, 0.36, 1] },
-    },
-    exit: {
-      opacity: 0,
-      y: -15,
-      transition: {
-        duration: 0.25,
-        ease: [0.22, 0.61, 0.36, 1],
-      },
-    },
-  };
+  const totalPages = Math.ceil(pagination.total / pagination.limit);
+  const startItem = (pagination.page - 1) * pagination.limit + 1;
+  const endItem = Math.min(
+    pagination.page * pagination.limit,
+    pagination.total
+  );
 
-  const expandVariants = {
-    collapsed: { height: 0, opacity: 0 },
-    expanded: {
-      height: "auto",
-      opacity: 1,
-      transition: {
-        height: { duration: 0.3 },
-        opacity: { duration: 0.3, delay: 0.1 },
-      },
-    },
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+
+    for (
+      let i = Math.max(2, pagination.page - delta);
+      i <= Math.min(totalPages - 1, pagination.page + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+
+    if (pagination.page - delta > 2) {
+      rangeWithDots.push(1, "...");
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    rangeWithDots.push(...range);
+
+    if (pagination.page + delta < totalPages - 1) {
+      rangeWithDots.push("...", totalPages);
+    } else if (totalPages > 1) {
+      rangeWithDots.push(totalPages);
+    }
+
+    return rangeWithDots;
   };
 
   return (
     <div
       ref={containerRef}
-      className="p-6 sm:p-8 w-full mx-auto max-w-[1600px] bg-gray-50 dark:bg-gray-900 min-h-screen"
+      className="min-h-screen bg-slate-50 dark:bg-gray-950"
     >
-      <motion.div
-        className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 0.61, 0.36, 1] }}
-      >
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-            <span className="mr-4 bg-gradient-to-br from-amber-400 to-amber-600 w-10 h-10 rounded-xl flex items-center justify-center shadow-md">
-              <Clock className="text-white" size={20} />
-            </span>
-            Approval Queue
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 ml-14">
-            Review and approve fundraising campaigns
-          </p>
-        </div>
-        <div className="flex gap-3 flex-wrap justify-end">
-          <motion.button
-            className="flex items-center px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm"
-            whileHover={{
-              y: -3,
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.06)",
-              backgroundColor: "#f9fafb",
-            }}
-            whileTap={{ y: 0 }}
-            onClick={refreshData}
-            disabled={isFetching}
-          >
-            <RefreshCw
-              size={16}
-              className={`mr-2 ${isFetching ? "animate-spin" : ""}`}
-            />
-            <span>Refresh Queue</span>
-          </motion.button>
-        </div>
-      </motion.div>
-
-      {/* Queue Status Card */}
-      <motion.div
-        className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm mb-8"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 0.61, 0.36, 1] }}
-      >
-        <div className="flex flex-col md:flex-row md:items-center justify-between">
-          <div className="flex items-center mb-4 md:mb-0">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 mr-4">
-              <Clock size={24} />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {isLoading ? "..." : pagination.total} Campaigns Awaiting Review
-              </h2>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">
-                {isLoading ? "..." : filteredCampaigns.length} campaigns
-                displayed with current filters
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <div className="flex flex-col items-end">
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Average wait time
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-900 border-b border-slate-200 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <Clock className="w-5 h-5 text-white" />
               </div>
-              <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                2.4 days
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Campaign Approval Queue
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {isLoading
+                    ? "Loading..."
+                    : `${pagination.total} campaigns awaiting review`}
+                </p>
               </div>
             </div>
+
+            <div className="flex items-center space-x-3">
+              <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl text-sm font-medium">
+                {isLoading ? "..." : filteredCampaigns.length} shown
+              </div>
+              <button
+                onClick={refreshData}
+                disabled={isFetching}
+                className="flex items-center px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200"
+              >
+                <RefreshCw
+                  size={18}
+                  className={`mr-2 ${isFetching ? "animate-spin" : ""}`}
+                />
+                Refresh
+              </button>
+            </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Search and Filters */}
-      <motion.div
-        className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 mb-8"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 0.61, 0.36, 1] }}
-      >
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-grow">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search size={16} className="text-gray-400 dark:text-gray-500" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search queued campaigns by title, description, creator..."
-              className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent transition-all shadow-sm"
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </div>
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-slate-200 dark:border-gray-800 mb-6">
+          <div className="p-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search campaigns, creators, or descriptions..."
+                  className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </div>
 
-          <div className="flex flex-wrap gap-2">
-            <motion.button
-              onClick={() => setShowFilters(!showFilters)}
-              className="px-5 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl flex items-center text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm"
-              whileHover={{
-                y: -2,
-                boxShadow: "0 10px 25px rgba(0, 0, 0, 0.06)",
-                backgroundColor: "#f9fafb",
-              }}
-              whileTap={{ y: 0 }}
-            >
-              <Filter size={16} className="mr-2" />
-              <span>Filter</span>
-              <ChevronDown
-                size={16}
-                className={`ml-2 transition-transform ${
-                  showFilters ? "transform rotate-180" : ""
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  showFilters
+                    ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25"
+                    : "bg-slate-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-700"
                 }`}
-              />
-            </motion.button>
-          </div>
-        </div>
+              >
+                <Filter size={18} className="mr-2" />
+                Filters
+                <ChevronDown
+                  size={18}
+                  className={`ml-2 transition-transform duration-200 ${
+                    showFilters ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            </div>
 
-        <AnimatePresence>
-          {showFilters && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
-              className="overflow-hidden"
-            >
-              <div className="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Category
-                    </label>
-                    <select
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all shadow-sm"
-                      value={filters.category}
-                      onChange={(e) =>
-                        handleFilterChange({
-                          ...filters,
-                          category: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">All Categories</option>
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-6 pt-6 border-t border-slate-200 dark:border-gray-800">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {[
+                        {
+                          label: "Category",
+                          value: filters.category,
+                          onChange: (value) =>
+                            handleFilterChange({ ...filters, category: value }),
+                          options: [
+                            { value: "", label: "All Categories" },
+                            ...categories.map((cat) => ({
+                              value: cat,
+                              label: cat,
+                            })),
+                          ],
+                        },
+                        {
+                          label: "Date Range",
+                          value: filters.dateRange,
+                          onChange: (value) =>
+                            handleFilterChange({
+                              ...filters,
+                              dateRange: value,
+                            }),
+                          options: [
+                            { value: "all", label: "All Time" },
+                            { value: "7days", label: "Last 7 Days" },
+                            { value: "30days", label: "Last 30 Days" },
+                            { value: "90days", label: "Last 90 Days" },
+                          ],
+                        },
+                        {
+                          label: "Goal Amount",
+                          value: filters.amountRange,
+                          onChange: (value) =>
+                            handleFilterChange({
+                              ...filters,
+                              amountRange: value,
+                            }),
+                          options: [
+                            { value: "all", label: "All Amounts" },
+                            { value: "small", label: "< Kes 10K" },
+                            { value: "medium", label: "Kes 10K - 50K" },
+                            { value: "large", label: "> Kes 50K" },
+                          ],
+                        },
+                        {
+                          label: "Sort By",
+                          value: filters.sortBy,
+                          onChange: (value) =>
+                            handleFilterChange({ ...filters, sortBy: value }),
+                          options: [
+                            { value: "newest", label: "Newest First" },
+                            { value: "oldest", label: "Oldest First" },
+                            { value: "goal_high", label: "Highest Goal" },
+                            { value: "goal_low", label: "Lowest Goal" },
+                          ],
+                        },
+                      ].map((filter, index) => (
+                        <div key={index}>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {filter.label}
+                          </label>
+                          <select
+                            className="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            value={filter.value}
+                            onChange={(e) => filter.onChange(e.target.value)}
+                          >
+                            {filter.options.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       ))}
-                    </select>
-                  </div>
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Submission Date
-                    </label>
-                    <select
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all shadow-sm"
-                      value={filters.dateRange}
-                      onChange={(e) =>
-                        handleFilterChange({
-                          ...filters,
-                          dateRange: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="all">All Time</option>
-                      <option value="7days">Last 7 Days</option>
-                      <option value="30days">Last 30 Days</option>
-                      <option value="90days">Last 90 Days</option>
-                    </select>
+                    <div className="flex justify-end mt-6">
+                      <button
+                        onClick={handleResetFilters}
+                        className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+                      >
+                        Reset all filters
+                      </button>
+                    </div>
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Goal Amount
-                    </label>
-                    <select
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all shadow-sm"
-                      value={filters.amountRange}
-                      onChange={(e) =>
-                        handleFilterChange({
-                          ...filters,
-                          amountRange: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="all">All Amounts</option>
-                      <option value="small">Small (&lt; Kes 10,000)</option>
-                      <option value="medium">
-                        Medium (Kes 10,000 - Kes 50,000)
-                      </option>
-                      <option value="large">Large (&gt; Kes 50,000)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Sort By
-                    </label>
-                    <select
-                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all shadow-sm"
-                      value={filters.sortBy}
-                      onChange={(e) =>
-                        handleFilterChange({
-                          ...filters,
-                          sortBy: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="newest">Newest First</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="goal_high">Highest Goal</option>
-                      <option value="goal_low">Lowest Goal</option>
-                    </select>
-                  </div>
-
-                  <div className="lg:col-span-4 flex justify-end">
-                    <motion.button
-                      onClick={handleResetFilters}
-                      className="px-5 py-2.5 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded-xl text-sm transition-colors"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      Reset Filters
-                    </motion.button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader size={36} className="text-amber-500 animate-spin mr-4" />
-          <span className="text-gray-500 dark:text-gray-400 text-lg font-medium">
-            Loading approval queue...
-          </span>
-        </div>
-      ) : filteredCampaigns.length === 0 ? (
-        <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm py-16 px-4 text-center"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="inline-flex items-center justify-center p-5 bg-gray-100 dark:bg-gray-700 rounded-full mb-5">
-            <CheckCircle
-              size={28}
-              className="text-green-500 dark:text-green-400"
-            />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-3">
-            No campaigns in the queue
-          </h3>
-          <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
-            All campaigns have been reviewed. Check back later for new
-            submissions.
-          </p>
-          <motion.button
-            onClick={refreshData}
-            className="px-6 py-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl text-sm hover:bg-amber-500/20 transition-colors shadow-sm"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <RefreshCw size={16} className="inline mr-2" />
-            Refresh Queue
-          </motion.button>
-        </motion.div>
-      ) : (
-        <div className="space-y-4">
-          {filteredCampaigns.map((campaign, index) => (
-            <motion.div
-              key={campaign.id}
-              className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden"
-              initial="hidden"
-              animate="visible"
-              custom={index}
-            >
-              <div className="p-5">
-                <div className="flex flex-col md:flex-row">
-                  <div className="flex items-start mb-4 md:mb-0 md:w-3/5">
-                    <div
-                      className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-xl bg-center bg-cover mr-4 relative overflow-hidden shadow-md flex-shrink-0"
-                      style={{
-                        backgroundImage: `url(${
-                          campaign.images && campaign.images.length > 0
-                            ? campaign.images[0]
-                            : getPlaceholderImage(campaign.title, campaign.id)
-                        })`,
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    </div>
-
-                    <div className="flex-grow">
-                      <div className="flex items-center mb-1">
-                        <span className="px-2.5 py-1 text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 rounded-full mr-2">
-                          Pending Approval
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          Submitted{" "}
-                          {formatDistanceToNow(new Date(campaign.createdAt), {
-                            addSuffix: true,
-                          })}
-                        </span>
-                      </div>
-
-                      <h3 className="font-semibold text-gray-900 dark:text-white text-lg mb-1">
-                        {campaign.title}
-                      </h3>
-
-                      <div className="flex flex-wrap items-center text-xs text-gray-500 dark:text-gray-400 gap-3 mb-2">
-                        <span className="flex items-center">
-                          <User size={12} className="mr-1.5" />
-                          {campaign.creatorName || "Anonymous Creator"}
-                        </span>
-
-                        {campaign.category && (
-                          <span className="capitalize px-2.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-full font-medium">
-                            {campaign.category}
-                          </span>
-                        )}
-
-                        <span className="flex items-center">
-                          <Calendar size={12} className="mr-1.5" />
-                          {campaign.endDate
-                            ? format(new Date(campaign.endDate), "MMM d, yyyy")
-                            : "No end date"}
-                        </span>
-                      </div>
-
-                      <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                        {campaign.description ||
-                          campaign.subtitle ||
-                          "No description provided."}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col md:flex-row items-start md:items-center ml-0 md:ml-auto md:w-2/5 justify-end">
-                    <div className="flex flex-col mb-4 md:mb-0 md:mr-6">
-                      <span className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                        Goal Amount
-                      </span>
-                      <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                        Kes{" "}
-                        {parseFloat(campaign.goalAmount || 0).toLocaleString(
-                          undefined,
-                          {
-                            maximumFractionDigits: 2,
-                          }
-                        )}
-                      </span>
-                    </div>
-
-                    <div className="flex space-x-2">
-                      <motion.button
-                        className="px-4 py-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center shadow-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
-                        onClick={() => handleAction(campaign, "approve")}
-                        whileHover={{ y: -2, scale: 1.02 }}
-                        whileTap={{ y: 0, scale: 0.98 }}
-                      >
-                        <CheckCircle size={16} className="mr-2" />
-                        Approve
-                      </motion.button>
-
-                      <motion.button
-                        className="px-4 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl flex items-center shadow-sm hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
-                        onClick={() => handleAction(campaign, "reject")}
-                        whileHover={{ y: -2, scale: 1.02 }}
-                        whileTap={{ y: 0, scale: 0.98 }}
-                      >
-                        <XCircle size={16} className="mr-2" />
-                        Reject
-                      </motion.button>
-
-                      <motion.button
-                        className="p-2.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center shadow-sm hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
-                        onClick={() => handleViewCampaign(campaign.id)}
-                        whileHover={{ y: -2, scale: 1.02 }}
-                        whileTap={{ y: 0, scale: 0.98 }}
-                      >
-                        <Eye size={16} />
-                      </motion.button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex justify-center">
-                  <motion.button
-                    className="text-sm text-gray-500 dark:text-gray-400 flex items-center"
-                    onClick={() => toggleExpandCampaign(campaign.id)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <SlidersHorizontal size={14} className="mr-1.5" />
-                    {expandedCampaign === campaign.id
-                      ? "Hide details"
-                      : "Show details"}
-                    <ChevronDown
-                      size={14}
-                      className={`ml-1.5 transition-transform ${
-                        expandedCampaign === campaign.id
-                          ? "transform rotate-180"
-                          : ""
-                      }`}
-                    />
-                  </motion.button>
-                </div>
-
-                <AnimatePresence initial={false}>
-                  {expandedCampaign === campaign.id && (
-                    <motion.div
-                      className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700"
-                      initial="collapsed"
-                      animate="expanded"
-                      exit="collapsed"
-                      variants={expandVariants}
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                            <User size={14} className="mr-1.5" />
-                            Creator Information
-                          </h4>
-                          <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-3 text-sm">
-                            <p className="flex justify-between mb-1">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                Name:
-                              </span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {campaign.creatorName || "Not provided"}
-                              </span>
-                            </p>
-                            <p className="flex justify-between mb-1">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                Email:
-                              </span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {campaign.creatorEmail || "Not provided"}
-                              </span>
-                            </p>
-                            <p className="flex justify-between">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                Verified:
-                              </span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {campaign.creatorVerified ? "Yes" : "No"}
-                              </span>
-                            </p>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                            <Calendar size={14} className="mr-1.5" />
-                            Campaign Timeline
-                          </h4>
-                          <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-3 text-sm">
-                            <p className="flex justify-between mb-1">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                Created:
-                              </span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {format(
-                                  new Date(campaign.createdAt),
-                                  "MMM d, yyyy"
-                                )}
-                              </span>
-                            </p>
-                            <p className="flex justify-between mb-1">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                Start Date:
-                              </span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {campaign.startDate
-                                  ? format(
-                                      new Date(campaign.startDate),
-                                      "MMM d, yyyy"
-                                    )
-                                  : "Upon approval"}
-                              </span>
-                            </p>
-                            <p className="flex justify-between">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                End Date:
-                              </span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {campaign.endDate
-                                  ? format(
-                                      new Date(campaign.endDate),
-                                      "MMM d, yyyy"
-                                    )
-                                  : "No end date"}
-                              </span>
-                            </p>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                            <AlertCircle size={14} className="mr-1.5" />
-                            Review Information
-                          </h4>
-                          <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-3 text-sm">
-                            <p className="flex justify-between mb-1">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                Flags:
-                              </span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {campaign.flags ? campaign.flags.length : 0}
-                              </span>
-                            </p>
-                            <p className="flex justify-between mb-1">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                Content Check:
-                              </span>
-                              <span
-                                className={`font-medium ${
-                                  campaign.contentVerified
-                                    ? "text-emerald-600 dark:text-emerald-400"
-                                    : "text-amber-600 dark:text-amber-400"
-                                }`}
-                              >
-                                {campaign.contentVerified
-                                  ? "Passed"
-                                  : "Needs Review"}
-                              </span>
-                            </p>
-                            <p className="flex justify-between">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                Time in Queue:
-                              </span>
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {formatDistanceToNow(
-                                  new Date(campaign.createdAt)
-                                )}
-                              </span>
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="md:col-span-3">
-                          <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                            <AlignLeft size={14} className="mr-1.5" />
-                            Full Description
-                          </h4>
-                          <div className="bg-gray-50 dark:bg-gray-700/30 rounded-xl p-3 text-sm text-gray-600 dark:text-gray-300">
-                            {campaign.description ||
-                              "No detailed description provided."}
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          ))}
         </div>
-      )}
 
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-slate-200 dark:border-gray-800 overflow-hidden">
+          <div className="bg-slate-50 dark:bg-gray-800/50 px-6 py-4 border-b border-slate-200 dark:border-gray-800">
+            <div className="grid grid-cols-12 gap-4 items-center text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+              <div className="col-span-4">
+                <button className="flex items-center hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+                  Campaign
+                  <ArrowUpDown size={14} className="ml-1" />
+                </button>
+              </div>
+              <div className="col-span-2">
+                <button className="flex items-center hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+                  Creator
+                  <ArrowUpDown size={14} className="ml-1" />
+                </button>
+              </div>
+              <div className="col-span-2">
+                <button className="flex items-center hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+                  Goal Amount
+                  <ArrowUpDown size={14} className="ml-1" />
+                </button>
+              </div>
+              <div className="col-span-2">
+                <button className="flex items-center hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+                  Submitted
+                  <ArrowUpDown size={14} className="ml-1" />
+                </button>
+              </div>
+              <div className="col-span-2 text-right">Actions</div>
+            </div>
+          </div>
+
+          <div className="divide-y divide-slate-100 dark:divide-gray-800">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="flex items-center">
+                  <Loader className="w-6 h-6 text-blue-500 animate-spin mr-3" />
+                  <span className="text-gray-500 dark:text-gray-400 font-medium">
+                    Loading campaigns...
+                  </span>
+                </div>
+              </div>
+            ) : filteredCampaigns.length === 0 ? (
+              <div className="text-center py-20">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  All caught up!
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">
+                  No campaigns are waiting for review.
+                </p>
+                <button
+                  onClick={refreshData}
+                  className="inline-flex items-center px-6 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors duration-200"
+                >
+                  <RefreshCw size={18} className="mr-2" />
+                  Check for new campaigns
+                </button>
+              </div>
+            ) : (
+              filteredCampaigns.map((campaign, index) => (
+                <motion.div
+                  key={campaign.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05, duration: 0.3 }}
+                  className="group hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-200"
+                >
+                  <div className="px-6 py-4">
+                    <div className="grid grid-cols-12 gap-4 items-center">
+                      {/* Campaign Column */}
+                      <div className="col-span-4">
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className="w-12 h-12 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 dark:from-gray-700 dark:to-gray-800 bg-cover bg-center flex-shrink-0 border-2 border-white dark:border-gray-800 shadow-sm"
+                            style={{
+                              backgroundImage: `url(${
+                                campaign.images && campaign.images.length > 0
+                                  ? campaign.images[0]
+                                  : getPlaceholderImage(
+                                      campaign.title,
+                                      campaign.id
+                                    )
+                              })`,
+                            }}
+                          />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight truncate">
+                                {campaign.title}
+                              </h3>
+                              <div className="flex items-center">
+                                <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-3 text-xs text-gray-500 dark:text-gray-400">
+                              {campaign.category && (
+                                <span className="px-2 py-0.5 bg-slate-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded capitalize">
+                                  {campaign.category}
+                                </span>
+                              )}
+                              <span className="flex items-center">
+                                <Clock size={12} className="mr-1" />
+                                {formatDistanceToNow(
+                                  new Date(campaign.createdAt),
+                                  { addSuffix: true }
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Creator Column */}
+                      <div className="col-span-2">
+                        <div className="flex items-center space-x-2">
+                          <User
+                            size={16}
+                            className="text-gray-400 flex-shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                              {campaign.creatorName || "Anonymous"}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                              {campaign.creatorVerified ? (
+                                <span className="text-green-600 dark:text-green-400">
+                                  ✓ Verified
+                                </span>
+                              ) : (
+                                "Unverified"
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-span-2">
+                        <div className="flex items-center space-x-2">
+                          <DollarSign
+                            size={16}
+                            className="text-blue-500 flex-shrink-0"
+                          />
+                          <div>
+                            <p className="text-sm font-bold text-gray-900 dark:text-white">
+                              Kes{" "}
+                              {parseFloat(
+                                campaign.goalAmount || 0
+                              ).toLocaleString()}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Goal amount
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Submitted Column */}
+                      <div className="col-span-2">
+                        <div className="flex items-center space-x-2">
+                          <Calendar
+                            size={16}
+                            className="text-gray-400 flex-shrink-0"
+                          />
+                          <div>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              {format(
+                                new Date(campaign.createdAt),
+                                "MMM d, yyyy"
+                              )}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {formatDistanceToNow(
+                                new Date(campaign.createdAt)
+                              )}{" "}
+                              ago
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-span-2">
+                        <div className="flex items-center justify-end space-x-2">
+                          <button
+                            onClick={() => toggleExpandCampaign(campaign.id)}
+                            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                          >
+                            <ChevronRight
+                              size={16}
+                              className={`transition-transform duration-200 ${
+                                expandedCampaign === campaign.id
+                                  ? "rotate-90"
+                                  : ""
+                              }`}
+                            />
+                          </button>
+
+                          <button
+                            onClick={() => handleViewCampaign(campaign.id)}
+                            className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
+                          >
+                            <Eye size={16} />
+                          </button>
+
+                          <button
+                            onClick={() => handleAction(campaign, "reject")}
+                            className="px-3 py-1.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg text-xs font-medium transition-all duration-200"
+                          >
+                            Reject
+                          </button>
+
+                          <button
+                            onClick={() => handleAction(campaign, "approve")}
+                            className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-medium transition-all duration-200 shadow-sm"
+                          >
+                            Approve
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {expandedCampaign === campaign.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden bg-slate-50 dark:bg-gray-800/50"
+                      >
+                        <div className="px-6 py-6 border-t border-slate-200 dark:border-gray-700">
+                          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div>
+                              <h4 className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                                <User
+                                  size={16}
+                                  className="mr-2 text-blue-500"
+                                />
+                                Creator Details
+                              </h4>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    Name:
+                                  </span>
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {campaign.creatorName || "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    Email:
+                                  </span>
+                                  <span className="font-medium text-gray-900 dark:text-white truncate ml-2">
+                                    {campaign.creatorEmail || "N/A"}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    Status:
+                                  </span>
+                                  <span
+                                    className={`font-medium ${
+                                      campaign.creatorVerified
+                                        ? "text-green-600 dark:text-green-400"
+                                        : "text-red-600 dark:text-red-400"
+                                    }`}
+                                  >
+                                    {campaign.creatorVerified
+                                      ? "Verified"
+                                      : "Unverified"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <h4 className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                                <Calendar
+                                  size={16}
+                                  className="mr-2 text-blue-500"
+                                />
+                                Campaign Timeline
+                              </h4>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    Submitted:
+                                  </span>
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {format(
+                                      new Date(campaign.createdAt),
+                                      "MMM d, yyyy"
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    Start Date:
+                                  </span>
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {campaign.startDate
+                                      ? format(
+                                          new Date(campaign.startDate),
+                                          "MMM d, yyyy"
+                                        )
+                                      : "On approval"}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    End Date:
+                                  </span>
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {campaign.endDate
+                                      ? format(
+                                          new Date(campaign.endDate),
+                                          "MMM d, yyyy"
+                                        )
+                                      : "No limit"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <h4 className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                                <AlertCircle
+                                  size={16}
+                                  className="mr-2 text-blue-500"
+                                />
+                                Review Status
+                              </h4>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    Flags:
+                                  </span>
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {campaign.flags ? campaign.flags.length : 0}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    Content:
+                                  </span>
+                                  <span
+                                    className={`font-medium ${
+                                      campaign.contentVerified
+                                        ? "text-green-600 dark:text-green-400"
+                                        : "text-amber-600 dark:text-amber-400"
+                                    }`}
+                                  >
+                                    {campaign.contentVerified
+                                      ? "Verified"
+                                      : "Pending"}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">
+                                    Queue time:
+                                  </span>
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {formatDistanceToNow(
+                                      new Date(campaign.createdAt)
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {campaign.description && (
+                            <div className="mt-6">
+                              <h4 className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                                <Tag size={16} className="mr-2 text-blue-500" />
+                                Campaign Description
+                              </h4>
+                              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-slate-200 dark:border-gray-700">
+                                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                                  {campaign.description}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))
+            )}
+          </div>
+
+          {/* Pagination */}
+          {!isLoading && filteredCampaigns.length > 0 && totalPages > 1 && (
+            <div className="bg-slate-50 dark:bg-gray-800/50 px-6 py-4 border-t border-slate-200 dark:border-gray-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <span>
+                    Showing{" "}
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {startItem}
+                    </span>{" "}
+                    to{" "}
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {endItem}
+                    </span>{" "}
+                    of{" "}
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {pagination.total}
+                    </span>{" "}
+                    campaigns
+                  </span>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => changePage(pagination.page - 1)}
+                    disabled={pagination.page === 1}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      pagination.page === 1
+                        ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                        : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    }`}
+                  >
+                    <ChevronLeft size={16} className="mr-1" />
+                    Previous
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex items-center space-x-1">
+                    {getPageNumbers().map((pageNumber, index) => (
+                      <button
+                        key={index}
+                        onClick={() =>
+                          typeof pageNumber === "number" &&
+                          changePage(pageNumber)
+                        }
+                        disabled={pageNumber === "..."}
+                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          pageNumber === pagination.page
+                            ? "bg-blue-500 text-white shadow-sm"
+                            : pageNumber === "..."
+                            ? "text-gray-400 dark:text-gray-500 cursor-default"
+                            : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() => changePage(pagination.page + 1)}
+                    disabled={pagination.page === totalPages}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      pagination.page === totalPages
+                        ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                        : "text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    }`}
+                  >
+                    Next
+                    <ChevronRight size={16} className="ml-1" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Action Modals */}
       <AnimatePresence>
         {showActionModal &&
           selectedCampaign &&
