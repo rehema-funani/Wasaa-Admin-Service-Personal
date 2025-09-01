@@ -63,7 +63,7 @@ const UserManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(100);
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -93,7 +93,7 @@ const UserManagementPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await userService.getAdminUsers();
+      const response = await userService.getAdminUsers(currentPage, itemsPerPage);
       const formattedUsers = response.users.map((user: any) => ({
         id: user.id,
         name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),

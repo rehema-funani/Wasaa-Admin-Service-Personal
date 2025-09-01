@@ -224,9 +224,9 @@ export const userService = {
     }
   },
 
-  async getAdminUsers(): Promise<any> {
+  async getAdminUsers(currentPage, itemsPerPage): Promise<any> {
     try {
-      const response = await api.get("/admin");
+      const response = await api.get(`/admin?page=${currentPage}&pageSize=${itemsPerPage}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
