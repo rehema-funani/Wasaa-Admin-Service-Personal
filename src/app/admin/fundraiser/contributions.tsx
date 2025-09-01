@@ -144,7 +144,7 @@ const generatePaymentMethodStats = (transactions) => {
   }));
 };
 
-const CampaignContributions = () => {
+const CampaignContributions: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [contributions, setContributions] = useState([]);
   const [filteredContributions, setFilteredContributions] = useState([]);
@@ -845,7 +845,6 @@ const CampaignContributions = () => {
             </div>
           </div>
           
-          {/* Payment Methods */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-gray-700 flex justify-between items-center">
               <h2 className="text-lg font-medium text-slate-900 dark:text-white">

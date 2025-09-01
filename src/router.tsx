@@ -176,6 +176,9 @@ const fundraisingModule = {
   FundraisingWithdrawals: lazy(
     () => import("./app/admin/fundraiser/withdrawals")
   ),
+  FundraisingWithdrawalDetail: lazy(
+    () => import("./app/admin/fundraiser/withdrawaldetail")
+  ),
   FundraisingContributions: lazy(
     () => import("./app/admin/fundraiser/contributions")
   ),
@@ -699,6 +702,10 @@ const fundraisingRoutes = [
   {
     path: PATHS.ADMIN.FUNDRAISING.WITHDRAWALS,
     element: fundraisingModule.FundraisingWithdrawals,
+  },
+  {
+    path: PATHS.ADMIN.FUNDRAISING.WITHDRAWAL_DETAIL,
+    element: fundraisingModule.FundraisingWithdrawalDetail,
   },
   {
     path: PATHS.ADMIN.FUNDRAISING.CONTRIBUTIONS,

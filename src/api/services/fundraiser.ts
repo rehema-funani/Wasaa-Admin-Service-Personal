@@ -44,23 +44,28 @@ export const fundraiserService = {
     return response.data;
   },
   getAllDonations: async (startDate: string, endDate: string) => {
-    const response = await fundraiser.get(`/donations/history?startDate=${startDate}&endDate=${endDate}`);
+    const response = await fundraiser.get(
+      `/donations/history?startDate=${startDate}&endDate=${endDate}`
+    );
     return response.data;
   },
   getPayouts: async () => {
     const response = await fundraiser.get(`/admin/payouts/pending`);
     return response.data;
   },
-  getPayoutById: async (id: string) => {
+  getPayoutDetails: async (id: string) => {
     const response = await fundraiser.get(`/payouts/${id}`);
     return response.data;
   },
-  approvePayout: async (id: string) => {
-    const response = await fundraiser.post(`/admin/payouts/${id}/approve`);
+  approvePayout: async (id: string, data) => {
+    const response = await fundraiser.post(
+      `/admin/payouts/${id}/approve`,
+      data
+    );
     return response.data;
   },
-  rejectPayout: async (id: string) => {
-    const response = await fundraiser.post(`/admin/payouts/${id}/reject`);
+  rejectPayout: async (id: string, data) => {
+    const response = await fundraiser.post(`/admin/payouts/${id}/reject`, data);
     return response.data;
   },
 

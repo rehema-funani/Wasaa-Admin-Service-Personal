@@ -188,6 +188,7 @@ export const PATHS = {
       CAMPAIGN_DETAIL: "admin/fundraising/campaigns/:id",
       DONATIONS: "admin/fundraising/donations",
       WITHDRAWALS: "admin/fundraising/withdrawals",
+      WITHDRAWAL_DETAIL: "admin/fundraising/withdrawals/:id",
       CONTRIBUTIONS: "admin/fundraising/contributions",
       REPORTS: "admin/fundraising/reports",
       METRICS: "admin/fundraising/performance",
