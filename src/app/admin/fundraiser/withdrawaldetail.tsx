@@ -7,10 +7,8 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  DollarSign,
   FileText,
   Shield,
-  Info,
   Loader,
   User,
   ExternalLink,
@@ -19,7 +17,7 @@ import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 
-const WithdrawalDetailsPage = () => {
+const WithdrawalDetailsPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);

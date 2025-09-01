@@ -182,6 +182,7 @@ const fundraisingModule = {
   FundraisingContributions: lazy(
     () => import("./app/admin/fundraiser/contributions")
   ),
+  FundraisingSettings: lazy(() => import("./app/admin/fundraiser/settings")),
   FundraisingReports: lazy(() => import("./app/admin/fundraiser/reports")),
   FundraisingMetrics: lazy(() => import("./app/admin/fundraiser/metrics")),
   CampaignDetail: lazy(() => import("./app/admin/fundraiser/campaigndetail")),
@@ -714,6 +715,10 @@ const fundraisingRoutes = [
   {
     path: PATHS.ADMIN.FUNDRAISING.REPORTS,
     element: fundraisingModule.FundraisingReports,
+  },
+  {
+    path: PATHS.ADMIN.FUNDRAISING.SETTINGS,
+    element: fundraisingModule.FundraisingSettings,
   },
   {
     path: PATHS.ADMIN.FUNDRAISING.METRICS,
