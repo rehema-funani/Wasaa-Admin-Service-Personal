@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -23,10 +23,16 @@ import {
   EyeOff,
   Smartphone,
   Globe,
-  Server,
+  Info,
   Cpu,
   FileText,
   Edit,
+  MoreHorizontal,
+  Layers,
+  User,
+  XCircle,
+  Zap,
+  AlertTriangle,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { toast } from "react-hot-toast";
@@ -50,6 +56,19 @@ const UserDetailsPage = () => {
   const [activeSessions, setActiveSessions] = useState([]);
   const [loginHistory, setLoginHistory] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState<{
+    show: boolean;
+    action: string;
+    title: string;
+    message: string;
+  }>({
+    show: false,
+    action: "",
+    title: "",
+    message: "",
+  });
+  const [isActionLoading, setIsActionLoading] = useState(false);
   const [editFormData, setEditFormData] = useState({
     email: "",
     first_name: "",
@@ -59,6 +78,7 @@ const UserDetailsPage = () => {
     account_status: "active",
   });
 
+  // Handler functions
   const openEditModal = () => {
     if (!user) return;
 
@@ -89,36 +109,36 @@ const UserDetailsPage = () => {
       await userService.updateUser(id, editFormData);
       toast.success("User updated successfully");
       setIsEditModalOpen(false);
+      // Refresh user data
+      fetchUserData();
     } catch (error) {
       console.error("Failed to update user:", error);
       toast.error("Failed to update user");
     }
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setIsLoadingUser(true);
-      try {
-        const userData = await userService.getAdminUserbyId(id);
-        setUser({
-          ...userData,
-          name: `${userData.first_name || ""} ${
-            userData.last_name || ""
-          }`.trim(),
-          lastActive: userData.last_login
-            ? formatDistanceToNow(new Date(userData.last_login), {
-                addSuffix: true,
-              })
-            : "Never",
-        });
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        toast.error("Failed to load user details");
-      } finally {
-        setIsLoadingUser(false);
-      }
-    };
+  const fetchUserData = async () => {
+    setIsLoadingUser(true);
+    try {
+      const userData = await userService.getAdminUserbyId(id);
+      setUser({
+        ...userData,
+        name: `${userData.first_name || ""} ${userData.last_name || ""}`.trim(),
+        lastActive: userData.last_login
+          ? formatDistanceToNow(new Date(userData.last_login), {
+              addSuffix: true,
+            })
+          : "Never",
+      });
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      toast.error("Failed to load user details");
+    } finally {
+      setIsLoadingUser(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
   }, [id]);
 
@@ -178,6 +198,41 @@ const UserDetailsPage = () => {
     navigate(-1);
   };
 
+  const showConfirmationDialog = (
+    action: string,
+    title: string,
+    message: string
+  ) => {
+    setShowConfirmDialog({
+      show: true,
+      action,
+      title,
+      message,
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    setIsActionLoading(true);
+    try {
+      switch (showConfirmDialog.action) {
+        case "terminate-all-sessions":
+          await handleTerminateAllSessions();
+          break;
+        case "toggle-status":
+          await handleToggleUserStatus();
+          break;
+        case "reset-mfa":
+          await handleResetMFA();
+          break;
+        default:
+          break;
+      }
+    } finally {
+      setIsActionLoading(false);
+      setShowConfirmDialog({ show: false, action: "", title: "", message: "" });
+    }
+  };
+
   const handleTerminateSession = async (sessionId) => {
     try {
       await userService.terminateUserSession(id, sessionId);
@@ -222,16 +277,7 @@ const UserDetailsPage = () => {
     try {
       await userService.resetUserMFA(id);
       toast.success("MFA has been reset successfully");
-      const userData = await userService.getUserById(id);
-      setUser({
-        ...userData,
-        name: `${userData.first_name || ""} ${userData.last_name || ""}`.trim(),
-        lastActive: userData.last_login
-          ? formatDistanceToNow(new Date(userData.last_login), {
-              addSuffix: true,
-            })
-          : "Never",
-      });
+      fetchUserData();
     } catch (error) {
       console.error("Failed to reset MFA:", error);
       toast.error("Failed to reset MFA");
@@ -243,11 +289,10 @@ const UserDetailsPage = () => {
     { id: "sessions", label: "Active Sessions", icon: <Globe size={16} /> },
     { id: "login-history", label: "Login History", icon: <Clock size={16} /> },
     {
-      id: "connected-apps",
-      label: "Connected Apps",
-      icon: <Server size={16} />,
+      id: "security",
+      label: "Security",
+      icon: <Shield size={16} />,
     },
-    { id: "security", label: "Security", icon: <Shield size={16} /> },
   ];
 
   const sessionColumns = [
@@ -320,7 +365,7 @@ const UserDetailsPage = () => {
       accessor: (row) => row.id,
       cell: (value) => (
         <motion.button
-          className="px-2 py-1 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-md text-xs font-medium hover:bg-red-100 dark:hover:bg-red-900/50"
+          className="px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-xs font-medium hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => handleTerminateSession(value)}
@@ -353,7 +398,7 @@ const UserDetailsPage = () => {
       accessor: (row) => row.status,
       cell: (value) => (
         <span
-          className={`inline-flex px-2 py-1 rounded-md text-xs font-medium ${
+          className={`inline-flex px-2 py-1 rounded-lg text-xs font-medium ${
             value === "success"
               ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400"
               : "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400"
@@ -385,78 +430,43 @@ const UserDetailsPage = () => {
     },
   ];
 
-  const InfoCard = ({ icon, label, value, className = "" }) => (
-    <div
-      className={`bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-100 dark:border-gray-600 ${className}`}
-    >
-      <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 flex items-center">
-        {icon}
-        <span className="ml-2">{label}</span>
-      </h4>
-      <div className="text-gray-800 dark:text-gray-200 font-medium">
-        {value}
-      </div>
-    </div>
-  );
-
-  const ActionButton = ({
-    icon,
-    label,
-    onClick,
-    isPrimary = false,
-    isDanger = false,
-    isDisabled = false,
-  }) => (
-    <motion.button
-      className={`flex items-center px-4 py-2.5 rounded-xl text-sm shadow-sm transition-all duration-200 ${
-        isDisabled
-          ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
-          : isPrimary
-          ? "bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400"
-          : isDanger
-          ? "bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-400"
-          : "bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
-      }`}
-      whileHover={{
-        y: isDisabled ? 0 : -2,
-        boxShadow: isDisabled ? "none" : "0 8px 16px rgba(0, 0, 0, 0.1)",
-      }}
-      whileTap={{
-        y: isDisabled ? 0 : 0,
-        boxShadow: isDisabled ? "none" : "0 2px 4px rgba(0, 0, 0, 0.1)",
-      }}
-      onClick={onClick}
-      disabled={isDisabled}
-    >
-      {icon}
-      <span className="ml-2">{label}</span>
-    </motion.button>
-  );
-
+  // Loading state
   if (isLoadingUser) {
     return (
-      <div className="p-6 max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="w-16 h-16 border-4 border-gray-200 dark:border-gray-700 border-t-primary-600 rounded-full animate-spin"></div>
-        <p className="mt-4 text-gray-600 dark:text-gray-400">
-          Loading user details...
-        </p>
+      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto relative">
+            <div className="absolute inset-0 rounded-full border-t-2 border-r-2 border-primary-600 animate-spin"></div>
+            <div className="absolute inset-2 rounded-full border-2 border-dashed border-gray-200 dark:border-gray-700"></div>
+          </div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400 font-medium">
+            Loading user details...
+          </p>
+        </div>
       </div>
     );
   }
 
+  // User not found
   if (!user) {
     return (
       <div className="p-6 max-w-7xl mx-auto">
-        <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 px-4 py-3 rounded-xl flex items-center">
-          <AlertCircle size={18} className="mr-2" />
-          User not found or you don't have permission to view this user.
-        </div>
-        <div className="mt-4">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center">
+          <div className="bg-amber-50 dark:bg-amber-900/30 h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle size={40} className="text-amber-500" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+            User Not Found
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            The user you're looking for doesn't exist or you don't have
+            permission to view it.
+          </p>
           <button
-            className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium transition-colors flex items-center mx-auto"
             onClick={handleGoBack}
           >
-            <ArrowLeft size={16} className="mr-2" />
+            <ArrowLeft size={18} className="mr-2" />
             Back to Users
           </button>
         </div>
@@ -465,554 +475,1056 @@ const UserDetailsPage = () => {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-6 flex items-center">
-        <motion.button
-          className="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-300 mr-3"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleGoBack}
-        >
-          <ArrowLeft size={20} />
-        </motion.button>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 bg-gradient-to-r from-primary-600 to-primary-600 bg-clip-text text-transparent">
-          User Details
-        </h1>
-      </div>
-
-      <div className="relative h-40 bg-gradient-to-r from-primary-500 to-primary-600 rounded-t-2xl p-6 flex items-end mb-14">
-        <motion.div
-          initial={{ scale: 0.8, y: 20, opacity: 0 }}
-          animate={{ scale: 1, y: 0, opacity: 1 }}
-          transition={{ delay: 0.2, type: "spring" }}
-          className="absolute -bottom-10 left-6 w-20 h-20 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg border-4 border-white dark:border-gray-800"
-        >
-          {user.name
-            ? user.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toUpperCase()
-            : "??"}
-        </motion.div>
-
-        <div className="absolute right-6 bottom-6 flex space-x-2">
-          <ActionButton
-            icon={<Edit size={16} />}
-            label="Edit Profile"
-            onClick={openEditModal}
-          />
-          <ActionButton
-            icon={
-              user.status === "active" ? (
-                <Lock size={16} />
-              ) : (
-                <Unlock size={16} />
-              )
-            }
-            label={
-              user.status === "active" ? "Deactivate User" : "Activate User"
-            }
-            onClick={handleToggleUserStatus}
-            isDanger={user.status === "active"}
-            isPrimary={user.status !== "active"}
-          />
-          <ActionButton
-            icon={<LogOut size={16} />}
-            label="Terminate All Sessions"
-            onClick={handleTerminateAllSessions}
-            isDanger={true}
-          />
-        </div>
-      </div>
-
-      <div className="px-6 pt-8 pb-4 bg-white dark:bg-gray-800 rounded-b-2xl shadow-sm border border-gray-100 dark:border-gray-700 border-t-0">
-        <div className="flex justify-between items-start">
-          <div>
-            <motion.h2
-              className="text-xl font-semibold text-gray-800 dark:text-gray-200"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              {user.name}
-            </motion.h2>
-            <motion.p
-              className="text-gray-500 dark:text-gray-400 flex items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Mail size={14} className="mr-2" />
-              {user.email}
-            </motion.p>
-          </div>
-
-          {/* Password Reset Button */}
+    <div className="p-6 max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
+      {/* Confirmation Dialog */}
+      <AnimatePresence>
+        {showConfirmDialog.show && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4"
           >
-            {resetSent ? (
-              <div className="flex items-center px-3 py-1.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg text-sm">
-                <CheckCircle size={14} className="mr-1" />
-                <span>Reset email sent</span>
-              </div>
-            ) : (
-              <motion.button
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 4px 8px rgba(99, 102, 241, 0.15)",
-                }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleSendPasswordReset}
-                disabled={isSendingReset}
-                className={`flex items-center px-3 py-1.5 rounded-lg text-sm font-medium 
-                                ${
-                                  isSendingReset
-                                    ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                                    : "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/50"
-                                }`}
-              >
-                {isSendingReset ? (
-                  <>
-                    <RefreshCw size={14} className="mr-2 animate-spin" />
-                    <span>Sending...</span>
-                  </>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-md w-full p-6"
+            >
+              <div className="text-center mb-4">
+                {showConfirmDialog.action.includes("terminate") ? (
+                  <div className="mx-auto h-16 w-16 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center mb-4">
+                    <LogOut size={28} className="text-red-500" />
+                  </div>
+                ) : showConfirmDialog.action === "toggle-status" ? (
+                  <div className="mx-auto h-16 w-16 rounded-full bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center mb-4">
+                    {user?.status === "active" ? (
+                      <Lock size={28} className="text-amber-500" />
+                    ) : (
+                      <Unlock size={28} className="text-green-500" />
+                    )}
+                  </div>
                 ) : (
-                  <>
-                    <KeyRound size={14} className="mr-2" />
-                    <span>Send Password Reset</span>
-                  </>
+                  <div className="mx-auto h-16 w-16 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center mb-4">
+                    <Shield size={28} className="text-primary-500" />
+                  </div>
                 )}
-              </motion.button>
-            )}
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  {showConfirmDialog.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {showConfirmDialog.message}
+                </p>
+              </div>
+              <div className="flex space-x-3 justify-end">
+                <button
+                  onClick={() =>
+                    setShowConfirmDialog({
+                      show: false,
+                      action: "",
+                      title: "",
+                      message: "",
+                    })
+                  }
+                  className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  disabled={isActionLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmAction}
+                  className={`px-4 py-2 rounded-xl font-medium flex items-center ${
+                    showConfirmDialog.action.includes("terminate") ||
+                    (showConfirmDialog.action === "toggle-status" &&
+                      user?.status === "active")
+                      ? "bg-red-600 hover:bg-red-700 text-white"
+                      : "bg-primary-600 hover:bg-primary-700 text-white"
+                  }`}
+                  disabled={isActionLoading}
+                >
+                  {isActionLoading ? (
+                    <>
+                      <RefreshCw size={16} className="animate-spin mr-2" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Confirm"
+                  )}
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
-        </div>
+        )}
+      </AnimatePresence>
 
-        {/* Status Badges */}
-        <div className="flex mt-4 space-x-3">
-          <div className="flex items-center px-3 py-1.5 rounded-lg text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-            <Shield
-              size={14}
-              className="mr-2 text-primary-500 dark:text-primary-400"
-            />
-            <span>{user.role.title || "No role assigned"}</span>
-          </div>
+      {/* Back Button */}
+      <motion.button
+        className="group mb-6 flex items-center px-4 py-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        whileHover={{ x: -5 }}
+        onClick={handleGoBack}
+      >
+        <ArrowLeft size={18} className="mr-2 group-hover:animate-pulse" />
+        Back to Users
+      </motion.button>
 
-          <StatusBadge
-            status={user.status as any}
-            size="lg"
-            withIcon
-            withDot={user.status === "active"}
-          />
-
-          <div className="flex items-center px-3 py-1.5 rounded-lg text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-            <Cpu
-              size={14}
-              className="mr-2 text-primary-500 dark:text-primary-400"
-            />
-            <span>{user.mfa_enabled ? "MFA Enabled" : "MFA Disabled"}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="mt-6 mb-4">
-        <TabNavigation
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          variant="default"
-          className=""
-          scrollable={false}
-        />
-      </div>
-
-      {/* Tab Content */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-        {activeTab === "overview" && (
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              <InfoCard
-                icon={
-                  <Shield
-                    size={14}
-                    className="text-primary-500 dark:text-primary-400"
-                  />
-                }
-                label="ROLE"
-                value={user.role.title || "No role assigned"}
-              />
-
-              <InfoCard
-                icon={
-                  <UserCheck
-                    size={14}
-                    className="text-primary-500 dark:text-primary-400"
-                  />
-                }
-                label="STATUS"
-                value={
-                  <StatusBadge status={user.status as any} size="md" withIcon />
-                }
-              />
-
-              <InfoCard
-                icon={
-                  <Cpu
-                    size={14}
-                    className="text-primary-500 dark:text-primary-400"
-                  />
-                }
-                label="MFA STATUS"
-                value={
-                  <span
-                    className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
-                      user.mfa_enabled
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400"
-                        : "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400"
-                    }`}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* User Profile Card */}
+        <div className="lg:col-span-1">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-6"
+          >
+            {/* User Card Header */}
+            <div className="relative">
+              <div className="h-32 bg-gradient-to-r from-primary-600 to-primary-400"></div>
+              <div className="absolute bottom-0 w-full transform translate-y-1/2 flex justify-center">
+                <div className="h-24 w-24 rounded-xl bg-white dark:bg-gray-800 p-1 shadow-md">
+                  <div className="h-full w-full rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white text-2xl font-bold">
+                    {user.name
+                      ? user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()
+                      : "??"}
+                  </div>
+                </div>
+              </div>
+              <div className="absolute top-3 right-3">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="p-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white transition-colors"
                   >
-                    {user.mfa_enabled ? "Enabled" : "Not Enabled"}
-                  </span>
-                }
-              />
+                    <MoreHorizontal size={18} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <AnimatePresence>
+                    {showDropdown && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 z-10"
+                      >
+                        <div className="p-2">
+                          <button
+                            onClick={() => {
+                              openEditModal();
+                              setShowDropdown(false);
+                            }}
+                            className="w-full flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                          >
+                            <Edit
+                              size={16}
+                              className="mr-2 text-gray-500 dark:text-gray-400"
+                            />
+                            Edit User
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              showConfirmationDialog(
+                                "toggle-status",
+                                user.status === "active"
+                                  ? "Deactivate User"
+                                  : "Activate User",
+                                user.status === "active"
+                                  ? `Are you sure you want to deactivate ${user.name}'s account? They will lose access to the platform.`
+                                  : `Are you sure you want to activate ${user.name}'s account? They will regain access to the platform.`
+                              );
+                              setShowDropdown(false);
+                            }}
+                            className="w-full flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                          >
+                            {user.status === "active" ? (
+                              <Lock
+                                size={16}
+                                className="mr-2 text-gray-500 dark:text-gray-400"
+                              />
+                            ) : (
+                              <Unlock
+                                size={16}
+                                className="mr-2 text-gray-500 dark:text-gray-400"
+                              />
+                            )}
+                            {user.status === "active"
+                              ? "Deactivate User"
+                              : "Activate User"}
+                          </button>
+
+                          <div className="my-1 border-t border-gray-100 dark:border-gray-700"></div>
+
+                          <button
+                            onClick={() => {
+                              showConfirmationDialog(
+                                "terminate-all-sessions",
+                                "Terminate All Sessions",
+                                `This will log ${user.name} out of all devices. Are you sure you want to continue?`
+                              );
+                              setShowDropdown(false);
+                            }}
+                            className="w-full flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                          >
+                            <LogOut
+                              size={16}
+                              className="mr-2 text-gray-500 dark:text-gray-400"
+                            />
+                            Terminate All Sessions
+                          </button>
+
+                          {user.mfa_enabled && (
+                            <button
+                              onClick={() => {
+                                showConfirmationDialog(
+                                  "reset-mfa",
+                                  "Reset MFA",
+                                  `This will remove all enrolled MFA devices for ${user.name}. They will need to set up MFA again. Continue?`
+                                );
+                                setShowDropdown(false);
+                              }}
+                              className="w-full flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                            >
+                              <EyeOff
+                                size={16}
+                                className="mr-2 text-gray-500 dark:text-gray-400"
+                              />
+                              Reset MFA
+                            </button>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
             </div>
 
-            {/* Contact information */}
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 p-4 mb-4">
-              <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-3">
-                Contact Information
-              </h3>
-              <div className="space-y-2">
+            {/* User Card Body */}
+            <div className="pt-16 px-6 pb-6">
+              <div className="text-center mb-4">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  {user.name}
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 flex items-center justify-center mt-1">
+                  <Mail size={14} className="mr-1.5" />
+                  {user.email}
+                </p>
+              </div>
+
+              {/* Status Badges */}
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                <span className="px-3 py-1.5 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-lg text-xs font-medium flex items-center">
+                  <Shield size={14} className="mr-1.5" />
+                  {user.role.title || "No role assigned"}
+                </span>
+
+                <StatusBadge
+                  status={user.status as any}
+                  size="lg"
+                  withIcon
+                  withDot={user.status === "active"}
+                />
+
+                <span
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center ${
+                    user.mfa_enabled
+                      ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                      : "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
+                  }`}
+                >
+                  <Cpu size={14} className="mr-1.5" />
+                  {user.mfa_enabled ? "MFA Enabled" : "MFA Disabled"}
+                </span>
+              </div>
+
+              {/* Contact Details */}
+              <div className="space-y-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
+                <h3 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-3">
+                  Contact Information
+                </h3>
+
                 <div className="flex items-center text-sm">
                   <Mail
-                    size={14}
-                    className="text-gray-400 dark:text-gray-500 mr-2"
+                    size={16}
+                    className="text-gray-400 dark:text-gray-500 mr-3 flex-shrink-0"
                   />
-                  <span className="text-gray-700 dark:text-gray-300">
-                    {user.email}
-                  </span>
+                  <div>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      Email
+                    </p>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      {user.email}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex items-center text-sm">
                   <Phone
-                    size={14}
-                    className="text-gray-400 dark:text-gray-500 mr-2"
+                    size={16}
+                    className="text-gray-400 dark:text-gray-500 mr-3 flex-shrink-0"
                   />
-                  <span className="text-gray-700 dark:text-gray-300">
-                    {user.phone_number || "Not provided"}
-                  </span>
+                  <div>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      Phone
+                    </p>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      {user.phone_number || "Not provided"}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex items-center text-sm">
                   <MapPin
-                    size={14}
-                    className="text-gray-400 dark:text-gray-500 mr-2"
+                    size={16}
+                    className="text-gray-400 dark:text-gray-500 mr-3 flex-shrink-0"
                   />
-                  <span className="text-gray-700 dark:text-gray-300">
-                    {user.location || "Not specified"}
-                  </span>
+                  <div>
+                    <p className="text-gray-900 dark:text-white font-medium">
+                      Location
+                    </p>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      {user.location || "Not specified"}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Activity stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <InfoCard
-                icon={
-                  <Clock
-                    size={14}
-                    className="text-primary-500 dark:text-primary-400"
-                  />
-                }
-                label="LAST ACTIVE"
-                value={
-                  <div className="text-sm flex items-center">
+              {/* Account Stats */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <Clock size={14} className="inline mr-1.5" />
+                    Last Active
+                  </div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {user.last_login
                       ? formatDistanceToNow(new Date(user.last_login), {
                           addSuffix: true,
                         })
                       : "Never"}
                   </div>
-                }
-              />
+                </div>
 
-              <InfoCard
-                icon={
-                  <CalendarDays
-                    size={14}
-                    className="text-primary-500 dark:text-primary-400"
-                  />
-                }
-                label="JOINED"
-                value={
-                  <div className="text-sm">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <CalendarDays size={14} className="inline mr-1.5" />
+                    Joined
+                  </div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {user.createdAt
                       ? format(new Date(user.createdAt), "MMM d, yyyy")
                       : "Unknown"}
                   </div>
-                }
-              />
-            </div>
-
-            {/* Transactions */}
-            <InfoCard
-              icon={
-                <CreditCard
-                  size={14}
-                  className="text-primary-500 dark:text-primary-400"
-                />
-              }
-              label="TRANSACTIONS"
-              value={
-                <div className="flex items-center">
-                  <span className="text-lg font-semibold mr-2">
-                    {user.transactions_count}
-                  </span>
-                  <div className="h-2.5 flex-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-primary-500 to-primary-500"
-                      initial={{ width: 0 }}
-                      animate={{
-                        width: `${Math.min(user.transactions_count * 2, 100)}%`,
-                      }}
-                      transition={{
-                        delay: 0.6,
-                        duration: 0.8,
-                        ease: "easeOut",
-                      }}
-                    />
-                  </div>
-                </div>
-              }
-            />
-
-            {/* Activity timeline */}
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 p-4 mt-4">
-              <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-3 flex items-center">
-                <Activity
-                  size={14}
-                  className="text-primary-500 dark:text-primary-400 mr-2"
-                />
-                Activity Timeline
-              </h3>
-              <div className="relative pl-4 border-l border-gray-200 dark:border-gray-600 space-y-3">
-                <div className="relative">
-                  <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-primary-500"></div>
-                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                    Account Created
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {user.createdAt
-                      ? format(new Date(user.createdAt), "MMM d, yyyy")
-                      : "Unknown"}
-                  </p>
                 </div>
 
-                {user.last_login && (
-                  <div className="relative">
-                    <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-primary-500"></div>
-                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                      Last Login
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {format(new Date(user.last_login), "MMM d, yyyy, h:mm a")}
-                    </p>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <CreditCard size={14} className="inline mr-1.5" />
+                    Transactions
                   </div>
-                )}
-
-                {user.transactions_count > 0 && (
-                  <div className="relative">
-                    <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                      Transactions
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {user.transactions_count} total transactions
-                    </p>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    {user.transactions_count || 0}
                   </div>
-                )}
-
-                {resetSent && (
-                  <div className="relative">
-                    <div className="absolute -left-6 mt-1 w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                      Password Reset Email
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Sent {format(new Date(), "MMM d, yyyy, h:mm a")}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "sessions" && (
-          <div className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
-                Active Sessions
-              </h3>
-              <ActionButton
-                icon={<LogOut size={16} />}
-                label="Terminate All Sessions"
-                onClick={handleTerminateAllSessions}
-                isDanger={true}
-              />
-            </div>
-
-            <DataTable
-              columns={sessionColumns}
-              data={activeSessions}
-              isLoading={isLoadingSessions}
-              emptyMessage="No active sessions found for this user."
-            />
-
-            <div className="mt-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 px-4 py-3 rounded-xl text-sm">
-              <AlertCircle size={16} className="inline-block mr-2" />
-              Terminating a session will immediately log the user out of that
-              device.
-            </div>
-          </div>
-        )}
-
-        {activeTab === "login-history" && (
-          <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
-              Login History
-            </h3>
-            <DataTable
-              columns={loginHistoryColumns}
-              data={loginHistory}
-              isLoading={isLoadingLogs}
-              emptyMessage="No login history found for this user."
-            />
-          </div>
-        )}
-
-        {activeTab === "security" && (
-          <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
-              Security Settings
-            </h3>
-
-            {/* Password Management */}
-            <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-4 mb-4">
-              <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-2">
-                Password Management
-              </h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Manage the user's password and send password reset links.
-              </p>
-
-              <div className="flex space-x-2">
-                <ActionButton
-                  icon={<KeyRound size={16} />}
-                  label="Send Password Reset"
-                  onClick={handleSendPasswordReset}
-                  isDisabled={isSendingReset || resetSent}
-                />
-
-                {user.status === "active" && (
-                  <ActionButton
-                    icon={<Eye size={16} />}
-                    label="Force Password Change"
-                    onClick={() => {
-                      toast("This feature is coming soon");
-                    }}
-                  />
-                )}
-              </div>
-
-              {resetSent && (
-                <div className="mt-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded-xl text-sm">
-                  <CheckCircle size={16} className="inline-block mr-2" />
-                  Password reset email sent successfully. The link will expire
-                  in 24 hours.
                 </div>
-              )}
-            </div>
-
-            <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-4 mb-4">
-              <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-2">
-                Multi-Factor Authentication
-              </h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                {user.mfa_enabled
-                  ? "The user has enabled MFA for their account."
-                  : "The user has not enabled MFA for their account."}
-              </p>
-
-              <div className="flex space-x-2">
-                {user.mfa_enabled ? (
-                  <ActionButton
-                    icon={<EyeOff size={16} />}
-                    label="Reset MFA"
-                    onClick={handleResetMFA}
-                    isDanger={true}
-                  />
-                ) : (
-                  <ActionButton
-                    icon={<Eye size={16} />}
-                    label="Require MFA Setup"
-                    onClick={() => {
-                      toast("This feature is coming soon");
-                    }}
-                  />
-                )}
               </div>
 
-              <div className="mt-4 bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 text-primary-700 dark:text-primary-400 px-4 py-3 rounded-xl text-sm">
-                <AlertCircle size={16} className="inline-block mr-2" />
-                Resetting MFA will remove all enrolled devices and require the
-                user to set up MFA again.
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-4">
-              <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-2">
-                Account Status
-              </h4>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Control the user's access to the platform.
-              </p>
-
-              <div className="flex space-x-2">
-                <ActionButton
-                  icon={
-                    user.status === "active" ? (
-                      <Lock size={16} />
+              {/* Password Reset */}
+              <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex flex-col space-y-2">
+                  <button
+                    onClick={handleSendPasswordReset}
+                    disabled={isSendingReset || resetSent}
+                    className={`w-full py-2.5 px-4 rounded-xl flex items-center justify-center text-sm font-medium transition-all ${
+                      resetSent
+                        ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 cursor-default"
+                        : isSendingReset
+                        ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-wait"
+                        : "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/50"
+                    }`}
+                  >
+                    {resetSent ? (
+                      <>
+                        <CheckCircle size={16} className="mr-2" />
+                        Reset email sent
+                      </>
+                    ) : isSendingReset ? (
+                      <>
+                        <RefreshCw size={16} className="mr-2 animate-spin" />
+                        Sending...
+                      </>
                     ) : (
-                      <Unlock size={16} />
-                    )
-                  }
-                  label={
-                    user.status === "active"
-                      ? "Deactivate Account"
-                      : "Activate Account"
-                  }
-                  onClick={handleToggleUserStatus}
-                  isDanger={user.status === "active"}
-                  isPrimary={user.status !== "active"}
-                />
-
-                <ActionButton
-                  icon={<FileText size={16} />}
-                  label="View Audit Logs"
-                  onClick={() => {
-                    toast("This feature is coming soon");
-                  }}
-                />
+                      <>
+                        <KeyRound size={16} className="mr-2" />
+                        Send Password Reset
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
+          </motion.div>
+        </div>
+
+        {/* Main Content */}
+        <div className="lg:col-span-3">
+          {/* Tab Navigation */}
+          <div className="mb-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-1">
+            <TabNavigation
+              tabs={tabs}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              variant="pills"
+              className="p-1.5"
+              scrollable={false}
+            />
           </div>
-        )}
+
+          {/* Tab Content */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            {/* Overview Tab */}
+            {activeTab === "overview" && (
+              <div className="p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                  <User size={20} className="mr-2 text-primary-500" />
+                  User Overview
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  {/* Role Card */}
+                  <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
+                        <Shield
+                          size={20}
+                          className="text-primary-600 dark:text-primary-400"
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                          Role
+                        </h3>
+                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                          {user.role.title || "No role assigned"}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {user.role.description || "No role description available"}
+                    </p>
+                  </div>
+
+                  {/* Account Status Card */}
+                  <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          user.status === "active"
+                            ? "bg-green-50 dark:bg-green-900/30"
+                            : "bg-red-50 dark:bg-red-900/30"
+                        }`}
+                      >
+                        {user.status === "active" ? (
+                          <CheckCircle
+                            size={20}
+                            className="text-green-600 dark:text-green-400"
+                          />
+                        ) : (
+                          <XCircle
+                            size={20}
+                            className="text-red-600 dark:text-red-400"
+                          />
+                        )}
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                          Account Status
+                        </h3>
+                        <p className="text-lg font-semibold text-gray-900 dark:text-white capitalize">
+                          {user.status}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {user.status === "active"
+                        ? "User has full access to the platform."
+                        : "User access is currently restricted."}
+                    </p>
+                  </div>
+
+                  {/* MFA Status Card */}
+                  <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center mb-4">
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          user.mfa_enabled
+                            ? "bg-green-50 dark:bg-green-900/30"
+                            : "bg-amber-50 dark:bg-amber-900/30"
+                        }`}
+                      >
+                        {user.mfa_enabled ? (
+                          <Layers
+                            size={20}
+                            className="text-green-600 dark:text-green-400"
+                          />
+                        ) : (
+                          <AlertTriangle
+                            size={20}
+                            className="text-amber-600 dark:text-amber-400"
+                          />
+                        )}
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                          MFA Status
+                        </h3>
+                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                          {user.mfa_enabled ? "Enabled" : "Disabled"}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {user.mfa_enabled
+                        ? "User has set up multi-factor authentication."
+                        : "User has not enabled multi-factor authentication."}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Activity Timeline */}
+                <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600 mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <Activity size={18} className="mr-2 text-primary-500" />
+                    Activity Timeline
+                  </h3>
+
+                  <div className="relative pl-8 ml-2 border-l-2 border-gray-200 dark:border-gray-600 space-y-6">
+                    {/* Account Created */}
+                    <div className="relative">
+                      <div className="absolute -left-10 top-0 w-5 h-5 rounded-full bg-primary-500 flex items-center justify-center ring-4 ring-white dark:ring-gray-700">
+                        <User size={12} className="text-white" />
+                      </div>
+                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          Account Created
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {user.createdAt
+                            ? format(
+                                new Date(user.createdAt),
+                                "MMMM d, yyyy 'at' h:mm a"
+                              )
+                            : "Unknown date"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Last Login */}
+                    {user.last_login && (
+                      <div className="relative">
+                        <div className="absolute -left-10 top-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center ring-4 ring-white dark:ring-gray-700">
+                          <Zap size={12} className="text-white" />
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            Last Login
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {format(
+                              new Date(user.last_login),
+                              "MMMM d, yyyy 'at' h:mm a"
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Transactions */}
+                    {user.transactions_count > 0 && (
+                      <div className="relative">
+                        <div className="absolute -left-10 top-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center ring-4 ring-white dark:ring-gray-700">
+                          <CreditCard size={12} className="text-white" />
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            Transactions
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {user.transactions_count} total transactions
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Password Reset */}
+                    {resetSent && (
+                      <div className="relative">
+                        <div className="absolute -left-10 top-0 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center ring-4 ring-white dark:ring-gray-700">
+                          <KeyRound size={12} className="text-white" />
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            Password Reset Email
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Sent{" "}
+                            {format(new Date(), "MMMM d, yyyy 'at' h:mm a")}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    Quick Actions
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button
+                      onClick={openEditModal}
+                      className="flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors"
+                    >
+                      <Edit size={18} className="text-primary-500 mr-2" />
+                      <span className="text-gray-800 dark:text-white font-medium">
+                        Edit Profile
+                      </span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        showConfirmationDialog(
+                          "toggle-status",
+                          user.status === "active"
+                            ? "Deactivate User"
+                            : "Activate User",
+                          user.status === "active"
+                            ? `Are you sure you want to deactivate ${user.name}'s account? They will lose access to the platform.`
+                            : `Are you sure you want to activate ${user.name}'s account? They will regain access to the platform.`
+                        );
+                      }}
+                      className={`flex items-center justify-center p-4 rounded-xl border transition-colors ${
+                        user.status === "active"
+                          ? "bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-800 dark:text-red-300"
+                          : "bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-800 dark:text-green-300"
+                      }`}
+                    >
+                      {user.status === "active" ? (
+                        <Lock size={18} className="mr-2" />
+                      ) : (
+                        <Unlock size={18} className="mr-2" />
+                      )}
+                      <span className="font-medium">
+                        {user.status === "active"
+                          ? "Deactivate User"
+                          : "Activate User"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sessions Tab */}
+            {activeTab === "sessions" && (
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+                    <Globe size={20} className="mr-2 text-primary-500" />
+                    Active Sessions
+                  </h2>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      showConfirmationDialog(
+                        "terminate-all-sessions",
+                        "Terminate All Sessions",
+                        `This will log ${user.name} out of all devices. Are you sure you want to continue?`
+                      );
+                    }}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center"
+                  >
+                    <LogOut size={16} className="mr-2" />
+                    Terminate All Sessions
+                  </motion.button>
+                </div>
+
+                <div className="bg-white dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 overflow-hidden">
+                  <DataTable
+                    columns={sessionColumns}
+                    data={activeSessions}
+                    isLoading={isLoadingSessions}
+                    emptyMessage="No active sessions found for this user."
+                  />
+                </div>
+
+                <div className="mt-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 px-4 py-3 rounded-xl text-sm flex items-start">
+                  <AlertTriangle
+                    size={18}
+                    className="mr-2 flex-shrink-0 mt-0.5"
+                  />
+                  <div>
+                    <p className="font-medium mb-1">Session Termination</p>
+                    <p>
+                      Terminating a session will immediately log the user out of
+                      that device. The user will need to log in again to regain
+                      access.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Login History Tab */}
+            {activeTab === "login-history" && (
+              <div className="p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                  <Clock size={20} className="mr-2 text-primary-500" />
+                  Login History
+                </h2>
+
+                <div className="bg-white dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 overflow-hidden">
+                  <DataTable
+                    columns={loginHistoryColumns}
+                    data={loginHistory}
+                    isLoading={isLoadingLogs}
+                    emptyMessage="No login history found for this user."
+                  />
+                </div>
+
+                <div className="mt-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 px-4 py-3 rounded-xl text-sm flex items-start">
+                  <Info size={18} className="mr-2 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium mb-1">Login History</p>
+                    <p>
+                      This table shows all login attempts, both successful and
+                      failed. This information can be useful for identifying
+                      suspicious activity.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Security Tab */}
+            {activeTab === "security" && (
+              <div className="p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                  <Shield size={20} className="mr-2 text-primary-500" />
+                  Security Settings
+                </h2>
+
+                <div className="space-y-6">
+                  {/* Password Management */}
+                  <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600">
+                    <div className="flex items-center mb-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
+                        <KeyRound
+                          size={20}
+                          className="text-primary-600 dark:text-primary-400"
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Password Management
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Manage the user's password and send password reset
+                          links
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={handleSendPasswordReset}
+                        disabled={isSendingReset || resetSent}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center transition-colors ${
+                          resetSent
+                            ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 cursor-default"
+                            : isSendingReset
+                            ? "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-wait"
+                            : "bg-primary-600 hover:bg-primary-700 text-white"
+                        }`}
+                      >
+                        {resetSent ? (
+                          <>
+                            <CheckCircle size={16} className="mr-2" />
+                            Reset email sent
+                          </>
+                        ) : isSendingReset ? (
+                          <>
+                            <RefreshCw
+                              size={16}
+                              className="mr-2 animate-spin"
+                            />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <KeyRound size={16} className="mr-2" />
+                            Send Password Reset
+                          </>
+                        )}
+                      </button>
+
+                      {user.status === "active" && (
+                        <button
+                          onClick={() => {
+                            toast(
+                              "Force password change feature coming soon"
+                            );
+                          }}
+                          className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+                        >
+                          <Eye size={16} className="mr-2" />
+                          Force Password Change
+                        </button>
+                      )}
+                    </div>
+
+                    {resetSent && (
+                      <div className="mt-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 px-4 py-3 rounded-xl text-sm flex items-start">
+                        <CheckCircle
+                          size={18}
+                          className="mr-2 flex-shrink-0 mt-0.5"
+                        />
+                        <div>
+                          <p className="font-medium mb-1">Reset Email Sent</p>
+                          <p>
+                            Password reset email sent successfully to{" "}
+                            {user.email}. The link will expire in 24 hours.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Multi-Factor Authentication */}
+                  <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600">
+                    <div className="flex items-center mb-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
+                        <Shield
+                          size={20}
+                          className="text-primary-600 dark:text-primary-400"
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Multi-Factor Authentication
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {user.mfa_enabled
+                            ? "The user has enabled MFA for their account"
+                            : "The user has not enabled MFA for their account"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl mt-4">
+                      <div className="flex items-center">
+                        {user.mfa_enabled ? (
+                          <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-3">
+                            <CheckCircle
+                              size={18}
+                              className="text-green-600 dark:text-green-400"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mr-3">
+                            <AlertTriangle
+                              size={18}
+                              className="text-amber-600 dark:text-amber-400"
+                            />
+                          </div>
+                        )}
+
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {user.mfa_enabled
+                              ? "MFA is enabled"
+                              : "MFA is not enabled"}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {user.mfa_enabled
+                              ? "User is using additional security verification"
+                              : "Recommend enabling MFA for increased security"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        {user.mfa_enabled ? (
+                          <button
+                            onClick={() => {
+                              showConfirmationDialog(
+                                "reset-mfa",
+                                "Reset MFA",
+                                `This will remove all enrolled MFA devices for ${user.name}. They will need to set up MFA again. Continue?`
+                              );
+                            }}
+                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center"
+                          >
+                            <EyeOff size={16} className="mr-2" />
+                            Reset MFA
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              toast(
+                                "Require MFA setup feature coming soon"
+                              );
+                            }}
+                            className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center"
+                          >
+                            <Eye size={16} className="mr-2" />
+                            Require MFA Setup
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mt-4 bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800 text-primary-800 dark:text-primary-300 px-4 py-3 rounded-xl text-sm flex items-start">
+                      <AlertCircle
+                        size={18}
+                        className="mr-2 flex-shrink-0 mt-0.5"
+                      />
+                      <div>
+                        <p className="font-medium mb-1">About MFA</p>
+                        <p>
+                          Multi-Factor Authentication adds an extra layer of
+                          security to the user's account. Resetting MFA will
+                          remove all enrolled devices and require the user to
+                          set up MFA again.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Account Status */}
+                  <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600">
+                    <div className="flex items-center mb-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">
+                        <UserCheck
+                          size={20}
+                          className="text-primary-600 dark:text-primary-400"
+                        />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Account Status
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Control the user's access to the platform
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl mt-4">
+                      <div className="flex items-center">
+                        {user.status === "active" ? (
+                          <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-3">
+                            <CheckCircle
+                              size={18}
+                              className="text-green-600 dark:text-green-400"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-3">
+                            <XCircle
+                              size={18}
+                              className="text-red-600 dark:text-red-400"
+                            />
+                          </div>
+                        )}
+
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">
+                            {user.status}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {user.status === "active"
+                              ? "User has full access to the platform"
+                              : "User access is currently restricted"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => {
+                            showConfirmationDialog(
+                              "toggle-status",
+                              user.status === "active"
+                                ? "Deactivate User"
+                                : "Activate User",
+                              user.status === "active"
+                                ? `Are you sure you want to deactivate ${user.name}'s account? They will lose access to the platform.`
+                                : `Are you sure you want to activate ${user.name}'s account? They will regain access to the platform.`
+                            );
+                          }}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-colors ${
+                            user.status === "active"
+                              ? "bg-red-600 hover:bg-red-700 text-white"
+                              : "bg-green-600 hover:bg-green-700 text-white"
+                          }`}
+                        >
+                          {user.status === "active" ? (
+                            <>
+                              <Lock size={16} className="mr-2" />
+                              Deactivate User
+                            </>
+                          ) : (
+                            <>
+                              <Unlock size={16} className="mr-2" />
+                              Activate User
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            toast("View audit logs feature coming soon");
+                          }}
+                          className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center"
+                        >
+                          <FileText size={16} className="mr-2" />
+                          View Audit Logs
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 px-4 py-3 rounded-xl text-sm flex items-start">
+                      <AlertTriangle
+                        size={18}
+                        className="mr-2 flex-shrink-0 mt-0.5"
+                      />
+                      <div>
+                        <p className="font-medium mb-1">
+                          Account Status Warning
+                        </p>
+                        <p>
+                          {user.status === "active"
+                            ? "Deactivating this account will prevent the user from accessing the platform until reactivated."
+                            : "This account is currently inactive. The user cannot access the platform until the account is reactivated."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+
+      {/* Edit Modal */}
       {isEditModalOpen && (
         <EditAdmin
           isEditModalOpen={isEditModalOpen}
