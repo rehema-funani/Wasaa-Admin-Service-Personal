@@ -697,7 +697,7 @@ const SystemWalletsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 shadow-sm mb-6">
+        {/* <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-100 dark:border-neutral-700 shadow-sm mb-6">
           <div className="flex justify-between items-center px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
             <h2 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 flex items-center">
               <ArrowDownUp size={16} className="mr-1.5 text-blue-500" />
@@ -811,7 +811,7 @@ const SystemWalletsPage: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
 
         <div className="bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-100 dark:border-blue-900/20 p-3 shadow-sm">
           <div className="flex items-start gap-2">
