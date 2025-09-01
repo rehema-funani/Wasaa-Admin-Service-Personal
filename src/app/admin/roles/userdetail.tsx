@@ -516,27 +516,6 @@ const UserDetailsPage = () => {
                               ? "Deactivate User"
                               : "Activate User"}
                           </button>
-
-                          <div className="my-1 border-t border-gray-100 dark:border-gray-700"></div>
-
-                          <button
-                            onClick={() => {
-                              showConfirmationDialog(
-                                "terminate-all-sessions",
-                                "Terminate All Sessions",
-                                `This will log ${user.name} out of all devices. Are you sure you want to continue?`
-                              );
-                              setShowDropdown(false);
-                            }}
-                            className="w-full flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-                          >
-                            <LogOut
-                              size={16}
-                              className="mr-2 text-gray-500 dark:text-gray-400"
-                            />
-                            Terminate All Sessions
-                          </button>
-
                           {user.mfa_enabled && (
                             <button
                               onClick={() => {
@@ -564,7 +543,6 @@ const UserDetailsPage = () => {
               </div>
             </div>
 
-            {/* User Card Body */}
             <div className="pt-16 px-6 pb-6">
               <div className="text-center mb-4">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -576,7 +554,6 @@ const UserDetailsPage = () => {
                 </p>
               </div>
 
-              {/* Status Badges */}
               <div className="flex flex-wrap justify-center gap-2 mb-6">
                 <span className="px-3 py-1.5 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-lg text-xs font-medium flex items-center">
                   <Shield size={14} className="mr-1.5" />
@@ -602,7 +579,6 @@ const UserDetailsPage = () => {
                 </span>
               </div>
 
-              {/* Contact Details */}
               <div className="space-y-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-6">
                 <h3 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-3">
                   Contact Information
@@ -653,7 +629,6 @@ const UserDetailsPage = () => {
                   </div>
                 </div>
               </div>
-              {/* Account Stats */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -692,7 +667,6 @@ const UserDetailsPage = () => {
                 </div>
               </div>
 
-              {/* Password Reset */}
               <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
                 <div className="flex flex-col space-y-2">
                   <button
@@ -775,7 +749,6 @@ const UserDetailsPage = () => {
                     </p>
                   </div>
 
-                  {/* Account Status Card */}
                   <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center mb-4">
                       <div
@@ -813,7 +786,6 @@ const UserDetailsPage = () => {
                     </p>
                   </div>
 
-                  {/* MFA Status Card */}
                   <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center mb-4">
                       <div
@@ -900,7 +872,6 @@ const UserDetailsPage = () => {
                       </div>
                     )}
 
-                    {/* Transactions */}
                     {user.transactions_count > 0 && (
                       <div className="relative">
                         <div className="absolute -left-10 top-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center ring-4 ring-white dark:ring-gray-700">
@@ -917,7 +888,6 @@ const UserDetailsPage = () => {
                       </div>
                     )}
 
-                    {/* Password Reset */}
                     {resetSent && (
                       <div className="relative">
                         <div className="absolute -left-10 top-0 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center ring-4 ring-white dark:ring-gray-700">
@@ -937,7 +907,6 @@ const UserDetailsPage = () => {
                   </div>
                 </div>
 
-                {/* Quick Actions */}
                 <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     Quick Actions
@@ -995,25 +964,8 @@ const UserDetailsPage = () => {
                     <Globe size={20} className="mr-2 text-primary-500" />
                     Active Sessions
                   </h2>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                      showConfirmationDialog(
-                        "terminate-all-sessions",
-                        "Terminate All Sessions",
-                        `This will log ${user.name} out of all devices. Are you sure you want to continue?`
-                      );
-                    }}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center"
-                  >
-                    <LogOut size={16} className="mr-2" />
-                    Terminate All Sessions
-                  </motion.button>
                 </div>
 
-                {/* Custom JSX Table */}
                 <div className="bg-white dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 overflow-hidden">
                   {isLoadingSessions ? (
                     <div className="p-8 flex justify-center">

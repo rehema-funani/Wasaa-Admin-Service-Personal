@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { formatErrorMessage } from "../../../utils/formatting";
 import userService from "../../../api/services/users";
 
@@ -17,8 +17,27 @@ const PasswordSetupPage = () => {
     general: "",
   });
   const [passwordStrength, setPasswordStrength] = useState(0);
+
   const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
+  const location = useLocation();
+
+  let token = searchParams.get("token");
+
+  if (!token || token.length < 20) {
+    const queryString = location.search;
+    const tokenMatch = queryString.match(/[?&]token=([^&]+)/);
+    if (tokenMatch && tokenMatch[1]) {
+      token = decodeURIComponent(tokenMatch[1]);
+    }
+  }
+
+  if (!token || token.length < 20) {
+    const pathParts = location.pathname.split("/");
+    const lastPart = pathParts[pathParts.length - 1];
+    if (lastPart && lastPart.length >= 20) {
+      token = lastPart;
+    }
+  }
 
   const navigate = useNavigate();
 
@@ -55,6 +74,16 @@ const PasswordSetupPage = () => {
     }
   }, [password, confirmPassword, errors]);
 
+  useEffect(() => {
+    if (!token) {
+      setErrors((prev) => ({
+        ...prev,
+        general:
+          "Invalid or missing password reset token. Please request a new password reset link.",
+      }));
+    }
+  }, [token]);
+
   const getStrengthColor = () => {
     if (passwordStrength <= 0.3) return "from-red-500 to-red-600";
     if (passwordStrength <= 0.6) return "from-amber-500 to-orange-500";
@@ -63,15 +92,17 @@ const PasswordSetupPage = () => {
   };
 
   const validateForm = () => {
-    const newErrors: {
-      password: string;
-      confirmPassword: string;
-      general: string;
-    } = {
+    const newErrors = {
       password: "",
       confirmPassword: "",
       general: "",
     };
+
+    if (!token) {
+      newErrors.general =
+        "Invalid or missing token. Please request a new password reset link.";
+      return false;
+    }
 
     if (!password) {
       newErrors.password = "Password is required";
@@ -86,10 +117,12 @@ const PasswordSetupPage = () => {
     }
 
     setErrors({ ...errors, ...newErrors });
-    return !newErrors.password && !newErrors.confirmPassword;
+    return (
+      !newErrors.password && !newErrors.confirmPassword && !newErrors.general
+    );
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -103,11 +136,12 @@ const PasswordSetupPage = () => {
         navigate("/auth/login");
       }, 2000);
     } catch (err) {
+      console.error("Password reset error:", err);
       setErrors({
         ...errors,
         general:
           formatErrorMessage(err) ||
-          "Failed to set password. Please try again.",
+          "Failed to set password. Please try again or request a new password reset link.",
       });
     } finally {
       setIsLoading(false);
@@ -116,7 +150,6 @@ const PasswordSetupPage = () => {
 
   return (
     <div className="flex h-screen w-full bg-white dark:bg-gray-900">
-      {/* Left Sidebar - Desktop Only */}
       <div className="hidden lg:block lg:w-2/5 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-blue-500/10 dark:from-teal-600/20 dark:to-blue-600/20" />
 
