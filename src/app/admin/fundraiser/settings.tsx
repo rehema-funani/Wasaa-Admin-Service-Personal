@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { fundraiserService } from "../../../api/services/fundraiser";
 
-const CampaignSettingsPage = () => {
+const CampaignSettingsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -33,7 +33,6 @@ const CampaignSettingsPage = () => {
 
   const [originalSettings, setOriginalSettings] = useState({});
 
-  // Sample stats for visualization
   const [stats, setStats] = useState({
     avgDonationAmount: 650,
     totalDonations: 0,

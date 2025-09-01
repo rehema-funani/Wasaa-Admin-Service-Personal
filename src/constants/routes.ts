@@ -388,24 +388,24 @@ const routes: Route[] = [
           },
         ],
       },
-      {
-        type: "dropdown",
-        title: "Analytics",
-        icon: FilePieChart,
-        key: "fundraising-analytics",
-        items: [
-          {
-            type: "link",
-            path: "/admin/fundraising/reports",
-            title: "Campaign Reports",
-          },
-          {
-            type: "link",
-            path: "/admin/fundraising/performance",
-            title: "Performance Metrics",
-          },
-        ],
-      },
+      // {
+      //   type: "dropdown",
+      //   title: "Analytics",
+      //   icon: FilePieChart,
+      //   key: "fundraising-analytics",
+      //   items: [
+      //     {
+      //       type: "link",
+      //       path: "/admin/fundraising/reports",
+      //       title: "Campaign Reports",
+      //     },
+      //     {
+      //       type: "link",
+      //       path: "/admin/fundraising/performance",
+      //       title: "Performance Metrics",
+      //     },
+      //   ],
+      // },
       {
         type: "link",
         path: "/admin/fundraising/settings",

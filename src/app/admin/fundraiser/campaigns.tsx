@@ -278,7 +278,7 @@ const CampaignsPage = () => {
     setSelectedCampaigns([]);
   };
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = (newFilters: any) => {
     applyFilters(newFilters);
   };
 
@@ -844,11 +844,11 @@ const CampaignsPage = () => {
                           <StatusBadge status={campaign.status} />
                         </div>
 
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-lg mb-1.5 line-clamp-1">
+                        <p className="font-semibold text-gray-900 dark:text-white text-[15px] capitalize mb-1.5 line-clamp-1">
                           {campaign.title}
-                        </h3>
+                        </p>
 
-                        <div className="flex flex-wrap items-center text-xs text-gray-500 dark:text-gray-400 gap-3">
+                        <div className="flex flex-wrap items-center text-[12px] text-gray-500 dark:text-gray-400 gap-3">
                           <span className="flex items-center">
                             <Calendar size={12} className="mr-1.5" />
                             {campaign.endDate
