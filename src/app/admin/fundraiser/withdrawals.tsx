@@ -11,16 +11,14 @@ import {
   XCircle,
   AlertTriangle,
   DollarSign,
-  FileText,
   Shield,
-  Info,
   Loader,
   User,
-  ExternalLink,
 } from "lucide-react";
 import { format, subDays, addHours } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
+import { useNavigate } from "react-router-dom";
 
 const generateDummyWithdrawals = () => {
   const statusOptions = ["pending", "approved", "rejected"];
@@ -122,7 +120,7 @@ const generateDummyWithdrawals = () => {
   });
 };
 
-const WithdrawalRequestsPage = () => {
+const WithdrawalRequestsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [withdrawals, setWithdrawals] = useState([]);
   const [filteredWithdrawals, setFilteredWithdrawals] = useState([]);
@@ -135,11 +133,8 @@ const WithdrawalRequestsPage = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [activeRequest, setActiveRequest] = useState(null);
-  const [showDetailsPanel, setShowDetailsPanel] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
-  const [approvalNote, setApprovalNote] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
   const [payouts, setPayouts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
@@ -244,96 +239,10 @@ const WithdrawalRequestsPage = () => {
     setFilteredWithdrawals(withdrawals);
   };
 
-  const handleViewDetails = (withdrawal) => {
-    setActiveRequest(withdrawal);
-    setShowDetailsPanel(true);
+  const handleViewDetails = (withdrawal: any) => {
+    navigate(`/admin/fundraising/withdrawals/${withdrawal.id}`);
   };
 
-  const handleCloseDetailsPanel = () => {
-    setShowDetailsPanel(false);
-    setActiveRequest(null);
-    setShowNotes(false);
-    setApprovalNote("");
-  };
-
-  const handleApproveWithdrawal = async () => {
-    if (!activeRequest) return;
-
-    setIsProcessing(true);
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Update the withdrawal in the local state
-      const updatedWithdrawals = withdrawals.map((w) =>
-        w.id === activeRequest.id
-          ? {
-              ...w,
-              status: "approved",
-              reviewDate: new Date(),
-              reviewedBy: {
-                id: "admin-current",
-                name: "Current Admin",
-              },
-              notes: approvalNote || w.notes,
-            }
-          : w
-      );
-
-      setWithdrawals(updatedWithdrawals);
-      applyFilters(filters, updatedWithdrawals);
-
-      toast.success(`Withdrawal request ${activeRequest.id} approved`);
-      handleCloseDetailsPanel();
-    } catch (error) {
-      console.error("Error approving withdrawal:", error);
-      toast.error("Failed to approve withdrawal request");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleRejectWithdrawal = async () => {
-    if (!activeRequest) return;
-
-    setIsProcessing(true);
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Update the withdrawal in the local state
-      const updatedWithdrawals = withdrawals.map((w) =>
-        w.id === activeRequest.id
-          ? {
-              ...w,
-              status: "rejected",
-              reviewDate: new Date(),
-              reviewedBy: {
-                id: "admin-current",
-                name: "Current Admin",
-              },
-              reason: "Rejected by admin",
-              notes: approvalNote || w.notes,
-            }
-          : w
-      );
-
-      setWithdrawals(updatedWithdrawals);
-      applyFilters(filters, updatedWithdrawals);
-
-      toast.success(`Withdrawal request ${activeRequest.id} rejected`);
-      handleCloseDetailsPanel();
-    } catch (error) {
-      console.error("Error rejecting withdrawal:", error);
-      toast.error("Failed to reject withdrawal request");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // Statistics
   const getPendingCount = () => {
     return withdrawals.filter((w) => w.status === "pending").length;
   };
@@ -352,8 +261,7 @@ const WithdrawalRequestsPage = () => {
     return withdrawals.filter((w) => w.status === "rejected").length;
   };
 
-  // Status Indicator
-  const getStatusIndicator = (status) => {
+  const getStatusIndicator = (status: string) => {
     switch (status) {
       case "pending":
         return (
@@ -383,8 +291,7 @@ const WithdrawalRequestsPage = () => {
     }
   };
 
-  // Risk Indicator
-  const getRiskIndicator = (score) => {
+  const getRiskIndicator = (score: number) => {
     if (score < 30) {
       return (
         <span className="flex items-center text-emerald-600 dark:text-emerald-400 text-xs">
@@ -427,7 +334,6 @@ const WithdrawalRequestsPage = () => {
         </div>
       </motion.div>
 
-      {/* Stats Overview */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -796,357 +702,6 @@ const WithdrawalRequestsPage = () => {
             )}
           </div>
         </motion.div>
-
-        {/* Details Panel */}
-        <AnimatePresence>
-          {showDetailsPanel && activeRequest && (
-            <motion.div
-              className="lg:w-1/3 xl:w-1/3"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden sticky top-6">
-                <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-gray-700">
-                  <h2 className="text-lg font-medium text-slate-900 dark:text-white">
-                    Request Details
-                  </h2>
-                  <button
-                    onClick={handleCloseDetailsPanel}
-                    className="p-1 text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors"
-                  >
-                    <XCircle size={18} />
-                  </button>
-                </div>
-
-                <div className="p-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <div>
-                      <p className="text-xs text-slate-500 dark:text-gray-400">
-                        Request ID
-                      </p>
-                      <p className="font-medium text-slate-900 dark:text-white">
-                        {activeRequest.id}
-                      </p>
-                    </div>
-                    <div className="px-3 py-1 rounded-full text-xs">
-                      {getStatusIndicator(activeRequest.status)}
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-4 mb-4">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-slate-500 dark:text-gray-400 text-sm">
-                        Amount
-                      </span>
-                      <span className="font-medium text-slate-900 dark:text-white">
-                        ${activeRequest.amount.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-slate-500 dark:text-gray-400 text-sm">
-                        Fee
-                      </span>
-                      <span className="text-slate-700 dark:text-gray-300">
-                        ${activeRequest.fee.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between pt-2 border-t border-slate-200 dark:border-gray-600">
-                      <span className="text-slate-700 dark:text-gray-300 text-sm font-medium">
-                        Net Amount
-                      </span>
-                      <span className="font-medium text-primary-600 dark:text-primary-400">
-                        ${activeRequest.netAmount.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
-                      Campaign Details
-                    </h3>
-                    <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-3">
-                      <p className="text-sm text-slate-900 dark:text-white mb-1">
-                        {activeRequest.campaignTitle}
-                      </p>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-slate-500 dark:text-gray-400">
-                          Campaign ID
-                        </span>
-                        <button className="text-primary-600 dark:text-primary-400 hover:underline flex items-center">
-                          {activeRequest.campaignId}
-                          <ExternalLink size={12} className="ml-1" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
-                      Payment Details
-                    </h3>
-                    <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-3">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-500 dark:text-gray-400">
-                          Method
-                        </span>
-                        <span className="text-slate-900 dark:text-white capitalize">
-                          {activeRequest.paymentMethod.replace("_", " ")}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-500 dark:text-gray-400">
-                          Account Name
-                        </span>
-                        <span className="text-slate-900 dark:text-white">
-                          {activeRequest.accountDetails.accountName}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-slate-500 dark:text-gray-400">
-                          {activeRequest.paymentMethod === "bank_transfer"
-                            ? "Account Number"
-                            : "Phone Number"}
-                        </span>
-                        <span className="text-slate-900 dark:text-white">
-                          {activeRequest.accountDetails.accountNumber}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-500 dark:text-gray-400">
-                          {activeRequest.paymentMethod === "bank_transfer"
-                            ? "Bank"
-                            : "Provider"}
-                        </span>
-                        <span className="text-slate-900 dark:text-white">
-                          {activeRequest.accountDetails.bankName}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
-                      Timeline
-                    </h3>
-                    <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-3">
-                      <div className="flex items-start mb-3">
-                        <div className="mt-1 mr-3">
-                          <div className="w-2 h-2 rounded-full bg-primary-500"></div>
-                        </div>
-                        <div>
-                          <p className="text-sm text-slate-900 dark:text-white">
-                            Request Submitted
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-gray-400">
-                            {format(
-                              new Date(activeRequest.requestDate),
-                              "MMM d, yyyy 'at' h:mm a"
-                            )}
-                          </p>
-                        </div>
-                      </div>
-
-                      {activeRequest.status !== "pending" && (
-                        <div className="flex items-start">
-                          <div className="mt-1 mr-3">
-                            <div
-                              className={`w-2 h-2 rounded-full ${
-                                activeRequest.status === "approved"
-                                  ? "bg-emerald-500"
-                                  : "bg-red-500"
-                              }`}
-                            ></div>
-                          </div>
-                          <div>
-                            <p className="text-sm text-slate-900 dark:text-white">
-                              {activeRequest.status === "approved"
-                                ? "Request Approved"
-                                : "Request Rejected"}
-                            </p>
-                            <p className="text-xs text-slate-500 dark:text-gray-400">
-                              {format(
-                                new Date(activeRequest.reviewDate),
-                                "MMM d, yyyy 'at' h:mm a"
-                              )}{" "}
-                              by {activeRequest.reviewedBy.name}
-                            </p>
-                            {activeRequest.reason && (
-                              <p className="text-xs text-red-500 mt-1">
-                                Reason: {activeRequest.reason}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300">
-                        Risk Assessment
-                      </h3>
-                      {getRiskIndicator(activeRequest.riskScore)}
-                    </div>
-                    <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-3">
-                      <div className="mb-2">
-                        <div className="w-full h-2 bg-slate-200 dark:bg-gray-600 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              activeRequest.riskScore < 30
-                                ? "bg-emerald-500"
-                                : activeRequest.riskScore < 70
-                                ? "bg-amber-500"
-                                : "bg-red-500"
-                            }`}
-                            style={{ width: `${activeRequest.riskScore}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                      <p className="text-xs text-slate-500 dark:text-gray-400">
-                        Risk score: {activeRequest.riskScore}/100
-                      </p>
-                    </div>
-                  </div>
-
-                  {activeRequest.documents.length > 0 && (
-                    <div className="mb-4">
-                      <h3 className="text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
-                        Documents
-                      </h3>
-                      <div className="space-y-2">
-                        {activeRequest.documents.map((doc, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between bg-slate-50 dark:bg-gray-700/50 rounded-lg p-3"
-                          >
-                            <div className="flex items-center">
-                              <FileText
-                                size={14}
-                                className="text-slate-400 dark:text-gray-500 mr-2"
-                              />
-                              <span className="text-sm text-slate-900 dark:text-white">
-                                {doc}
-                              </span>
-                            </div>
-                            <button className="text-primary-600 dark:text-primary-400 text-sm hover:underline">
-                              View
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {activeRequest.status === "pending" && (
-                    <div className="mb-4">
-                      <button
-                        className="flex items-center justify-between w-full bg-slate-50 dark:bg-gray-700/50 rounded-lg p-3 text-left"
-                        onClick={() => setShowNotes(!showNotes)}
-                      >
-                        <div className="flex items-center">
-                          <Info
-                            size={14}
-                            className="text-slate-400 dark:text-gray-500 mr-2"
-                          />
-                          <span className="text-sm font-medium text-slate-700 dark:text-gray-300">
-                            Add Notes
-                          </span>
-                        </div>
-                        <ChevronDown
-                          size={16}
-                          className={`text-slate-400 dark:text-gray-500 transition-transform ${
-                            showNotes ? "transform rotate-180" : ""
-                          }`}
-                        />
-                      </button>
-
-                      <AnimatePresence>
-                        {showNotes && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="overflow-hidden mt-2"
-                          >
-                            <textarea
-                              placeholder="Add notes about this withdrawal request..."
-                              className="w-full border border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                              rows={3}
-                              value={approvalNote}
-                              onChange={(e) => setApprovalNote(e.target.value)}
-                            ></textarea>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )}
-
-                  {activeRequest.status === "pending" ? (
-                    <div className="flex gap-3">
-                      <button
-                        className="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={handleApproveWithdrawal}
-                        disabled={isProcessing}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader size={14} className="animate-spin mr-2" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle size={14} className="mr-2" />
-                            Approve Withdrawal
-                          </>
-                        )}
-                      </button>
-
-                      <button
-                        className="flex-1 px-4 py-2 bg-white dark:bg-gray-700 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={handleRejectWithdrawal}
-                        disabled={isProcessing}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader size={14} className="animate-spin mr-2" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <XCircle size={14} className="mr-2" />
-                            Reject
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="p-3 bg-slate-50 dark:bg-gray-700/50 rounded-lg">
-                      <div className="flex items-center">
-                        <Info
-                          size={16}
-                          className="text-slate-400 dark:text-gray-500 mr-2 flex-shrink-0"
-                        />
-                        <p className="text-sm text-slate-700 dark:text-gray-300">
-                          This withdrawal request has been{" "}
-                          {activeRequest.status}.
-                          {activeRequest.notes && (
-                            <span className="block mt-1 text-xs italic text-slate-500 dark:text-gray-400">
-                              Note: {activeRequest.notes}
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );

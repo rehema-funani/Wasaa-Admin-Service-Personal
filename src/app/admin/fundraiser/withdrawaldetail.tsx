@@ -31,7 +31,6 @@ const WithdrawalDetailsPage = () => {
     const fetchWithdrawalDetails = async () => {
       setIsLoading(true);
       try {
-        // Replace with actual API call
         const response = await fundraiserService.getPayoutDetails(id);
         setWithdrawal(response.withdrawal);
       } catch (error) {
@@ -50,7 +49,7 @@ const WithdrawalDetailsPage = () => {
     try {
       await fundraiserService.approvePayout(id, { notes: approvalNote });
       toast.success("Withdrawal request approved successfully");
-      navigate("/admin/withdrawals");
+      navigate(-1);
     } catch (error) {
       console.error("Error approving withdrawal:", error);
       toast.error("Failed to approve withdrawal");
@@ -67,7 +66,7 @@ const WithdrawalDetailsPage = () => {
         reason: "Rejected by admin",
       });
       toast.success("Withdrawal request rejected");
-      navigate("/admin/withdrawals");
+      navigate(-1);
     } catch (error) {
       console.error("Error rejecting withdrawal:", error);
       toast.error("Failed to reject withdrawal");
