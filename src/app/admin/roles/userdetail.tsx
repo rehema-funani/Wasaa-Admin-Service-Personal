@@ -38,7 +38,6 @@ import { format, formatDistanceToNow } from "date-fns";
 import { toast } from "react-hot-toast";
 import userService from "../../../api/services/users";
 import StatusBadge from "../../../components/common/StatusBadge";
-import DataTable from "../../../components/common/DataTable";
 import TabNavigation from "../../../components/common/TabNavigation";
 import EditAdmin from "../../../components/users/EditAdmin";
 import { UserAdmin } from "../../../types/user";
@@ -78,7 +77,6 @@ const UserDetailsPage = () => {
     account_status: "active",
   });
 
-  // Handler functions
   const openEditModal = () => {
     if (!user) return;
 
@@ -109,7 +107,6 @@ const UserDetailsPage = () => {
       await userService.updateUser(id, editFormData);
       toast.success("User updated successfully");
       setIsEditModalOpen(false);
-      // Refresh user data
       fetchUserData();
     } catch (error) {
       console.error("Failed to update user:", error);
@@ -154,7 +151,7 @@ const UserDetailsPage = () => {
     setIsLoadingSessions(true);
     try {
       const sessions = await userService.getUserSessions(id);
-      setActiveSessions(sessions);
+      setActiveSessions(sessions.sessions || []);
     } catch (error) {
       console.error("Failed to fetch sessions:", error);
       toast.error("Failed to load user sessions");
@@ -235,7 +232,7 @@ const UserDetailsPage = () => {
 
   const handleTerminateSession = async (sessionId) => {
     try {
-      await userService.terminateUserSession(id, sessionId);
+      await userService.revokeSession(sessionId);
       toast.success("Session terminated successfully");
       fetchUserSessions();
     } catch (error) {
@@ -295,142 +292,6 @@ const UserDetailsPage = () => {
     },
   ];
 
-  const sessionColumns = [
-    {
-      id: "device",
-      header: "Device",
-      accessor: (row) => row.device_type,
-      cell: (value, row) => (
-        <div className="flex items-center">
-          <Smartphone
-            size={16}
-            className="mr-2 text-gray-400 dark:text-gray-500"
-          />
-          <div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">
-              {value || "Unknown"}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {row.browser || "Unknown browser"}
-            </p>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "location",
-      header: "Location",
-      accessor: (row) => row.location,
-      cell: (value) => (
-        <div className="flex items-center">
-          <Globe size={16} className="mr-2 text-gray-400 dark:text-gray-500" />
-          <span className="text-gray-900 dark:text-gray-100">
-            {value || "Unknown location"}
-          </span>
-        </div>
-      ),
-    },
-    {
-      id: "ip",
-      header: "IP Address",
-      accessor: (row) => row.ip_address,
-    },
-    {
-      id: "started",
-      header: "Started",
-      accessor: (row) => row.created_at,
-      cell: (value) => (
-        <span className="text-gray-900 dark:text-gray-100">
-          {value
-            ? formatDistanceToNow(new Date(value), { addSuffix: true })
-            : "Unknown"}
-        </span>
-      ),
-    },
-    {
-      id: "last_active",
-      header: "Last Active",
-      accessor: (row) => row.last_active,
-      cell: (value) => (
-        <span className="text-gray-900 dark:text-gray-100">
-          {value
-            ? formatDistanceToNow(new Date(value), { addSuffix: true })
-            : "Unknown"}
-        </span>
-      ),
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      accessor: (row) => row.id,
-      cell: (value) => (
-        <motion.button
-          className="px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-xs font-medium hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => handleTerminateSession(value)}
-        >
-          Terminate
-        </motion.button>
-      ),
-    },
-  ];
-
-  const loginHistoryColumns = [
-    {
-      id: "timestamp",
-      header: "Time",
-      accessor: (row) => row.timestamp,
-      cell: (value) => (
-        <div>
-          <p className="text-gray-900 dark:text-gray-100">
-            {value ? format(new Date(value), "MMM d, yyyy") : "Unknown"}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {value ? format(new Date(value), "h:mm a") : ""}
-          </p>
-        </div>
-      ),
-    },
-    {
-      id: "status",
-      header: "Status",
-      accessor: (row) => row.status,
-      cell: (value) => (
-        <span
-          className={`inline-flex px-2 py-1 rounded-lg text-xs font-medium ${
-            value === "success"
-              ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-              : "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400"
-          }`}
-        >
-          {value === "success" ? "Success" : "Failed"}
-        </span>
-      ),
-    },
-    {
-      id: "method",
-      header: "Method",
-      accessor: (row) => row.method,
-    },
-    {
-      id: "location",
-      header: "Location",
-      accessor: (row) => row.location,
-    },
-    {
-      id: "device",
-      header: "Device/Browser",
-      accessor: (row) => row.device,
-    },
-    {
-      id: "ip",
-      header: "IP Address",
-      accessor: (row) => row.ip_address,
-    },
-  ];
-
-  // Loading state
   if (isLoadingUser) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
@@ -868,9 +729,7 @@ const UserDetailsPage = () => {
           </motion.div>
         </div>
 
-        {/* Main Content */}
         <div className="lg:col-span-3">
-          {/* Tab Navigation */}
           <div className="mb-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-1">
             <TabNavigation
               tabs={tabs}
@@ -1129,7 +988,6 @@ const UserDetailsPage = () => {
               </div>
             )}
 
-            {/* Sessions Tab */}
             {activeTab === "sessions" && (
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
@@ -1155,13 +1013,151 @@ const UserDetailsPage = () => {
                   </motion.button>
                 </div>
 
+                {/* Custom JSX Table */}
                 <div className="bg-white dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 overflow-hidden">
-                  <DataTable
-                    columns={sessionColumns}
-                    data={activeSessions}
-                    isLoading={isLoadingSessions}
-                    emptyMessage="No active sessions found for this user."
-                  />
+                  {isLoadingSessions ? (
+                    <div className="p-8 flex justify-center">
+                      <div className="flex flex-col items-center">
+                        <div className="w-10 h-10 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">
+                          Loading sessions...
+                        </p>
+                      </div>
+                    </div>
+                  ) : activeSessions.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                        <Globe
+                          size={24}
+                          className="text-gray-400 dark:text-gray-500"
+                        />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                        No active sessions
+                      </h3>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        No active sessions found for this user.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Device
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Location
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              IP Address
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Started
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Last Active
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
+                          {activeSessions.map((session, index) => (
+                            <motion.tr
+                              key={session.id || index}
+                              initial={{ opacity: 0, y: 5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.2,
+                                delay: index * 0.05,
+                              }}
+                              className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <Smartphone
+                                    size={16}
+                                    className="mr-2 text-gray-400 dark:text-gray-500"
+                                  />
+                                  <div>
+                                    <p className="font-medium text-gray-900 dark:text-gray-100">
+                                      {session.device_name || "Unknown"}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {session.user_agent || "Unknown browser"}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <Globe
+                                    size={16}
+                                    className="mr-2 text-gray-400 dark:text-gray-500"
+                                  />
+                                  <span className="text-gray-900 dark:text-gray-100">
+                                    {session.location || "Unknown location"}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                {session.ip_address || "Unknown"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                {session.createdAt
+                                  ? formatDistanceToNow(
+                                      new Date(session.createdAt),
+                                      { addSuffix: true }
+                                    )
+                                  : "Unknown"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                {session.last_accessed
+                                  ? formatDistanceToNow(
+                                      new Date(session.last_accessed),
+                                      { addSuffix: true }
+                                    )
+                                  : "Unknown"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <motion.button
+                                  className="px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-xs font-medium hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  onClick={() =>
+                                    handleTerminateSession(session.id)
+                                  }
+                                >
+                                  Terminate
+                                </motion.button>
+                              </td>
+                            </motion.tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 px-4 py-3 rounded-xl text-sm flex items-start">
@@ -1180,8 +1176,7 @@ const UserDetailsPage = () => {
                 </div>
               </div>
             )}
-
-            {/* Login History Tab */}
+            {/* Replace the DataTable in the Login History Tab with this custom table */}
             {activeTab === "login-history" && (
               <div className="p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
@@ -1190,12 +1185,136 @@ const UserDetailsPage = () => {
                 </h2>
 
                 <div className="bg-white dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600 overflow-hidden">
-                  <DataTable
-                    columns={loginHistoryColumns}
-                    data={loginHistory}
-                    isLoading={isLoadingLogs}
-                    emptyMessage="No login history found for this user."
-                  />
+                  {isLoadingLogs ? (
+                    <div className="p-8 flex justify-center">
+                      <div className="flex flex-col items-center">
+                        <div className="w-10 h-10 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">
+                          Loading login history...
+                        </p>
+                      </div>
+                    </div>
+                  ) : loginHistory.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                        <Clock
+                          size={24}
+                          className="text-gray-400 dark:text-gray-500"
+                        />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                        No login history
+                      </h3>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        No login history found for this user.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Time
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Status
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Method
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Location
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              Device/Browser
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                            >
+                              IP Address
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
+                          {loginHistory.map((item, index) => (
+                            <motion.tr
+                              key={index}
+                              initial={{ opacity: 0, y: 5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.2,
+                                delay: index * 0.05,
+                              }}
+                              className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                  <p className="text-gray-900 dark:text-gray-100">
+                                    {item.timestamp
+                                      ? format(
+                                          new Date(item.timestamp),
+                                          "MMM d, yyyy"
+                                        )
+                                      : "Unknown"}
+                                  </p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    {item.timestamp
+                                      ? format(
+                                          new Date(item.timestamp),
+                                          "h:mm a"
+                                        )
+                                      : ""}
+                                  </p>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                  className={`inline-flex px-2 py-1 rounded-lg text-xs font-medium ${
+                                    item.status === "success"
+                                      ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                                      : "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                                  }`}
+                                >
+                                  {item.status === "success"
+                                    ? "Success"
+                                    : "Failed"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                {item.method || "Unknown"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                {item.location || "Unknown"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                {item.device || "Unknown"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                {item.ip_address || "Unknown"}
+                              </td>
+                            </motion.tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 px-4 py-3 rounded-xl text-sm flex items-start">
@@ -1211,7 +1330,6 @@ const UserDetailsPage = () => {
                 </div>
               </div>
             )}
-
             {/* Security Tab */}
             {activeTab === "security" && (
               <div className="p-6">
@@ -1277,9 +1395,7 @@ const UserDetailsPage = () => {
                       {user.status === "active" && (
                         <button
                           onClick={() => {
-                            toast(
-                              "Force password change feature coming soon"
-                            );
+                            toast("Force password change feature coming soon");
                           }}
                           className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
                         >
@@ -1377,9 +1493,7 @@ const UserDetailsPage = () => {
                         ) : (
                           <button
                             onClick={() => {
-                              toast(
-                                "Require MFA setup feature coming soon"
-                              );
+                              toast("Require MFA setup feature coming soon");
                             }}
                             className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center"
                           >

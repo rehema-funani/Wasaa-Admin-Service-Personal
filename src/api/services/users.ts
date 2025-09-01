@@ -258,7 +258,7 @@ export const userService = {
 
   async getUserSessions(userId: string): Promise<any> {
     try {
-      const response = await api.get(`/admin/${userId}/sessions`);
+      const response = await api.get(`/sessions/${userId}/admin`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -268,6 +268,22 @@ export const userService = {
       }
       throw new Error(
         "Failed to get user sessions. Please check your network connection."
+      );
+    }
+  },
+
+  revokeSession: async (sessionId: string): Promise<any> => {
+    try {
+      const response = await api.delete(`/sessions/${sessionId}/revoke`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(
+          error.response.data.message || "Failed to revoke session"
+        );
+      }
+      throw new Error(
+        "Failed to revoke session. Please check your network connection."
       );
     }
   },
