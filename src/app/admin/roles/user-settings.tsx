@@ -25,6 +25,7 @@ import {
   Loader,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
+import moment from "moment";
 import { toast } from "react-hot-toast";
 import userService from "../../../api/services/users";
 import { roleService } from "../../../api/services/roles";
@@ -978,7 +979,9 @@ const UserManagementPage: React.FC = () => {
                           className="text-slate-400 dark:text-gray-500 mr-1.5"
                           strokeWidth={1.8}
                         />
-                        <span className="text-sm">{user.lastActive}</span>
+                        <span className="text-sm">
+                          {user.last_login ? moment(user.last_login).fromNow() : "Never"}
+                        </span>
                       </div>
                     </td>
                     <td className="px-4 py-3">
