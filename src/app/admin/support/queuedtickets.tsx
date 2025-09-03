@@ -30,6 +30,9 @@ import SlaStatusBadge from "../../../components/support/SlaStatusBadge";
 import PriorityBadge from "../../../components/tickets/PriorityBadge";
 import StatusBadge from "../../../components/support/StatusBadge";
 import CategoryBadge from "../../../components/support/CategoryBadge";
+import GridSkeleton from "../../../components/support/GridSkeleton";
+import ListSkeleton from "../../../components/support/ListSkeleton";
+import getTagColor from "../../../components/support/getTagColor";
 
 interface Ticket {
   id: string;
@@ -318,68 +321,6 @@ const TicketQueuePage = () => {
       setSortDirection("asc");
     }
   };
-
-  const getTagColor = (tag) => {
-    const colors = {
-      bug: "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-100 dark:border-red-800",
-      feature:
-        "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-800",
-      documentation:
-        "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-800",
-      account:
-        "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800",
-      billing:
-        "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
-      mobile:
-        "bg-sky-50 dark:bg-sky-900/20 text-sky-600 dark:text-sky-400 border-sky-100 dark:border-sky-800",
-      web: "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800",
-      api: "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-100 dark:border-gray-600",
-    };
-
-    return colors[tag] || colors.api;
-  };
-
-  // Skeleton loading components
-  const GridSkeleton = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      {[1, 2, 3, 4, 5, 6].map((item) => (
-        <div
-          key={item}
-          className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 animate-pulse"
-        >
-          <div className="flex items-center mb-4">
-            <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-600 mr-3"></div>
-            <div className="flex-1">
-              <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-1/2"></div>
-            </div>
-          </div>
-          <div className="h-12 bg-gray-100 dark:bg-gray-700 rounded mb-4"></div>
-          <div className="flex justify-between">
-            <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-1/3"></div>
-            <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-1/4"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
-  const ListSkeleton = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm divide-y divide-gray-100 dark:divide-gray-600">
-      {[1, 2, 3, 4, 5].map((item) => (
-        <div key={item} className="p-4 animate-pulse">
-          <div className="flex items-center">
-            <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-600 mr-3"></div>
-            <div className="flex-1">
-              <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-1/4 mb-2"></div>
-              <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-1/3"></div>
-            </div>
-            <div className="w-20 h-5 bg-gray-100 dark:bg-gray-700 rounded"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 
   return (
     <div className="p-6 w-full mx-auto max-w-7xl">
@@ -900,7 +841,6 @@ const TicketQueuePage = () => {
         )}
       </AnimatePresence>
 
-      {/* Stats Dashboard */}
       {!isLoading && filteredTickets.length > 0 && (
         <motion.div
           className="grid grid-cols-1 md:grid-cols-4 gap-5 mt-8"
@@ -1001,7 +941,6 @@ const TicketQueuePage = () => {
         </motion.div>
       )}
 
-      {/* Refresh Button */}
       <div className="flex justify-center mt-8">
         <motion.button
           className="px-4 py-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm transition-colors flex items-center"
