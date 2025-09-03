@@ -309,7 +309,7 @@ const TicketQueuePage = () => {
     navigate("/support/tickets/create");
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: any) => {
     setSearchQuery(e.target.value);
   };
 
@@ -438,7 +438,6 @@ const TicketQueuePage = () => {
             </select>
           </div>
 
-          {/* Category Filter */}
           <div className="flex items-center">
             <span className="text-sm text-gray-500 dark:text-gray-400 mr-2 whitespace-nowrap">
               Category:
@@ -457,7 +456,6 @@ const TicketQueuePage = () => {
             </select>
           </div>
 
-          {/* Assignee Filter */}
           <div className="flex items-center">
             <span className="text-sm text-gray-500 dark:text-gray-400 mr-2 whitespace-nowrap">
               Assigned:
@@ -473,7 +471,6 @@ const TicketQueuePage = () => {
             </select>
           </div>
 
-          {/* Sort By */}
           <div className="flex items-center ml-auto">
             <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">
               <SlidersHorizontal size={14} className="inline mr-1" />
@@ -507,7 +504,6 @@ const TicketQueuePage = () => {
         </div>
       </motion.div>
 
-      {/* Error Message */}
       {error && (
         <motion.div
           className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-xl mb-6 flex items-center"
@@ -519,7 +515,6 @@ const TicketQueuePage = () => {
         </motion.div>
       )}
 
-      {/* Results Summary */}
       <motion.div
         className="flex items-center mb-4 text-sm text-gray-500 dark:text-gray-400"
         initial={{ opacity: 0 }}
