@@ -906,54 +906,6 @@ const UserDetailsPage = () => {
                     )}
                   </div>
                 </div>
-
-                <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Quick Actions
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button
-                      onClick={openEditModal}
-                      className="flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors"
-                    >
-                      <Edit size={18} className="text-primary-500 mr-2" />
-                      <span className="text-gray-800 dark:text-white font-medium">
-                        Edit Profile
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        showConfirmationDialog(
-                          "toggle-status",
-                          user.status === "active"
-                            ? "Deactivate User"
-                            : "Activate User",
-                          user.status === "active"
-                            ? `Are you sure you want to deactivate ${user.name}'s account? They will lose access to the platform.`
-                            : `Are you sure you want to activate ${user.name}'s account? They will regain access to the platform.`
-                        );
-                      }}
-                      className={`flex items-center justify-center p-4 rounded-xl border transition-colors ${
-                        user.status === "active"
-                          ? "bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-800 dark:text-red-300"
-                          : "bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-800 dark:text-green-300"
-                      }`}
-                    >
-                      {user.status === "active" ? (
-                        <Lock size={18} className="mr-2" />
-                      ) : (
-                        <Unlock size={18} className="mr-2" />
-                      )}
-                      <span className="font-medium">
-                        {user.status === "active"
-                          ? "Deactivate User"
-                          : "Activate User"}
-                      </span>
-                    </button>
-                  </div>
-                </div>
               </div>
             )}
 
@@ -1128,7 +1080,6 @@ const UserDetailsPage = () => {
                 </div>
               </div>
             )}
-            {/* Replace the DataTable in the Login History Tab with this custom table */}
             {activeTab === "login-history" && (
               <div className="p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
@@ -1282,7 +1233,6 @@ const UserDetailsPage = () => {
                 </div>
               </div>
             )}
-            {/* Security Tab */}
             {activeTab === "security" && (
               <div className="p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
@@ -1291,7 +1241,6 @@ const UserDetailsPage = () => {
                 </h2>
 
                 <div className="space-y-6">
-                  {/* Password Management */}
                   <div className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-100 dark:border-gray-600">
                     <div className="flex items-center mb-4">
                       <div className="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center">

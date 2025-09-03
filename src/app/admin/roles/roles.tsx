@@ -198,7 +198,6 @@ const RolesPage = () => {
     }
   };
 
-  // Function to get the role icon based on role properties
   const getRoleIcon = (role: Role) => {
     if (role.default) {
       return (
@@ -241,7 +240,6 @@ const RolesPage = () => {
     return "from-gray-700 to-gray-900";
   };
 
-  // Loading skeleton for grid view
   const GridSkeleton = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
       {[1, 2, 3, 4, 5, 6].map((item) => (
@@ -266,7 +264,6 @@ const RolesPage = () => {
     </div>
   );
 
-  // Loading skeleton for list view
   const ListSkeleton = () => (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm divide-y divide-gray-100 dark:divide-gray-600">
       {[1, 2, 3, 4, 5].map((item) => (
@@ -286,7 +283,6 @@ const RolesPage = () => {
 
   return (
     <div className="p-6 w-full mx-auto max-w-7xl">
-      {/* Header */}
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -316,7 +312,6 @@ const RolesPage = () => {
         </motion.button>
       </motion.div>
 
-      {/* Filters and Controls */}
       <motion.div
         className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -324,7 +319,6 @@ const RolesPage = () => {
         transition={{ duration: 0.3, delay: 0.1 }}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          {/* Search */}
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search size={16} className="text-gray-400 dark:text-gray-500" />
@@ -508,7 +502,6 @@ const RolesPage = () => {
                 ></div>
 
                 <div className="p-5">
-                  {/* Role header */}
                   <div className="flex items-start mb-3">
                     <div
                       className={`w-10 h-10 rounded-lg bg-gradient-to-br ${getRoleGradient(
@@ -526,18 +519,11 @@ const RolesPage = () => {
                     </div>
                   </div>
 
-                  {/* Description */}
                   <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-2">
                     {role.description || "No description provided"}
                   </p>
 
-                  {/* Role details */}
                   <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
-                    <div className="flex items-center">
-                      <Users size={12} className="mr-1" />
-                      <span>{role.userCount || 0} users</span>
-                    </div>
-
                     <div className="flex items-center">
                       <Clock size={12} className="mr-1" />
                       <span>
@@ -548,7 +534,6 @@ const RolesPage = () => {
                     </div>
                   </div>
 
-                  {/* Actions */}
                   <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-600">
                     <StatusBadge active={!role.deletedAt} />
 
@@ -612,13 +597,6 @@ const RolesPage = () => {
                       </div>
                     </div>
 
-                    <div className="text-sm text-gray-500 dark:text-gray-400 hidden lg:block">
-                      <div className="flex items-center">
-                        <Users size={14} className="mr-1.5" />
-                        <span>{role.userCount || 0} users</span>
-                      </div>
-                    </div>
-
                     <StatusBadge active={!role.deletedAt} />
 
                     <button
@@ -635,7 +613,6 @@ const RolesPage = () => {
         )}
       </AnimatePresence>
 
-      {/* Quick Stats */}
       {!isLoading && filteredRoles.length > 0 && (
         <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-8"

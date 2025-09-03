@@ -144,6 +144,7 @@ const MediaModule = {
 const SupportAuditModule = {
   TicketDashboard: lazy(() => import("./app/admin/support/ticketdashboard")),
   Tickets: lazy(() => import("./app/admin/support/tickets")),
+  QueuedTickets: lazy(() => import("./app/admin/support/queuedtickets")),
   NewTicket: lazy(() => import("./app/admin/support/newticket")),
   TicketDetail: lazy(() => import("./app/admin/support/ticketdetail")),
   SLAList: lazy(() => import("./app/admin/support/sla")),
@@ -611,6 +612,10 @@ const supportAuditRoutes = [
     element: SupportAuditModule.TicketDashboard,
   },
   { path: PATHS.ADMIN.SUPPORT.TICKETS, element: SupportAuditModule.Tickets },
+  {
+    path: PATHS.ADMIN.SUPPORT.QUEUED_TICKETS,
+    element: SupportAuditModule.QueuedTickets,
+  },
   {
     path: PATHS.ADMIN.SUPPORT.NEW_TICKET,
     element: SupportAuditModule.NewTicket,

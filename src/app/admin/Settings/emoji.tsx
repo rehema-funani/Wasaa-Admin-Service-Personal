@@ -27,11 +27,9 @@ interface CategoryData {
     status: 'active' | 'inactive';
 }
 
-// Define modal types
 type ModalType = 'add' | 'edit' | 'delete' | 'addCategory' | 'editCategory' | 'deleteCategory' | null;
 
 const page = () => {
-    // Initial emoji categories data
     const [categories, setCategories] = useState<CategoryData[]>([
         {
             id: '1',
@@ -283,12 +281,6 @@ const page = () => {
         status: 'active'
     });
 
-    // Get all emojis across all categories
-    const getAllEmojis = () => {
-        return categories.flatMap(category => category.emojis);
-    };
-
-    // Filter emojis based on search query, category and status
     const filterEmojis = (emojis: Emoji[]) => {
         return emojis.filter(emoji => {
             const matchesSearch = emoji.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -299,7 +291,6 @@ const page = () => {
         });
     };
 
-    // Filtered categories (only showing categories that have matching emojis)
     const filteredCategories = categories
         .map(category => ({
             ...category,

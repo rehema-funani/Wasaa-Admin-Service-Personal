@@ -151,6 +151,7 @@ export const PATHS = {
     SUPPORT: {
       DASHBOARD: "admin/support/dashboard",
       TICKETS: "admin/support/tickets",
+      QUEUED_TICKETS: "admin/support/queued-tickets",
       TICKET_DETAIL: "admin/support/tickets/:id",
       NEW_TICKET: "admin/support/tickets/new",
       SLA_LIST: "admin/support/sla",

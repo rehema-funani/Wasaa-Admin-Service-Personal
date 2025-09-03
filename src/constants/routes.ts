@@ -7,7 +7,6 @@ import {
   ImageIcon,
   Settings,
   Users,
-  Languages,
   TicketIcon,
   UsersIcon,
   Bell,
@@ -19,7 +18,8 @@ import {
   FileCheck,
   Shield,
   Candy,
-  ListEnd
+  ListEnd,
+  List
 } from 'lucide-react';
 
 export type LinkRoute = {
@@ -260,6 +260,13 @@ const routes: Route[] = [
       },
       {
         type: "link",
+        path: "/admin/support/queued-tickets",
+        title: "Queued Tickets",
+        icon: List,
+        description: "Manage queued support tickets",
+      },
+      {
+        type: "link",
         path: "/admin/support/tickets",
         title: "Support Tickets",
         icon: TicketIcon,
@@ -354,7 +361,7 @@ const routes: Route[] = [
       {
         type: "link",
         path: "/admin/fundraising/campaigns",
-        title: "All Campaign",
+        title: "All Campaigns",
         icon: FileText,
         description: "View all fundraising campaigns",
       },
@@ -388,24 +395,6 @@ const routes: Route[] = [
           },
         ],
       },
-      // {
-      //   type: "dropdown",
-      //   title: "Analytics",
-      //   icon: FilePieChart,
-      //   key: "fundraising-analytics",
-      //   items: [
-      //     {
-      //       type: "link",
-      //       path: "/admin/fundraising/reports",
-      //       title: "Campaign Reports",
-      //     },
-      //     {
-      //       type: "link",
-      //       path: "/admin/fundraising/performance",
-      //       title: "Performance Metrics",
-      //     },
-      //   ],
-      // },
       {
         type: "link",
         path: "/admin/fundraising/settings",

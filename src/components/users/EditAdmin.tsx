@@ -74,9 +74,8 @@ const EditAdmin = ({
               damping: 25,
               stiffness: 300,
             }}
-            className="max-w-md w-full mx-auto overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl backdrop-saturate-150 rounded-2xl border border-white/20 dark:border-gray-700/30 shadow-xl"
+            className="max-w-md w-full mx-auto overflow-y-auto max-h-[85vh] mt-[3rem] bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl backdrop-saturate-150 rounded-2xl border border-white/20 dark:border-gray-700/30 shadow-xl"
           >
-            {/* Modal Header */}
             <div className="flex items-center justify-between p-5 border-b border-gray-100/80 dark:border-gray-700/50">
               <div className="flex items-center">
                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary-100/80 dark:bg-primary-900/30 flex items-center justify-center mr-3">
