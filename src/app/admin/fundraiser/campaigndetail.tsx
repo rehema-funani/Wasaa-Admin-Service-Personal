@@ -129,15 +129,13 @@ const CampaignDetailsPage: React.FC = () => {
         const campaignRes = await fundraiserService.getCampaignById(id);
         const campaign = campaignRes.data;
 
-        // Calculate progress
         const raisedAmount = parseFloat(campaign.raisedAmount || 0);
-        const goalAmount = parseFloat(campaign.goalAmount || 1); // Prevent division by zero
+        const goalAmount = parseFloat(campaign.goalAmount || 1);
         const progress = Math.min(
           Math.round((raisedAmount / goalAmount) * 100),
           100
         );
 
-        // Calculate time left if end date exists
         let timeLeftText = null;
         if (campaign.endDate) {
           const endDate = parseISO(campaign.endDate);
@@ -729,39 +727,11 @@ const CampaignDetailsPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
-
-                    {/* Escrow Wallet Information */}
-                    {campaign.escrowWalletId && (
-                      <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-gray-800 dark:to-blue-900/10 rounded-xl p-6 border border-gray-100/50 dark:border-gray-700/50">
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                          <Wallet size={18} className="text-blue-500 mr-2" />
-                          Escrow Wallet
-                        </h2>
-
-                        <div className="p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-100/70 dark:border-gray-700/70 mb-4">
-                          <p className="text-xs font-mono text-gray-700 dark:text-gray-300 break-all">
-                            {campaign.escrowWalletId}
-                          </p>
-                        </div>
-
-                        <div className="flex space-x-2">
-                          <button className="flex-1 text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 py-2 px-3 rounded-lg border border-blue-100 dark:border-blue-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors">
-                            <Link size={12} className="inline mr-1" />
-                            Copy Wallet ID
-                          </button>
-                          <button className="flex-1 text-xs bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 py-2 px-3 rounded-lg border border-indigo-100 dark:border-indigo-800/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors">
-                            <ExternalLink size={12} className="inline mr-1" />
-                            View Transactions
-                          </button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               </motion.div>
             )}
 
-            {/* Keep existing tabs and their content */}
             {activeTab === "analytics" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

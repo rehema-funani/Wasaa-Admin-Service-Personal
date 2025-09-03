@@ -25,7 +25,7 @@ const StatCard: React.FC<StatCardProps> = ({
   className = "",
 }) => (
   <motion.div
-    className={`relative bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden ${
+    className={`relative bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 hover:shadow-sm transition-all duration-300 group overflow-hidden ${
       onClick ? "cursor-pointer" : ""
     } ${className}`}
     whileHover={{ y: -4 }}
