@@ -4,14 +4,12 @@ import {
   ChevronDown,
   Search,
   X,
-  Bell,
   ArrowRight,
   Menu,
   User,
   Settings,
   LogOut,
   CreditCard,
-  AlertCircle,
   BarChart3,
   Shield,
   Wallet,
@@ -30,6 +28,7 @@ import {
 } from "../../utils/permissions";
 import { notificationService } from "../../api/services/notification";
 import { useTheme } from "../../context/ThemeContext";
+import NavigationTour from "./NavigationTour";
 
 const getRequiredPermissionsForRoute = (path: string) => {
   if (!routePermissionsMap[path]) {
@@ -88,7 +87,8 @@ const TopNavigation = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [unreadNotifications, setUnreadNotifications] = useState(3);
+  const [showTour, setShowTour] = useState(false);
+  const [debugTourMode, setDebugTourMode] = useState(false);
   const [showTimeIndicator, setShowTimeIndicator] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
 
@@ -114,6 +114,32 @@ const TopNavigation = () => {
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
+  };
+
+  useEffect(() => {
+    // Check if URL has debug parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const debugParam = urlParams.get("debugTour");
+
+    if (debugParam === "true") {
+      setDebugTourMode(true);
+      setShowTour(true);
+      localStorage.removeItem("navTourCompleted");
+    } else {
+      const hasSeenTour = localStorage.getItem("navTourCompleted");
+      if (!hasSeenTour) {
+        setShowTour(true);
+      }
+    }
+  }, []);
+
+  const handleCloseTour = () => {
+    setShowTour(false);
+  };
+
+  const startTour = () => {
+    localStorage.removeItem("navTourCompleted");
+    setShowTour(true);
   };
 
   useEffect(() => {
@@ -573,7 +599,6 @@ const TopNavigation = () => {
           />
           <span>{item.title}</span>
 
-          {/* Add subtle particle effect on hover */}
           {hoverState.section === item.title && (
             <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
               <div className="absolute -top-1 left-1/2 w-1 h-1 rounded-full bg-indigo-300/40 dark:bg-indigo-400/40 animate-float-slow"></div>
@@ -708,10 +733,11 @@ const TopNavigation = () => {
         </div>
 
         <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between relative">
-          <div className="flex items-center mr-4 lg:mr-12">
+          <div className="flex items-center mr-4 lg:mr-12 ">
             <div className="relative">
               <img
                 src={isDarkMode ? dark : light}
+                data-tour="nav-logo"
                 alt="Logo"
                 className="w-[150px] h-auto cursor-pointer transition-transform duration-500 hover:scale-105"
                 onClick={() => navigate("/")}
@@ -722,6 +748,7 @@ const TopNavigation = () => {
 
           <nav
             className="hidden xl:flex items-center flex-1 justify-center"
+            data-tour="nav-sections"
             ref={navRef}
           >
             <div className="flex items-center space-x-2 bg-white/30 dark:bg-gray-800/30 backdrop-blur-2xl rounded-3xl p-2 shadow-2xl shadow-indigo-500/5 dark:shadow-gray-900/20 border border-white/80 dark:border-gray-700/80 transition-all duration-500 hover:shadow-indigo-500/10 dark:hover:shadow-gray-900/30 relative">
@@ -746,7 +773,11 @@ const TopNavigation = () => {
           </nav>
 
           <div className="flex items-center space-x-1 md:space-x-3">
-            <div className="relative" ref={searchInputRef}>
+            <div
+              className="relative"
+              ref={searchInputRef}
+              data-tour="nav-search"
+            >
               {isSearchOpen ? (
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center">
                   <div className="relative">
@@ -949,7 +980,11 @@ const TopNavigation = () => {
               {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
-            <div className="relative ml-2" ref={userMenuRef}>
+            <div
+              className="relative ml-2"
+              ref={userMenuRef}
+              data-tour="nav-user"
+            >
               <button
                 className="flex items-center space-x-2 py-1.5 px-2 rounded-xl transition-all duration-500 hover:bg-white/60 dark:hover:bg-gray-700/60 text-gray-600/90 dark:text-gray-400/90 hover:text-indigo-600 dark:hover:text-indigo-400 group relative"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -1219,6 +1254,15 @@ const TopNavigation = () => {
           </div>
         </div>
       )}
+      {/* {showTour && (
+        <NavigationTour onClose={handleCloseTour} debugMode={debugTourMode} />
+      )}
+      <button
+        onClick={startTour}
+        className="fixed bottom-4 right-4 z-50 px-3 py-1.5 text-xs bg-indigo-600 text-white rounded-full shadow-lg"
+      >
+        Debug Tour
+      </button> */}
     </div>
   );
 };
