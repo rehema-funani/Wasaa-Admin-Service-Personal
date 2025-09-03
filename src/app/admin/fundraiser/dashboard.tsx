@@ -25,119 +25,10 @@ import {
   CheckCircle,
   PiggyBank,
 } from "lucide-react";
-import { format, subDays, addHours } from "date-fns";
+import { format, subDays } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
-
-const generateDummyCampaigns = () => {
-  const categories = [
-    "Medical",
-    "Education",
-    "Disaster Relief",
-    "Community",
-    "Arts",
-    "Sports",
-  ];
-  const statusOptions = ["active", "completed", "draft", "pending_review"];
-  const campaignNames = [
-    "Build a School in Rural Kenya",
-    "Hurricane Relief Fund",
-    "Cancer Treatment Support",
-    "Community Garden Project",
-    "Youth Basketball League",
-    "Local Theater Renovation",
-    "College Scholarship Fund",
-    "Animal Shelter Expansion",
-    "Clean Water Initiative",
-    "Wheelchair Accessibility Project",
-    "Emergency Food Drive",
-    "Historical Museum Preservation",
-    "Children's Hospital Equipment",
-    "Renewable Energy Education",
-    "Local Business Recovery",
-  ];
-
-  return Array.from({ length: 15 }, (_, i) => {
-    const goal = Math.round((Math.random() * 20000 + 5000) / 100) * 100;
-    const raised = Math.round((Math.random() * goal) / 100) * 100;
-    const status =
-      statusOptions[Math.floor(Math.random() * statusOptions.length)];
-    const startDate = subDays(new Date(), Math.floor(Math.random() * 60));
-    const endDate = subDays(new Date(), -Math.floor(Math.random() * 60 - 10));
-    const category = categories[Math.floor(Math.random() * categories.length)];
-    const donorsCount = Math.floor(Math.random() * 200) + 5;
-
-    return {
-      id: `camp-${i + 1}`,
-      title: campaignNames[i % campaignNames.length],
-      description: `This campaign aims to raise funds for ${campaignNames[
-        i % campaignNames.length
-      ].toLowerCase()}.`,
-      goal,
-      raised,
-      progress: Math.round((raised / goal) * 100),
-      status,
-      creator: {
-        id: `user-${i + 10}`,
-        name: [
-          "Jane Cooper",
-          "Robert Fox",
-          "Esther Howard",
-          "Cameron Williamson",
-          "Brooklyn Simmons",
-        ][i % 5],
-        email: `creator${i}@example.com`,
-      },
-      category,
-      donorsCount,
-      startDate,
-      endDate,
-      lastActivity: addHours(new Date(), -Math.floor(Math.random() * 48)),
-      location: ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret"][i % 5],
-      featured: Math.random() > 0.7,
-      verificationStatus: Math.random() > 0.2 ? "verified" : "pending",
-    };
-  });
-};
-
-const generateDummyTransactions = (campaigns) => {
-  const transactionTypes = ["donation", "withdrawal", "refund"];
-  const paymentMethods = ["credit_card", "bank_transfer", "mobile_money"];
-
-  return Array.from({ length: 30 }, (_, i) => {
-    const campaign = campaigns[Math.floor(Math.random() * campaigns.length)];
-    const type =
-      transactionTypes[Math.floor(Math.random() * transactionTypes.length)];
-    const amount = Math.round((Math.random() * 1000 + 10) / 10) * 10;
-
-    return {
-      id: `trx-${i + 1}`,
-      campaignId: campaign.id,
-      campaignTitle: campaign.title,
-      type,
-      amount,
-      status: Math.random() > 0.9 ? "pending" : "completed",
-      createdAt: subDays(new Date(), Math.floor(Math.random() * 30)),
-      paymentMethod:
-        paymentMethods[Math.floor(Math.random() * paymentMethods.length)],
-      user:
-        type === "donation"
-          ? {
-              id: `donor-${i}`,
-              name: [
-                "Alex Johnson",
-                "Maria Garcia",
-                "John Smith",
-                "Sarah Chen",
-                "Michael Brown",
-              ][i % 5],
-              email: `donor${i}@example.com`,
-            }
-          : campaign.creator,
-      fee: Math.round(amount * 0.025 * 100) / 100,
-    };
-  });
-};
+import { useNavigate } from "react-router-dom";
 
 const FundraisingDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -172,6 +63,7 @@ const FundraisingDashboard = () => {
       platformFees: 0,
     },
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
@@ -179,16 +71,9 @@ const FundraisingDashboard = () => {
 
       try {
         const response = await fundraiserService.getDashboardStats();
+        const res = await fundraiserService.getCampaigns(1, 4);
         setStats(response.data);
-
-        // Generate dummy data for campaigns and transactions
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        const dummyCampaigns = generateDummyCampaigns();
-        const dummyTransactions = generateDummyTransactions(dummyCampaigns);
-
-        setCampaigns(dummyCampaigns);
-        setTransactions(dummyTransactions);
-        setSearchResults(dummyCampaigns);
+        setCampaigns(res.data);
       } catch (error) {
         console.error("Error loading data:", error);
         toast.error("Failed to load dashboard data");
@@ -220,7 +105,7 @@ const FundraisingDashboard = () => {
     setSearchResults(filtered);
   };
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
 
     let filtered = [...campaigns];
@@ -313,17 +198,6 @@ const FundraisingDashboard = () => {
           <p className="text-slate-500 dark:text-gray-400 text-sm mt-0.5">
             Overview of all fundraising campaigns and activities
           </p>
-        </div>
-        <div className="flex gap-2">
-          <motion.button
-            className="flex items-center px-4 py-2.5 bg-white dark:bg-gray-700 border border-slate-200 dark:border-gray-600 text-slate-700 dark:text-gray-300 rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-            onClick={handleExport}
-          >
-            <Download size={16} className="mr-2" />
-            <span>Export</span>
-          </motion.button>
         </div>
       </motion.div>
 
@@ -680,26 +554,10 @@ const FundraisingDashboard = () => {
                 <h2 className="text-lg font-medium text-slate-900 dark:text-white">
                   Campaigns
                 </h2>
-
-                <div className="flex space-x-1 bg-slate-100 dark:bg-gray-700 p-1 rounded-lg">
-                  {["active", "pending", "completed", "all"].map((viewType) => (
-                    <button
-                      key={viewType}
-                      className={`px-3 py-1 text-sm rounded-md ${
-                        view === viewType
-                          ? "bg-white dark:bg-gray-600 text-primary-600 dark:text-primary-400 shadow-sm"
-                          : "text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200"
-                      }`}
-                      onClick={() => setView(viewType)}
-                    >
-                      <span className="capitalize">{viewType}</span>
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <div className="divide-y divide-slate-100 dark:divide-gray-700">
-                {viewCampaigns.length === 0 ? (
+                {campaigns.length === 0 ? (
                   <div className="py-12 px-4 text-center">
                     <div className="inline-flex items-center justify-center p-4 bg-slate-100 dark:bg-gray-700 rounded-full mb-4">
                       <Gift
@@ -722,8 +580,8 @@ const FundraisingDashboard = () => {
                     </button>
                   </div>
                 ) : (
-                  viewCampaigns.map((campaign) => {
-                    const getStatusBadge = (status) => {
+                  campaigns.map((campaign) => {
+                    const getStatusBadge = (status: string) => {
                       switch (status) {
                         case "active":
                           return "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800";
@@ -766,13 +624,14 @@ const FundraisingDashboard = () => {
                                   <span className="flex items-center">
                                     <Calendar size={12} className="mr-1" />
                                     {format(
-                                      new Date(campaign.startDate),
+                                      new Date(campaign.endDate),
                                       "MMM d, yyyy"
                                     )}
                                   </span>
                                   <span className="flex items-center">
-                                    <TrendingUp size={12} className="mr-1" />$
-                                    {campaign.raised.toLocaleString()} raised
+                                    <TrendingUp size={12} className="mr-1" />
+                                    Kes {campaign.raisedAmount.toLocaleString()}{" "}
+                                    raised
                                   </span>
                                 </div>
                               </div>
@@ -780,15 +639,9 @@ const FundraisingDashboard = () => {
 
                             <div className="flex items-center ml-0 md:ml-auto space-x-3">
                               <div className="min-w-[100px] md:text-center">
-                                <div className="w-full h-2 bg-slate-100 dark:bg-gray-700 rounded-full overflow-hidden mb-1">
-                                  <div
-                                    className="h-full bg-primary-500 rounded-full"
-                                    style={{ width: `${campaign.progress}%` }}
-                                  ></div>
-                                </div>
                                 <p className="text-xs text-slate-600 dark:text-gray-400">
-                                  {campaign.progress}% of $
-                                  {campaign.goal.toLocaleString()}
+                                  {campaign.raisedAmount}% of Kes{" "}
+                                  {campaign.goalAmount.toLocaleString()}
                                 </p>
                               </div>
 
@@ -801,7 +654,7 @@ const FundraisingDashboard = () => {
                               </span>
 
                               <div className="flex items-center">
-                                {campaign.verificationStatus === "verified" ? (
+                                {campaign.status === "active" ? (
                                   <span className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center">
                                     <UserCheck size={12} className="mr-1" />
                                     Verified
@@ -821,26 +674,12 @@ const FundraisingDashboard = () => {
                           <button
                             className="p-2 text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors"
                             onClick={() =>
-                              toast.success(`Viewing ${campaign.title}`)
+                              navigate(
+                                `/admin/fundraising/campaigns/${campaign.id}`
+                              )
                             }
                           >
                             <Eye size={18} />
-                          </button>
-                          <button
-                            className="p-2 text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors"
-                            onClick={() =>
-                              toast.success(`Editing ${campaign.title}`)
-                            }
-                          >
-                            <Settings size={18} />
-                          </button>
-                          <button
-                            className="p-2 text-slate-500 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors"
-                            onClick={() =>
-                              toast.success(`Flagging ${campaign.title}`)
-                            }
-                          >
-                            <Flag size={18} />
                           </button>
                         </div>
                       </motion.div>
@@ -852,7 +691,7 @@ const FundraisingDashboard = () => {
               <div className="p-4 border-t border-slate-100 dark:border-gray-700 flex justify-center">
                 <button
                   className="text-primary-600 dark:text-primary-400 text-sm hover:underline flex items-center"
-                  onClick={() => toast.success("Navigating to all campaigns")}
+                  onClick={() => navigate("/admin/fundraising/campaigns")}
                 >
                   View All Campaigns
                   <ArrowUpRight size={14} className="ml-1" />

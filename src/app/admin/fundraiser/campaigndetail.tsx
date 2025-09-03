@@ -18,27 +18,26 @@ import {
   AlertTriangle,
   MapPin,
   User,
-  Mail,
-  Phone,
-  Globe,
   RefreshCw,
-  Star,
   TrendingUp,
   PieChart,
   ChevronRight,
   ChevronLeft,
-  MoreHorizontal,
-  ExternalLink,
-  Award,
   Heart,
-  Bookmark,
+  Flag,
+  Link,
+  Shield,
+  Info,
+  ExternalLink,
+  Wallet,
 } from "lucide-react";
-import { format, formatDistance } from "date-fns";
+import { format, formatDistance, parseISO } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 import DonationsTab from "../../../components/fundraiser/DonationsTab";
 import ApproveCampaignModal from "../../../components/fundraiser/ApproveCampaignModal";
 import DeleteCampaignModal from "../../../components/fundraiser/DeleteCampaignModal";
+import StatCard from "../../../components/dashboard/StatCard";
 
 const StatusBadge = ({ status }) => {
   const statusConfig = {
@@ -109,55 +108,7 @@ const ProgressBar = ({ progress }) => {
   );
 };
 
-type StatCardProps = {
-  title: any;
-  value: any;
-  subtitle?: any;
-  icon: any;
-  color: any;
-  trend?: any;
-};
-
-const StatCard = ({
-  title,
-  value,
-  subtitle,
-  icon: Icon,
-  color,
-  trend,
-}: StatCardProps) => (
-  <motion.div
-    className="relative bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden"
-    whileHover={{ y: -4 }}
-  >
-    <div
-      className={`absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300 ${color}`}
-    />
-    <div className="relative">
-      <div className="flex items-center justify-between mb-3">
-        <div className={`p-2.5 rounded-lg ${color}`}>
-          <Icon size={18} className="text-white" />
-        </div>
-        {trend && (
-          <span className="text-xs text-green-600 dark:text-green-400 font-medium bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
-            {trend}
-          </span>
-        )}
-      </div>
-      <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-        {value}
-      </p>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
-      {subtitle && (
-        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-          {subtitle}
-        </p>
-      )}
-    </div>
-  </motion.div>
-);
-
-const CampaignDetailsPage = () => {
+const CampaignDetailsPage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [campaign, setCampaign] = useState(null);
@@ -169,30 +120,53 @@ const CampaignDetailsPage = () => {
   const [comments, setComments] = useState([]);
   const [donations, setDonations] = useState([]);
   const [approveModal, setApproveModal] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(null);
 
   useEffect(() => {
     const fetchCampaignData = async () => {
       setIsLoading(true);
       try {
-        const [campaignRes, commentsRes, donationsRes] = await Promise.all([
-          fundraiserService.getCampaignById(id),
-          fundraiserService.getCampaignComments(id),
-          fundraiserService.getCampaignDonations(id),
-        ]);
+        const campaignRes = await fundraiserService.getCampaignById(id);
+        const campaign = campaignRes.data;
 
-        setCampaign({
-          ...campaignRes.data,
-          progress: calculateProgress(
-            campaignRes.data.raisedAmount,
-            campaignRes.data.goalAmount
-          ),
-        });
+        // Calculate progress
+        const raisedAmount = parseFloat(campaign.raisedAmount || 0);
+        const goalAmount = parseFloat(campaign.goalAmount || 1); // Prevent division by zero
+        const progress = Math.min(
+          Math.round((raisedAmount / goalAmount) * 100),
+          100
+        );
 
-        setComments(commentsRes.data || []);
-        setDonations(donationsRes.data);
+        // Calculate time left if end date exists
+        let timeLeftText = null;
+        if (campaign.endDate) {
+          const endDate = parseISO(campaign.endDate);
+          const now = new Date();
+          const days = Math.ceil(
+            (endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          timeLeftText = days > 0 ? `${days} days left` : "Campaign ended";
+        }
+
+        setCampaign({ ...campaign, progress, timeLeft: timeLeftText });
+        setTimeLeft(timeLeftText);
+
+        // Fetch additional data
+        try {
+          const [commentsRes, donationsRes] = await Promise.all([
+            fundraiserService.getCampaignComments(id),
+            fundraiserService.getCampaignDonations(id),
+          ]);
+
+          setComments(commentsRes?.data || []);
+          setDonations(donationsRes?.data || []);
+        } catch (e) {
+          console.error("Error fetching related data:", e);
+          // Continue even if these requests fail
+        }
       } catch (error) {
         console.error("Error loading campaign data:", error);
-        toast.error("Failed to load campaign data");
+        toast.error("Failed to load campaign details");
       } finally {
         setIsLoading(false);
       }
@@ -200,13 +174,6 @@ const CampaignDetailsPage = () => {
 
     fetchCampaignData();
   }, [id]);
-
-  const calculateProgress = (raised: string, goal: string) => {
-    const raisedNum = parseFloat(raised);
-    const goalNum = parseFloat(goal);
-    if (goalNum <= 0) return 0;
-    return Math.min(Math.round((raisedNum / goalNum) * 100), 100);
-  };
 
   const handleDeleteCampaign = async () => {
     try {
@@ -221,6 +188,12 @@ const CampaignDetailsPage = () => {
     }
   };
 
+  const generatePlaceholderImage = (title) => {
+    return `https://placehold.co/800x400/3b82f6/ffffff/png?text=${encodeURIComponent(
+      title || "Fundraising Campaign"
+    )}`;
+  };
+
   const tabs = [
     { id: "overview", label: "Overview", icon: Eye },
     { id: "updates", label: "Updates", icon: RefreshCw },
@@ -229,6 +202,7 @@ const CampaignDetailsPage = () => {
     { id: "analytics", label: "Analytics", icon: BarChart2 },
   ];
 
+  // Loading state UI
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-gray-950 dark:via-blue-950/30 dark:to-gray-950 flex items-center justify-center">
@@ -245,7 +219,7 @@ const CampaignDetailsPage = () => {
   if (!campaign) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-gray-950 dark:via-blue-950/30 dark:to-gray-950 flex items-center justify-center">
-        <div className="text-center bg-white dark:bg-gray-900 p-8 rounded-xl border border-gray-100 dark:border-gray-800">
+        <div className="text-center bg-white dark:bg-gray-900 p-8 rounded-xl border border-gray-100 dark:border-gray-800 max-w-md">
           <AlertTriangle size={48} className="text-gray-400 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Campaign Not Found
@@ -268,9 +242,8 @@ const CampaignDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-gray-950 dark:via-blue-950/30 dark:to-gray-950">
-      {/* Header */}
-      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-slate-200/50 dark:border-gray-800/50">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-slate-200/50 dark:border-gray-800/50 sticky -top-6 z-10">
+        <div className="max-w-7xl mx-auto px-6 pb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
@@ -312,54 +285,65 @@ const CampaignDetailsPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Hero section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100/50 dark:border-gray-800/50 overflow-hidden mb-8"
         >
           <div
-            className="relative h-48 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 bg-cover bg-center"
+            className="relative h-64 sm:h-80 md:h-96 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${
-                campaign.images?.[0] ||
-                `https://placehold.co/800x400/3b82f6/ffffff/png?text=${encodeURIComponent(
-                  campaign.title
-                )}`
-              })`,
+              backgroundImage:
+                campaign.images && campaign.images.length > 0
+                  ? `url(${campaign.images[0]})`
+                  : `url(${generatePlaceholderImage(campaign.title)})`,
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/20" />
-            <div className="absolute top-4 left-6 right-6 flex items-start justify-between">
-              <div className="flex items-center space-x-3">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
+
+            {/* Status badges */}
+            <div className="absolute top-6 left-6 right-6 flex flex-wrap items-start justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge status={campaign.status} />
-                {campaign.featured && (
-                  <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 text-amber-700 dark:text-amber-400 text-sm font-medium rounded-full border border-amber-200/50 dark:border-amber-800/50">
-                    <Star size={12} className="mr-1.5" />
-                    Featured
+                <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-400 text-sm font-medium rounded-full border border-blue-200/50 dark:border-blue-800/50">
+                  <MapPin size={12} className="mr-1.5" />
+                  {campaign.category &&
+                    campaign.category.charAt(0).toUpperCase() +
+                      campaign.category.slice(1)}
+                </span>
+                {timeLeft && (
+                  <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-purple-50/80 to-violet-50/80 dark:from-purple-900/30 dark:to-violet-900/30 text-purple-700 dark:text-purple-400 text-sm font-medium rounded-full border border-purple-200/50 dark:border-purple-800/50">
+                    <Clock size={12} className="mr-1.5" />
+                    {timeLeft}
                   </span>
                 )}
               </div>
               <div className="flex space-x-2">
                 <button className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors">
-                  <Bookmark size={16} />
+                  <Share2 size={16} />
                 </button>
                 <button className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors">
-                  <Share2 size={16} />
+                  <Flag size={16} />
                 </button>
               </div>
             </div>
-            <div className="absolute bottom-4 left-6 right-6">
-              <h1 className="text-2xl font-bold text-white mb-2">
+
+            {/* Campaign title & subtitle */}
+            <div className="absolute bottom-6 left-6 right-6">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
                 {campaign.title}
               </h1>
-              <p className="text-gray-200 text-sm max-w-2xl line-clamp-2">
-                {campaign.subtitle || campaign.description}
+              <p className="text-gray-200 text-sm sm:text-base max-w-2xl line-clamp-2">
+                {campaign.subtitle ||
+                  campaign.shortDescription ||
+                  campaign.description}
               </p>
             </div>
           </div>
 
-          {/* Enhanced Stats Section */}
-          <div className="p-8">
+          {/* Progress & Stats Section */}
+          <div className="p-6 sm:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Progress Section */}
               <div className="lg:col-span-2">
@@ -378,6 +362,17 @@ const CampaignDetailsPage = () => {
                     </div>
                   </div>
                   <ProgressBar progress={campaign.progress} />
+
+                  <div className="mt-4 flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <span>
+                      Kes{" "}
+                      {parseFloat(campaign.raisedAmount || 0).toLocaleString()}
+                    </span>
+                    <span>
+                      Kes{" "}
+                      {parseFloat(campaign.goalAmount || 0).toLocaleString()}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -386,31 +381,36 @@ const CampaignDetailsPage = () => {
                     value={`Kes ${parseFloat(
                       campaign.raisedAmount || 0
                     ).toLocaleString()}`}
-                    icon={DollarSign}
-                    color="bg-gradient-to-r from-green-500 to-emerald-500"
-                    trend="+12.3%"
+                    icon={<DollarSign />}
+                    bgColor="bg-gradient-to-r from-green-500 to-emerald-500"
+                    isPositive={true}
+                    change={`+Kes ${campaign.newAmount || 0} this month`}
                   />
                   <StatCard
                     title="Goal Amount"
                     value={`Kes ${parseFloat(
                       campaign.goalAmount || 0
                     ).toLocaleString()}`}
-                    icon={Target}
-                    color="bg-gradient-to-r from-blue-500 to-cyan-500"
+                    icon={<Target />}
+                    bgColor="bg-gradient-to-r from-blue-500 to-cyan-500"
+                    isPositive={false}
+                    change="Fixed Goal"
                   />
                   <StatCard
                     title="Total Donors"
-                    value={(donations?.length || 0).toString()}
-                    icon={Users}
-                    color="bg-gradient-to-r from-purple-500 to-pink-500"
-                    trend="+3 today"
+                    value={(campaign.donationsCount || 0).toString()}
+                    icon={<Users />}
+                    bgColor="bg-gradient-to-r from-purple-500 to-pink-500"
+                    isPositive={true}
+                    change={`+${campaign.newDonors || 0} this month`}
                   />
                 </div>
               </div>
 
+              {/* Campaign Info Card */}
               <div className="bg-gradient-to-br from-gray-50/50 to-blue-50/30 dark:from-gray-800/50 dark:to-blue-900/10 rounded-xl p-6">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
-                  <Award size={18} className="text-blue-500 mr-2" />
+                  <Info size={18} className="text-blue-500 mr-2" />
                   Campaign Info
                 </h3>
                 <div className="space-y-4">
@@ -427,7 +427,7 @@ const CampaignDetailsPage = () => {
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center text-gray-600 dark:text-gray-400">
                       <Clock size={16} className="mr-3 text-blue-500" />
-                      Updated
+                      Last Updated
                     </div>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {formatDistance(
@@ -442,10 +442,10 @@ const CampaignDetailsPage = () => {
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center text-gray-600 dark:text-gray-400">
                         <Target size={16} className="mr-3 text-blue-500" />
-                        End date
+                        End Date
                       </div>
                       <span className="font-medium text-gray-900 dark:text-white">
-                        {format(new Date(campaign.endDate), "MMM d, yyyy")}
+                        {format(parseISO(campaign.endDate), "MMM d, yyyy")}
                       </span>
                     </div>
                   )}
@@ -460,33 +460,62 @@ const CampaignDetailsPage = () => {
                     </span>
                   </div>
 
-                  {campaign.organizer && (
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center text-gray-600 dark:text-gray-400">
-                        <User size={16} className="mr-3 text-blue-500" />
-                        Organizer
-                      </div>
-                      <span className="font-medium text-gray-900 dark:text-white">
-                        {campaign.organizer.name}
-                      </span>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center text-gray-600 dark:text-gray-400">
+                      <MessageSquare size={16} className="mr-3 text-blue-500" />
+                      Comments
                     </div>
-                  )}
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {campaign.enableComments ? "Enabled" : "Disabled"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center text-gray-600 dark:text-gray-400">
+                      <User size={16} className="mr-3 text-blue-500" />
+                      Anonymous Donations
+                    </div>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {campaign.allowAnonymous ? "Allowed" : "Not allowed"}
+                    </span>
+                  </div>
+
+                  {/* Creator Info Section */}
+                  <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                      Campaign Creator
+                    </h4>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                        <User size={16} className="text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {campaign.user?.firstName} {campaign.user?.lastName}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {campaign.user?.phone}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </motion.div>
 
+        {/* Tabs section */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100/50 dark:border-gray-800/50 overflow-hidden">
           <div className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-            <nav className="flex space-x-1 p-1">
+            <nav className="flex flex-wrap space-x-1 p-1">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    className={`flex items-center px-4 sm:px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                       activeTab === tab.id
                         ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-gray-800"
@@ -500,7 +529,7 @@ const CampaignDetailsPage = () => {
             </nav>
           </div>
 
-          <div className="p-8">
+          <div className="p-6 sm:p-8">
             {activeTab === "overview" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -517,13 +546,27 @@ const CampaignDetailsPage = () => {
                       <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-base">
                         {campaign.description || "No description provided."}
                       </p>
-                      {campaign.story && (
-                        <div className="mt-6 p-6 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10 rounded-xl border border-blue-100/50 dark:border-blue-800/20">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                            Detailed Story
+
+                      {campaign.shortDescription &&
+                        campaign.shortDescription !== campaign.description && (
+                          <div className="mt-6 p-6 bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10 rounded-xl border border-blue-100/50 dark:border-blue-800/20">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                              Short Description
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                              {campaign.shortDescription}
+                            </p>
+                          </div>
+                        )}
+
+                      {campaign.beneficiaryInfo && (
+                        <div className="mt-6 p-6 bg-gradient-to-r from-emerald-50/50 to-green-50/50 dark:from-emerald-900/10 dark:to-green-900/10 rounded-xl border border-emerald-100/50 dark:border-emerald-800/20">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                            <Shield size={18} className="text-green-500 mr-2" />
+                            Beneficiary Information
                           </h3>
                           <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                            {campaign.story}
+                            {campaign.beneficiaryInfo}
                           </p>
                         </div>
                       )}
@@ -533,7 +576,7 @@ const CampaignDetailsPage = () => {
                       <div className="mt-8">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                           <Eye size={18} className="text-blue-500 mr-2" />
-                          Gallery ({campaign.images.length} images)
+                          Media Gallery ({campaign.images.length} images)
                         </h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {campaign.images.slice(0, 6).map((image, index) => (
@@ -565,74 +608,160 @@ const CampaignDetailsPage = () => {
                         </div>
                       </div>
                     )}
+
+                    {campaign.videos && campaign.videos.length > 0 && (
+                      <div className="mt-8">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                          <Eye size={18} className="text-blue-500 mr-2" />
+                          Videos ({campaign.videos.length})
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {campaign.videos.map((video, index) => (
+                            <div
+                              key={index}
+                              className="relative aspect-video bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden shadow-md"
+                            >
+                              {/* You might need a video player component here */}
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-gray-400 dark:text-gray-600">
+                                  Video player would go here
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Enhanced Organizer Info */}
+                  {/* Campaign Stats */}
                   <div className="space-y-6">
-                    <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-gray-800 dark:to-blue-900/10 rounded-xl p-6 border border-gray-100/50 dark:border-gray-700/50">
+                    {/* Campaign Engagement Stats */}
+                    <div className="bg-gradient-to-br from-slate-50 to-indigo-50/30 dark:from-gray-800 dark:to-indigo-900/10 rounded-xl p-6 border border-gray-100/50 dark:border-gray-700/50">
                       <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                        <User size={18} className="text-blue-500 mr-2" />
-                        Organizer
+                        <TrendingUp
+                          size={18}
+                          className="text-indigo-500 mr-2"
+                        />
+                        Campaign Engagement
                       </h2>
-                      <div className="flex items-center mb-6">
-                        <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mr-4">
-                          <User size={24} className="text-white" />
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-100/70 dark:border-gray-700/70">
+                          <div className="flex items-center space-x-3 mb-1">
+                            <Heart size={16} className="text-rose-500" />
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                              Likes
+                            </span>
+                          </div>
+                          <p className="text-xl font-bold text-gray-900 dark:text-white">
+                            {campaign.likesCount || 0}
+                          </p>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
-                            {campaign.organizer?.name || "Unknown Organizer"}
-                          </h3>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Campaign Creator
+
+                        <div className="p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-100/70 dark:border-gray-700/70">
+                          <div className="flex items-center space-x-3 mb-1">
+                            <MessageSquare
+                              size={16}
+                              className="text-blue-500"
+                            />
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                              Comments
+                            </span>
+                          </div>
+                          <p className="text-xl font-bold text-gray-900 dark:text-white">
+                            {campaign.commentsCount || 0}
+                          </p>
+                        </div>
+
+                        <div className="p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-100/70 dark:border-gray-700/70">
+                          <div className="flex items-center space-x-3 mb-1">
+                            <Share2 size={16} className="text-green-500" />
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                              Shares
+                            </span>
+                          </div>
+                          <p className="text-xl font-bold text-gray-900 dark:text-white">
+                            {campaign.sharesCount || 0}
+                          </p>
+                        </div>
+
+                        <div className="p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-100/70 dark:border-gray-700/70">
+                          <div className="flex items-center space-x-3 mb-1">
+                            <TrendingUp size={16} className="text-amber-500" />
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                              Boosts
+                            </span>
+                          </div>
+                          <p className="text-xl font-bold text-gray-900 dark:text-white">
+                            {campaign.boostsCount || 0}
                           </p>
                         </div>
                       </div>
 
-                      {campaign.organizer && (
-                        <div className="space-y-3 text-sm">
-                          {campaign.organizer.email && (
-                            <div className="flex items-center text-gray-600 dark:text-gray-300 p-2 bg-white dark:bg-gray-800 rounded-lg">
-                              <Mail size={14} className="mr-3 text-blue-500" />
-                              {campaign.organizer.email}
-                            </div>
-                          )}
-                          {campaign.organizer.phone && (
-                            <div className="flex items-center text-gray-600 dark:text-gray-300 p-2 bg-white dark:bg-gray-800 rounded-lg">
-                              <Phone size={14} className="mr-3 text-blue-500" />
-                              {campaign.organizer.phone}
-                            </div>
-                          )}
-                          {campaign.organizer.website && (
-                            <div className="flex items-center text-gray-600 dark:text-gray-300 p-2 bg-white dark:bg-gray-800 rounded-lg">
-                              <Globe size={14} className="mr-3 text-blue-500" />
-                              <a
-                                href={campaign.organizer.website}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="hover:text-blue-600 dark:hover:text-blue-400 flex items-center transition-colors"
-                              >
-                                Visit Website
-                                <ExternalLink size={12} className="ml-1" />
-                              </a>
-                            </div>
-                          )}
+                      <div className="mt-5 pt-5 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Trending Score
+                          </span>
+                          <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            {campaign.trendingScore || 0}
+                          </span>
                         </div>
-                      )}
 
-                      <div className="flex space-x-3 mt-6">
-                        <button className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg text-sm font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200 hover:shadow-xl">
-                          View Profile
-                        </button>
-                        <button className="p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-sm">
-                          <MoreHorizontal size={16} />
-                        </button>
+                        <div className="mt-2 relative h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                          <div
+                            className="absolute h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                            style={{
+                              width: `${Math.min(
+                                ((campaign.trendingScore || 0) / 100) * 100,
+                                100
+                              )}%`,
+                            }}
+                          ></div>
+                        </div>
+
+                        <div className="mt-4 flex justify-end">
+                          <button className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 flex items-center">
+                            View detailed analytics
+                            <ChevronRight size={12} className="ml-1" />
+                          </button>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Escrow Wallet Information */}
+                    {campaign.escrowWalletId && (
+                      <div className="bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-gray-800 dark:to-blue-900/10 rounded-xl p-6 border border-gray-100/50 dark:border-gray-700/50">
+                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                          <Wallet size={18} className="text-blue-500 mr-2" />
+                          Escrow Wallet
+                        </h2>
+
+                        <div className="p-4 rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-100/70 dark:border-gray-700/70 mb-4">
+                          <p className="text-xs font-mono text-gray-700 dark:text-gray-300 break-all">
+                            {campaign.escrowWalletId}
+                          </p>
+                        </div>
+
+                        <div className="flex space-x-2">
+                          <button className="flex-1 text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 py-2 px-3 rounded-lg border border-blue-100 dark:border-blue-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors">
+                            <Link size={12} className="inline mr-1" />
+                            Copy Wallet ID
+                          </button>
+                          <button className="flex-1 text-xs bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 py-2 px-3 rounded-lg border border-indigo-100 dark:border-indigo-800/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors">
+                            <ExternalLink size={12} className="inline mr-1" />
+                            View Transactions
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
             )}
 
+            {/* Keep existing tabs and their content */}
             {activeTab === "analytics" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -643,34 +772,34 @@ const CampaignDetailsPage = () => {
                   <StatCard
                     title="Total Views"
                     value="1,243"
-                    icon={Eye}
-                    color="bg-gradient-to-r from-blue-500 to-cyan-500"
-                    trend="+12%"
-                    subtitle="This month"
+                    icon={<Eye />}
+                    bgColor="bg-gradient-to-r from-blue-500 to-cyan-500"
+                    change="+12%"
+                    isPositive={true}
                   />
                   <StatCard
                     title="Conversion Rate"
                     value="4.2%"
-                    icon={TrendingUp}
-                    color="bg-gradient-to-r from-green-500 to-emerald-500"
-                    trend="+2.1%"
-                    subtitle="Above average"
+                    icon={<TrendingUp />}
+                    bgColor="bg-gradient-to-r from-green-500 to-emerald-500"
+                    change="+2.1%"
+                    isPositive={true}
                   />
                   <StatCard
                     title="Avg. Donation"
                     value="Kes 86"
-                    icon={DollarSign}
-                    color="bg-gradient-to-r from-amber-500 to-orange-500"
-                    trend="+Kes 4"
-                    subtitle="Per donor"
+                    icon={<DollarSign />}
+                    bgColor="bg-gradient-to-r from-amber-500 to-orange-500"
+                    change="+Kes 4"
+                    isPositive={true}
                   />
                   <StatCard
                     title="Social Shares"
                     value="327"
-                    icon={Share2}
-                    color="bg-gradient-to-r from-purple-500 to-pink-500"
-                    trend="+43"
-                    subtitle="This week"
+                    icon={<Share2 />}
+                    bgColor="bg-gradient-to-r from-purple-500 to-pink-500"
+                    change="+43"
+                    isPositive={true}
                   />
                 </div>
 
@@ -765,7 +894,7 @@ const CampaignDetailsPage = () => {
         </div>
       </div>
 
-      {/* Modals remain the same */}
+      {/* Modals */}
       <AnimatePresence>
         {approveModal && (
           <ApproveCampaignModal
@@ -791,7 +920,7 @@ const CampaignDetailsPage = () => {
         )}
       </AnimatePresence>
 
-      {/* Enhanced Image Gallery */}
+      {/* Image Gallery Modal */}
       <AnimatePresence>
         {showImageGallery && campaign.images && campaign.images.length > 0 && (
           <motion.div
@@ -810,22 +939,24 @@ const CampaignDetailsPage = () => {
 
             <button
               className="absolute left-6 top-1/2 -translate-y-1/2 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
-              onClick={() =>
+              onClick={(e) => {
+                e.stopPropagation();
                 setSelectedImage((prev) =>
                   prev === 0 ? campaign.images.length - 1 : prev - 1
-                )
-              }
+                );
+              }}
             >
               <ChevronLeft size={28} />
             </button>
 
             <button
               className="absolute right-6 top-1/2 -translate-y-1/2 p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
-              onClick={() =>
+              onClick={(e) => {
+                e.stopPropagation();
                 setSelectedImage((prev) =>
                   prev === campaign.images.length - 1 ? 0 : prev + 1
-                )
-              }
+                );
+              }}
             >
               <ChevronRight size={28} />
             </button>
@@ -850,7 +981,10 @@ const CampaignDetailsPage = () => {
                       ? "bg-white"
                       : "bg-white/40 hover:bg-white/60"
                   }`}
-                  onClick={() => setSelectedImage(index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImage(index);
+                  }}
                 />
               ))}
             </div>
