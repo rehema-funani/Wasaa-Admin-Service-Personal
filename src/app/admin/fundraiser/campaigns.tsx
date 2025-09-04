@@ -16,6 +16,17 @@ import {
   ThumbsUp,
   ChevronRight,
   ChevronLeft,
+  Shield,
+  ShieldAlert,
+  AlertTriangle,
+  Flag,
+  Eye,
+  Bell,
+  UserCheck,
+  ThumbsDown,
+  FileText,
+  MessageCircle,
+  Users
 } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { toast } from "react-hot-toast";
@@ -48,6 +59,61 @@ const calculateProgress = (raised, goal) => {
   return Math.min(Math.round((raisedNum / goalNum) * 100), 100);
 };
 
+// KYC Status component
+const KycStatusBadge = ({ status }) => {
+  let bgColor = "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
+  let icon = <Shield size={12} className="mr-1.5" />;
+  let text = "Not Submitted";
+
+  switch (status) {
+    case "verified":
+      bgColor = "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400";
+      icon = <Shield size={12} className="mr-1.5" />;
+      text = "Verified";
+      break;
+    case "pending":
+      bgColor = "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400";
+      icon = <Shield size={12} className="mr-1.5" />;
+      text = "Pending";
+      break;
+    case "rejected":
+      bgColor = "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400";
+      icon = <Shield size={12} className="mr-1.5" />;
+      text = "Rejected";
+      break;
+    default:
+      break;
+  }
+
+  return (
+    <span className={`flex items-center text-xs px-2.5 py-1.5 rounded-full ${bgColor}`}>
+      {icon}
+      {text}
+    </span>
+  );
+};
+
+// Risk Score component
+const RiskScoreBadge = ({ score }) => {
+  let bgColor = "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400";
+  let icon = <Shield size={12} className="mr-1.5" />;
+  
+  if (score > 70) {
+    bgColor = "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400";
+    icon = <ShieldAlert size={12} className="mr-1.5" />;
+  } else if (score > 30) {
+    bgColor = "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400";
+    icon = <AlertTriangle size={12} className="mr-1.5" />;
+  }
+
+  return (
+    <span className={`flex items-center text-xs px-2.5 py-1.5 rounded-full ${bgColor}`}>
+      {icon}
+      Risk: {score}%
+    </span>
+  );
+};
+
 const CampaignsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [campaigns, setCampaigns] = useState([]);
@@ -64,6 +130,9 @@ const CampaignsPage = () => {
     dateRange: "all",
     amountRange: "all",
     sortBy: "newest",
+    riskLevel: "all",
+    kycStatus: "all",
+    flagged: false,
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState(null);
@@ -74,6 +143,7 @@ const CampaignsPage = () => {
     pending: 0,
     active: 0,
     completed: 0,
+    flagged: 0,
     totalRaised: 0,
   });
   const [isFetching, setIsFetching] = useState(false);
@@ -92,34 +162,55 @@ const CampaignsPage = () => {
           pagination.limit
         );
 
-        const campaignsWithProgress = response.data.map((campaign) => ({
-          ...campaign,
-          progress: calculateProgress(
-            campaign.raisedAmount,
-            campaign.goalAmount
-          ),
-        }));
+        const campaignsWithExtras = response.data.map((campaign) => {
+          const riskScore = Math.floor(Math.random() * 100);
 
-        setCampaigns(campaignsWithProgress);
-        setFilteredCampaigns(campaignsWithProgress);
+          const kycStatuses = [
+            "verified",
+            "pending",
+            "rejected",
+            "not_submitted",
+          ];
+          const kycStatus =
+            kycStatuses[Math.floor(Math.random() * kycStatuses.length)];
+
+          const donorsCount = Math.floor(Math.random() * 500) + 1;
+
+          const flagged = Math.random() < 0.1;
+
+          return {
+            ...campaign,
+            progress: calculateProgress(
+              campaign.raisedAmount,
+              campaign.goalAmount
+            ),
+            riskScore,
+            kycStatus,
+            donorsCount,
+            flagged,
+          };
+        });
+
+        setCampaigns(campaignsWithExtras);
+        setFilteredCampaigns(campaignsWithExtras);
         setPagination(response.pagination);
 
         const uniqueCategories = [
-          ...new Set(campaignsWithProgress.map((c) => c.category)),
+          ...new Set(campaignsWithExtras.map((c) => c.category)),
         ].filter(Boolean);
         setCategories(uniqueCategories);
 
         const stats = {
-          pending: campaignsWithProgress.filter(
+          pending: campaignsWithExtras.filter(
             (c) => c.status === "pending_approval"
           ).length,
-          active: campaignsWithProgress.filter(
+          active: campaignsWithExtras.filter(
             (c) => c.status === "active" || c.status === "approved"
           ).length,
-          completed: campaignsWithProgress.filter(
-            (c) => c.status === "completed"
-          ).length,
-          totalRaised: campaignsWithProgress.reduce(
+          completed: campaignsWithExtras.filter((c) => c.status === "completed")
+            .length,
+          flagged: campaignsWithExtras.filter((c) => c.flagged).length,
+          totalRaised: campaignsWithExtras.reduce(
             (total, campaign) => total + parseFloat(campaign.raisedAmount || 0),
             0
           ),
@@ -230,6 +321,30 @@ const CampaignsPage = () => {
       );
     }
 
+    if (newFilters.riskLevel !== "all") {
+      switch (newFilters.riskLevel) {
+        case "low":
+          filtered = filtered.filter((c) => c.riskScore <= 30);
+          break;
+        case "medium":
+          filtered = filtered.filter(
+            (c) => c.riskScore > 30 && c.riskScore <= 70
+          );
+          break;
+        case "high":
+          filtered = filtered.filter((c) => c.riskScore > 70);
+          break;
+      }
+    }
+
+    if (newFilters.kycStatus !== "all") {
+      filtered = filtered.filter((c) => c.kycStatus === newFilters.kycStatus);
+    }
+
+    if (newFilters.flagged) {
+      filtered = filtered.filter((c) => c.flagged);
+    }
+
     if (newFilters.sortBy) {
       switch (newFilters.sortBy) {
         case "newest":
@@ -262,6 +377,9 @@ const CampaignsPage = () => {
         case "progress_high":
           filtered.sort((a, b) => b.progress - a.progress);
           break;
+        case "risk_high":
+          filtered.sort((a, b) => b.riskScore - a.riskScore);
+          break;
         case "end_date":
           filtered.sort(
             (a, b) =>
@@ -289,6 +407,9 @@ const CampaignsPage = () => {
       dateRange: "all",
       amountRange: "all",
       sortBy: "newest",
+      riskLevel: "all",
+      kycStatus: "all",
+      flagged: false,
     };
 
     setFilters(resetFilters);
@@ -310,6 +431,29 @@ const CampaignsPage = () => {
     });
   };
 
+  const handleBulkAction = (action: string) => {
+    switch (action) {
+      case "approve":
+        toast.success(`${selectedCampaigns.length} campaigns approved`);
+        break;
+      case "reject":
+        toast.error(`${selectedCampaigns.length} campaigns rejected`);
+        break;
+      case "flag":
+        toast.success(
+          `${selectedCampaigns.length} campaigns flagged for review`
+        );
+        break;
+      case "escalate":
+        toast.success(
+          `${selectedCampaigns.length} campaigns escalated to compliance`
+        );
+        break;
+    }
+    setSelectedCampaigns([]);
+    setShowBulkActionMenu(false);
+  };
+
   const refreshData = async () => {
     setIsFetching(true);
     try {
@@ -318,13 +462,42 @@ const CampaignsPage = () => {
         pagination.limit
       );
 
-      const campaignsWithProgress = response.data.map((campaign) => ({
-        ...campaign,
-        progress: calculateProgress(campaign.raisedAmount, campaign.goalAmount),
-      }));
+      // Add risk scores and KYC status for demo purposes
+      const campaignsWithExtras = response.data.map((campaign) => {
+        // Random risk score between 0-100 for demo
+        const riskScore = Math.floor(Math.random() * 100);
 
-      setCampaigns(campaignsWithProgress);
-      setFilteredCampaigns(campaignsWithProgress);
+        // Random KYC status for demo
+        const kycStatuses = [
+          "verified",
+          "pending",
+          "rejected",
+          "not_submitted",
+        ];
+        const kycStatus =
+          kycStatuses[Math.floor(Math.random() * kycStatuses.length)];
+
+        // Random donor count
+        const donorsCount = Math.floor(Math.random() * 500) + 1;
+
+        // Random flag status (10% chance of being flagged)
+        const flagged = Math.random() < 0.1;
+
+        return {
+          ...campaign,
+          progress: calculateProgress(
+            campaign.raisedAmount,
+            campaign.goalAmount
+          ),
+          riskScore,
+          kycStatus,
+          donorsCount,
+          flagged,
+        };
+      });
+
+      setCampaigns(campaignsWithExtras);
+      setFilteredCampaigns(campaignsWithExtras);
       setPagination(response.pagination);
 
       toast.success("Data refreshed successfully");
@@ -338,6 +511,26 @@ const CampaignsPage = () => {
 
   const handleViewCampaign = (id: string) => {
     navigate(`/admin/fundraising/campaigns/${id}`);
+  };
+
+  const handleApproveCampaign = (campaignId, event) => {
+    event.stopPropagation();
+    toast.success(`Campaign ${campaignId} approved`);
+  };
+
+  const handleRejectCampaign = (campaignId: string, event: any) => {
+    event.stopPropagation();
+    toast.error(`Campaign ${campaignId} rejected`);
+  };
+
+  const handleFlagCampaign = (campaignId: string, event: any) => {
+    event.stopPropagation();
+    toast.success(`Campaign ${campaignId} flagged for review`);
+  };
+
+  const handleEscalateCampaign = (campaignId: string, event: any) => {
+    event.stopPropagation();
+    toast.success(`Campaign ${campaignId} escalated to compliance`);
   };
 
   const totalPages = Math.ceil(pagination.total / pagination.limit);
@@ -400,6 +593,71 @@ const CampaignsPage = () => {
           </p>
         </div>
         <div className="flex gap-3 flex-wrap justify-end">
+          {selectedCampaigns.length > 0 && (
+            <div className="relative">
+              <motion.button
+                id="bulk-action-button"
+                className="flex items-center px-5 py-2.5 bg-gradient-to-r from-[#FF6B81] to-[#B75BFF] text-white rounded-xl text-sm hover:opacity-90 transition-all shadow-md"
+                whileHover={{
+                  y: -3,
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
+                }}
+                whileTap={{ y: 0 }}
+                onClick={() => setShowBulkActionMenu(!showBulkActionMenu)}
+              >
+                <span>Bulk Actions ({selectedCampaigns.length})</span>
+                <ChevronDown
+                  size={16}
+                  className={`ml-2 transition-transform ${
+                    showBulkActionMenu ? "transform rotate-180" : ""
+                  }`}
+                />
+              </motion.button>
+
+              <AnimatePresence>
+                {showBulkActionMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg z-10 border border-gray-100 dark:border-gray-700"
+                  >
+                    <div className="py-1">
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-emerald-600 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        onClick={() => handleBulkAction("approve")}
+                      >
+                        <CheckCircle size={14} className="inline mr-2" />
+                        Approve Selected
+                      </button>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        onClick={() => handleBulkAction("reject")}
+                      >
+                        <ThumbsDown size={14} className="inline mr-2" />
+                        Reject Selected
+                      </button>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        onClick={() => handleBulkAction("flag")}
+                      >
+                        <Flag size={14} className="inline mr-2" />
+                        Flag Selected
+                      </button>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        onClick={() => handleBulkAction("escalate")}
+                      >
+                        <AlertTriangle size={14} className="inline mr-2" />
+                        Escalate to Compliance
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
           <motion.button
             className="flex items-center px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm"
             whileHover={{
@@ -434,7 +692,7 @@ const CampaignsPage = () => {
       </motion.div>
 
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 0.61, 0.36, 1] }}
@@ -496,6 +754,26 @@ const CampaignsPage = () => {
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Successful campaigns
+          </p>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
+          whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+              Flagged Campaigns
+            </p>
+            <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+              <Flag size={18} />
+            </div>
+          </div>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+            {isLoading ? "..." : statsData.flagged}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Require attention
           </p>
         </motion.div>
 
@@ -577,7 +855,7 @@ const CampaignsPage = () => {
               className="overflow-hidden"
             >
               <div className="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Status
@@ -636,6 +914,49 @@ const CampaignsPage = () => {
                           {category}
                         </option>
                       ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Risk Level
+                    </label>
+                    <select
+                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81]/50 transition-all shadow-sm"
+                      value={filters.riskLevel}
+                      onChange={(e) =>
+                        handleFilterChange({
+                          ...filters,
+                          riskLevel: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="all">All Risk Levels</option>
+                      <option value="low">Low Risk (0-30%)</option>
+                      <option value="medium">Medium Risk (31-70%)</option>
+                      <option value="high">High Risk (71-100%)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      KYC Status
+                    </label>
+                    <select
+                      className="w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B81]/50 transition-all shadow-sm"
+                      value={filters.kycStatus}
+                      onChange={(e) =>
+                        handleFilterChange({
+                          ...filters,
+                          kycStatus: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="all">All Statuses</option>
+                      <option value="verified">Verified</option>
+                      <option value="pending">Pending</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="not_submitted">Not Submitted</option>
                     </select>
                   </div>
 
@@ -703,11 +1024,38 @@ const CampaignsPage = () => {
                       <option value="progress_high">
                         Progress (High to Low)
                       </option>
+                      <option value="risk_high">
+                        Risk Score (High to Low)
+                      </option>
                       <option value="end_date">End Date (Soonest)</option>
                     </select>
                   </div>
 
-                  <div className="lg:col-span-5 flex justify-end">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Flagged Campaigns
+                    </label>
+                    <div className="mt-2">
+                      <label className="inline-flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-[#FF6B81] mr-1.5 focus:ring-[#FF6B81]/50 h-4 w-4"
+                          checked={filters.flagged}
+                          onChange={(e) => {
+                            handleFilterChange({
+                              ...filters,
+                              flagged: e.target.checked,
+                            });
+                          }}
+                        />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Show only flagged campaigns
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-4 flex justify-end">
                     <motion.button
                       onClick={handleResetFilters}
                       className="px-5 py-2.5 text-[#FF6B81] dark:text-[#FF6B81] bg-[#FF6B81]/5 hover:bg-[#FF6B81]/10 rounded-xl text-sm transition-colors"
@@ -799,21 +1147,23 @@ const CampaignsPage = () => {
               {filteredCampaigns.map((campaign, index) => (
                 <motion.div
                   key={campaign.id}
-                  className={`p-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all ${
+                  className={`p-5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all ${
                     selectedCampaigns.includes(campaign.id)
                       ? "bg-[#FF6B81]/5"
                       : ""
-                  }`}
+                  } ${campaign.flagged ? "border-l-4 border-red-500" : ""}`}
                   initial="hidden"
                   animate="visible"
-                  onClick={() => handleViewCampaign(campaign.id)}
                   custom={index}
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
                   <div className="flex flex-col md:flex-row md:items-center">
-                    <div className="flex items-center mb-4 md:mb-0">
-                      <div className="mr-4">
+                    <div className="flex items-center mb-4 md:mb-0 md:min-w-[50%]">
+                      <div
+                        className="mr-4"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <label className="inline-flex items-center">
                           <input
                             type="checkbox"
@@ -837,11 +1187,25 @@ const CampaignsPage = () => {
                         }}
                       >
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+
+                        {campaign.riskScore > 70 && (
+                          <div className="absolute top-1 right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                            <AlertTriangle size={10} className="text-white" />
+                          </div>
+                        )}
+
+                        {campaign.flagged && (
+                          <div className="absolute bottom-1 right-1 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center">
+                            <Flag size={10} className="text-white" />
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex-grow">
-                        <div className="flex items-center mb-2">
+                        <div className="flex items-center mb-2 flex-wrap gap-2">
                           <StatusBadge status={campaign.status} />
+                          <KycStatusBadge status={campaign.kycStatus} />
+                          <RiskScoreBadge score={campaign.riskScore} />
                         </div>
 
                         <p className="font-semibold text-gray-900 dark:text-white text-[15px] capitalize mb-1.5 line-clamp-1">
@@ -864,6 +1228,11 @@ const CampaignsPage = () => {
                               {campaign.category}
                             </span>
                           )}
+
+                          <span className="flex items-center">
+                            <Users size={12} className="mr-1.5" />
+                            {campaign.donorsCount || 0} donors
+                          </span>
 
                           <span className="flex items-center">
                             <ThumbsUp size={12} className="mr-1.5" />
@@ -900,6 +1269,61 @@ const CampaignsPage = () => {
                             { maximumFractionDigits: 2 }
                           )}
                         </div>
+                      </div>
+
+                      {/* Campaign Actions */}
+                      <div
+                        className="flex flex-wrap gap-2"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300 rounded-lg transition-colors"
+                          onClick={() => handleViewCampaign(campaign.id)}
+                        >
+                          <Eye size={16} />
+                        </button>
+
+                        {campaign.status === "pending_approval" && (
+                          <>
+                            <button
+                              className="p-2 text-emerald-500 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors"
+                              onClick={(e) =>
+                                handleApproveCampaign(campaign.id, e)
+                              }
+                            >
+                              <CheckCircle size={16} />
+                            </button>
+
+                            <button
+                              className="p-2 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                              onClick={(e) =>
+                                handleRejectCampaign(campaign.id, e)
+                              }
+                            >
+                              <ThumbsDown size={16} />
+                            </button>
+                          </>
+                        )}
+
+                        {!campaign.flagged && (
+                          <button
+                            className="p-2 text-amber-500 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
+                            onClick={(e) => handleFlagCampaign(campaign.id, e)}
+                          >
+                            <Flag size={16} />
+                          </button>
+                        )}
+
+                        {campaign.riskScore > 50 && (
+                          <button
+                            className="p-2 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                            onClick={(e) =>
+                              handleEscalateCampaign(campaign.id, e)
+                            }
+                          >
+                            <ShieldAlert size={16} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
