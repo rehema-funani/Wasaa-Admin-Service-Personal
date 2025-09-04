@@ -181,7 +181,7 @@ const fundraisingModule = {
     () => import("./app/admin/fundraiser/withdrawaldetail")
   ),
   FundraisingContributions: lazy(
-    () => import("./app/admin/fundraiser/contributions")
+    () => import("./app/admin/fundraiser/transactions")
   ),
   FundraisingSettings: lazy(() => import("./app/admin/fundraiser/settings")),
   FundraisingReports: lazy(() => import("./app/admin/fundraiser/reports")),

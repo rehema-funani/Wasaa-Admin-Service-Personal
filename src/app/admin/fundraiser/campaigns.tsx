@@ -21,11 +21,7 @@ import {
   AlertTriangle,
   Flag,
   Eye,
-  Bell,
-  UserCheck,
   ThumbsDown,
-  FileText,
-  MessageCircle,
   Users
 } from "lucide-react";
 import { format, subDays } from "date-fns";
@@ -59,7 +55,6 @@ const calculateProgress = (raised, goal) => {
   return Math.min(Math.round((raisedNum / goalNum) * 100), 100);
 };
 
-// KYC Status component
 const KycStatusBadge = ({ status }) => {
   let bgColor = "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
   let icon = <Shield size={12} className="mr-1.5" />;
@@ -93,7 +88,6 @@ const KycStatusBadge = ({ status }) => {
   );
 };
 
-// Risk Score component
 const RiskScoreBadge = ({ score }) => {
   let bgColor = "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400";
   let icon = <Shield size={12} className="mr-1.5" />;
@@ -1360,7 +1354,7 @@ const CampaignsPage = () => {
                     className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                       pagination.page === 1
                         ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                        : "text-gray-600 dark:text-gray-400 hover:text-[#FF6B81] dark:hover:text-[#FF6B81] hover:bg-[#FF6B81]/10"
+                        : "text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-[#FF6B81] hover:bg-[#FF6B81]/10"
                     }`}
                   >
                     <ChevronLeft size={16} className="mr-1" />
