@@ -1346,7 +1346,6 @@ const RefundsAndChargebacksPage = () => {
         </AnimatePresence>
       </motion.div>
 
-      {/* Count Display */}
       <motion.div
         className="flex items-center justify-between mb-5 text-sm text-gray-500 dark:text-gray-400"
         initial={{ opacity: 0 }}
