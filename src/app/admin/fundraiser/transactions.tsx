@@ -62,15 +62,12 @@ const transactionService = {
             amount = Math.floor(Math.random() * 5000) + 100;
           }
           
-          // Random dates in the last 60 days
           const daysAgo = Math.floor(Math.random() * 60);
           const createdAt = subDays(new Date(), daysAgo);
           
-          // Generate reconciliation status
           const reconciliationStatuses = ["matched", "pending", "mismatch", "manual_override"];
           const reconciliationStatus = reconciliationStatuses[Math.floor(Math.random() * reconciliationStatuses.length)];
           
-          // Suspicious flags (randomly assign to ~15% of transactions)
           const suspicious = Math.random() < 0.15;
           const suspiciousReason = suspicious ? 
             [

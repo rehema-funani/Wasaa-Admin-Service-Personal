@@ -191,6 +191,7 @@ export const PATHS = {
       WITHDRAWALS: "admin/fundraising/withdrawals",
       WITHDRAWAL_DETAIL: "admin/fundraising/withdrawals/:id",
       CONTRIBUTIONS: "admin/fundraising/contributions",
+      REFUNDS: "admin/fundraising/refunds",
       SETTINGS: "admin/fundraising/settings",
       REPORTS: "admin/fundraising/reports",
       METRICS: "admin/fundraising/performance",
