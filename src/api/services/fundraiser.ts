@@ -81,4 +81,28 @@ export const fundraiserService = {
     const response = await fundraiser.put(`/admin/system/settings`, data);
     return response.data;
   },
+
+  getFundraiserReports: async (
+    type: string,
+    format: string,
+    startDate: string,
+    endDate: string
+  ) => {
+    const response = await fundraiser.get(
+      `/analytics/reports?type=${type}&format=${format}&startDate=${startDate}&endDate=${endDate}`
+    );
+    return response.data;
+  },
+  getPerformanceMetrics: async () => {
+    const response = await fundraiser.get(`/analytics/performance`);
+    return response.data;
+  },
+  getDonationAnalytics: async () => {
+    const response = await fundraiser.get(`/analytics/donations`);
+    return response.data;
+  },
+  getCampaignAnalytics: async () => {
+    const response = await fundraiser.get(`/analytics/campaigns`);
+    return response.data;
+  }
 };

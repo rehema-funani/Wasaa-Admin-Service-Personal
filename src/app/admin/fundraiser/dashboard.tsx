@@ -21,7 +21,6 @@ import {
   RefreshCw,
   Loader,
   CheckCircle,
-  PiggyBank,
   Bell,
   Globe,
   User,
@@ -30,8 +29,6 @@ import {
   FileText,
   MessageCircle,
   ShieldAlert,
-  Lock,
-  BadgeAlert,
   ShieldCheck,
   ThumbsDown,
 } from "lucide-react";
@@ -91,47 +88,6 @@ const FundraisingDashboard = () => {
       suspiciousTransactions: 0,
     },
   });
-  const [alerts, setAlerts] = useState([
-    {
-      id: 1,
-      type: "fraud",
-      title: "Suspicious donation pattern detected",
-      description:
-        "Multiple large donations from the same IP address to 'Medical Fund for Jane'",
-      severity: "high",
-      timestamp: new Date(),
-      campaignId: "12345",
-    },
-    {
-      id: 2,
-      type: "compliance",
-      title: "KYC verification pending",
-      description: "5 organizers have incomplete KYC documentation",
-      severity: "medium",
-      timestamp: new Date(),
-      campaignId: null,
-    },
-    {
-      id: 3,
-      type: "financial",
-      title: "Payout reconciliation mismatch",
-      description:
-        "Wallet balance doesn't match expected escrow for 'Community Garden Project'",
-      severity: "high",
-      timestamp: new Date(),
-      campaignId: "67890",
-    },
-    {
-      id: 4,
-      type: "system",
-      title: "Wallet service integration issue",
-      description:
-        "Intermittent connection errors with WasaaChat Wallet service",
-      severity: "medium",
-      timestamp: new Date(),
-      campaignId: null,
-    },
-  ]);
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -285,14 +241,6 @@ const FundraisingDashboard = () => {
     );
   };
 
-  const handleAlertAction = (alertId, action) => {
-    toast.success(`Alert ${alertId} ${action}`);
-
-    // In a real implementation, we would call appropriate API endpoints
-    // For now, just remove the alert from the UI for demonstration
-    setAlerts(alerts.filter((alert) => alert.id !== alertId));
-  };
-
   const recentTransactions = [...transactions]
     .sort(
       (a, b) =>
@@ -302,33 +250,6 @@ const FundraisingDashboard = () => {
 
   const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
 
-  const getAlertSeverityIcon = (severity: string) => {
-    switch (severity) {
-      case "high":
-        return <AlertTriangle size={16} className="text-red-500" />;
-      case "medium":
-        return <BadgeAlert size={16} className="text-amber-500" />;
-      case "low":
-        return <Flag size={16} className="text-blue-500" />;
-      default:
-        return <Flag size={16} />;
-    }
-  };
-
-  const getAlertTypeIcon = (type: string) => {
-    switch (type) {
-      case "fraud":
-        return <ShieldAlert size={16} className="text-red-500" />;
-      case "compliance":
-        return <FileText size={16} className="text-amber-500" />;
-      case "financial":
-        return <DollarSign size={16} className="text-green-500" />;
-      case "system":
-        return <Settings size={16} className="text-blue-500" />;
-      default:
-        return <AlertTriangle size={16} />;
-    }
-  };
 
   return (
     <div className="p-6 w-full mx-auto max-w-[1600px]">
@@ -346,7 +267,6 @@ const FundraisingDashboard = () => {
           </span>
         </div>
 
-        {/* Search */}
         <div className="relative hidden md:block">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search size={14} className="text-slate-400 dark:text-gray-500" />
@@ -358,7 +278,6 @@ const FundraisingDashboard = () => {
           />
         </div>
 
-        {/* Notifications */}
         <div className="relative">
           <button
             className="p-2 text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-full relative"
@@ -372,7 +291,6 @@ const FundraisingDashboard = () => {
             )}
           </button>
 
-          {/* Notifications Dropdown */}
           <AnimatePresence>
             {showNotifications && (
               <motion.div
@@ -460,7 +378,6 @@ const FundraisingDashboard = () => {
           </AnimatePresence>
         </div>
 
-        {/* Language Selector */}
         <div className="relative">
           <button
             className="p-2 text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-full flex items-center"
@@ -818,112 +735,6 @@ const FundraisingDashboard = () => {
           </div>
         </motion.div>
 
-        {/* Active Issues & Alerts Panel */}
-        <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm p-4 mb-6"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-slate-900 dark:text-white flex items-center">
-              <AlertTriangle size={18} className="text-red-500 mr-2" />
-              Active Issues & Alerts
-            </h2>
-            <button className="text-primary-600 dark:text-primary-400 text-sm hover:underline flex items-center">
-              View All Alerts
-              <ArrowUpRight size={14} className="ml-1" />
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {alerts.length === 0 ? (
-              <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-4 text-center">
-                <CheckCircle
-                  size={24}
-                  className="text-green-500 mx-auto mb-2"
-                />
-                <p className="text-slate-700 dark:text-gray-300">
-                  No active issues requiring attention
-                </p>
-              </div>
-            ) : (
-              alerts.map((alert) => {
-                const getSeverityColor = (severity) => {
-                  switch (severity) {
-                    case "high":
-                      return "border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20";
-                    case "medium":
-                      return "border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-900/20";
-                    case "low":
-                    default:
-                      return "border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20";
-                  }
-                };
-
-                return (
-                  <div
-                    key={alert.id}
-                    className={`rounded-lg ${getSeverityColor(
-                      alert.severity
-                    )} p-3 flex flex-col sm:flex-row sm:items-center justify-between`}
-                  >
-                    <div className="flex items-start mb-3 sm:mb-0">
-                      <div className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center mr-3">
-                        {getAlertTypeIcon(alert.type)}
-                      </div>
-                      <div>
-                        <div className="flex items-center mb-1">
-                          {getAlertSeverityIcon(alert.severity)}
-                          <p className="font-medium text-slate-900 dark:text-white text-sm ml-1.5">
-                            {alert.title}
-                          </p>
-                        </div>
-                        <p className="text-xs text-slate-600 dark:text-gray-400">
-                          {alert.description}
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-gray-500 mt-1">
-                          {format(new Date(alert.timestamp), "MMM d, h:mm a")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      {alert.campaignId && (
-                        <button
-                          className="px-3 py-1.5 text-xs bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300 rounded-lg hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors"
-                          onClick={() =>
-                            navigate(
-                              `/admin/fundraising/campaigns/${alert.campaignId}`
-                            )
-                          }
-                        >
-                          <Eye size={14} className="inline mr-1" />
-                          View
-                        </button>
-                      )}
-                      <button
-                        className="px-3 py-1.5 text-xs bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors"
-                        onClick={() => handleAlertAction(alert.id, "resolved")}
-                      >
-                        <CheckCircle size={14} className="inline mr-1" />
-                        Resolve
-                      </button>
-                      <button
-                        className="px-3 py-1.5 text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
-                        onClick={() => handleAlertAction(alert.id, "escalated")}
-                      >
-                        <ArrowUpRight size={14} className="inline mr-1" />
-                        Escalate
-                      </button>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </motion.div>
-
-        {/* Search and Filters */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm p-4 mb-6"
           initial={{ opacity: 0, y: -10 }}
@@ -1498,166 +1309,6 @@ const FundraisingDashboard = () => {
                       );
                     })
                   )}
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-100 dark:border-gray-700 shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-gray-700">
-                  <h2 className="text-lg font-medium text-slate-900 dark:text-white">
-                    System Integrations
-                  </h2>
-                  <button
-                    className="text-primary-600 dark:text-primary-400 text-sm hover:underline"
-                    onClick={() => navigate("/admin/settings/integrations")}
-                  >
-                    Manage
-                  </button>
-                </div>
-
-                <div className="divide-y divide-slate-100 dark:divide-gray-700">
-                  {/* Wallet Service */}
-                  <div className="flex items-center justify-between p-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-900/30 flex items-center justify-center mr-3">
-                        <CreditCard
-                          size={18}
-                          className="text-green-600 dark:text-green-400"
-                        />
-                      </div>
-                      <div>
-                        <p className="font-medium text-slate-900 dark:text-white text-sm">
-                          Wallet Service
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-gray-400">
-                          Processes donations and payouts
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="flex items-center text-emerald-600 dark:text-emerald-400 text-sm">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div>
-                        Operational
-                      </span>
-                      <button className="ml-4 text-slate-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400">
-                        <Settings size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Support System */}
-                  <div className="flex items-center justify-between p-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center mr-3">
-                        <MessageCircle
-                          size={18}
-                          className="text-indigo-600 dark:text-indigo-400"
-                        />
-                      </div>
-                      <div>
-                        <p className="font-medium text-slate-900 dark:text-white text-sm">
-                          Support System
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-gray-400">
-                          Manages tickets and resolutions
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="flex items-center text-emerald-600 dark:text-emerald-400 text-sm">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div>
-                        Operational
-                      </span>
-                      <button className="ml-4 text-slate-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400">
-                        <Settings size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Notification Service */}
-                  <div className="flex items-center justify-between p-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mr-3">
-                        <Bell
-                          size={18}
-                          className="text-blue-600 dark:text-blue-400"
-                        />
-                      </div>
-                      <div>
-                        <p className="font-medium text-slate-900 dark:text-white text-sm">
-                          Notification Service
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-gray-400">
-                          Sends alerts to users
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="flex items-center text-amber-600 dark:text-amber-400 text-sm">
-                        <div className="w-2 h-2 rounded-full bg-amber-500 mr-2"></div>
-                        Degraded
-                      </span>
-                      <button className="ml-4 text-slate-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400">
-                        <Settings size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center mr-3">
-                        <Lock
-                          size={18}
-                          className="text-amber-600 dark:text-amber-400"
-                        />
-                      </div>
-                      <div>
-                        <p className="font-medium text-slate-900 dark:text-white text-sm">
-                          KYC/Compliance API
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-gray-400">
-                          Verifies user identities
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="flex items-center text-emerald-600 dark:text-emerald-400 text-sm">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div>
-                        Operational
-                      </span>
-                      <button className="ml-4 text-slate-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400">
-                        <Settings size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Regulatory Reporting API */}
-                  <div className="flex items-center justify-between p-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center mr-3">
-                        <FileText
-                          size={18}
-                          className="text-purple-600 dark:text-purple-400"
-                        />
-                      </div>
-                      <div>
-                        <p className="font-medium text-slate-900 dark:text-white text-sm">
-                          Regulatory Reporting
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-gray-400">
-                          Submits reports to authorities
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="flex items-center text-emerald-600 dark:text-emerald-400 text-sm">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div>
-                        Operational
-                      </span>
-                      <button className="ml-4 text-slate-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400">
-                        <Settings size={16} />
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </motion.div>
