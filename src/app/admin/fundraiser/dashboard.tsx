@@ -76,7 +76,6 @@ const FundraisingDashboard = () => {
 
   const loadAnalyticsData = async () => {
     setAnalyticsLoading(true);
-    console.log("Starting to load analytics data...");
 
     try {
       let performanceRes = null;

@@ -566,7 +566,7 @@ const AnalyticsSection = ({
                 </div>
                 <p className="text-xl font-semibold text-slate-900 dark:text-white">
                   {campaignAnalytics?.completionPercentage !== null
-                    ? `${campaignAnalytics.completionPercentage}%`
+                    ? `${campaignAnalytics?.completionPercentage}%`
                     : "N/A"}
                 </p>
               </div>
