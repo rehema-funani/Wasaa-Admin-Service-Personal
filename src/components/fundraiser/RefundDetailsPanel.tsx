@@ -17,24 +17,145 @@ import {
   CreditCard,
   Download,
   Eye,
-  ExternalLink
+  ExternalLink,
+  AlertOctagon,
+  Info,
+  RefreshCw
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 
-// Status Badge Component (same as in RefundsTable)
 const StatusBadge = ({ status, type }) => {
-  // Implementation same as RefundsTable - omitted for brevity
+  let bgColor = "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
+  let icon = <Info size={12} className="mr-1.5" />;
+
+  if (type === "chargeback") {
+    switch (status) {
+      case "pending":
+        bgColor =
+          "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400";
+        icon = <Clock size={12} className="mr-1.5" />;
+        break;
+      case "disputed":
+        bgColor =
+          "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400";
+        icon = <AlertOctagon size={12} className="mr-1.5" />;
+        break;
+      case "settled":
+        bgColor =
+          "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400";
+        icon = <CheckCircle size={12} className="mr-1.5" />;
+        break;
+      case "lost":
+        bgColor = "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400";
+        icon = <XCircle size={12} className="mr-1.5" />;
+        break;
+      default:
+        break;
+    }
+  } else {
+    switch (status) {
+      case "completed":
+        bgColor =
+          "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400";
+        icon = <CheckCircle size={12} className="mr-1.5" />;
+        break;
+      case "approved":
+        bgColor =
+          "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400";
+        icon = <ThumbsUp size={12} className="mr-1.5" />;
+        break;
+      case "pending":
+        bgColor =
+          "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400";
+        icon = <Clock size={12} className="mr-1.5" />;
+        break;
+      case "processing":
+        bgColor =
+          "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400";
+        icon = <RefreshCw size={12} className="mr-1.5" />;
+        break;
+      case "rejected":
+      case "cancelled":
+        bgColor = "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400";
+        icon = <XCircle size={12} className="mr-1.5" />;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${bgColor}`}
+    >
+      {icon}
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
 };
 
-// Priority Badge Component (same as in RefundsTable)
 const PriorityBadge = ({ priority }) => {
-  // Implementation same as RefundsTable - omitted for brevity
+  let bgColor = "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
+  let icon = <Info size={12} className="mr-1.5" />;
+
+  switch (priority) {
+    case "low":
+      bgColor =
+        "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400";
+      icon = <Info size={12} className="mr-1.5" />;
+      break;
+    case "medium":
+      bgColor =
+        "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400";
+      icon = <AlertTriangle size={12} className="mr-1.5" />;
+      break;
+    case "high":
+      bgColor =
+        "bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400";
+      icon = <AlertTriangle size={12} className="mr-1.5" />;
+      break;
+    case "critical":
+      bgColor = "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400";
+      icon = <AlertOctagon size={12} className="mr-1.5" />;
+      break;
+    default:
+      break;
+  }
+
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${bgColor}`}
+    >
+      {icon}
+      {priority.charAt(0).toUpperCase() + priority.slice(1)}
+    </span>
+  );
 };
 
-// Documentation Badge Component (same as in RefundsTable)
 const DocumentationBadge = ({ status }) => {
-  // Implementation same as RefundsTable - omitted for brevity
+  let bgColor =
+    status === "complete"
+      ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
+      : "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400";
+
+  let icon =
+    status === "complete" ? (
+      <CheckCircle size={12} className="mr-1.5" />
+    ) : (
+      <AlertTriangle size={12} className="mr-1.5" />
+    );
+
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${bgColor}`}
+    >
+      {icon}
+      {status === "complete"
+        ? "Documentation Complete"
+        : "Documentation Needed"}
+    </span>
+  );
 };
 
 const RefundDetailsPanel = ({

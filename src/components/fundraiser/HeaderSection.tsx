@@ -17,7 +17,7 @@ const HeaderSection = ({ statsData, isLoading, refreshData, isFetching }) => {
 
   return (
     <>
-\      <motion.div
+     <motion.div
         className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
