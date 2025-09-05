@@ -14,17 +14,12 @@ import {
   Gift,
   Zap,
   AlertTriangle,
-  Settings,
   Eye,
   Flag,
   CreditCard,
   RefreshCw,
   Loader,
   CheckCircle,
-  Bell,
-  Globe,
-  User,
-  LogOut,
   Shield,
   FileText,
   MessageCircle,
@@ -127,21 +122,79 @@ const FundraisingDashboard = () => {
   const loadAnalyticsData = async () => {
     setAnalyticsLoading(true);
     try {
+      // Load all analytics data in parallel
       const [performanceRes, donationRes, campaignRes] = await Promise.all([
         fundraiserService.getPerformanceMetrics(),
         fundraiserService.getDonationAnalytics(),
         fundraiserService.getCampaignAnalytics(),
       ]);
 
-      setPerformanceMetrics(performanceRes);
-      setDonationAnalytics(donationRes);
-      setCampaignAnalytics(campaignRes);
+      // Extract and process data from the responses
+      setPerformanceMetrics(performanceRes.data);
+      setDonationAnalytics(donationRes.data);
+
+      // Process campaign analytics data
+      if (campaignRes.success && campaignRes.data) {
+        // Calculate average donation
+        const avgDonation =
+          campaignRes.data.averageDonation ||
+          (campaignRes.data.donationsCount > 0
+            ? (
+                Number(campaignRes.data.totalDonations.replace(/\./g, "")) /
+                campaignRes.data.donationsCount
+              ).toFixed(2)
+            : 0);
+
+        // Calculate recent trend from daily stats
+        const recentTrend = campaignRes.data.dailyStats
+          ? calculateTrend(campaignRes.data.dailyStats)
+          : { direction: "stable", percentage: 0 };
+
+        // Format data for display
+        setCampaignAnalytics({
+          totalDonations: campaignRes.data.totalDonations,
+          donationsCount: campaignRes.data.donationsCount,
+          averageDonation: avgDonation,
+          completionPercentage: campaignRes.data.completionPercentage || 0,
+          daysRemaining: campaignRes.data.daysRemaining || 0,
+          dailyStats: campaignRes.data.dailyStats || [],
+          topDonors: campaignRes.data.topDonors || [],
+          period: campaignRes.data.period || "month",
+          recentTrend: recentTrend,
+        });
+      }
     } catch (error) {
       console.error("Error loading analytics data:", error);
       toast.error("Failed to load analytics data");
     } finally {
       setAnalyticsLoading(false);
     }
+  };
+
+  const calculateTrend = (dailyStats) => {
+    if (!dailyStats || dailyStats.length < 2)
+      return { direction: "stable", percentage: 0 };
+
+    const latestPeriod = dailyStats[dailyStats.length - 1];
+    const previousPeriod = dailyStats[dailyStats.length - 2];
+
+    if (!latestPeriod || !previousPeriod)
+      return { direction: "stable", percentage: 0 };
+
+    const latestDonors = latestPeriod.donorsCount || 0;
+    const previousDonors = previousPeriod.donorsCount || 0;
+
+    if (previousDonors === 0) return { direction: "up", percentage: 100 };
+
+    const percentageChange =
+      ((latestDonors - previousDonors) / previousDonors) * 100;
+    const direction =
+      percentageChange > 0 ? "up" : percentageChange < 0 ? "down" : "stable";
+
+    return {
+      direction,
+      percentage: Math.abs(Math.round(percentageChange)),
+    };
   };
 
   const handleGenerateReport = async () => {
@@ -331,7 +384,6 @@ const FundraisingDashboard = () => {
           </div>
         </motion.div>
 
-        {/* Campaign Statistics */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6"
           initial={{ opacity: 0, y: -10 }}
@@ -426,7 +478,6 @@ const FundraisingDashboard = () => {
           </div>
         </motion.div>
 
-        {/* Financial & Compliance Statistics */}
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6"
           initial={{ opacity: 0, y: -10 }}
@@ -589,7 +640,6 @@ const FundraisingDashboard = () => {
             </button>
           </div>
 
-          {/* Donation Analytics Card */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-md font-medium text-slate-900 dark:text-white">
@@ -652,7 +702,6 @@ const FundraisingDashboard = () => {
             </button>
           </div>
 
-          {/* Campaign Analytics Card */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-md font-medium text-slate-900 dark:text-white">
