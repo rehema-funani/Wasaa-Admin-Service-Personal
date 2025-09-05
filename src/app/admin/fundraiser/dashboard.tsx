@@ -30,10 +30,25 @@ import {
   PieChart,
   LineChart,
 } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  LineChart as RechartLineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart as RechartPieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import { format, subDays, startOfMonth, endOfMonth } from "date-fns";
 import { toast } from "react-hot-toast";
 import { fundraiserService } from "../../../api/services/fundraiser";
 import { useNavigate } from "react-router-dom";
+
 
 const FundraisingDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -119,57 +134,97 @@ const FundraisingDashboard = () => {
     loadData();
   }, []);
 
-  const loadAnalyticsData = async () => {
-    setAnalyticsLoading(true);
-    try {
-      // Load all analytics data in parallel
-      const [performanceRes, donationRes, campaignRes] = await Promise.all([
-        fundraiserService.getPerformanceMetrics(),
-        fundraiserService.getDonationAnalytics(),
-        fundraiserService.getCampaignAnalytics(),
-      ]);
+ const loadAnalyticsData = async () => {
+   setAnalyticsLoading(true);
+   try {
+     const [performanceRes, donationRes, campaignRes] = await Promise.all([
+       fundraiserService.getPerformanceMetrics(),
+       fundraiserService.getDonationAnalytics(),
+       fundraiserService.getCampaignAnalytics(),
+     ]);
+       const parsedPerformanceMetrics = {
+         systemHealth: performanceRes.data.systemHealth || {},
+         platformMetrics: performanceRes.data.platformMetrics || {},
+         financialMetrics: {
+           ...performanceRes.data.financialMetrics,
+           // Format totalRevenue if it's in the dot-separated format
+           totalRevenue: formatDotSeparatedAmount(
+             performanceRes.data.financialMetrics?.totalRevenue
+           ),
+           platformFee: performanceRes.data.financialMetrics?.platformFee || 0,
+           processingFee:
+             performanceRes.data.financialMetrics?.processingFee || 0,
+           netRevenue: performanceRes.data.financialMetrics?.netRevenue || 0,
+         },
+       };
+       setPerformanceMetrics(parsedPerformanceMetrics);
+     if (campaignRes.data) {
+       // Format totalDonations and calculate proper average
+       const totalDonationsAmount = formatDotSeparatedAmount(
+         campaignRes.data.totalDonations
+       );
+       const avgDonation =
+         campaignRes.data.averageDonation ||
+         (campaignRes.data.donationsCount > 0
+           ? (totalDonationsAmount / campaignRes.data.donationsCount).toFixed(2)
+           : 0);
 
-      // Extract and process data from the responses
-      setPerformanceMetrics(performanceRes.data);
-      setDonationAnalytics(donationRes.data);
+       // Calculate recent trend from daily stats
+       const recentTrend = campaignRes.data.dailyStats
+         ? calculateTrend(campaignRes.data.dailyStats)
+         : { direction: "stable", percentage: 0 };
 
-      // Process campaign analytics data
-      if (campaignRes.success && campaignRes.data) {
-        // Calculate average donation
-        const avgDonation =
-          campaignRes.data.averageDonation ||
-          (campaignRes.data.donationsCount > 0
-            ? (
-                Number(campaignRes.data.totalDonations.replace(/\./g, "")) /
-                campaignRes.data.donationsCount
-              ).toFixed(2)
-            : 0);
+       const processedDailyStats = campaignRes.data.dailyStats.map((day) => ({
+         date: day.date,
+         donorsCount: day.donorsCount,
+         donationsAmount: formatDotSeparatedAmount(day.donations),
+       }));
 
-        // Calculate recent trend from daily stats
-        const recentTrend = campaignRes.data.dailyStats
-          ? calculateTrend(campaignRes.data.dailyStats)
-          : { direction: "stable", percentage: 0 };
+       setCampaignAnalytics({
+         totalDonations: totalDonationsAmount,
+         donationsCount: campaignRes.data.donationsCount,
+         averageDonation: avgDonation,
+         completionPercentage: campaignRes.data.completionPercentage || 0,
+         daysRemaining: campaignRes.data.daysRemaining || 0,
+         dailyStats: processedDailyStats,
+         topDonors:
+           campaignRes.data.topDonors.map((donor) => ({
+             ...donor,
+             amount: formatDotSeparatedAmount(donor.amount),
+           })) || [],
+         period: campaignRes.data.period || "month",
+         recentTrend: recentTrend,
+       });
+     }
 
-        // Format data for display
-        setCampaignAnalytics({
-          totalDonations: campaignRes.data.totalDonations,
-          donationsCount: campaignRes.data.donationsCount,
-          averageDonation: avgDonation,
-          completionPercentage: campaignRes.data.completionPercentage || 0,
-          daysRemaining: campaignRes.data.daysRemaining || 0,
-          dailyStats: campaignRes.data.dailyStats || [],
-          topDonors: campaignRes.data.topDonors || [],
-          period: campaignRes.data.period || "month",
-          recentTrend: recentTrend,
-        });
-      }
-    } catch (error) {
-      console.error("Error loading analytics data:", error);
-      toast.error("Failed to load analytics data");
-    } finally {
-      setAnalyticsLoading(false);
-    }
-  };
+     // Similar processing for donation analytics if needed
+     setDonationAnalytics(donationRes.data);
+   } catch (error) {
+     console.error("Error loading analytics data:", error);
+     toast.error("Failed to load analytics data");
+   } finally {
+     setAnalyticsLoading(false);
+   }
+ };
+
+ // Helper function to format dot-separated amount strings
+ const formatDotSeparatedAmount = (amountString) => {
+   if (!amountString) return 0;
+
+   // Remove dots and extract actual numbers
+   // This assumes the format is like "01.001000.0010..." where each segment is a number
+   const cleanedString = amountString.replace(/\./g, "");
+
+   // Parse as a number - this may need adjustment based on exact format
+   try {
+     // If it's a complex string that needs special parsing
+     const numbers = cleanedString.match(/\d+/g) || [];
+     return numbers.reduce((sum, num) => sum + parseInt(num, 10), 0);
+   } catch (e) {
+     console.error("Error parsing amount string:", e);
+     return 0;
+   }
+ };
 
   const calculateTrend = (dailyStats) => {
     if (!dailyStats || dailyStats.length < 2)
@@ -207,25 +262,39 @@ const FundraisingDashboard = () => {
         dateRange.endDate
       );
 
-      if (reportFormat === "pdf") {
-        const blob = new Blob([response], { type: "application/pdf" });
+      if (!response) {
+        throw new Error("No data received from the report API");
+      }
+
+      if (response.fileUrl) {
+        window.open(response.fileUrl, "_blank");
+      } else if (response.fileData) {
+        const blob = new Blob([response.fileData], {
+          type: reportFormat === "pdf" ? "application/pdf" : "text/csv",
+        });
         const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
-      } else if (reportFormat === "csv") {
-        const blob = new Blob([response], { type: "text/csv" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${reportType}-report-${dateRange.startDate}-to-${dateRange.endDate}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+
+        if (reportFormat === "pdf") {
+          window.open(url, "_blank");
+        } else {
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${reportType}-report-${dateRange.startDate}-to-${dateRange.endDate}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+      } else {
+        console.log("Report data received:", response);
+        toast.success("Report data received. See console for details.");
       }
 
       toast.success(`Report generated successfully`);
     } catch (error) {
       console.error("Error generating report:", error);
-      toast.error("Failed to generate report");
+      toast.error(
+        "Failed to generate report: " + (error.message || "Unknown error")
+      );
     } finally {
       setAnalyticsLoading(false);
       setShowReportModal(false);
@@ -598,46 +667,150 @@ const FundraisingDashboard = () => {
                 <Loader size={20} className="text-primary-500 animate-spin" />
               </div>
             ) : performanceMetrics ? (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600 dark:text-gray-400">
-                    Conversion Rate
-                  </span>
-                  <span className="text-md font-medium text-slate-900 dark:text-white">
-                    {performanceMetrics.conversionRate}%
-                  </span>
+              <>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="bg-slate-50 dark:bg-gray-700 p-3 rounded-lg">
+                    <p className="text-xs text-slate-500 dark:text-gray-400 mb-1">
+                      System Uptime
+                    </p>
+                    <p className="text-lg font-medium text-slate-900 dark:text-white">
+                      {performanceMetrics.systemHealth?.uptime || "N/A"}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 dark:bg-gray-700 p-3 rounded-lg">
+                    <p className="text-xs text-slate-500 dark:text-gray-400 mb-1">
+                      Active Campaigns
+                    </p>
+                    <p className="text-lg font-medium text-slate-900 dark:text-white">
+                      {performanceMetrics.platformMetrics?.activeCampaigns || 0}
+                      <span className="text-xs text-slate-500 dark:text-gray-400 ml-1">
+                        /
+                        {performanceMetrics.platformMetrics?.totalCampaigns ||
+                          0}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600 dark:text-gray-400">
-                    Avg. Donation
-                  </span>
-                  <span className="text-md font-medium text-slate-900 dark:text-white">
-                    Kes {performanceMetrics.avgDonationAmount?.toLocaleString()}
-                  </span>
+
+                {/* System Health Metrics Chart */}
+                <div className="mb-4">
+                  <p className="text-sm font-medium text-slate-800 dark:text-white mb-2">
+                    System Performance
+                  </p>
+                  <div className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={[
+                          {
+                            name: "Response",
+                            value:
+                              performanceMetrics.systemHealth?.responseTime ||
+                              0,
+                            fill: "#8884d8",
+                          },
+                          {
+                            name: "Error Rate",
+                            value:
+                              parseFloat(
+                                performanceMetrics.systemHealth?.errorRate || 0
+                              ) * 100,
+                            fill: "#ff8042",
+                          },
+                          {
+                            name: "Throughput",
+                            value:
+                              (performanceMetrics.systemHealth?.throughput ||
+                                0) / 10, // Scaled for visualization
+                            fill: "#82ca9d",
+                          },
+                        ]}
+                        margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                        <YAxis tick={{ fontSize: 10 }} />
+                        <Tooltip
+                          formatter={(value, name) => {
+                            if (name === "Response")
+                              return [`${value} ms`, "Response Time"];
+                            if (name === "Error Rate")
+                              return [
+                                `${(value / 100).toFixed(2)}%`,
+                                "Error Rate",
+                              ];
+                            if (name === "Throughput")
+                              return [`${value * 10}/min`, "Throughput"];
+                            return [value, name];
+                          }}
+                        />
+                        <Bar dataKey="value" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600 dark:text-gray-400">
-                    Repeat Donors
-                  </span>
-                  <span className="text-md font-medium text-slate-900 dark:text-white">
-                    {performanceMetrics.repeatDonorPercentage}%
-                  </span>
+
+                <div className="space-y-3 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-600 dark:text-gray-400">
+                      Monthly Active Users
+                    </span>
+                    <span className="text-md font-medium text-slate-900 dark:text-white">
+                      {performanceMetrics.platformMetrics?.monthlyActiveUsers ||
+                        0}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-600 dark:text-gray-400">
+                      Total Revenue
+                    </span>
+                    <span className="text-md font-medium text-slate-900 dark:text-white">
+                      Kes{" "}
+                      {typeof performanceMetrics.financialMetrics
+                        ?.totalRevenue === "number"
+                        ? performanceMetrics.financialMetrics.totalRevenue.toLocaleString()
+                        : "N/A"}
+                    </span>
+                  </div>
+
+                  {performanceMetrics.financialMetrics?.platformFee !==
+                    null && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-slate-600 dark:text-gray-400">
+                        Platform Fee
+                      </span>
+                      <span className="text-md font-medium text-slate-900 dark:text-white">
+                        Kes{" "}
+                        {typeof performanceMetrics.financialMetrics
+                          ?.platformFee === "number"
+                          ? performanceMetrics.financialMetrics.platformFee.toLocaleString()
+                          : "N/A"}
+                      </span>
+                    </div>
+                  )}
+
+                  {performanceMetrics.financialMetrics?.netRevenue !== null && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-slate-600 dark:text-gray-400">
+                        Net Revenue
+                      </span>
+                      <span className="text-md font-medium text-slate-900 dark:text-white">
+                        Kes{" "}
+                        {typeof performanceMetrics.financialMetrics
+                          ?.netRevenue === "number"
+                          ? performanceMetrics.financialMetrics.netRevenue.toLocaleString()
+                          : "N/A"}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
+              </>
             ) : (
               <div className="text-center p-4 text-slate-500 dark:text-gray-400">
                 No performance data available
               </div>
             )}
-
-            <button
-              className="w-full mt-4 py-2 text-xs text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-800 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20"
-              onClick={() =>
-                navigate("/admin/fundraising/analytics/performance")
-              }
-            >
-              View Detailed Metrics
-            </button>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
@@ -717,44 +890,146 @@ const FundraisingDashboard = () => {
                 <Loader size={20} className="text-primary-500 animate-spin" />
               </div>
             ) : campaignAnalytics ? (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600 dark:text-gray-400">
-                    Success Rate
-                  </span>
-                  <span className="text-md font-medium text-slate-900 dark:text-white">
-                    {campaignAnalytics.successRate}%
-                  </span>
+              <>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="bg-slate-50 dark:bg-gray-700 p-3 rounded-lg">
+                    <p className="text-xs text-slate-500 dark:text-gray-400 mb-1">
+                      Total Donations
+                    </p>
+                    <p className="text-lg font-medium text-slate-900 dark:text-white">
+                      Kes {campaignAnalytics.totalDonations.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="bg-slate-50 dark:bg-gray-700 p-3 rounded-lg">
+                    <p className="text-xs text-slate-500 dark:text-gray-400 mb-1">
+                      Total Donors
+                    </p>
+                    <p className="text-lg font-medium text-slate-900 dark:text-white">
+                      {campaignAnalytics.donationsCount.toLocaleString()}
+                      {campaignAnalytics.recentTrend.direction !== "stable" && (
+                        <span
+                          className={`ml-1 text-xs ${
+                            campaignAnalytics.recentTrend.direction === "up"
+                              ? "text-emerald-600 dark:text-emerald-400"
+                              : "text-red-600 dark:text-red-400"
+                          }`}
+                        >
+                          (
+                          {campaignAnalytics.recentTrend.direction === "up"
+                            ? "+"
+                            : "-"}
+                          {campaignAnalytics.recentTrend.percentage}%)
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600 dark:text-gray-400">
-                    Avg. Campaign Duration
-                  </span>
-                  <span className="text-md font-medium text-slate-900 dark:text-white">
-                    {campaignAnalytics.avgDuration} days
-                  </span>
+
+                {/* Daily Donations Chart */}
+                <div className="mb-4">
+                  <p className="text-sm font-medium text-slate-800 dark:text-white mb-2">
+                    Daily Donation Trends
+                  </p>
+                  <div className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartLineChart
+                        data={campaignAnalytics.dailyStats}
+                        margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis
+                          dataKey="date"
+                          tick={{ fontSize: 10 }}
+                          tickFormatter={(value) => {
+                            const date = new Date(value);
+                            return `${date.getDate()}/${date.getMonth() + 1}`;
+                          }}
+                        />
+                        <YAxis tick={{ fontSize: 10 }} />
+                        <Tooltip
+                          formatter={(value) => [`${value} donors`, "Donors"]}
+                          labelFormatter={(label) => {
+                            const date = new Date(label);
+                            return format(date, "MMM d, yyyy");
+                          }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="donorsCount"
+                          name="Donors"
+                          stroke="#8884d8"
+                          activeDot={{ r: 6 }}
+                          strokeWidth={2}
+                        />
+                      </RechartLineChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-slate-600 dark:text-gray-400">
-                    Top Category
-                  </span>
-                  <span className="text-md font-medium text-slate-900 dark:text-white">
-                    {campaignAnalytics.topCategory}
-                  </span>
+
+                <div className="space-y-3 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-600 dark:text-gray-400">
+                      Average Donation
+                    </span>
+                    <span className="text-md font-medium text-slate-900 dark:text-white">
+                      {campaignAnalytics.averageDonation
+                        ? `Kes ${Number(
+                            campaignAnalytics.averageDonation
+                          ).toLocaleString()}`
+                        : "Not available"}
+                    </span>
+                  </div>
+
+                  {campaignAnalytics.completionPercentage !== null && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-slate-600 dark:text-gray-400">
+                        Completion Rate
+                      </span>
+                      <span className="text-md font-medium text-slate-900 dark:text-white">
+                        {campaignAnalytics.completionPercentage}%
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-600 dark:text-gray-400">
+                      Period
+                    </span>
+                    <span className="text-md font-medium text-slate-900 dark:text-white capitalize">
+                      {campaignAnalytics.period}
+                    </span>
+                  </div>
                 </div>
-              </div>
+
+                {/* Top Donors Section */}
+                {campaignAnalytics.topDonors &&
+                  campaignAnalytics.topDonors.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-sm font-medium text-slate-800 dark:text-white mb-2">
+                        Top Donors
+                      </p>
+                      {campaignAnalytics.topDonors.map((donor, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center py-1"
+                        >
+                          <span className="text-xs text-slate-600 dark:text-gray-400">
+                            {donor.anonymous ? "Anonymous Donor" : donor.userId}
+                          </span>
+                          <span className="text-xs font-medium text-slate-900 dark:text-white">
+                            Kes {donor.amount.toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+              </>
             ) : (
               <div className="text-center p-4 text-slate-500 dark:text-gray-400">
                 No campaign analytics available
               </div>
             )}
-
-            <button
-              className="w-full mt-4 py-2 text-xs text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-800 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20"
-              onClick={() => navigate("/admin/fundraising/analytics/campaigns")}
-            >
-              View Campaign Analytics
-            </button>
           </div>
         </motion.div>
 
