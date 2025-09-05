@@ -10,10 +10,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  PieChart as RechartPieChart,
-  Pie,
-  Cell,
+  ResponsiveContainer
 } from "recharts";
 import { format } from "date-fns";
 
@@ -24,6 +21,16 @@ const AnalyticsSection = ({
   analyticsLoading,
 }) => {
   const navigate = useNavigate();
+//   console.log(performanceMetrics, donationAnalytics, campaignAnalytics);
+
+  const formattedDailyStats = campaignAnalytics?.dailyStats
+    ? campaignAnalytics.dailyStats.map((day) => ({
+        date: day.date,
+        donorsCount: day.donorsCount || 0,
+        donationsAmount:
+          typeof day.donationsAmount === "number" ? day.donationsAmount : 0,
+      }))
+    : [];
 
   return (
     <motion.div
@@ -32,7 +39,6 @@ const AnalyticsSection = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.2 }}
     >
-      {/* Performance Metrics Card */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-slate-100 dark:border-gray-700 shadow-sm">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-md font-medium text-slate-900 dark:text-white">
@@ -113,7 +119,10 @@ const AnalyticsSection = ({
                         if (name === "Response")
                           return [`${value} ms`, "Response Time"];
                         if (name === "Error Rate")
-                          return [`${(Number(value) / 100).toFixed(2)}%`, "Error Rate"];
+                          return [
+                            `${(Number(value) / 100).toFixed(2)}%`,
+                            "Error Rate",
+                          ];
                         if (name === "Throughput")
                           return [`${Number(value) * 10}/min`, "Throughput"];
                         return [value, name];
@@ -301,44 +310,52 @@ const AnalyticsSection = ({
               </div>
             </div>
 
-            {/* Daily Donations Chart */}
             <div className="mb-4">
               <p className="text-sm font-medium text-slate-800 dark:text-white mb-2">
-                Daily Donation Trends
+                Daily Donors
               </p>
               <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartLineChart
-                    data={campaignAnalytics.dailyStats}
-                    margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fontSize: 10 }}
-                      tickFormatter={(value) => {
-                        const date = new Date(value);
-                        return `${date.getDate()}/${date.getMonth() + 1}`;
-                      }}
-                    />
-                    <YAxis tick={{ fontSize: 10 }} />
-                    <Tooltip
-                      formatter={(value) => [`${value} donors`, "Donors"]}
-                      labelFormatter={(label) => {
-                        const date = new Date(label);
-                        return format(date, "MMM d, yyyy");
-                      }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="donorsCount"
-                      name="Donors"
-                      stroke="#8884d8"
-                      activeDot={{ r: 6 }}
-                      strokeWidth={2}
-                    />
-                  </RechartLineChart>
-                </ResponsiveContainer>
+                {formattedDailyStats.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RechartLineChart
+                      data={formattedDailyStats}
+                      margin={{ top: 5, right: 5, left: 0, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis
+                        dataKey="date"
+                        tick={{ fontSize: 10 }}
+                        tickFormatter={(value) => {
+                          const date = new Date(value);
+                          return `${date.getDate()}/${date.getMonth() + 1}`;
+                        }}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 10 }}
+                        domain={[0, "dataMax + 1"]}
+                      />
+                      <Tooltip
+                        formatter={(value) => [`${value} donors`, "Donors"]}
+                        labelFormatter={(label) => {
+                          const date = new Date(label);
+                          return format(date, "MMM d, yyyy");
+                        }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="donorsCount"
+                        name="Donors"
+                        stroke="#8884d8"
+                        activeDot={{ r: 6 }}
+                        strokeWidth={2}
+                      />
+                    </RechartLineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-slate-500 dark:text-gray-400">
+                    No daily data available
+                  </div>
+                )}
               </div>
             </div>
             <div className="space-y-3 mb-4">

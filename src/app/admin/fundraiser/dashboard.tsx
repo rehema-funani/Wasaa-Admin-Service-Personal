@@ -45,13 +45,11 @@ const FundraisingDashboard = () => {
     },
   });
 
-  // Analytics state
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [performanceMetrics, setPerformanceMetrics] = useState(null);
   const [donationAnalytics, setDonationAnalytics] = useState(null);
   const [campaignAnalytics, setCampaignAnalytics] = useState(null);
 
-  // Report modal state
   const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
@@ -78,15 +76,32 @@ const FundraisingDashboard = () => {
 
   const loadAnalyticsData = async () => {
     setAnalyticsLoading(true);
-    try {
-      const [performanceRes, donationRes, campaignRes] = await Promise.all([
-        fundraiserService.getPerformanceMetrics(),
-        fundraiserService.getDonationAnalytics(),
-        fundraiserService.getCampaignAnalytics(),
-      ]);
+    console.log("Starting to load analytics data...");
 
-      // Parse performance metrics data
-      if (performanceRes.data) {
+    try {
+      let performanceRes = null;
+      let donationRes = null;
+      let campaignRes = null;
+
+      try {
+        performanceRes = await fundraiserService.getPerformanceMetrics();
+      } catch (perfError) {
+        console.error("Failed to fetch performance metrics:", perfError);
+      }
+
+      try {
+        donationRes = await fundraiserService.getDonationAnalytics();
+      } catch (donationError) {
+        console.error("Failed to fetch donation analytics:", donationError);
+      }
+
+      try {
+        campaignRes = await fundraiserService.getCampaignAnalytics();
+      } catch (campaignError) {
+        console.error("Failed to fetch campaign analytics:", campaignError);
+      }
+
+      if (performanceRes?.data) {
         const parsedPerformanceMetrics = {
           systemHealth: performanceRes.data.systemHealth || {},
           platformMetrics: performanceRes.data.platformMetrics || {},
@@ -104,9 +119,7 @@ const FundraisingDashboard = () => {
         setPerformanceMetrics(parsedPerformanceMetrics);
       }
 
-      // Parse campaign analytics data
-      if (campaignRes.data) {
-        // Format totalDonations and calculate proper average
+      if (campaignRes?.data) {
         const totalDonationsAmount = formatDotSeparatedAmount(
           campaignRes.data.totalDonations
         );
@@ -118,62 +131,72 @@ const FundraisingDashboard = () => {
               )
             : 0);
 
-        // Calculate recent trend from daily stats
         const recentTrend = campaignRes.data.dailyStats
           ? calculateTrend(campaignRes.data.dailyStats)
           : { direction: "stable", percentage: 0 };
 
         const processedDailyStats = campaignRes.data.dailyStats.map((day) => ({
           date: day.date,
-          donorsCount: day.donorsCount,
-          donationsAmount: formatDotSeparatedAmount(day.donations),
+          donorsCount: day.donorsCount || 0,
+          donationsAmount: formatDotSeparatedAmount(day.donations) || 0,
         }));
 
-        setCampaignAnalytics({
+        const processedAnalytics = {
           totalDonations: totalDonationsAmount,
-          donationsCount: campaignRes.data.donationsCount,
+          donationsCount: campaignRes.data.donationsCount || 0,
           averageDonation: avgDonation,
           completionPercentage: campaignRes.data.completionPercentage || 0,
           daysRemaining: campaignRes.data.daysRemaining || 0,
           dailyStats: processedDailyStats,
-          topDonors:
-            campaignRes.data.topDonors.map((donor) => ({
-              ...donor,
-              amount: formatDotSeparatedAmount(donor.amount),
-            })) || [],
+          topDonors: (campaignRes.data.topDonors || []).map((donor) => ({
+            ...donor,
+            amount: formatDotSeparatedAmount(donor.amount) || 0,
+          })),
           period: campaignRes.data.period || "month",
           recentTrend: recentTrend,
-        });
+        };
+
+        setCampaignAnalytics(processedAnalytics);
       }
 
-      // Set donation analytics
-      setDonationAnalytics(donationRes.data);
+      if (donationRes?.data) {
+        setDonationAnalytics(donationRes.data);
+      } else {
+        setDonationAnalytics({
+          totalDonations: 0,
+          growthRate: 0,
+          peakDonationDay: "N/A",
+        });
+      }
     } catch (error) {
-      console.error("Error loading analytics data:", error);
+      console.error("Error in loadAnalyticsData:", error);
       toast.error("Failed to load analytics data");
     } finally {
       setAnalyticsLoading(false);
     }
   };
 
-  // Helper function to format dot-separated amount strings
   const formatDotSeparatedAmount = (amountString) => {
     if (!amountString) return 0;
 
-    // Remove dots and extract actual numbers
-    const cleanedString = amountString.replace(/\./g, "");
-
-    // Parse as a number
     try {
-      const numbers = cleanedString.match(/\d+/g) || [];
-      return numbers.reduce((sum, num) => sum + parseInt(num, 10), 0);
+      const cleanedString = amountString.replace(/\./g, "");
+
+      let total = 0;
+      for (let i = 0; i < cleanedString.length; i += 2) {
+        if (i + 1 < cleanedString.length) {
+          total += parseInt(cleanedString.substring(i, i + 2), 10);
+        } else {
+          total += parseInt(cleanedString.substring(i, i + 1), 10);
+        }
+      }
+      return total;
     } catch (e) {
-      console.error("Error parsing amount string:", e);
+      console.error("Error parsing amount string:", e, amountString);
       return 0;
     }
   };
 
-  // Calculate trend helper function
   const calculateTrend = (dailyStats) => {
     if (!dailyStats || dailyStats.length < 2)
       return { direction: "stable", percentage: 0 };
