@@ -17,16 +17,11 @@ import { useNavigate } from "react-router-dom";
 import {
   BarChart,
   Bar,
-  LineChart as RechartLineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart as RechartPieChart,
-  Pie,
-  Cell,
   AreaChart,
   Area,
 } from "recharts";
@@ -48,9 +43,6 @@ const AnalyticsSection = ({
           typeof day.donationsAmount === "number" ? day.donationsAmount : 0,
       }))
     : [];
-
-  // Colors for charts
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#0088FE"];
 
   return (
     <div className="mb-6">
