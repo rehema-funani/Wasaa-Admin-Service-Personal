@@ -49,6 +49,17 @@ export const PATHS = {
       MODERATION: "admin/livestreams/moderation",
       REPORTED: "admin/livestreams/reported",
     },
+    ESCROW: {
+      DASHBOARD: "admin/escrow/dashboard",
+      TRANSACTIONS: "admin/escrow/transactions",
+      TRANSACTION_DETAIL: "admin/escrow/transactions/:id",
+      DISPUTES: "admin/escrow/disputes",
+      DISPUTE_DETAIL: "admin/escrow/disputes/:id",
+      ESCROW_ACCOUNTS: "admin/escrow/accounts",
+      ACCOUNT_DETAIL: "admin/escrow/accounts/:id",
+      SETTINGS: "admin/escrow/settings",
+      REPORTS: "admin/escrow/reports",
+    },
     FINANCE: {
       FOREX: {
         DASHBOARD: "admin/finance/forex/dashboard",
@@ -181,7 +192,6 @@ export const PATHS = {
       LOGS: "admin/logs",
       DETAILS: "admin/audit-logs/:id",
     },
-
     FUNDRAISING: {
       DASHBOARD: "admin/fundraising/dashboard",
       CAMPAIGNS: "admin/fundraising/campaigns",

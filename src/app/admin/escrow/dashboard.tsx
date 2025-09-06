@@ -1,0 +1,844 @@
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Download,
+  Filter,
+  Calendar,
+  ArrowRight,
+  Shield,
+  AlertTriangle,
+  TrendingUp,
+  CheckCircle,
+  XCircle,
+  Eye,
+  AlertCircle,
+} from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+} from "recharts";
+
+const EscrowDashboard: React.FC = () => {
+  const [selectedPeriod, setSelectedPeriod] = useState("monthly");
+  const [selectedYear, setSelectedYear] = useState(2025);
+  const [selectedMonth, setSelectedMonth] = useState(4);
+  const [selectedQuarter, setSelectedQuarter] = useState(2);
+  const [isLoading, setIsLoading] = useState(true);
+  const [escrowData, setEscrowData] = useState<any[]>([]);
+  const [disputeData, setDisputeData] = useState<any[]>([]);
+  const [riskData, setRiskData] = useState<any[]>([]);
+  const [volumeData, setVolumeData] = useState<any[]>([]);
+
+  const monthlyEscrowData = [
+    {
+      name: "Jan",
+      totalEscrows: 2450,
+      activeEscrows: 1890,
+      releasedEscrows: 2180,
+      disputedEscrows: 95,
+      volume: 125000000,
+    },
+    {
+      name: "Feb",
+      totalEscrows: 2780,
+      activeEscrows: 2150,
+      releasedEscrows: 2520,
+      disputedEscrows: 110,
+      volume: 142000000,
+    },
+    {
+      name: "Mar",
+      totalEscrows: 3150,
+      activeEscrows: 2480,
+      releasedEscrows: 2890,
+      disputedEscrows: 125,
+      volume: 168000000,
+    },
+    {
+      name: "Apr",
+      totalEscrows: 3680,
+      activeEscrows: 2950,
+      releasedEscrows: 3420,
+      disputedEscrows: 95,
+      volume: 195000000,
+    },
+  ];
+
+  const disputeStatusData = [
+    { name: "Resolved - Buyer Favor", value: 45, count: 892 },
+    { name: "Resolved - Seller Favor", value: 35, count: 694 },
+    { name: "Under Review", value: 12, count: 238 },
+    { name: "Escalated", value: 5, count: 99 },
+    { name: "Pending Evidence", value: 3, count: 59 },
+  ];
+
+  const riskAssessmentData = [
+    { name: "Jan", lowRisk: 85, mediumRisk: 12, highRisk: 3 },
+    { name: "Feb", lowRisk: 82, mediumRisk: 15, highRisk: 3 },
+    { name: "Mar", lowRisk: 88, mediumRisk: 10, highRisk: 2 },
+    { name: "Apr", lowRisk: 91, mediumRisk: 7, highRisk: 2 },
+  ];
+
+  const escrowVolumeData = [
+    { name: "Jan", volume: 125000000, transactions: 2450, avgValue: 51020 },
+    { name: "Feb", volume: 142000000, transactions: 2780, avgValue: 51079 },
+    { name: "Mar", volume: 168000000, transactions: 3150, avgValue: 53333 },
+    { name: "Apr", volume: 195000000, transactions: 3680, avgValue: 52989 },
+  ];
+
+  const complianceMetrics = [
+    { metric: "KYC Verification Rate", value: "98.5%", change: "+1.2%" },
+    {
+      metric: "AML Flag Resolution Time",
+      value: "4.2 hrs",
+      change: "-0.8 hrs",
+    },
+    { metric: "SAR Submissions", value: "23", change: "+5" },
+    {
+      metric: "Dispute Resolution Time",
+      value: "18.5 hrs",
+      change: "-2.3 hrs",
+    },
+    { metric: "Fraud Detection Rate", value: "0.08%", change: "-0.02%" },
+    { metric: "Compliance Score", value: "96.8%", change: "+2.1%" },
+    { metric: "Escrow Success Rate", value: "97.4%", change: "+0.6%" },
+    { metric: "Average Escrow Value", value: "KES 52,989", change: "+3.8%" },
+  ];
+
+  const COLORS = [
+    "#10b981",
+    "#3b82f6",
+    "#f59e0b",
+    "#ef4444",
+    "#8b5cf6",
+    "#ec4899",
+  ];
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setEscrowData(monthlyEscrowData);
+      setDisputeData(disputeStatusData);
+      setRiskData(riskAssessmentData);
+      setVolumeData(escrowVolumeData);
+      setIsLoading(false);
+    }, 1000);
+  }, [selectedPeriod, selectedYear, selectedMonth, selectedQuarter]);
+
+  const handlePeriodChange = (period: string) => {
+    setSelectedPeriod(period);
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const formatNumber = (value: number) => {
+    return new Intl.NumberFormat("en-KE").format(value);
+  };
+
+  return (
+    <div className="p-6 max-w-[1600px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <motion.div
+        className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+            TrustBridge Dashboard
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            Monitor escrow transactions, disputes, and compliance metrics
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-1 flex items-center shadow-sm">
+            <button
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                selectedPeriod === "weekly"
+                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => handlePeriodChange("weekly")}
+            >
+              Weekly
+            </button>
+            <button
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                selectedPeriod === "monthly"
+                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => handlePeriodChange("monthly")}
+            >
+              Monthly
+            </button>
+            <button
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                selectedPeriod === "quarterly"
+                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
+                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => handlePeriodChange("quarterly")}
+            >
+              Quarterly
+            </button>
+          </div>
+          <motion.button
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+            whileTap={{ y: 0 }}
+          >
+            <Calendar size={16} className="mr-2" strokeWidth={1.8} />
+            {selectedPeriod === "monthly" && `April ${selectedYear}`}
+            {selectedPeriod === "quarterly" &&
+              `Q${selectedQuarter} ${selectedYear}`}
+            {selectedPeriod === "weekly" && `April Week 4, ${selectedYear}`}
+          </motion.button>
+          <motion.button
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+            whileTap={{ y: 0 }}
+          >
+            <Filter size={16} className="mr-2" strokeWidth={1.8} />
+            Filters
+          </motion.button>
+          <motion.button
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+            whileTap={{ y: 0 }}
+          >
+            <Download size={16} className="mr-2" strokeWidth={1.8} />
+            Export
+          </motion.button>
+        </div>
+      </motion.div>
+
+      {/* Quick Stats KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Active Escrows
+              </p>
+              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                2,950
+              </p>
+              <p className="text-green-600 dark:text-green-400 text-sm">
+                +18.9% from last month
+              </p>
+            </div>
+            <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
+              <Shield className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Pending Disputes
+              </p>
+              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                95
+              </p>
+              <p className="text-red-600 dark:text-red-400 text-sm">
+                -13.6% from last month
+              </p>
+            </div>
+            <div className="p-3 bg-red-100 dark:bg-red-900 rounded-full">
+              <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Total Volume
+              </p>
+              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                KES 195M
+              </p>
+              <p className="text-green-600 dark:text-green-400 text-sm">
+                +16.1% from last month
+              </p>
+            </div>
+            <div className="p-3 bg-green-100 dark:bg-green-900 rounded-full">
+              <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.4 }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Fraud Alerts
+              </p>
+              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                7
+              </p>
+              <p className="text-amber-600 dark:text-amber-400 text-sm">
+                2 require action
+              </p>
+            </div>
+            <div className="p-3 bg-amber-100 dark:bg-amber-900 rounded-full">
+              <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Escrow Transactions & Volume Analysis */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-2"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.5 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                Escrow Transaction Trends
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Monthly escrow activity and status distribution
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-blue-500 dark:bg-blue-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Active
+                </span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-green-500 dark:bg-green-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Released
+                </span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-red-500 dark:bg-red-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Disputed
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="h-72">
+            {isLoading ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={escrowData}
+                  margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+                  barSize={20}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(value: number) => formatNumber(value)}
+                    labelFormatter={(label) => `Period: ${label}`}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="activeEscrows"
+                    fill="#3b82f6"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="releasedEscrows"
+                    fill="#10b981"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="disputedEscrows"
+                    fill="#ef4444"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.6 }}
+        >
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Dispute Resolution
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Current dispute status breakdown
+            </p>
+          </div>
+          <div className="h-72">
+            {isLoading ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsPieChart>
+                  <Pie
+                    data={disputeData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) =>
+                      `${name.split(" ")[0]}: ${(percent * 100).toFixed(0)}%`
+                    }
+                  >
+                    {disputeData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => `${value}%`} />
+                  <Legend />
+                </RechartsPieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Risk Assessment & Volume Trends */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.7 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                Risk Assessment Distribution
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Monthly risk scoring trends (percentage)
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-green-500 dark:bg-green-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Low Risk
+                </span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-amber-500 dark:bg-amber-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Medium Risk
+                </span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-red-500 dark:bg-red-400 mr-1"></div>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  High Risk
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="h-72">
+            {isLoading ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={riskData}
+                  margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="name" />
+                  <YAxis tickFormatter={(value) => `${value}%`} />
+                  <Tooltip formatter={(value: number) => `${value}%`} />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="lowRisk"
+                    stackId="1"
+                    stroke="#10b981"
+                    fill="#6ee7b7"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="mediumRisk"
+                    stackId="1"
+                    stroke="#f59e0b"
+                    fill="#fcd34d"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="highRisk"
+                    stackId="1"
+                    stroke="#ef4444"
+                    fill="#fca5a5"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.8 }}
+        >
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Escrow Volume Trends
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Monthly transaction volume in KES
+            </p>
+          </div>
+          <div className="h-72">
+            {isLoading ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={volumeData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis tickFormatter={(value) => formatCurrency(value)} />
+                  <Tooltip
+                    formatter={(value: number) => formatCurrency(value)}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="volume"
+                    stroke="#6366f1"
+                    strokeWidth={3}
+                    dot={{ fill: "#6366f1", strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Compliance Metrics */}
+      <motion.div
+        className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.9 }}
+      >
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+            Compliance & Performance Metrics
+          </h3>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            Key compliance and operational performance indicators
+          </p>
+        </div>
+        <div className="h-60 overflow-y-auto">
+          {isLoading ? (
+            <div className="h-full flex items-center justify-center">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {complianceMetrics.map((metric, index) => (
+                <div
+                  key={index}
+                  className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                >
+                  <div className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
+                    {metric.metric}
+                  </div>
+                  <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                    {metric.value}
+                  </div>
+                  <div
+                    className={`text-sm font-medium ${
+                      metric.change.startsWith("+")
+                        ? "text-green-600 dark:text-green-400"
+                        : metric.change.startsWith("-") &&
+                          metric.metric.includes("Time")
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {metric.change}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Quick Actions */}
+      <motion.div
+        className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 1.0 }}
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Quick Actions
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Frequently used escrow management actions
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <motion.button
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
+              whileTap={{ y: 0 }}
+            >
+              <Eye
+                size={16}
+                className="mr-2 text-blue-600 dark:text-blue-400"
+                strokeWidth={1.8}
+              />
+              Review Pending
+            </motion.button>
+            <motion.button
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
+              whileTap={{ y: 0 }}
+            >
+              <AlertTriangle
+                size={16}
+                className="mr-2 text-amber-600 dark:text-amber-400"
+                strokeWidth={1.8}
+              />
+              Resolve Disputes
+            </motion.button>
+            <motion.button
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
+              whileTap={{ y: 0 }}
+            >
+              <CheckCircle
+                size={16}
+                className="mr-2 text-green-600 dark:text-green-400"
+                strokeWidth={1.8}
+              />
+              KYC Verification
+            </motion.button>
+            <motion.button
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
+              whileHover={{
+                y: -2,
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+              }}
+              whileTap={{ y: 0 }}
+            >
+              <Shield
+                size={16}
+                className="mr-2 text-red-600 dark:text-red-400"
+                strokeWidth={1.8}
+              />
+              AML Review
+            </motion.button>
+          </div>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <motion.button
+            className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 dark:text-gray-100 rounded-xl text-sm shadow-sm hover:bg-primary-700 dark:hover:bg-primary-600"
+            whileHover={{
+              y: -2,
+              backgroundColor: "#4f46e5",
+              boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)",
+            }}
+            whileTap={{ y: 0 }}
+          >
+            Generate Reports
+            <ArrowRight size={16} className="ml-2" strokeWidth={1.8} />
+          </motion.button>
+        </div>
+      </motion.div>
+
+      {/* Recent Activity Feed */}
+      <motion.div
+        className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 1.1 }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Recent Activity
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Latest escrow transactions and system alerts
+            </p>
+          </div>
+          <motion.button
+            className="text-primary-600 dark:text-primary-400 text-sm hover:underline"
+            whileHover={{ y: -1 }}
+          >
+            View All
+          </motion.button>
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-green-100 dark:bg-green-900 rounded-full">
+                <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  Escrow #TXN-2025-001247 released
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  KES 250,000 • 2 minutes ago
+                </p>
+              </div>
+            </div>
+            <span className="text-xs bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 px-2 py-1 rounded-full">
+              Completed
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-amber-100 dark:bg-amber-900 rounded-full">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  Dispute raised for #TXN-2025-001245
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Non-delivery claim • 15 minutes ago
+                </p>
+              </div>
+            </div>
+            <span className="text-xs bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 px-2 py-1 rounded-full">
+              Pending
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-full">
+                <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  High-value escrow created
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  KES 2,500,000 • 32 minutes ago
+                </p>
+              </div>
+            </div>
+            <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">
+              Review Required
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-red-100 dark:bg-red-900 rounded-full">
+                <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  AML alert triggered
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  User flagged for review • 1 hour ago
+                </p>
+              </div>
+            </div>
+            <span className="text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 px-2 py-1 rounded-full">
+              Action Required
+            </span>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default EscrowDashboard;

@@ -84,6 +84,10 @@ export const PermissionMap = {
     update: ['can_update_roles'],
     delete: ['can_delete_roles']
   },
+  Escrow: {
+    // view: ['can_view_escrow_dashboard', 'can_view_escrow_transactions', 'can_view_escrow_disputes', 'can_view_escrow_accounts', 'can_view_escrow_settings'],
+    // update: ['can_update_escrow_settings']
+  },
 
   Permissions: {
     create: ['can_create_permissions'],

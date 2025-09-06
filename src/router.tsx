@@ -170,6 +170,10 @@ const SupportAuditModule = {
   AuditDetails: lazy(() => import("./app/admin/audits/auditdetails")),
 };
 
+const EscrowModule = {
+  EscrowDashboard: lazy(() => import("./app/admin/escrow/dashboard")),
+}
+
 const fundraisingModule = {
   FundraisingDashboard: lazy(() => import("./app/admin/fundraiser/dashboard")),
   FundraisingCampaigns: lazy(() => import("./app/admin/fundraiser/campaigns")),
@@ -367,6 +371,14 @@ const roleRoutes = [
     element: RoleModule.AdminUserDetails,
     permissions: PermissionMap.Users.viewStaff,
   },
+];
+
+const escrowRoutes = [
+  {
+    path: PATHS.ADMIN.ESCROW.DASHBOARD,
+    element: EscrowModule.EscrowDashboard,
+    // permissions: PermissionMap.Escrow.view,
+  }
 ];
 
 const forexRoutes = [
@@ -751,6 +763,7 @@ const protectedRoutes = [
   ...mediaRoutes,
   ...supportAuditRoutes,
   ...fundraisingRoutes,
+  ...escrowRoutes,
 ];
 
 const AppRouter: React.FC = () => {

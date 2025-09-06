@@ -55,7 +55,7 @@ export type Route = LinkRoute | DropdownRoute | SectionRoute;
 const routes: Route[] = [
   {
     type: "section",
-    title: "TrustBridge",
+    title: "Escrow",
     items: [
       {
         type: "link",
@@ -189,7 +189,7 @@ const routes: Route[] = [
   },
   {
     type: "section",
-    title: "Finance",
+    title: "Wallet",
     items: [
       {
         type: "link",
@@ -276,7 +276,7 @@ const routes: Route[] = [
   },
   {
     type: "section",
-    title: "Clients",
+    title: "Users",
     items: [
       {
         type: "link",
