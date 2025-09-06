@@ -2,21 +2,11 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
-  Filter,
-  Download,
-  Calendar,
-  ArrowUpDown,
-  Eye,
   Save,
   RefreshCw,
   Settings,
   Shield,
-  Lock,
   Clock,
-  Users,
-  FileText,
-  CheckCircle,
-  XCircle,
   AlertTriangle,
   Globe,
   CreditCard,
@@ -24,29 +14,14 @@ import {
   Target,
   Activity,
   Layers,
-  ArrowRight,
-  MoreVertical,
-  Maximize2,
-  CalendarDays,
   Scale,
-  MessageSquare,
-  Zap,
-  ArrowUpRight,
-  ArrowDownRight,
   Percent,
-  Timer,
-  Award,
-  Building,
-  Wallet,
   Smartphone,
-  Banknote,
   Bell,
   Brain,
   Scan,
-  Fingerprint,
   Key,
   Database,
-  Server,
   Wifi,
   ShieldCheck,
   UserCheck,
@@ -55,15 +30,10 @@ import {
   Gavel,
   AlertCircle,
   Info,
-  HelpCircle,
-  ToggleLeft,
-  ToggleRight,
   Plus,
   Minus,
   Edit,
   Trash2,
-  Copy,
-  Upload
 } from "lucide-react";
 
 const EscrowSettingsPage: React.FC = () => {
@@ -72,7 +42,6 @@ const EscrowSettingsPage: React.FC = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // General Settings State
   const [generalSettings, setGeneralSettings] = useState({
     defaultExpiry: 72,
     autoRelease: true,
