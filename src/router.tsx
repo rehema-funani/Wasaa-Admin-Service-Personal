@@ -181,6 +181,7 @@ const EscrowModule = {
   EscrowDisputes: lazy(() => import("./app/admin/escrow/activedisputes")),
   EscrowEscalatedDisputes: lazy(() => import("./app/admin/escrow/escalateddisputes")),
   EscrowResolvedDisputes: lazy(() => import("./app/admin/escrow/resolutionhistory")),
+  EscrowAML: lazy(() => import("./app/admin/escrow/amlfraud")),
 };
 
 const fundraisingModule = {
@@ -421,6 +422,11 @@ const escrowRoutes = [
   {
     path: PATHS.ADMIN.ESCROW.RESOLVED_DISPUTES,
     element: EscrowModule.EscrowResolvedDisputes,
+    // permissions: PermissionMap.Escrow.view,
+  },
+  {
+    path: PATHS.ADMIN.ESCROW.AML_FRAUD,
+    element: EscrowModule.EscrowAML,
     // permissions: PermissionMap.Escrow.view,
   },
 ];

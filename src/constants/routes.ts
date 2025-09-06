@@ -123,11 +123,6 @@ const routes: Route[] = [
         items: [
           {
             type: "link",
-            path: "/admin/escrow/kyc",
-            title: "KYC Verification",
-          },
-          {
-            type: "link",
             path: "/admin/escrow/aml",
             title: "AML/Fraud Detection",
           },
