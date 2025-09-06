@@ -179,9 +179,14 @@ const EscrowModule = {
   EscrowRefunds: lazy(() => import("./app/admin/escrow/refundsandreversals")),
   EscrowCreate: lazy(() => import("./app/admin/escrow/createescrow")),
   EscrowDisputes: lazy(() => import("./app/admin/escrow/activedisputes")),
-  EscrowEscalatedDisputes: lazy(() => import("./app/admin/escrow/escalateddisputes")),
-  EscrowResolvedDisputes: lazy(() => import("./app/admin/escrow/resolutionhistory")),
+  EscrowEscalatedDisputes: lazy(
+    () => import("./app/admin/escrow/escalateddisputes")
+  ),
+  EscrowResolvedDisputes: lazy(
+    () => import("./app/admin/escrow/resolutionhistory")
+  ),
   EscrowAML: lazy(() => import("./app/admin/escrow/amlfraud")),
+  TransactionReports: lazy(() => import("./app/admin/escrow/transactionreports")),
 };
 
 const fundraisingModule = {
@@ -427,6 +432,11 @@ const escrowRoutes = [
   {
     path: PATHS.ADMIN.ESCROW.AML_FRAUD,
     element: EscrowModule.EscrowAML,
+    // permissions: PermissionMap.Escrow.view,
+  },
+  {
+    path: PATHS.ADMIN.ESCROW.TRANSACTION_REPORTS,
+    element: EscrowModule.TransactionReports,
     // permissions: PermissionMap.Escrow.view,
   },
 ];
