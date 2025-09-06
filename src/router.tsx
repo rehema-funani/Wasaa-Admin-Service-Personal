@@ -175,6 +175,7 @@ const EscrowModule = {
   EscrowTransactions: lazy(() => import("./app/admin/escrow/transactions")),
   EscrowPendingTransactions: lazy(() => import("./app/admin/escrow/pendingapprovals")),
   EscrowRefunds: lazy(() => import("./app/admin/escrow/refundsandreversals")),
+  EscrowCreate: lazy(() => import("./app/admin/escrow/createescrow")),
 }
 
 const fundraisingModule = {
@@ -395,6 +396,11 @@ const escrowRoutes = [
   {
     path: PATHS.ADMIN.ESCROW.REFUNDS,
     element: EscrowModule.EscrowRefunds,
+    // permissions: PermissionMap.Escrow.view,
+  },
+  {
+    path: PATHS.ADMIN.ESCROW.CREATE_ESCROW,
+    element: EscrowModule.EscrowCreate,
     // permissions: PermissionMap.Escrow.view,
   },
 ];
