@@ -59,10 +59,8 @@ import {
 const TransactionReportsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const [selectedMetric, setSelectedMetric] = useState("volume");
-  const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Mock data for charts
   const transactionTrendData = [
     {
       date: "Jan 01",
@@ -183,7 +181,6 @@ const TransactionReportsPage: React.FC = () => {
 
   const refreshData = async () => {
     setRefreshing(true);
-    // Simulate API call
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
