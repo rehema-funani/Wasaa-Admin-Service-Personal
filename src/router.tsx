@@ -172,6 +172,7 @@ const SupportAuditModule = {
 
 const EscrowModule = {
   EscrowDashboard: lazy(() => import("./app/admin/escrow/dashboard")),
+  EscrowTransactions: lazy(() => import("./app/admin/escrow/transactions")),
 }
 
 const fundraisingModule = {
@@ -378,7 +379,12 @@ const escrowRoutes = [
     path: PATHS.ADMIN.ESCROW.DASHBOARD,
     element: EscrowModule.EscrowDashboard,
     // permissions: PermissionMap.Escrow.view,
-  }
+  },
+  {
+    path: PATHS.ADMIN.ESCROW.TRANSACTIONS,
+    element: EscrowModule.EscrowTransactions,
+    // permissions: PermissionMap.Escrow.view,
+  },
 ];
 
 const forexRoutes = [
