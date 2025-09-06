@@ -12,6 +12,10 @@ import {
   XCircle,
   Eye,
   AlertCircle,
+  FileText,
+  Activity,
+  DollarSign,
+  Clock,
 } from "lucide-react";
 import {
   BarChart,
@@ -172,7 +176,7 @@ const EscrowDashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-1 flex items-center shadow-sm">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-1 flex items-center">
             <button
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
                 selectedPeriod === "weekly"
@@ -205,7 +209,7 @@ const EscrowDashboard: React.FC = () => {
             </button>
           </div>
           <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
           >
@@ -216,7 +220,7 @@ const EscrowDashboard: React.FC = () => {
             {selectedPeriod === "weekly" && `April Week 4, ${selectedYear}`}
           </motion.button>
           <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
           >
@@ -224,7 +228,7 @@ const EscrowDashboard: React.FC = () => {
             Filters
           </motion.button>
           <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
             whileTap={{ y: 0 }}
           >
@@ -234,10 +238,9 @@ const EscrowDashboard: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Quick Stats KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
@@ -261,7 +264,7 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
@@ -285,7 +288,7 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
@@ -309,7 +312,7 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
@@ -333,10 +336,9 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Escrow Transactions & Volume Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-2"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 lg:col-span-2"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.5 }}
@@ -413,7 +415,7 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.6 }}
@@ -462,10 +464,9 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Risk Assessment & Volume Trends */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.7 }}
@@ -544,7 +545,7 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.8 }}
@@ -589,9 +590,8 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Compliance Metrics */}
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
+        className="bg-white dark:bg-gray-800 rounded-xl p-5 mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.9 }}
@@ -641,9 +641,8 @@ const EscrowDashboard: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Quick Actions */}
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
+        className="bg-white dark:bg-gray-800 rounded-xl p-5 mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 1.0 }}
@@ -659,7 +658,7 @@ const EscrowDashboard: React.FC = () => {
           </div>
           <div className="flex flex-wrap gap-2">
             <motion.button
-              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
@@ -674,7 +673,7 @@ const EscrowDashboard: React.FC = () => {
               Review Pending
             </motion.button>
             <motion.button
-              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
@@ -689,7 +688,7 @@ const EscrowDashboard: React.FC = () => {
               Resolve Disputes
             </motion.button>
             <motion.button
-              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
@@ -704,7 +703,7 @@ const EscrowDashboard: React.FC = () => {
               KYC Verification
             </motion.button>
             <motion.button
-              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
@@ -722,7 +721,7 @@ const EscrowDashboard: React.FC = () => {
         </div>
         <div className="mt-4 flex justify-end">
           <motion.button
-            className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 dark:text-gray-100 rounded-xl text-sm shadow-sm hover:bg-primary-700 dark:hover:bg-primary-600"
+            className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 dark:text-gray-100 rounded-xl text-sm hover:bg-primary-700 dark:hover:bg-primary-600"
             whileHover={{
               y: -2,
               backgroundColor: "#4f46e5",
@@ -736,9 +735,8 @@ const EscrowDashboard: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Recent Activity Feed */}
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+        className="bg-white dark:bg-gray-800 rounded-xl p-5"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 1.1 }}
@@ -834,6 +832,366 @@ const EscrowDashboard: React.FC = () => {
             <span className="text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 px-2 py-1 rounded-full">
               Action Required
             </span>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 my-6">
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 1.2 }}
+        >
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Priority Alerts
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Critical items requiring immediate attention
+            </p>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                <div>
+                  <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                    5 escrows {'>'} 72h pending approval
+                  </p>
+                  <p className="text-xs text-red-600 dark:text-red-300">SLA breach risk</p>
+                </div>
+              </div>
+              <motion.button
+                className="text-xs bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-200 px-3 py-1 rounded-full hover:bg-red-200 dark:hover:bg-red-700"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Review
+              </motion.button>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                <div>
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                    12 KYC documents expiring in 7 days
+                  </p>
+                  <p className="text-xs text-amber-600 dark:text-amber-300">Renewal required</p>
+                </div>
+              </div>
+              <motion.button
+                className="text-xs bg-amber-100 dark:bg-amber-800 text-amber-700 dark:text-amber-200 px-3 py-1 rounded-full hover:bg-amber-200 dark:hover:bg-amber-700"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Notify
+              </motion.button>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div>
+                  <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                    3 high-value escrows ({'>'}KES 5M)
+                  </p>
+                  <p className="text-xs text-blue-600 dark:text-blue-300">Awaiting compliance clearance</p>
+                </div>
+              </div>
+              <motion.button
+                className="text-xs bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 px-3 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-700"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Process
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 1.3 }}
+        >
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              System Health
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Platform performance and operational status
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-300">API Response Time</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+                </div>
+                <span className="text-sm font-medium text-green-600 dark:text-green-400">142ms</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-300">Transaction Success Rate</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '97%' }}></div>
+                </div>
+                <span className="text-sm font-medium text-green-600 dark:text-green-400">97.4%</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-300">Fraud Detection Accuracy</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: '94%' }}></div>
+                </div>
+                <span className="text-sm font-medium text-blue-600 dark:text-blue-400">94.2%</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-300">Compliance Processing</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                  <div className="bg-amber-500 h-2 rounded-full" style={{ width: '78%' }}></div>
+                </div>
+                <span className="text-sm font-medium text-amber-600 dark:text-amber-400">78%</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Transaction Pipeline & User Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 1.4 }}
+        >
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Transaction Pipeline
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Current status distribution
+            </p>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Pending Approval</span>
+              </div>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">432</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Active Escrow</span>
+              </div>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">2,950</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <span className="text-sm text-gray-600 dark:text-gray-300">In Dispute</span>
+              </div>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">95</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Pending Release</span>
+              </div>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">156</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Completed Today</span>
+              </div>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">1,247</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 1.5 }}
+        >
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Top User Segments
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Most active user categories
+            </p>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">SME Businesses</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">42% of volume</p>
+              </div>
+              <span className="text-sm text-gray-600 dark:text-gray-300">KES 82M</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Individual Traders</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">35% of volume</p>
+              </div>
+              <span className="text-sm text-gray-600 dark:text-gray-300">KES 68M</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">E-commerce</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">18% of volume</p>
+              </div>
+              <span className="text-sm text-gray-600 dark:text-gray-300">KES 35M</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Freelancers</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">5% of volume</p>
+              </div>
+              <span className="text-sm text-gray-600 dark:text-gray-300">KES 10M</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 1.6 }}
+        >
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Geographic Distribution
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Escrow activity by region
+            </p>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 dark:text-gray-300">🇰🇪 Kenya</span>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">65%</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">2,392 transactions</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 dark:text-gray-300">🇳🇬 Nigeria</span>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">20%</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">736 transactions</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 dark:text-gray-300">🇿🇦 South Africa</span>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">10%</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">368 transactions</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600 dark:text-gray-300">🌍 Others</span>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">5%</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">184 transactions</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Fraud Detection & Security Metrics */}
+      <motion.div
+        className="bg-white dark:bg-gray-800 rounded-xl p-5 mb-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 1.7 }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Security & Fraud Detection
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Real-time security monitoring and threat assessment
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
+              <span className="text-xs text-gray-600 dark:text-gray-400">System Secure</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between mb-2">
+              <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <span className="text-xs bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200 px-2 py-1 rounded-full">
+                Normal
+              </span>
+            </div>
+            <p className="text-lg font-semibold text-green-800 dark:text-green-200">99.2%</p>
+            <p className="text-sm text-green-600 dark:text-green-300">Fraud Prevention Rate</p>
+          </div>
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between mb-2">
+              <Activity className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <span className="text-xs bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 px-2 py-1 rounded-full">
+                Active
+              </span>
+            </div>
+            <p className="text-lg font-semibold text-blue-800 dark:text-blue-200">24/7</p>
+            <p className="text-sm text-blue-600 dark:text-blue-300">Monitoring Status</p>
+          </div>
+
+          <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+            <div className="flex items-center justify-between mb-2">
+              <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              <span className="text-xs bg-amber-100 dark:bg-amber-800 text-amber-700 dark:text-amber-200 px-2 py-1 rounded-full">
+                Medium
+              </span>
+            </div>
+            <p className="text-lg font-semibold text-amber-800 dark:text-amber-200">7</p>
+            <p className="text-sm text-amber-600 dark:text-amber-300">Pending Investigations</p>
+          </div>
+
+          <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center justify-between mb-2">
+              <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <span className="text-xs bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200 px-2 py-1 rounded-full">
+                Updated
+              </span>
+            </div>
+            <p className="text-lg font-semibold text-purple-800 dark:text-purple-200">3</p>
+            <p className="text-sm text-purple-600 dark:text-purple-300">SARs Filed This Month</p>
           </div>
         </div>
       </motion.div>
