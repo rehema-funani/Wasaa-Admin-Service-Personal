@@ -1352,164 +1352,223 @@ const RevenueCommissionsPage: React.FC = () => {
         </motion.div>
       </div>
 
-      <motion.div
-        className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 shadow-2xl text-white"
+      {/* <motion.div
+        className="bg-gradient-to-br from-gray-50 to-gray-50 dark:from-gray-900 dark:to-black rounded-2xl p-8 shadow-2xl border border-gray-200 dark:border-gray-700"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 1.5 }}
       >
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h3 className="text-2xl font-bold mb-2">
+            <h3 className="text-2xl font-bold mb-2 text-primary-900 dark:text-gray-100">
               Executive Financial Summary
             </h3>
-            <p className="text-gray-300 text-lg">
+            <p className="dark:text-gray-300 text-gray-300 text-lg">
               Comprehensive overview for C-level decision making and strategic
               planning
             </p>
           </div>
           <div className="flex items-center space-x-4">
             <div className="text-right">
-              <p className="text-sm text-gray-400">Period Performance</p>
+              <p className="text-sm text-gray-400 dark:text-gray-400">
+                Period Performance
+              </p>
               <div className="flex items-center space-x-2">
-                <TrendingUp className="w-5 h-5 text-green-400" />
-                <span className="text-xl font-bold text-green-400">+18.7%</span>
+                <TrendingUp className="w-5 h-5 text-green-400 dark:text-green-400" />
+                <span className="text-xl font-bold text-green-400 dark:text-green-400">
+                  +18.7%
+                </span>
               </div>
             </div>
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <Receipt className="w-8 h-8" />
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 rounded-full flex items-center justify-center">
+              <Receipt className="w-8 h-8 text-white" />
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Financial Health */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+\          <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-green-500/20 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-400" />
+              <div className="p-2 bg-green-500/20 dark:bg-green-500/30 rounded-lg">
+                <CheckCircle className="w-6 h-6 text-green-400 dark:text-green-300" />
               </div>
-              <h4 className="font-bold text-lg">Financial Health</h4>
+              <h4 className="font-bold text-lg text-white dark:text-gray-100">
+                Financial Health
+              </h4>
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Revenue Growth:</span>
-                <span className="font-semibold text-green-400">+23.4%</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Revenue Growth:
+                </span>
+                <span className="font-semibold text-green-400 dark:text-green-300">
+                  +23.4%
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Profit Margin:</span>
-                <span className="font-semibold text-green-400">56.4%</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Profit Margin:
+                </span>
+                <span className="font-semibold text-green-400 dark:text-green-300">
+                  56.4%
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Cash Flow:</span>
-                <span className="font-semibold text-green-400">Positive</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Cash Flow:
+                </span>
+                <span className="font-semibold text-green-400 dark:text-green-300">
+                  Positive
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">ROI:</span>
-                <span className="font-semibold text-green-400">34.2%</span>
+                <span className="text-gray-300 dark:text-gray-300">ROI:</span>
+                <span className="font-semibold text-green-400 dark:text-green-300">
+                  34.2%
+                </span>
               </li>
             </ul>
           </div>
 
-          {/* Market Position */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+          <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <Target className="w-6 h-6 text-blue-400" />
+              <div className="p-2 bg-blue-500/20 dark:bg-blue-500/30 rounded-lg">
+                <Target className="w-6 h-6 text-blue-400 dark:text-blue-300" />
               </div>
-              <h4 className="font-bold text-lg">Market Position</h4>
+              <h4 className="font-bold text-lg text-white dark:text-gray-100">
+                Market Position
+              </h4>
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Market Share:</span>
-                <span className="font-semibold text-blue-400">12.8%</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Market Share:
+                </span>
+                <span className="font-semibold text-blue-400 dark:text-blue-300">
+                  12.8%
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Partner Growth:</span>
-                <span className="font-semibold text-blue-400">+156</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Partner Growth:
+                </span>
+                <span className="font-semibold text-blue-400 dark:text-blue-300">
+                  +156
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Retention Rate:</span>
-                <span className="font-semibold text-blue-400">94.7%</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Retention Rate:
+                </span>
+                <span className="font-semibold text-blue-400 dark:text-blue-300">
+                  94.7%
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">NPS Score:</span>
-                <span className="font-semibold text-blue-400">72</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  NPS Score:
+                </span>
+                <span className="font-semibold text-blue-400 dark:text-blue-300">
+                  72
+                </span>
               </li>
             </ul>
           </div>
 
-          {/* Strategic Opportunities */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+          <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-purple-500/20 rounded-lg">
-                <Zap className="w-6 h-6 text-purple-400" />
+              <div className="p-2 bg-purple-500/20 dark:bg-purple-500/30 rounded-lg">
+                <Zap className="w-6 h-6 text-purple-400 dark:text-purple-300" />
               </div>
-              <h4 className="font-bold text-lg">Opportunities</h4>
+              <h4 className="font-bold text-lg text-white dark:text-gray-100">
+                Opportunities
+              </h4>
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start space-x-2">
-                <div className="w-2 h-2 bg-purple-400 rounded-full mt-1.5"></div>
-                <span className="text-gray-300">
+                <div className="w-2 h-2 bg-purple-400 dark:bg-purple-300 rounded-full mt-1.5"></div>
+                <span className="text-gray-300 dark:text-gray-300">
                   API monetization expansion
                 </span>
               </li>
               <li className="flex items-start space-x-2">
-                <div className="w-2 h-2 bg-purple-400 rounded-full mt-1.5"></div>
-                <span className="text-gray-300">Premium tier optimization</span>
+                <div className="w-2 h-2 bg-purple-400 dark:bg-purple-300 rounded-full mt-1.5"></div>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Premium tier optimization
+                </span>
               </li>
               <li className="flex items-start space-x-2">
-                <div className="w-2 h-2 bg-purple-400 rounded-full mt-1.5"></div>
-                <span className="text-gray-300">Geographic expansion</span>
+                <div className="w-2 h-2 bg-purple-400 dark:bg-purple-300 rounded-full mt-1.5"></div>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Geographic expansion
+                </span>
               </li>
               <li className="flex items-start space-x-2">
-                <div className="w-2 h-2 bg-purple-400 rounded-full mt-1.5"></div>
-                <span className="text-gray-300">Commission automation</span>
+                <div className="w-2 h-2 bg-purple-400 dark:bg-purple-300 rounded-full mt-1.5"></div>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Commission automation
+                </span>
               </li>
             </ul>
           </div>
 
-          {/* Risk Assessment */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+          <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-orange-500/20 rounded-lg">
-                <AlertTriangle className="w-6 h-6 text-orange-400" />
+              <div className="p-2 bg-orange-500/20 dark:bg-orange-500/30 rounded-lg">
+                <AlertTriangle className="w-6 h-6 text-orange-400 dark:text-orange-300" />
               </div>
-              <h4 className="font-bold text-lg">Risk Factors</h4>
+              <h4 className="font-bold text-lg text-white dark:text-gray-100">
+                Risk Factors
+              </h4>
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Concentration Risk:</span>
-                <span className="font-semibold text-yellow-400">Medium</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Concentration Risk:
+                </span>
+                <span className="font-semibold text-yellow-400 dark:text-yellow-300">
+                  Medium
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Currency Exposure:</span>
-                <span className="font-semibold text-green-400">Low</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Currency Exposure:
+                </span>
+                <span className="font-semibold text-green-400 dark:text-green-300">
+                  Low
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Regulatory Risk:</span>
-                <span className="font-semibold text-green-400">Low</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Regulatory Risk:
+                </span>
+                <span className="font-semibold text-green-400 dark:text-green-300">
+                  Low
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-gray-300">Competition:</span>
-                <span className="font-semibold text-orange-400">High</span>
+                <span className="text-gray-300 dark:text-gray-300">
+                  Competition:
+                </span>
+                <span className="font-semibold text-orange-400 dark:text-orange-300">
+                  High
+                </span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Key Recommendations */}
-        <div className="mt-8 p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-          <h4 className="text-xl font-bold mb-4 flex items-center">
-            <Crown className="w-6 h-6 text-yellow-400 mr-2" />
+        <div className="mt-8 p-6 bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-xl border border-white/20 dark:border-white/10">
+          <h4 className="text-xl font-bold mb-4 flex items-center text-white dark:text-gray-100">
+            <Crown className="w-6 h-6 text-yellow-400 dark:text-yellow-300 mr-2" />
             Strategic Recommendations for Q2 2025
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-3">
-              <h5 className="font-semibold text-green-400">
+              <h5 className="font-semibold text-green-400 dark:text-green-300">
                 Revenue Optimization
               </h5>
-              <ul className="space-y-2 text-sm text-gray-300">
+              <ul className="space-y-2 text-sm text-gray-300 dark:text-gray-300">
                 <li>• Introduce premium API tiers (+$2.1M projected)</li>
                 <li>• Optimize commission structure for Platinum partners</li>
                 <li>• Expand currency exchange services</li>
@@ -1517,10 +1576,10 @@ const RevenueCommissionsPage: React.FC = () => {
               </ul>
             </div>
             <div className="space-y-3">
-              <h5 className="font-semibold text-blue-400">
+              <h5 className="font-semibold text-blue-400 dark:text-blue-300">
                 Operational Excellence
               </h5>
-              <ul className="space-y-2 text-sm text-gray-300">
+              <ul className="space-y-2 text-sm text-gray-300 dark:text-gray-300">
                 <li>• Automate 80% of commission processing</li>
                 <li>• Implement real-time payout systems</li>
                 <li>• Enhance partner onboarding experience</li>
@@ -1528,10 +1587,10 @@ const RevenueCommissionsPage: React.FC = () => {
               </ul>
             </div>
             <div className="space-y-3">
-              <h5 className="font-semibold text-purple-400">
+              <h5 className="font-semibold text-purple-400 dark:text-purple-300">
                 Strategic Growth
               </h5>
-              <ul className="space-y-2 text-sm text-gray-300">
+              <ul className="space-y-2 text-sm text-gray-300 dark:text-gray-300">
                 <li>• Target Central & North Africa expansion</li>
                 <li>• Develop white-label solutions</li>
                 <li>• Partner with fintech ecosystem</li>
@@ -1541,42 +1600,59 @@ const RevenueCommissionsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Financial Projections */}
-        <div className="mt-6 p-6 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-xl border border-white/20">
-          <h4 className="text-xl font-bold mb-4 flex items-center">
-            <TrendingUp className="w-6 h-6 text-blue-400 mr-2" />
+        <div className="mt-6 p-6 bg-gradient-to-r from-blue-600/20 to-purple-600/20 dark:from-blue-600/30 dark:to-purple-600/30 backdrop-blur-sm rounded-xl border border-white/20 dark:border-white/10">
+          <h4 className="text-xl font-bold mb-4 flex items-center text-white dark:text-gray-100">
+            <TrendingUp className="w-6 h-6 text-blue-400 dark:text-blue-300 mr-2" />
             Q2 2025 Financial Projections
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <p className="text-sm text-gray-400 mb-1">Projected Revenue</p>
-              <p className="text-2xl font-bold text-blue-400">
+              <p className="text-sm text-gray-400 dark:text-gray-400 mb-1">
+                Projected Revenue
+              </p>
+              <p className="text-2xl font-bold text-blue-400 dark:text-blue-300">
                 {formatCurrency(52800000, true)}
               </p>
-              <p className="text-sm text-green-400">+15.6% growth</p>
+              <p className="text-sm text-green-400 dark:text-green-300">
+                +15.6% growth
+              </p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-400 mb-1">Projected Profit</p>
-              <p className="text-2xl font-bold text-green-400">
+              <p className="text-sm text-gray-400 dark:text-gray-400 mb-1">
+                Projected Profit
+              </p>
+              <p className="text-2xl font-bold text-green-400 dark:text-green-300">
                 {formatCurrency(29600000, true)}
               </p>
-              <p className="text-sm text-green-400">+14.8% growth</p>
+              <p className="text-sm text-green-400 dark:text-green-300">
+                +14.8% growth
+              </p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-400 mb-1">Partner Commissions</p>
-              <p className="text-2xl font-bold text-purple-400">
+              <p className="text-sm text-gray-400 dark:text-gray-400 mb-1">
+                Partner Commissions
+              </p>
+              <p className="text-2xl font-bold text-purple-400 dark:text-purple-300">
                 {formatCurrency(8600000, true)}
               </p>
-              <p className="text-sm text-purple-400">+15.5% growth</p>
+              <p className="text-sm text-purple-400 dark:text-purple-300">
+                +15.5% growth
+              </p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-400 mb-1">EBITDA Margin</p>
-              <p className="text-2xl font-bold text-orange-400">61.2%</p>
-              <p className="text-sm text-orange-400">+3.7% improvement</p>
+              <p className="text-sm text-gray-400 dark:text-gray-400 mb-1">
+                EBITDA Margin
+              </p>
+              <p className="text-2xl font-bold text-orange-400 dark:text-orange-300">
+                61.2%
+              </p>
+              <p className="text-sm text-orange-400 dark:text-orange-300">
+                +3.7% improvement
+              </p>
             </div>
           </div>
         </div>
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 };
