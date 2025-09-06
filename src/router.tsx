@@ -187,9 +187,9 @@ const EscrowModule = {
   ),
   EscrowAML: lazy(() => import("./app/admin/escrow/amlfraud")),
   TransactionReports: lazy(
-    () => import("./app/admin/escrow/transactionreports")
+    () => import("./app/admin/escrow/reports/transactionreports")
   ),
-  DisputeReports: lazy(() => import("./app/admin/escrow/disputeanalytics")),
+  DisputeReports: lazy(() => import("./app/admin/escrow/reports/disputeanalytics")),
 };
 
 const fundraisingModule = {
