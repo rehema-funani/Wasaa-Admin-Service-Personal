@@ -1117,9 +1117,7 @@ const RevenueCommissionsPage: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Advanced Analytics Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Cohort Analysis */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 hover:shadow-md"
           initial={{ opacity: 0, y: -10 }}
@@ -1354,9 +1352,8 @@ const RevenueCommissionsPage: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Executive Summary */}
       <motion.div
-        className="bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 shadow-2xl text-white"
+        className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 shadow-2xl text-white"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 1.5 }}
