@@ -63,6 +63,7 @@ export const PATHS = {
       DISPUTE_DETAIL: "admin/escrow/disputes/:id",
       AML_FRAUD: "admin/escrow/aml",
       TRANSACTION_REPORTS: "admin/escrow/reports/transactions",
+      DISPUTE_REPORTS: "admin/escrow/reports/disputes",
       ESCROW_ACCOUNTS: "admin/escrow/accounts",
       ACCOUNT_DETAIL: "admin/escrow/accounts/:id",
       SETTINGS: "admin/escrow/settings",
