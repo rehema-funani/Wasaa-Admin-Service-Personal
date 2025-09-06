@@ -55,6 +55,140 @@ export type Route = LinkRoute | DropdownRoute | SectionRoute;
 const routes: Route[] = [
   {
     type: "section",
+    title: "TrustBridge",
+    items: [
+      {
+        type: "link",
+        path: "/admin/escrow/dashboard",
+        title: "Escrow Dashboard",
+        icon: Shield,
+        description: "Overview of all escrow operations",
+      },
+      {
+        type: "dropdown",
+        title: "Transaction Management",
+        icon: Receipt,
+        key: "escrow-transactions",
+        items: [
+          {
+            type: "link",
+            path: "/admin/escrow/transactions",
+            title: "All Transactions",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/transactions/pending",
+            title: "Pending Approvals",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/transactions/create",
+            title: "Create Escrow",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/refunds",
+            title: "Refunds & Reversals",
+          },
+        ],
+      },
+      {
+        type: "dropdown",
+        title: "Dispute Resolution",
+        icon: AlertTriangle,
+        key: "escrow-disputes",
+        items: [
+          {
+            type: "link",
+            path: "/admin/escrow/disputes",
+            title: "Active Disputes",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/disputes/escalated",
+            title: "Escalated Cases",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/disputes/resolved",
+            title: "Resolution History",
+          },
+        ],
+      },
+      {
+        type: "dropdown",
+        title: "Compliance & Security",
+        icon: FileCheck,
+        key: "escrow-compliance",
+        items: [
+          {
+            type: "link",
+            path: "/admin/escrow/kyc",
+            title: "KYC Verification",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/aml",
+            title: "AML/Fraud Detection",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/sar",
+            title: "Suspicious Activity Reports",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/audit-logs",
+            title: "Audit Trail",
+          },
+        ],
+      },
+      {
+        type: "link",
+        path: "/admin/escrow/support",
+        title: "Support & Tickets",
+        icon: LifeBuoy,
+        description: "Escrow-related support cases",
+      },
+      {
+        type: "dropdown",
+        title: "Analytics & Reports",
+        icon: FilePieChart,
+        key: "escrow-reports",
+        items: [
+          {
+            type: "link",
+            path: "/admin/escrow/reports/transactions",
+            title: "Transaction Reports",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/reports/disputes",
+            title: "Dispute Analytics",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/reports/revenue",
+            title: "Revenue & Commissions",
+          },
+          {
+            type: "link",
+            path: "/admin/escrow/reports/compliance",
+            title: "Compliance Reports",
+          },
+        ],
+      },
+      {
+        type: "link",
+        path: "/admin/escrow/settings",
+        title: "Escrow Settings",
+        icon: Settings,
+        description: "Configure escrow parameters",
+      },
+    ],
+  },
+  {
+    type: "section",
     title: "Finance",
     items: [
       {

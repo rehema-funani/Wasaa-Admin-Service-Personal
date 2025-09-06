@@ -618,7 +618,7 @@ const TransactionHistoryPage = () => {
       >
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
-            <span className="mr-4 bg-gradient-to-br from-[#FF6B81] to-[#B75BFF] w-10 h-10 rounded-xl flex items-center justify-center shadow-md">
+            <span className="mr-4 bg-primary-500 dark:bg-primary-900 w-10 h-10 rounded-xl flex items-center justify-center">
               <CreditCard className="text-white" size={20} />
             </span>
             Transaction History
@@ -661,14 +661,12 @@ const TransactionHistoryPage = () => {
         </div>
       </motion.div>
 
-      {/* Stats Cards */}
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5 mb-8"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 0.61, 0.36, 1] }}
       >
-        {/* Total Donations Amount */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
           whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
@@ -691,7 +689,6 @@ const TransactionHistoryPage = () => {
           </p>
         </motion.div>
 
-        {/* Total Donations Count */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
           whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
@@ -712,7 +709,6 @@ const TransactionHistoryPage = () => {
           </p>
         </motion.div>
 
-        {/* Total Payouts */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
           whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
@@ -733,7 +729,6 @@ const TransactionHistoryPage = () => {
           </p>
         </motion.div>
 
-        {/* Refunds */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
           whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
@@ -754,7 +749,6 @@ const TransactionHistoryPage = () => {
           </p>
         </motion.div>
 
-        {/* Suspicious */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all"
           whileHover={{ y: -5, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.08)" }}
@@ -797,7 +791,6 @@ const TransactionHistoryPage = () => {
         </motion.div>
       </motion.div>
 
-      {/* Search & Filter Controls */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 mb-8"
         initial={{ opacity: 0, y: -10 }}
@@ -852,7 +845,6 @@ const TransactionHistoryPage = () => {
             >
               <div className="mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                  {/* Transaction Type Filter */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Transaction Type
@@ -887,7 +879,6 @@ const TransactionHistoryPage = () => {
                     </div>
                   </div>
 
-                  {/* Status Filter */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Transaction Status
@@ -976,7 +967,6 @@ const TransactionHistoryPage = () => {
                     </select>
                   </div>
 
-                  {/* Reconciliation Status */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Reconciliation Status
@@ -999,7 +989,6 @@ const TransactionHistoryPage = () => {
                     </select>
                   </div>
 
-                  {/* Sort By */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Sort By
@@ -1021,7 +1010,6 @@ const TransactionHistoryPage = () => {
                     </select>
                   </div>
 
-                  {/* Suspicious Filter */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Suspicious Transactions
@@ -1063,7 +1051,6 @@ const TransactionHistoryPage = () => {
         </AnimatePresence>
       </motion.div>
 
-      {/* Transaction Count Display */}
       <motion.div
         className="flex items-center justify-between mb-5 text-sm text-gray-500 dark:text-gray-400"
         initial={{ opacity: 0 }}
@@ -1088,7 +1075,6 @@ const TransactionHistoryPage = () => {
         </div>
       </motion.div>
 
-      {/* Loading State */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader size={36} className="text-[#FF6B81] animate-spin mr-4" />
@@ -1126,7 +1112,6 @@ const TransactionHistoryPage = () => {
         </motion.div>
       ) : (
         <div className="space-y-6">
-          {/* Transactions Table */}
           <motion.div
             className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden"
             initial={{ opacity: 0, y: -10 }}
