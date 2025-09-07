@@ -221,7 +221,6 @@ const EscrowListPage: React.FC = () => {
     }
   };
 
-  // Pagination
   const totalPages = Math.ceil(filteredEscrows.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEscrows = filteredEscrows.slice(
@@ -229,7 +228,6 @@ const EscrowListPage: React.FC = () => {
     startIndex + itemsPerPage
   );
 
-  // Calculate stats
   const stats = {
     total: escrows.length,
     funded: escrows.filter((e) => e.status === "FUNDED").length,
@@ -243,7 +241,6 @@ const EscrowListPage: React.FC = () => {
 
   return (
     <div className="p-6 max-w-[1800px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-      {/* Header */}
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -319,7 +316,7 @@ const EscrowListPage: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-2xl p-4 hover:shadow-md"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
@@ -348,7 +345,7 @@ const EscrowListPage: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-2xl p-4 hover:shadow-md"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
@@ -374,7 +371,7 @@ const EscrowListPage: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-2xl p-4 hover:shadow-md"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
@@ -400,7 +397,7 @@ const EscrowListPage: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-2xl p-4 hover:shadow-md"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.5 }}
@@ -426,7 +423,7 @@ const EscrowListPage: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-100 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-2xl p-4 hover:shadow-md"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.6 }}
@@ -453,7 +450,7 @@ const EscrowListPage: React.FC = () => {
       </div>
 
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 mb-6"
+        className="bg-white dark:bg-gray-800 rounded-2xl p-6 hover:shadow-md mb-6"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.7 }}
@@ -512,7 +509,7 @@ const EscrowListPage: React.FC = () => {
       </motion.div>
 
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+        className="bg-white dark:bg-gray-800 rounded-2xl hover:shadow-md"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.8 }}

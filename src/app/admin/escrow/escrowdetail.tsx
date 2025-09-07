@@ -999,7 +999,6 @@ const EscrowDetailPage: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Summary Card */}
                     <div className="bg-white/60 backdrop-blur-xl rounded-xl p-6 border border-white/20">
                       <h5 className="font-medium text-gray-800 mb-4">
                         Accounts Summary
@@ -1261,7 +1260,6 @@ const EscrowDetailPage: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Action Modal */}
       {showActionModal && (
         <motion.div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
