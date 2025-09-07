@@ -53,7 +53,7 @@ export const escrowService = {
     return response.data;
   },
 
-    //   Escrow refunds
+  //   Escrow refunds
   getAllRefunds: async () => {
     const response = await escrow.get("/refunds");
     return response.data;
@@ -106,4 +106,19 @@ export const escrowService = {
     const response = await escrow.put("/settings", data);
     return response.data;
   },
+
+  //   Escrow dashboard
+  getActiveEscrowStats: async () => {
+    const response = await escrow.get("/escrow-agreements/stats/active");
+    return response.data;
+  },
+
+  getPendingDisputes: async () => {
+    const response = await escrow.get("/escrow-agreements/stats/pending");
+    return response.data;
+  },
+  getTotalVolumeMetrics: async () => {
+    const response = await escrow.get("/escrow-agreements/stats/volume");
+    return response.data;
+  }
 };

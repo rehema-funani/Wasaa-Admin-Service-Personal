@@ -34,6 +34,7 @@ import {
   AreaChart,
   Area,
 } from "recharts";
+import { escrowService } from "../../../api/services/escrow";
 
 const EscrowDashboard: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("monthly");
@@ -41,10 +42,75 @@ const EscrowDashboard: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState(4);
   const [selectedQuarter, setSelectedQuarter] = useState(2);
   const [isLoading, setIsLoading] = useState(true);
-  const [escrowData, setEscrowData] = useState<any[]>([]);
   const [disputeData, setDisputeData] = useState<any[]>([]);
   const [riskData, setRiskData] = useState<any[]>([]);
   const [volumeData, setVolumeData] = useState<any[]>([]);
+  
+  
+  const [activeStats, setActiveStats] = useState<any>(null);
+  const [pendingDisputes, setPendingDisputes] = useState<any[]>([]);
+  const [volumeMetrics, setVolumeMetrics] = useState<any>(null);
+  const [escrowData, setEscrowData] = useState<any[]>([]);
+
+
+   useEffect(() => {
+     fetchDashboardData();
+   }, [selectedPeriod, selectedYear, selectedMonth, selectedQuarter]);
+
+   const fetchDashboardData = async () => {
+     setIsLoading(true);
+     try {
+       const [stats, disputes, volume] = await Promise.all([
+         escrowService.getActiveEscrowStats(),
+         escrowService.getPendingDisputes(),
+         escrowService.getTotalVolumeMetrics(),
+       ]);
+
+       setActiveStats(stats);
+       setPendingDisputes(disputes);
+       setVolumeMetrics(volume);
+     } catch (error) {
+       console.error("Error fetching dashboard data:", error);
+     } finally {
+       setIsLoading(false);
+     }
+   };
+
+   const formatCurrency = (amount: number, abbreviated = false) => {
+     if (abbreviated && amount >= 1000000) {
+       return `KES ${(amount / 1000000).toFixed(1)}M`;
+     } else if (abbreviated && amount >= 1000) {
+       return `KES ${(amount / 1000).toFixed(0)}K`;
+     }
+     return `KES ${amount.toLocaleString()}`;
+   };
+
+   const formatPercentageChange = (change: number) => {
+     const sign = change >= 0 ? "+" : "";
+     return `${sign}${change.toFixed(1)}%`;
+   };
+
+   const dashboardStats = {
+     activeEscrows: {
+       current: activeStats?.currentCount || 0,
+       previous: activeStats?.previousCount || 0,
+       change: activeStats?.percentChange || 0,
+     },
+     pendingDisputesCount: {
+       current: pendingDisputes?.currentCount || 0,
+       previous: activeStats?.previousCount || 0,
+       change: activeStats?.percentChange || 0,
+     },
+     totalVolume: {
+       current: volumeMetrics?.currentVolume || 0,
+       previous: volumeMetrics?.previousVolume || 0,
+       change: volumeMetrics?.percentChange || 0,
+     },
+     fraudAlerts: {
+       current: activeStats?.fraudAlertCount || 0,
+       actionRequired: activeStats?.fraudAlertsRequiringAction || 0,
+     },
+   };
 
   const monthlyEscrowData = [
     {
@@ -146,15 +212,6 @@ const EscrowDashboard: React.FC = () => {
     setSelectedPeriod(period);
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
   const formatNumber = (value: number) => {
     return new Intl.NumberFormat("en-KE").format(value);
   };
@@ -240,7 +297,7 @@ const EscrowDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-lg border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
@@ -250,12 +307,27 @@ const EscrowDashboard: React.FC = () => {
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Active Escrows
               </p>
-              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                2,950
-              </p>
-              <p className="text-green-600 dark:text-green-400 text-sm">
-                +18.9% from last month
-              </p>
+              {isLoading ? (
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-600 h-8 w-20 rounded mt-1"></div>
+              ) : (
+                <>
+                  <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                    {dashboardStats.activeEscrows.current.toLocaleString()}
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      dashboardStats.activeEscrows.change >= 0
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {formatPercentageChange(
+                      dashboardStats.activeEscrows.change
+                    )}{" "}
+                    from last period
+                  </p>
+                </>
+              )}
             </div>
             <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
               <Shield className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -264,7 +336,7 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-lg border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
@@ -274,12 +346,27 @@ const EscrowDashboard: React.FC = () => {
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Pending Disputes
               </p>
-              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                95
-              </p>
-              <p className="text-red-600 dark:text-red-400 text-sm">
-                -13.6% from last month
-              </p>
+              {isLoading ? (
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-600 h-8 w-16 rounded mt-1"></div>
+              ) : (
+                <>
+                  <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                    {dashboardStats.pendingDisputesCount.current}
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      dashboardStats.pendingDisputesCount.change <= 0
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {formatPercentageChange(
+                      dashboardStats.pendingDisputesCount.change
+                    )}{" "}
+                    from last period
+                  </p>
+                </>
+              )}
             </div>
             <div className="p-3 bg-red-100 dark:bg-red-900 rounded-full">
               <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
@@ -288,7 +375,7 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-lg border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
@@ -298,12 +385,25 @@ const EscrowDashboard: React.FC = () => {
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Total Volume
               </p>
-              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                KES 195M
-              </p>
-              <p className="text-green-600 dark:text-green-400 text-sm">
-                +16.1% from last month
-              </p>
+              {isLoading ? (
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-600 h-8 w-24 rounded mt-1"></div>
+              ) : (
+                <>
+                  <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                    {formatCurrency(dashboardStats.totalVolume.current, true)}
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      dashboardStats.totalVolume.change >= 0
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {formatPercentageChange(dashboardStats.totalVolume.change)}{" "}
+                    from last period
+                  </p>
+                </>
+              )}
             </div>
             <div className="p-3 bg-green-100 dark:bg-green-900 rounded-full">
               <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -312,7 +412,7 @@ const EscrowDashboard: React.FC = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5"
+          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-lg border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
@@ -322,12 +422,18 @@ const EscrowDashboard: React.FC = () => {
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Fraud Alerts
               </p>
-              <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                7
-              </p>
-              <p className="text-amber-600 dark:text-amber-400 text-sm">
-                2 require action
-              </p>
+              {isLoading ? (
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-600 h-8 w-12 rounded mt-1"></div>
+              ) : (
+                <>
+                  <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                    {dashboardStats.fraudAlerts.current}
+                  </p>
+                  <p className="text-amber-600 dark:text-amber-400 text-sm">
+                    {dashboardStats.fraudAlerts.actionRequired} require action
+                  </p>
+                </>
+              )}
             </div>
             <div className="p-3 bg-amber-100 dark:bg-amber-900 rounded-full">
               <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
@@ -857,9 +963,11 @@ const EscrowDashboard: React.FC = () => {
                 <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
                 <div>
                   <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                    5 escrows {'>'} 72h pending approval
+                    5 escrows {">"} 72h pending approval
                   </p>
-                  <p className="text-xs text-red-600 dark:text-red-300">SLA breach risk</p>
+                  <p className="text-xs text-red-600 dark:text-red-300">
+                    SLA breach risk
+                  </p>
                 </div>
               </div>
               <motion.button
@@ -870,7 +978,7 @@ const EscrowDashboard: React.FC = () => {
                 Review
               </motion.button>
             </div>
-            
+
             <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
               <div className="flex items-center space-x-3">
                 <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
@@ -878,7 +986,9 @@ const EscrowDashboard: React.FC = () => {
                   <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
                     12 KYC documents expiring in 7 days
                   </p>
-                  <p className="text-xs text-amber-600 dark:text-amber-300">Renewal required</p>
+                  <p className="text-xs text-amber-600 dark:text-amber-300">
+                    Renewal required
+                  </p>
                 </div>
               </div>
               <motion.button
@@ -895,9 +1005,11 @@ const EscrowDashboard: React.FC = () => {
                 <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <div>
                   <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                    3 high-value escrows ({'>'}KES 5M)
+                    3 high-value escrows ({">"}KES 5M)
                   </p>
-                  <p className="text-xs text-blue-600 dark:text-blue-300">Awaiting compliance clearance</p>
+                  <p className="text-xs text-blue-600 dark:text-blue-300">
+                    Awaiting compliance clearance
+                  </p>
                 </div>
               </div>
               <motion.button
@@ -927,42 +1039,70 @@ const EscrowDashboard: React.FC = () => {
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-300">API Response Time</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                API Response Time
+              </span>
               <div className="flex items-center space-x-2">
                 <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+                  <div
+                    className="bg-green-500 h-2 rounded-full"
+                    style={{ width: "85%" }}
+                  ></div>
                 </div>
-                <span className="text-sm font-medium text-green-600 dark:text-green-400">142ms</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-300">Transaction Success Rate</span>
-              <div className="flex items-center space-x-2">
-                <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '97%' }}></div>
-                </div>
-                <span className="text-sm font-medium text-green-600 dark:text-green-400">97.4%</span>
+                <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                  142ms
+                </span>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-300">Fraud Detection Accuracy</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                Transaction Success Rate
+              </span>
               <div className="flex items-center space-x-2">
                 <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: '94%' }}></div>
+                  <div
+                    className="bg-green-500 h-2 rounded-full"
+                    style={{ width: "97%" }}
+                  ></div>
                 </div>
-                <span className="text-sm font-medium text-blue-600 dark:text-blue-400">94.2%</span>
+                <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                  97.4%
+                </span>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600 dark:text-gray-300">Compliance Processing</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                Fraud Detection Accuracy
+              </span>
               <div className="flex items-center space-x-2">
                 <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                  <div className="bg-amber-500 h-2 rounded-full" style={{ width: '78%' }}></div>
+                  <div
+                    className="bg-blue-500 h-2 rounded-full"
+                    style={{ width: "94%" }}
+                  ></div>
                 </div>
-                <span className="text-sm font-medium text-amber-600 dark:text-amber-400">78%</span>
+                <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                  94.2%
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                Compliance Processing
+              </span>
+              <div className="flex items-center space-x-2">
+                <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                  <div
+                    className="bg-amber-500 h-2 rounded-full"
+                    style={{ width: "78%" }}
+                  ></div>
+                </div>
+                <span className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                  78%
+                </span>
               </div>
             </div>
           </div>
@@ -988,37 +1128,57 @@ const EscrowDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Pending Approval</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  Pending Approval
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">432</span>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                432
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Active Escrow</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  Active Escrow
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">2,950</span>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                2,950
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">In Dispute</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  In Dispute
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">95</span>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                95
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Pending Release</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  Pending Release
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">156</span>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                156
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-600 dark:text-gray-300">Completed Today</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  Completed Today
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">1,247</span>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                1,247
+              </span>
             </div>
           </div>
         </motion.div>
@@ -1040,31 +1200,55 @@ const EscrowDashboard: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">SME Businesses</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">42% of volume</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  SME Businesses
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  42% of volume
+                </p>
               </div>
-              <span className="text-sm text-gray-600 dark:text-gray-300">KES 82M</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                KES 82M
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Individual Traders</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">35% of volume</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  Individual Traders
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  35% of volume
+                </p>
               </div>
-              <span className="text-sm text-gray-600 dark:text-gray-300">KES 68M</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                KES 68M
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">E-commerce</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">18% of volume</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  E-commerce
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  18% of volume
+                </p>
               </div>
-              <span className="text-sm text-gray-600 dark:text-gray-300">KES 35M</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                KES 35M
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Freelancers</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">5% of volume</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  Freelancers
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  5% of volume
+                </p>
               </div>
-              <span className="text-sm text-gray-600 dark:text-gray-300">KES 10M</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                KES 10M
+              </span>
             </div>
           </div>
         </motion.div>
@@ -1086,38 +1270,62 @@ const EscrowDashboard: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600 dark:text-gray-300">🇰🇪 Kenya</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  🇰🇪 Kenya
+                </span>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">65%</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">2,392 transactions</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  65%
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  2,392 transactions
+                </p>
               </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600 dark:text-gray-300">🇳🇬 Nigeria</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  🇳🇬 Nigeria
+                </span>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">20%</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">736 transactions</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  20%
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  736 transactions
+                </p>
               </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600 dark:text-gray-300">🇿🇦 South Africa</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  🇿🇦 South Africa
+                </span>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">10%</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">368 transactions</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  10%
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  368 transactions
+                </p>
               </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600 dark:text-gray-300">🌍 Others</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  🌍 Others
+                </span>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">5%</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">184 transactions</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  5%
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  184 transactions
+                </p>
               </div>
             </div>
           </div>
@@ -1142,11 +1350,13 @@ const EscrowDashboard: React.FC = () => {
           <div className="flex items-center space-x-2">
             <div className="flex items-center">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">System Secure</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                System Secure
+              </span>
             </div>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
             <div className="flex items-center justify-between mb-2">
@@ -1155,8 +1365,12 @@ const EscrowDashboard: React.FC = () => {
                 Normal
               </span>
             </div>
-            <p className="text-lg font-semibold text-green-800 dark:text-green-200">99.2%</p>
-            <p className="text-sm text-green-600 dark:text-green-300">Fraud Prevention Rate</p>
+            <p className="text-lg font-semibold text-green-800 dark:text-green-200">
+              99.2%
+            </p>
+            <p className="text-sm text-green-600 dark:text-green-300">
+              Fraud Prevention Rate
+            </p>
           </div>
 
           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -1166,8 +1380,12 @@ const EscrowDashboard: React.FC = () => {
                 Active
               </span>
             </div>
-            <p className="text-lg font-semibold text-blue-800 dark:text-blue-200">24/7</p>
-            <p className="text-sm text-blue-600 dark:text-blue-300">Monitoring Status</p>
+            <p className="text-lg font-semibold text-blue-800 dark:text-blue-200">
+              24/7
+            </p>
+            <p className="text-sm text-blue-600 dark:text-blue-300">
+              Monitoring Status
+            </p>
           </div>
 
           <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
@@ -1177,8 +1395,12 @@ const EscrowDashboard: React.FC = () => {
                 Medium
               </span>
             </div>
-            <p className="text-lg font-semibold text-amber-800 dark:text-amber-200">7</p>
-            <p className="text-sm text-amber-600 dark:text-amber-300">Pending Investigations</p>
+            <p className="text-lg font-semibold text-amber-800 dark:text-amber-200">
+              7
+            </p>
+            <p className="text-sm text-amber-600 dark:text-amber-300">
+              Pending Investigations
+            </p>
           </div>
 
           <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
@@ -1188,8 +1410,12 @@ const EscrowDashboard: React.FC = () => {
                 Updated
               </span>
             </div>
-            <p className="text-lg font-semibold text-purple-800 dark:text-purple-200">3</p>
-            <p className="text-sm text-purple-600 dark:text-purple-300">SARs Filed This Month</p>
+            <p className="text-lg font-semibold text-purple-800 dark:text-purple-200">
+              3
+            </p>
+            <p className="text-sm text-purple-600 dark:text-purple-300">
+              SARs Filed This Month
+            </p>
           </div>
         </div>
       </motion.div>
