@@ -603,7 +603,7 @@ const DisputeDetailPage: React.FC = () => {
                 <motion.button
                   className="w-full mt-4 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
                   whileHover={{ scale: 1.02 }}
-                  onClick={() => navigate(`/escrows/${dispute.escrowId}`)}
+                  onClick={() => navigate(`/admin/escrow/escrow-details/${dispute.escrowId}`)}
                 >
                   <ExternalLink className="w-4 h-4" />
                   View Full Escrow
