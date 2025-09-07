@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
-  Filter,
   Download,
-  Calendar,
   ArrowUpDown,
   Eye,
   MessageSquare,
@@ -13,7 +11,6 @@ import {
   User,
   FileText,
   CheckCircle,
-  XCircle,
   ExternalLink,
   Globe,
   CreditCard,
@@ -21,9 +18,10 @@ import {
   Zap,
   Scale,
   Flag,
-  Users,
-  DollarSign
+  DollarSign,
+  RefreshCw
 } from "lucide-react";
+import { escrowService } from "../../../api/services/escrow";
 
 const ActiveDisputesPage: React.FC = () => {
   const [disputes, setDisputes] = useState<any[]>([]);
@@ -32,199 +30,68 @@ const ActiveDisputesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [sortField, setSortField] = useState("raisedAt");
+  const [sortField, setSortField] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [selectedDisputes, setSelectedDisputes] = useState<string[]>([]);
 
-  // Mock disputes data
-  const mockDisputes = [
-    {
-      id: "D-2025-001120",
-      transactionId: "TXN-2025-001245",
-      disputeType: "non_delivery",
-      status: "open",
-      priority: "high",
-      raisedBy: "buyer",
-      buyer: {
-        name: "David Chen",
-        email: "david.c@example.com",
-        verified: true,
-      },
-      seller: {
-        name: "Sarah Ahmed",
-        email: "sarah.a@example.com",
-        verified: true,
-      },
-      amount: 1200000,
-      currency: "KES",
-      raisedAt: "2025-01-08T14:30:00Z",
-      lastActivity: "2025-01-08T16:45:00Z",
-      responseDeadline: "2025-01-10T14:30:00Z",
-      category: "Goods",
-      paymentMethod: "Wallet",
-      location: "Cape Town, South Africa",
-      description:
-        "Seller has not delivered goods after 7 days. No tracking information provided.",
-      evidence: ["order_receipt.pdf", "communication_screenshots.png"],
-      messages: 5,
-      escalationLevel: "tier_1",
-      assignedTo: "Sarah M. (Support)",
-      slaStatus: "within_sla",
-      timeElapsed: "1d 2h 15m",
-    },
-    {
-      id: "D-2025-001119",
-      transactionId: "TXN-2025-001241",
-      disputeType: "quality_issues",
-      status: "under_review",
-      priority: "medium",
-      raisedBy: "buyer",
-      buyer: {
-        name: "Emma Thompson",
-        email: "emma.t@example.com",
-        verified: true,
-      },
-      seller: {
-        name: "Michael Brown",
-        email: "michael.b@example.com",
-        verified: true,
-      },
-      amount: 450000,
-      currency: "KES",
-      raisedAt: "2025-01-07T16:20:00Z",
-      lastActivity: "2025-01-08T09:30:00Z",
-      responseDeadline: "2025-01-09T16:20:00Z",
-      category: "Services",
-      paymentMethod: "Mobile Money",
-      location: "Nairobi, Kenya",
-      description:
-        "Service quality does not match agreed specifications. Requesting partial refund.",
-      evidence: ["quality_report.pdf", "comparison_photos.zip"],
-      messages: 12,
-      escalationLevel: "tier_2",
-      assignedTo: "Paul K. (Compliance)",
-      slaStatus: "within_sla",
-      timeElapsed: "16h 10m",
-    },
-    {
-      id: "D-2025-001118",
-      transactionId: "TXN-2025-001238",
-      disputeType: "fraud_suspected",
-      status: "escalated",
-      priority: "urgent",
-      raisedBy: "seller",
-      buyer: {
-        name: "John Wilson",
-        email: "john.w@example.com",
-        verified: false,
-      },
-      seller: {
-        name: "Lisa Davis",
-        email: "lisa.d@example.com",
-        verified: true,
-      },
-      amount: 750000,
-      currency: "KES",
-      raisedAt: "2025-01-06T11:30:00Z",
-      lastActivity: "2025-01-07T14:20:00Z",
-      responseDeadline: "2025-01-08T11:30:00Z",
-      category: "Electronics",
-      paymentMethod: "Bank Transfer",
-      location: "Lagos, Nigeria",
-      description:
-        "Suspicious buyer behavior. Multiple failed verification attempts.",
-      evidence: ["verification_attempts.pdf", "ip_analysis.pdf"],
-      messages: 8,
-      escalationLevel: "tier_3",
-      assignedTo: "Jane W. (Admin)",
-      slaStatus: "overdue",
-      timeElapsed: "2d 3h 0m",
-    },
-    {
-      id: "D-2025-001117",
-      transactionId: "TXN-2025-001235",
-      disputeType: "payment_issues",
-      status: "pending_response",
-      priority: "normal",
-      raisedBy: "seller",
-      buyer: {
-        name: "Alice Smith",
-        email: "alice.smith@example.com",
-        verified: true,
-      },
-      seller: {
-        name: "Robert Kim",
-        email: "robert.k@example.com",
-        verified: true,
-      },
-      amount: 180000,
-      currency: "KES",
-      raisedAt: "2025-01-05T09:15:00Z",
-      lastActivity: "2025-01-06T11:20:00Z",
-      responseDeadline: "2025-01-08T09:15:00Z",
-      category: "Digital Goods",
-      paymentMethod: "Card",
-      location: "Kampala, Uganda",
-      description:
-        "Payment authorization failed multiple times. Buyer not responding.",
-      evidence: ["payment_logs.pdf"],
-      messages: 3,
-      escalationLevel: "tier_1",
-      assignedTo: "Mark T. (Support)",
-      slaStatus: "approaching_deadline",
-      timeElapsed: "3d 5h 15m",
-    },
-  ];
+  const fetchDisputes = async () => {
+    try {
+      setIsLoading(true);
+      const res = await escrowService.getAllDisputes();
+      setDisputes(res || []);
+    } catch (error) {
+      console.error("Error fetching disputes:", error);
+      setDisputes([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setDisputes(mockDisputes);
-      setFilteredDisputes(mockDisputes);
-      setIsLoading(false);
-    }, 1000);
+    fetchDisputes();
   }, []);
 
   useEffect(() => {
     let filtered = disputes.filter((dispute) => {
       const matchesSearch =
         dispute.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispute.transactionId
+        dispute.escrowId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        dispute.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        dispute.raisedByName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        dispute.escrow?.initiator
           .toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
-        dispute.buyer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispute.seller.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispute.buyer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispute.seller.email.toLowerCase().includes(searchTerm.toLowerCase());
+        dispute.escrow?.counterparty
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
       const matchesStatus =
-        statusFilter === "all" || dispute.status === statusFilter;
-      const matchesPriority =
-        priorityFilter === "all" || dispute.priority === priorityFilter;
-      const matchesType =
-        typeFilter === "all" || dispute.disputeType === typeFilter;
+        statusFilter === "all" ||
+        dispute.status.toLowerCase() === statusFilter.toLowerCase();
 
-      return matchesSearch && matchesStatus && matchesPriority && matchesType;
+      const matchesPriority =
+        priorityFilter === "all" ||
+        dispute.priority.toLowerCase() === priorityFilter.toLowerCase();
+
+      return matchesSearch && matchesStatus && matchesPriority;
     });
 
-    // Sort the filtered results
     filtered.sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
 
-      if (sortField === "amount") {
-        aValue = Number(aValue);
-        bValue = Number(bValue);
-      } else if (sortField === "raisedAt" || sortField === "lastActivity") {
+      if (sortField === "amountMinor") {
+        aValue = Number(a.escrow?.amountMinor || 0);
+        bValue = Number(b.escrow?.amountMinor || 0);
+      } else if (sortField === "createdAt" || sortField === "updatedAt") {
         aValue = new Date(aValue);
         bValue = new Date(bValue);
       } else if (sortField === "priority") {
-        const priorityOrder = { urgent: 3, high: 2, medium: 1, normal: 0 };
-        aValue = priorityOrder[aValue as keyof typeof priorityOrder];
-        bValue = priorityOrder[bValue as keyof typeof priorityOrder];
+        const priorityOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+        aValue = priorityOrder[aValue as keyof typeof priorityOrder] || 0;
+        bValue = priorityOrder[bValue as keyof typeof priorityOrder] || 0;
       }
 
       if (sortDirection === "asc") {
@@ -240,7 +107,6 @@ const ActiveDisputesPage: React.FC = () => {
     searchTerm,
     statusFilter,
     priorityFilter,
-    typeFilter,
     sortField,
     sortDirection,
     disputes,
@@ -248,32 +114,33 @@ const ActiveDisputesPage: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      open: {
+      OPEN: {
         color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
         icon: AlertTriangle,
       },
-      under_review: {
+      UNDER_REVIEW: {
         color:
           "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
         icon: Eye,
       },
-      pending_response: {
+      PENDING_RESPONSE: {
         color:
           "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
         icon: Clock,
       },
-      escalated: {
+      ESCALATED: {
         color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
         icon: Zap,
       },
-      resolved: {
+      RESOLVED: {
         color:
           "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
         icon: CheckCircle,
       },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig];
+    const config =
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.OPEN;
     const IconComponent = config.icon;
 
     return (
@@ -281,30 +148,102 @@ const ActiveDisputesPage: React.FC = () => {
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
       >
         <IconComponent className="w-3 h-3 mr-1" />
-        {status.replace("_", " ").charAt(0).toUpperCase() +
-          status.replace("_", " ").slice(1)}
+        {status.replace("_", " ")}
       </span>
     );
   };
 
   const getPriorityBadge = (priority: string) => {
     const priorityConfig = {
-      urgent: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-      high: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
-      medium:
+      HIGH: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+      MEDIUM:
         "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-      normal: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+      LOW: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
     };
 
     return (
       <span
         className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
-          priorityConfig[priority as keyof typeof priorityConfig]
+          priorityConfig[priority as keyof typeof priorityConfig] ||
+          priorityConfig.LOW
         }`}
       >
-        {priority.charAt(0).toUpperCase() + priority.slice(1)}
+        {priority}
       </span>
     );
+  };
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  const handleSelectDispute = (id: string) => {
+    setSelectedDisputes((prev) =>
+      prev.includes(id)
+        ? prev.filter((disputeId) => disputeId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    const currentPageIds = paginatedDisputes.map((d) => d.id);
+    if (selectedDisputes.length === currentPageIds.length) {
+      setSelectedDisputes([]);
+    } else {
+      setSelectedDisputes(currentPageIds);
+    }
+  };
+
+  const formatCurrency = (amountMinor: string, currency: string) => {
+    const amount = parseInt(amountMinor) / 100;
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const getTimeElapsed = (createdAt: string) => {
+    const now = new Date();
+    const created = new Date(createdAt);
+    const diffInHours = Math.floor(
+      (now.getTime() - created.getTime()) / (1000 * 60 * 60)
+    );
+
+    if (diffInHours < 24) {
+      return `${diffInHours}h`;
+    } else {
+      const days = Math.floor(diffInHours / 24);
+      return `${days}d`;
+    }
+  };
+
+  const getSlaStatus = (createdAt: string, priority: string) => {
+    const hours = Math.floor(
+      (new Date().getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60)
+    );
+    const thresholds = { HIGH: 4, MEDIUM: 24, LOW: 48 };
+    const threshold = thresholds[priority as keyof typeof thresholds] || 48;
+
+    if (hours > threshold) return "overdue";
+    if (hours > threshold * 0.8) return "approaching_deadline";
+    return "within_sla";
   };
 
   const getSlaStatusBadge = (slaStatus: string) => {
@@ -338,64 +277,6 @@ const ActiveDisputesPage: React.FC = () => {
     );
   };
 
-  const getDisputeTypeLabel = (type: string) => {
-    const typeLabels = {
-      non_delivery: "Non-delivery",
-      quality_issues: "Quality Issues",
-      fraud_suspected: "Fraud Suspected",
-      payment_issues: "Payment Issues",
-      wrong_item: "Wrong Item",
-      damaged_goods: "Damaged Goods",
-      service_dispute: "Service Dispute",
-    };
-    return typeLabels[type as keyof typeof typeLabels] || type;
-  };
-
-  const handleSort = (field: string) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("desc");
-    }
-  };
-
-  const handleSelectDispute = (id: string) => {
-    setSelectedDisputes((prev) =>
-      prev.includes(id)
-        ? prev.filter((disputeId) => disputeId !== id)
-        : [...prev, id]
-    );
-  };
-
-  const handleSelectAll = () => {
-    const currentPageIds = paginatedDisputes.map((d) => d.id);
-    if (selectedDisputes.length === currentPageIds.length) {
-      setSelectedDisputes([]);
-    } else {
-      setSelectedDisputes(currentPageIds);
-    }
-  };
-
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   // Pagination
   const totalPages = Math.ceil(filteredDisputes.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -405,16 +286,19 @@ const ActiveDisputesPage: React.FC = () => {
   );
 
   // Calculate summary stats
-  const urgentCount = filteredDisputes.filter(
-    (d) => d.priority === "urgent"
+  const highPriorityCount = filteredDisputes.filter(
+    (d) => d.priority === "HIGH"
   ).length;
   const overdueCount = filteredDisputes.filter(
-    (d) => d.slaStatus === "overdue"
+    (d) => getSlaStatus(d.createdAt, d.priority) === "overdue"
   ).length;
   const escalatedCount = filteredDisputes.filter(
-    (d) => d.status === "escalated"
+    (d) => d.status === "ESCALATED"
   ).length;
-  const totalValue = filteredDisputes.reduce((sum, d) => sum + d.amount, 0);
+  const totalValue = filteredDisputes.reduce(
+    (sum, d) => sum + parseInt(d.escrow?.amountMinor || "0"),
+    0
+  );
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -434,6 +318,20 @@ const ActiveDisputesPage: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <motion.button
+            className="flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-300 text-sm shadow-sm"
+            onClick={fetchDisputes}
+            disabled={isLoading}
+            whileHover={{ y: -2, boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)" }}
+            whileTap={{ y: 0 }}
+          >
+            <RefreshCw
+              size={16}
+              className={`mr-2 ${isLoading ? "animate-spin" : ""}`}
+              strokeWidth={1.8}
+            />
+            {isLoading ? "Loading..." : "Refresh"}
+          </motion.button>
           <motion.button
             className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
@@ -482,9 +380,11 @@ const ActiveDisputesPage: React.FC = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Urgent</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                High Priority
+              </p>
               <p className="text-xl font-semibold text-red-600 dark:text-red-400">
-                {urgentCount}
+                {highPriorityCount}
               </p>
             </div>
             <Zap className="w-8 h-8 text-red-600 dark:text-red-400" />
@@ -522,7 +422,7 @@ const ActiveDisputesPage: React.FC = () => {
                 Total Value
               </p>
               <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                {formatCurrency(totalValue, "KES")}
+                {formatCurrency(totalValue.toString(), "KES")}
               </p>
             </div>
             <DollarSign className="w-8 h-8 text-green-600 dark:text-green-400" />
@@ -542,8 +442,8 @@ const ActiveDisputesPage: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search by Dispute ID, Transaction ID, buyer, seller, or email..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="Search by Dispute ID, Escrow ID, reason, or raised by..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -551,7 +451,7 @@ const ActiveDisputesPage: React.FC = () => {
 
           <div className="flex gap-2">
             <select
-              className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -560,34 +460,22 @@ const ActiveDisputesPage: React.FC = () => {
               <option value="under_review">Under Review</option>
               <option value="pending_response">Pending Response</option>
               <option value="escalated">Escalated</option>
+              <option value="resolved">Resolved</option>
             </select>
 
             <select
-              className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
             >
               <option value="all">All Priorities</option>
-              <option value="urgent">Urgent</option>
               <option value="high">High</option>
               <option value="medium">Medium</option>
-              <option value="normal">Normal</option>
+              <option value="low">Low</option>
             </select>
 
             <select
-              className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-            >
-              <option value="all">All Types</option>
-              <option value="non_delivery">Non-delivery</option>
-              <option value="quality_issues">Quality Issues</option>
-              <option value="fraud_suspected">Fraud Suspected</option>
-              <option value="payment_issues">Payment Issues</option>
-            </select>
-
-            <select
-              className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={itemsPerPage}
               onChange={(e) => setItemsPerPage(Number(e.target.value))}
             >
@@ -629,7 +517,7 @@ const ActiveDisputesPage: React.FC = () => {
       >
         {isLoading ? (
           <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="text-gray-500 dark:text-gray-400 mt-2">
               Loading disputes...
             </p>
@@ -675,7 +563,7 @@ const ActiveDisputesPage: React.FC = () => {
                     </th>
                     <th
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
-                      onClick={() => handleSort("amount")}
+                      onClick={() => handleSort("amountMinor")}
                     >
                       <div className="flex items-center">
                         Amount
@@ -686,7 +574,7 @@ const ActiveDisputesPage: React.FC = () => {
                       Status & SLA
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Assignment
+                      Timeline
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Actions
@@ -694,124 +582,114 @@ const ActiveDisputesPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {paginatedDisputes.map((dispute) => (
-                    <tr
-                      key={dispute.id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      <td className="px-6 py-4">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 dark:border-gray-600"
-                          checked={selectedDisputes.includes(dispute.id)}
-                          onChange={() => handleSelectDispute(dispute.id)}
-                        />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getPriorityBadge(dispute.priority)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {dispute.id}
-                        </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                          <ExternalLink className="w-3 h-3 mr-1" />
-                          {dispute.transactionId}
-                        </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-300">
-                          {getDisputeTypeLabel(dispute.disputeType)}
-                        </div>
-                        <div className="text-xs text-gray-400 dark:text-gray-500 flex items-center mt-1">
-                          <Globe className="w-3 h-3 mr-1" />
-                          {dispute.location}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center text-sm">
-                            <User className="w-3 h-3 mr-1 text-gray-400" />
-                            <span className="font-medium text-gray-900 dark:text-gray-100">
-                              Buyer:
-                            </span>
-                            <span className="ml-1 text-gray-600 dark:text-gray-300">
-                              {dispute.buyer.name}
-                            </span>
-                            {dispute.buyer.verified && (
-                              <CheckCircle className="ml-1 w-3 h-3 text-green-500" />
+                  {paginatedDisputes.map((dispute) => {
+                    const slaStatus = getSlaStatus(
+                      dispute.createdAt,
+                      dispute.priority
+                    );
+                    const timeElapsed = getTimeElapsed(dispute.createdAt);
+
+                    return (
+                      <tr
+                        key={dispute.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        <td className="px-6 py-4">
+                          <input
+                            type="checkbox"
+                            className="rounded border-gray-300 dark:border-gray-600"
+                            checked={selectedDisputes.includes(dispute.id)}
+                            onChange={() => handleSelectDispute(dispute.id)}
+                          />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {getPriorityBadge(dispute.priority)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {dispute.id.slice(0, 8)}...
+                          </div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            {dispute.escrowId.slice(0, 8)}...
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                            {dispute.reason.slice(0, 50)}...
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="space-y-2">
+                            <div className="flex items-center text-sm">
+                              <User className="w-3 h-3 mr-1 text-gray-400" />
+                              <span className="font-medium text-gray-900 dark:text-gray-100">
+                                Initiator:
+                              </span>
+                              <span className="ml-1 text-gray-600 dark:text-gray-300">
+                                {dispute.escrow?.initiator || "N/A"}
+                              </span>
+                            </div>
+                            <div className="flex items-center text-sm">
+                              <User className="w-3 h-3 mr-1 text-gray-400" />
+                              <span className="font-medium text-gray-900 dark:text-gray-100">
+                                Counterparty:
+                              </span>
+                              <span className="ml-1 text-gray-600 dark:text-gray-300">
+                                {dispute.escrow?.counterparty || "N/A"}
+                              </span>
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                              <Flag className="w-3 h-3 mr-1" />
+                              Raised by: {dispute.raisedByName}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {formatCurrency(
+                              dispute.escrow?.amountMinor || "0",
+                              dispute.escrow?.currency || "KES"
                             )}
                           </div>
-                          <div className="flex items-center text-sm">
-                            <User className="w-3 h-3 mr-1 text-gray-400" />
-                            <span className="font-medium text-gray-900 dark:text-gray-100">
-                              Seller:
-                            </span>
-                            <span className="ml-1 text-gray-600 dark:text-gray-300">
-                              {dispute.seller.name}
-                            </span>
-                            {dispute.seller.verified && (
-                              <CheckCircle className="ml-1 w-3 h-3 text-green-500" />
-                            )}
+                          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                            <CreditCard className="w-3 h-3 mr-1" />
+                            {dispute.escrow?.purpose || "N/A"}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                            <Flag className="w-3 h-3 mr-1" />
-                            Raised by: {dispute.raisedBy}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="space-y-1">
+                            {getStatusBadge(dispute.status)}
+                            {getSlaStatusBadge(slaStatus)}
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {formatCurrency(dispute.amount, dispute.currency)}
-                        </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                          <CreditCard className="w-3 h-3 mr-1" />
-                          {dispute.paymentMethod}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {dispute.category}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="space-y-1">
-                          {getStatusBadge(dispute.status)}
-                          {getSlaStatusBadge(dispute.slaStatus)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900 dark:text-gray-100">
+                            Created: {formatDate(dispute.createdAt)}
+                          </div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            Updated: {formatDate(dispute.updatedAt)}
+                          </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            Elapsed: {dispute.timeElapsed}
+                            Elapsed: {timeElapsed}
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {dispute.assignedTo}
-                        </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {dispute.escalationLevel
-                            .replace("_", " ")
-                            .toUpperCase()}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                          <MessageSquare className="w-3 h-3 mr-1" />
-                          {dispute.messages} messages
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center space-x-2">
-                          <motion.button
-                            className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            title="View Details"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </motion.button>
-                          <motion.button
-                            className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20"
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            title="Chat/Messages"
-                          >
-                            <MessageSquare className="w-4 h-4" />
-                          </motion.button>
-                          {dispute.evidence.length > 0 && (
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex items-center space-x-2">
+                            <motion.button
+                              className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              title="View Details"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </motion.button>
+                            <motion.button
+                              className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20"
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              title="Chat/Messages"
+                            >
+                              <MessageSquare className="w-4 h-4" />
+                            </motion.button>
                             <motion.button
                               className="text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 p-1 rounded hover:bg-purple-50 dark:hover:bg-purple-900/20"
                               whileHover={{ scale: 1.1 }}
@@ -820,58 +698,80 @@ const ActiveDisputesPage: React.FC = () => {
                             >
                               <FileText className="w-4 h-4" />
                             </motion.button>
-                          )}
-                          {dispute.status !== "resolved" && (
-                            <motion.button
-                              className="text-orange-600 dark:text-orange-400 hover:text-orange-900 dark:hover:text-orange-300 p-1 rounded hover:bg-orange-50 dark:hover:bg-orange-900/20"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              title="Escalate"
-                            >
-                              <Zap className="w-4 h-4" />
-                            </motion.button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            {dispute.status !== "RESOLVED" && (
+                              <motion.button
+                                className="text-orange-600 dark:text-orange-400 hover:text-orange-900 dark:hover:text-orange-300 p-1 rounded hover:bg-orange-50 dark:hover:bg-orange-900/20"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                title="Escalate"
+                              >
+                                <Zap className="w-4 h-4" />
+                              </motion.button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
+            {/* Empty State */}
+            {filteredDisputes.length === 0 && !isLoading && (
+              <div className="text-center py-12">
+                <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  No disputes found
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {searchTerm ||
+                  statusFilter !== "all" ||
+                  priorityFilter !== "all"
+                    ? "Try adjusting your search criteria or filters"
+                    : "No active disputes at the moment"}
+                </p>
+              </div>
+            )}
+
             {/* Pagination */}
-            <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Showing {startIndex + 1} to{" "}
-                  {Math.min(startIndex + itemsPerPage, filteredDisputes.length)}{" "}
-                  of {filteredDisputes.length} results
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
-                    disabled={currentPage === 1}
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                  >
-                    Previous
-                  </button>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <button
-                    className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
-                    disabled={currentPage === totalPages}
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                  >
-                    Next
-                  </button>
+            {filteredDisputes.length > 0 && (
+              <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Showing {startIndex + 1} to{" "}
+                    {Math.min(
+                      startIndex + itemsPerPage,
+                      filteredDisputes.length
+                    )}{" "}
+                    of {filteredDisputes.length} results
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                      disabled={currentPage === 1}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                    >
+                      Previous
+                    </button>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                      disabled={currentPage === totalPages}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </motion.div>
@@ -891,28 +791,28 @@ const ActiveDisputesPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
                 <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-1">
-                  Tier 1 (Support)
+                  High Priority
                 </h4>
                 <p className="text-sm text-blue-600 dark:text-blue-300">
-                  Initial response within 4 hours. Handle standard disputes and
-                  collect evidence.
+                  Response within 4 hours. Immediate attention required for
+                  urgent cases.
                 </p>
               </div>
               <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg border border-orange-200 dark:border-orange-800">
                 <h4 className="font-medium text-orange-800 dark:text-orange-200 mb-1">
-                  Tier 2 (Compliance)
+                  Medium Priority
                 </h4>
                 <p className="text-sm text-orange-600 dark:text-orange-300">
-                  Complex disputes and fraud cases. Review within 24 hours.
+                  Response within 24 hours. Standard dispute resolution
+                  timeline.
                 </p>
               </div>
-              <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
-                <h4 className="font-medium text-red-800 dark:text-red-200 mb-1">
-                  Tier 3 (Admin)
+              <div className="bg-gray-50 dark:bg-gray-700/20 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-1">
+                  Low Priority
                 </h4>
-                <p className="text-sm text-red-600 dark:text-red-300">
-                  Escalated cases requiring final authority. Resolve within 48
-                  hours.
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Response within 48 hours. Lower urgency cases and follow-ups.
                 </p>
               </div>
             </div>
@@ -968,7 +868,7 @@ const ActiveDisputesPage: React.FC = () => {
               whileTap={{ y: 0 }}
             >
               <Zap size={16} className="mr-2" strokeWidth={1.8} />
-              Escalate Urgent
+              Escalate High Priority
             </motion.button>
           </div>
         </div>
