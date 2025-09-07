@@ -36,6 +36,7 @@ import {
 } from "recharts";
 import { escrowService } from "../../../api/services/escrow";
 import MonthlyEscrowTransactionsChart from "../../../components/escrow/MonthlyEscrowTransactionsChart";
+import DisputeResolution from "../../../components/escrow/DisputeResolution";
 
 const EscrowDashboard: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("monthly");
@@ -60,6 +61,7 @@ const EscrowDashboard: React.FC = () => {
 
    useEffect(() => {
       fetchTransactionTrends();
+      fetchDisputeStats();
    }, []);
 
    const fetchTransactionTrends = async () => {
@@ -68,6 +70,15 @@ const EscrowDashboard: React.FC = () => {
         setTransactionTrends(trends);
       } catch (error) {
         console.error("Error fetching transaction trends:", error);
+      }
+   }
+
+   const fetchDisputeStats = async () => {
+      try {
+        const disputes = await escrowService.getDisputeReports();
+        setDisputeData(disputes);
+      } catch (error) {
+        console.error("Error fetching dispute stats:", error);
       }
    }
 
@@ -527,31 +538,7 @@ const EscrowDashboard: React.FC = () => {
                 <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsPieChart>
-                  <Pie
-                    data={disputeData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) =>
-                      `${name.split(" ")[0]}: ${(percent * 100).toFixed(0)}%`
-                    }
-                  >
-                    {disputeData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => `${value}%`} />
-                  <Legend />
-                </RechartsPieChart>
-              </ResponsiveContainer>
+              <DisputeResolution disputeData={disputeData} COLORS={COLORS} />
             )}
           </div>
         </motion.div>
