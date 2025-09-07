@@ -172,6 +172,7 @@ const SupportAuditModule = {
 
 const EscrowModule = {
   EscrowDashboard: lazy(() => import("./app/admin/escrow/dashboard")),
+  EscrowList: lazy(() => import("./app/admin/escrow/escrowlist")),
   EscrowTransactions: lazy(() => import("./app/admin/escrow/transactions")),
   EscrowPendingTransactions: lazy(
     () => import("./app/admin/escrow/pendingapprovals")
@@ -179,6 +180,7 @@ const EscrowModule = {
   EscrowRefunds: lazy(() => import("./app/admin/escrow/refundsandreversals")),
   EscrowCreate: lazy(() => import("./app/admin/escrow/createescrow")),
   EscrowDisputes: lazy(() => import("./app/admin/escrow/activedisputes")),
+  EscrowDisputeDetail: lazy(() => import("./app/admin/escrow/disputedetail")),  
   EscrowEscalatedDisputes: lazy(
     () => import("./app/admin/escrow/escalateddisputes")
   ),
@@ -402,6 +404,11 @@ const escrowRoutes = [
     // permissions: PermissionMap.Escrow.view,
   },
   {
+    path: PATHS.ADMIN.ESCROW.ALL,
+    element: EscrowModule.EscrowList,
+    // permissions: PermissionMap.Escrow.view,
+  },
+  {
     path: PATHS.ADMIN.ESCROW.TRANSACTIONS,
     element: EscrowModule.EscrowTransactions,
     // permissions: PermissionMap.Escrow.view,
@@ -429,6 +436,11 @@ const escrowRoutes = [
   {
     path: PATHS.ADMIN.ESCROW.ESCALATED_DISPUTES,
     element: EscrowModule.EscrowEscalatedDisputes,
+    // permissions: PermissionMap.Escrow.view,
+  },
+  {
+    path: PATHS.ADMIN.ESCROW.DISPUTE_DETAIL,
+    element: EscrowModule.EscrowDisputeDetail,
     // permissions: PermissionMap.Escrow.view,
   },
   {
@@ -470,7 +482,7 @@ const escrowRoutes = [
     path: PATHS.ADMIN.ESCROW.MILESTONES,
     element: EscrowModule.EscrowMilestones,
     // permissions: PermissionMap.Escrow.view,
-  }
+  },
 ];
 
 const forexRoutes = [

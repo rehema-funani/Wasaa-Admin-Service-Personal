@@ -9,7 +9,7 @@ export const escrowService = {
 
   //   Escrow agreements
   getEscrowAgreements: async () => {
-    const response = await escrow.get("/agreements");
+    const response = await escrow.get("/escrow-agreements");
     return response.data;
   },
 

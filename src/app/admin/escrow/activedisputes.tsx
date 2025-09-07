@@ -12,7 +12,6 @@ import {
   FileText,
   CheckCircle,
   ExternalLink,
-  Globe,
   CreditCard,
   Timer,
   Zap,
@@ -22,6 +21,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { escrowService } from "../../../api/services/escrow";
+import { useNavigate } from "react-router-dom";
 
 const ActiveDisputesPage: React.FC = () => {
   const [disputes, setDisputes] = useState<any[]>([]);
@@ -35,6 +35,7 @@ const ActiveDisputesPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [selectedDisputes, setSelectedDisputes] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const fetchDisputes = async () => {
     try {
@@ -678,6 +679,9 @@ const ActiveDisputesPage: React.FC = () => {
                               className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20"
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
+                              onClick={() =>
+                                navigate(`/admin/escrow/disputes/${dispute.id}`)
+                              }
                               title="View Details"
                             >
                               <Eye className="w-4 h-4" />

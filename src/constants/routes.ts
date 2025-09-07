@@ -65,6 +65,13 @@ const routes: Route[] = [
         description: "Overview of all escrow operations",
       },
       {
+        type: "link",
+        path: "/admin/escrow/all-escrow-agreements",
+        title: "Escrow Agreements",
+        icon: FileText,
+        description: "Manage all escrow agreements",
+      },
+      {
         type: "dropdown",
         title: "Transaction Management",
         icon: Receipt,
