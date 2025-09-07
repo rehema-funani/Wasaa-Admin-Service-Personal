@@ -12,6 +12,10 @@ export const escrowService = {
     const response = await escrow.get("/escrow-agreements");
     return response.data;
   },
+  getEscrowAgreementById: async (id: string) => {
+    const response = await escrow.get(`/escrow-agreements/${id}`);
+    return response.data;
+  },
 
   //   Escrow transactions
   getEscrowTransactions: async () => {

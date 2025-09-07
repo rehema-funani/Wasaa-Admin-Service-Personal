@@ -173,6 +173,7 @@ const SupportAuditModule = {
 const EscrowModule = {
   EscrowDashboard: lazy(() => import("./app/admin/escrow/dashboard")),
   EscrowList: lazy(() => import("./app/admin/escrow/escrowlist")),
+  EscrowDetail: lazy(() => import("./app/admin/escrow/escrowdetail")),
   EscrowTransactions: lazy(() => import("./app/admin/escrow/transactions")),
   EscrowPendingTransactions: lazy(
     () => import("./app/admin/escrow/pendingapprovals")
@@ -406,6 +407,11 @@ const escrowRoutes = [
   {
     path: PATHS.ADMIN.ESCROW.ALL,
     element: EscrowModule.EscrowList,
+    // permissions: PermissionMap.Escrow.view,
+  },
+  {
+    path: PATHS.ADMIN.ESCROW.ESCROW_DETAIL,
+    element: EscrowModule.EscrowDetail,
     // permissions: PermissionMap.Escrow.view,
   },
   {

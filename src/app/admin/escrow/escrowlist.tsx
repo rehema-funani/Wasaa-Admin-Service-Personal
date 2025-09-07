@@ -63,7 +63,6 @@ const EscrowListPage: React.FC = () => {
       return matchesSearch && matchesStatus && matchesPurpose;
     });
 
-    // Sort the filtered results
     filtered.sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
@@ -748,7 +747,11 @@ const EscrowListPage: React.FC = () => {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             title="View Details"
-                            onClick={() => navigate(`/admin/escrows/${escrow.id}`)}
+                            onClick={() =>
+                              navigate(
+                                `/admin/escrow/escrow-details/${escrow.id}`
+                              )
+                            }
                           >
                             <Eye className="w-4 h-4" />
                           </motion.button>
@@ -786,7 +789,6 @@ const EscrowListPage: React.FC = () => {
           </table>
         </div>
 
-        {/* Pagination */}
         {filteredEscrows.length > 0 && (
           <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
