@@ -35,6 +35,7 @@ import {
   Area,
 } from "recharts";
 import { escrowService } from "../../../api/services/escrow";
+import MonthlyEscrowTransactionsChart from "../../../components/escrow/MonthlyEscrowTransactionsChart";
 
 const EscrowDashboard: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("monthly");
@@ -46,16 +47,29 @@ const EscrowDashboard: React.FC = () => {
   const [riskData, setRiskData] = useState<any[]>([]);
   const [volumeData, setVolumeData] = useState<any[]>([]);
   
-  
   const [activeStats, setActiveStats] = useState<any>(null);
   const [pendingDisputes, setPendingDisputes] = useState<any[]>([]);
   const [volumeMetrics, setVolumeMetrics] = useState<any>(null);
   const [escrowData, setEscrowData] = useState<any[]>([]);
+  const [transactionTrends, setTransactionTrends] = useState<any[]>([]);
 
 
    useEffect(() => {
      fetchDashboardData();
    }, [selectedPeriod, selectedYear, selectedMonth, selectedQuarter]);
+
+   useEffect(() => {
+      fetchTransactionTrends();
+   }, []);
+
+   const fetchTransactionTrends = async () => {
+      try {
+        const trends = await escrowService.getTransactionReports();
+        setTransactionTrends(trends);
+      } catch (error) {
+        console.error("Error fetching transaction trends:", error);
+      }
+   }
 
    const fetchDashboardData = async () => {
      setIsLoading(true);
@@ -485,37 +499,10 @@ const EscrowDashboard: React.FC = () => {
                 <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={escrowData}
-                  margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
-                  barSize={20}
-                >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip
-                    formatter={(value: number) => formatNumber(value)}
-                    labelFormatter={(label) => `Period: ${label}`}
-                  />
-                  <Legend />
-                  <Bar
-                    dataKey="activeEscrows"
-                    fill="#3b82f6"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="releasedEscrows"
-                    fill="#10b981"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey="disputedEscrows"
-                    fill="#ef4444"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              <MonthlyEscrowTransactionsChart
+                formatNumber={formatNumber}
+                escrowData={transactionTrends}
+              />
             )}
           </div>
         </motion.div>

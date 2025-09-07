@@ -81,7 +81,9 @@ export const escrowService = {
 
   //   Escrow reports
   getTransactionReports: async () => {
-    const response = await escrow.get("/reports/transactions");
+    const response = await escrow.get(
+      "/escrow-agreements/trends?from=2025-01-01&to=2025-12-31"
+    );
     return response.data;
   },
   getDisputeReports: async () => {
