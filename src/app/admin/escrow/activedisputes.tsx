@@ -18,7 +18,7 @@ import {
   Scale,
   Flag,
   DollarSign,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 import { escrowService } from "../../../api/services/escrow";
 import { useNavigate } from "react-router-dom";
@@ -302,8 +302,7 @@ const ActiveDisputesPage: React.FC = () => {
   );
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-      {/* Header */}
+    <div className="max-w-[1600px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -431,7 +430,6 @@ const ActiveDisputesPage: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Filters and Search */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -509,9 +507,8 @@ const ActiveDisputesPage: React.FC = () => {
         )}
       </motion.div>
 
-      {/* Disputes Table */}
       <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
+        className="bg-white w-fit dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-x-auto"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.6 }}
@@ -547,15 +544,6 @@ const ActiveDisputesPage: React.FC = () => {
                     >
                       <div className="flex items-center">
                         Priority
-                        <ArrowUpDown className="ml-1 w-3 h-3" />
-                      </div>
-                    </th>
-                    <th
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-700 dark:hover:text-gray-200"
-                      onClick={() => handleSort("id")}
-                    >
-                      <div className="flex items-center">
-                        Dispute Details
                         <ArrowUpDown className="ml-1 w-3 h-3" />
                       </div>
                     </th>
@@ -605,18 +593,6 @@ const ActiveDisputesPage: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {getPriorityBadge(dispute.priority)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            {dispute.id.slice(0, 8)}...
-                          </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
-                            <ExternalLink className="w-3 h-3 mr-1" />
-                            {dispute.escrowId.slice(0, 8)}...
-                          </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                            {dispute.reason.slice(0, 50)}...
-                          </div>
                         </td>
                         <td className="px-6 py-4">
                           <div className="space-y-2">
