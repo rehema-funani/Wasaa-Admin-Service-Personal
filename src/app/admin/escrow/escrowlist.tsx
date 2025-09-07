@@ -2,78 +2,33 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
-  Filter,
   Download,
-  Calendar,
   ArrowUpDown,
   Eye,
-  BarChart3,
-  PieChart,
   TrendingUp,
-  TrendingDown,
   Clock,
-  Users,
   FileText,
   CheckCircle,
   XCircle,
   AlertTriangle,
-  Globe,
-  CreditCard,
   DollarSign,
   Target,
-  Activity,
-  Layers,
   ArrowRight,
   RefreshCw,
-  Settings,
-  Share2,
-  Database,
-  LineChart,
   MoreVertical,
-  Maximize2,
-  CalendarDays,
-  Scale,
-  MessageSquare,
-  Zap,
-  ArrowUpRight,
-  ArrowDownRight,
-  Percent,
-  Timer,
-  Award,
-  ThumbsUp,
-  ThumbsDown,
-  Building,
   Wallet,
-  Smartphone,
-  Banknote,
   Shield,
   Lock,
-  UserCheck,
-  AlertCircle,
-  Flag,
-  Gavel,
-  BookOpen,
-  ClipboardCheck,
-  FileSearch,
-  ShieldCheck,
-  Bell,
-  Brain,
-  Scan,
-  Fingerprint,
-  Plus,
   Edit,
-  Trash2,
-  PlayCircle,
-  PauseCircle,
-  StopCircle,
-  RotateCcw
+  RotateCcw,
+  User
 } from "lucide-react";
 import { escrowService } from '../../../api/services/escrow';
+import { useNavigate } from "react-router-dom";
 
 const EscrowListPage: React.FC = () => {
   const [escrows, setEscrows] = useState<any[]>([]);
   const [filteredEscrows, setFilteredEscrows] = useState<any[]>([]);
-  const [selectedEscrow, setSelectedEscrow] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -83,6 +38,7 @@ const EscrowListPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [selectedEscrows, setSelectedEscrows] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEscrowList();
@@ -97,10 +53,12 @@ const EscrowListPage: React.FC = () => {
         escrow.purpose.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus =
-        statusFilter === "all" || escrow.status.toLowerCase() === statusFilter.toLowerCase();
-      
+        statusFilter === "all" ||
+        escrow.status.toLowerCase() === statusFilter.toLowerCase();
+
       const matchesPurpose =
-        purposeFilter === "all" || escrow.purpose.toLowerCase() === purposeFilter.toLowerCase();
+        purposeFilter === "all" ||
+        escrow.purpose.toLowerCase() === purposeFilter.toLowerCase();
 
       return matchesSearch && matchesStatus && matchesPurpose;
     });
@@ -110,10 +68,18 @@ const EscrowListPage: React.FC = () => {
       let aValue = a[sortField];
       let bValue = b[sortField];
 
-      if (sortField === "amountMinor" || sortField === "fundedMinor" || sortField === "releasedMinor") {
+      if (
+        sortField === "amountMinor" ||
+        sortField === "fundedMinor" ||
+        sortField === "releasedMinor"
+      ) {
         aValue = Number(aValue);
         bValue = Number(bValue);
-      } else if (sortField === "createdAt" || sortField === "updatedAt" || sortField === "deadline") {
+      } else if (
+        sortField === "createdAt" ||
+        sortField === "updatedAt" ||
+        sortField === "deadline"
+      ) {
         aValue = new Date(aValue);
         bValue = new Date(bValue);
       }
@@ -127,7 +93,14 @@ const EscrowListPage: React.FC = () => {
 
     setFilteredEscrows(filtered);
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, purposeFilter, sortField, sortDirection, escrows]);
+  }, [
+    searchTerm,
+    statusFilter,
+    purposeFilter,
+    sortField,
+    sortDirection,
+    escrows,
+  ]);
 
   const fetchEscrowList = async () => {
     try {
@@ -144,23 +117,54 @@ const EscrowListPage: React.FC = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      DRAFT: { color: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200", icon: FileText },
-      PENDING_FUNDING: { color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200", icon: Clock },
-      FUNDED: { color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200", icon: CheckCircle },
-      PARTIALLY_RELEASED: { color: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200", icon: ArrowRight },
-      RELEASED: { color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200", icon: CheckCircle },
-      DISPUTED: { color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200", icon: AlertTriangle },
-      CANCELLED: { color: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200", icon: XCircle },
-      REFUNDED: { color: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200", icon: RotateCcw }
+      DRAFT: {
+        color: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+        icon: FileText,
+      },
+      PENDING_FUNDING: {
+        color:
+          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+        icon: Clock,
+      },
+      FUNDED: {
+        color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+        icon: CheckCircle,
+      },
+      PARTIALLY_RELEASED: {
+        color:
+          "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+        icon: ArrowRight,
+      },
+      RELEASED: {
+        color:
+          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+        icon: CheckCircle,
+      },
+      DISPUTED: {
+        color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+        icon: AlertTriangle,
+      },
+      CANCELLED: {
+        color: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+        icon: XCircle,
+      },
+      REFUNDED: {
+        color:
+          "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
+        icon: RotateCcw,
+      },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.DRAFT;
+    const config =
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.DRAFT;
     const IconComponent = config.icon;
 
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.color}`}
+      >
         <IconComponent className="w-3 h-3 mr-1" />
-        {status.replace('_', ' ')}
+        {status.replace("_", " ")}
       </span>
     );
   };
@@ -203,7 +207,9 @@ const EscrowListPage: React.FC = () => {
 
   const handleSelectEscrow = (id: string) => {
     setSelectedEscrows((prev) =>
-      prev.includes(id) ? prev.filter((escrowId) => escrowId !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((escrowId) => escrowId !== id)
+        : [...prev, id]
     );
   };
 
@@ -219,16 +225,21 @@ const EscrowListPage: React.FC = () => {
   // Pagination
   const totalPages = Math.ceil(filteredEscrows.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedEscrows = filteredEscrows.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedEscrows = filteredEscrows.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   // Calculate stats
   const stats = {
     total: escrows.length,
-    funded: escrows.filter(e => e.status === "FUNDED").length,
-    released: escrows.filter(e => e.status === "RELEASED").length,
-    disputed: escrows.filter(e => e.status === "DISPUTED").length,
+    funded: escrows.filter((e) => e.status === "FUNDED").length,
+    released: escrows.filter((e) => e.status === "RELEASED").length,
+    disputed: escrows.filter((e) => e.status === "DISPUTED").length,
     totalValue: escrows.reduce((sum, e) => sum + parseInt(e.amountMinor), 0),
-    fundedValue: escrows.filter(e => e.status === "FUNDED").reduce((sum, e) => sum + parseInt(e.amountMinor), 0)
+    fundedValue: escrows
+      .filter((e) => e.status === "FUNDED")
+      .reduce((sum, e) => sum + parseInt(e.amountMinor), 0),
   };
 
   return (
@@ -265,29 +276,27 @@ const EscrowListPage: React.FC = () => {
             whileHover={{ y: -2, boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)" }}
             whileTap={{ y: 0 }}
           >
-            <RefreshCw size={16} className={`mr-2 ${isLoading ? 'animate-spin' : ''}`} strokeWidth={2} />
-            {isLoading ? 'Loading...' : 'Refresh'}
+            <RefreshCw
+              size={16}
+              className={`mr-2 ${isLoading ? "animate-spin" : ""}`}
+              strokeWidth={2}
+            />
+            {isLoading ? "Loading..." : "Refresh"}
           </motion.button>
           <motion.button
             className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg text-sm shadow-lg"
-            whileHover={{ y: -2, boxShadow: "0 8px 25px rgba(34, 197, 94, 0.3)" }}
+            whileHover={{
+              y: -2,
+              boxShadow: "0 8px 25px rgba(34, 197, 94, 0.3)",
+            }}
             whileTap={{ y: 0 }}
           >
             <Download size={16} className="mr-2" strokeWidth={2} />
             Export
           </motion.button>
-          <motion.button
-            className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm shadow-lg"
-            whileHover={{ y: -2, boxShadow: "0 8px 25px rgba(59, 130, 246, 0.3)" }}
-            whileTap={{ y: 0 }}
-          >
-            <Plus size={16} className="mr-2" strokeWidth={2} />
-            Create Escrow
-          </motion.button>
         </div>
       </motion.div>
 
-      {/* Stats Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
         <motion.div
           className="col-span-1 lg:col-span-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-xl"
@@ -318,11 +327,18 @@ const EscrowListPage: React.FC = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">Funded</p>
-              <p className="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">{stats.funded}</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">
+                Funded
+              </p>
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">
+                {stats.funded}
+              </p>
               <div className="flex items-center mt-1">
                 <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                  {stats.total > 0 ? Math.round((stats.funded / stats.total) * 100) : 0}% of total
+                  {stats.total > 0
+                    ? Math.round((stats.funded / stats.total) * 100)
+                    : 0}
+                  % of total
                 </span>
               </div>
             </div>
@@ -340,8 +356,12 @@ const EscrowListPage: React.FC = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">Released</p>
-              <p className="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">{stats.released}</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">
+                Released
+              </p>
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">
+                {stats.released}
+              </p>
               <div className="flex items-center mt-1">
                 <span className="text-xs text-green-600 dark:text-green-400 font-medium">
                   Completed
@@ -362,8 +382,12 @@ const EscrowListPage: React.FC = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">Disputed</p>
-              <p className="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">{stats.disputed}</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">
+                Disputed
+              </p>
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">
+                {stats.disputed}
+              </p>
               <div className="flex items-center mt-1">
                 <span className="text-xs text-red-600 dark:text-red-400 font-medium">
                   Need attention
@@ -384,9 +408,11 @@ const EscrowListPage: React.FC = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">Total Value</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">
+                Total Value
+              </p>
               <p className="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                {formatCurrency((stats.totalValue).toString(), "KES")}
+                {formatCurrency(stats.totalValue.toString(), "KES")}
               </p>
               <div className="flex items-center mt-1">
                 <span className="text-xs text-purple-600 dark:text-purple-400 font-medium">
@@ -408,9 +434,11 @@ const EscrowListPage: React.FC = () => {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">Funded Value</p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">
+                Funded Value
+              </p>
               <p className="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                {formatCurrency((stats.fundedValue).toString(), "KES")}
+                {formatCurrency(stats.fundedValue.toString(), "KES")}
               </p>
               <div className="flex items-center mt-1">
                 <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
@@ -425,7 +453,6 @@ const EscrowListPage: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Filters and Search */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -474,7 +501,9 @@ const EscrowListPage: React.FC = () => {
             </select>
             <button
               className="flex items-center px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-              onClick={() => setSortDirection(sortDirection === "desc" ? "asc" : "desc")}
+              onClick={() =>
+                setSortDirection(sortDirection === "desc" ? "asc" : "desc")
+              }
             >
               <ArrowUpDown className="w-4 h-4 mr-2" />
               Sort {sortDirection === "desc" ? "Newest" : "Oldest"}
@@ -483,7 +512,6 @@ const EscrowListPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Escrows Table */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
         initial={{ opacity: 0, y: -10 }}
@@ -522,7 +550,10 @@ const EscrowListPage: React.FC = () => {
                   <input
                     type="checkbox"
                     className="rounded border-gray-300 dark:border-gray-600"
-                    checked={selectedEscrows.length === paginatedEscrows.length && paginatedEscrows.length > 0}
+                    checked={
+                      selectedEscrows.length === paginatedEscrows.length &&
+                      paginatedEscrows.length > 0
+                    }
                     onChange={handleSelectAll}
                   />
                 </th>
@@ -571,9 +602,15 @@ const EscrowListPage: React.FC = () => {
                     <motion.div
                       className="inline-block w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full"
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
                     />
-                    <p className="text-gray-500 dark:text-gray-400 mt-4">Loading escrows...</p>
+                    <p className="text-gray-500 dark:text-gray-400 mt-4">
+                      Loading escrows...
+                    </p>
                   </td>
                 </tr>
               ) : paginatedEscrows.length === 0 ? (
@@ -584,17 +621,18 @@ const EscrowListPage: React.FC = () => {
                       No escrows found
                     </h3>
                     <p className="text-gray-500 dark:text-gray-400">
-                      {searchTerm || statusFilter !== "all" || purposeFilter !== "all" 
+                      {searchTerm ||
+                      statusFilter !== "all" ||
+                      purposeFilter !== "all"
                         ? "Try adjusting your search criteria or filters"
-                        : "No escrow agreements have been created yet"
-                      }
+                        : "No escrow agreements have been created yet"}
                     </p>
                   </td>
                 </tr>
               ) : (
                 paginatedEscrows.map((escrow: any, index: number) => {
                   const progress = calculateProgress(escrow);
-                  
+
                   return (
                     <motion.tr
                       key={escrow.id}
@@ -611,4 +649,181 @@ const EscrowListPage: React.FC = () => {
                           onChange={() => handleSelectEscrow(escrow.id)}
                         />
                       </td>
-                      <td className="px-6 py
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            {escrow.purpose}
+                          </div>
+                          <div className="text-xs text-gray-400 dark:text-gray-500 mt-1 flex items-center">
+                            {escrow.has_milestone && (
+                              <>
+                                <Target className="w-3 h-3 mr-1" />
+                                Has Milestones
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center text-sm">
+                            <User className="w-3 h-3 mr-1 text-gray-400" />
+                            <span className="font-medium text-gray-900 dark:text-gray-100">
+                              Initiator:
+                            </span>
+                            <span className="ml-1 text-gray-600 dark:text-gray-300">
+                              {escrow.initiator}
+                            </span>
+                          </div>
+                          <div className="flex items-center text-sm">
+                            <User className="w-3 h-3 mr-1 text-gray-400" />
+                            <span className="font-medium text-gray-900 dark:text-gray-100">
+                              Counterparty:
+                            </span>
+                            <span className="ml-1 text-gray-600 dark:text-gray-300">
+                              {escrow.counterparty}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {formatCurrency(
+                              escrow.amountMinor,
+                              escrow.currency
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Funded:{" "}
+                            {formatCurrency(
+                              escrow.fundedMinor,
+                              escrow.currency
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            Released:{" "}
+                            {formatCurrency(
+                              escrow.releasedMinor,
+                              escrow.currency
+                            )}
+                          </div>
+                          <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-2">
+                            <div
+                              className={`h-2 rounded-full transition-all duration-500 ${
+                                escrow.status === "RELEASED"
+                                  ? "bg-green-500"
+                                  : escrow.status === "FUNDED"
+                                  ? "bg-blue-500"
+                                  : escrow.status === "PARTIALLY_RELEASED"
+                                  ? "bg-purple-500"
+                                  : "bg-gray-400"
+                              }`}
+                              style={{ width: `${Math.max(progress, 5)}%` }}
+                            ></div>
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {Math.round(progress)}% complete
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(escrow.status)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900 dark:text-gray-100">
+                          Created: {formatDate(escrow.createdAt)}
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          Deadline: {formatDate(escrow.deadline)}
+                        </div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                          Updated: {formatDate(escrow.updatedAt)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center space-x-2">
+                          <motion.button
+                            className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            title="View Details"
+                            onClick={() => navigate(`/admin/escrows/${escrow.id}`)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </motion.button>
+                          <motion.button
+                            className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            title="Edit"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </motion.button>
+                          <motion.button
+                            className="text-purple-600 dark:text-purple-400 hover:text-purple-900 dark:hover:text-purple-300 p-1 rounded hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            title="View Documents"
+                          >
+                            <FileText className="w-4 h-4" />
+                          </motion.button>
+                          <motion.button
+                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            title="More Actions"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </motion.button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {filteredEscrows.length > 0 && (
+          <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Showing {startIndex + 1} to{" "}
+                {Math.min(startIndex + itemsPerPage, filteredEscrows.length)} of{" "}
+                {filteredEscrows.length} results
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                  disabled={currentPage === 1}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                >
+                  Previous
+                </button>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  className="px-3 py-1 text-sm border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                  disabled={currentPage === totalPages}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </div>
+  );
+};
+
+export default EscrowListPage;
