@@ -11,7 +11,6 @@ import {
   User,
   FileText,
   CheckCircle,
-  ExternalLink,
   CreditCard,
   Timer,
   Zap,
@@ -278,7 +277,6 @@ const ActiveDisputesPage: React.FC = () => {
     );
   };
 
-  // Pagination
   const totalPages = Math.ceil(filteredDisputes.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedDisputes = filteredDisputes.slice(
@@ -286,7 +284,6 @@ const ActiveDisputesPage: React.FC = () => {
     startIndex + itemsPerPage
   );
 
-  // Calculate summary stats
   const highPriorityCount = filteredDisputes.filter(
     (d) => d.priority === "HIGH"
   ).length;

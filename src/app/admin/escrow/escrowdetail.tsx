@@ -483,7 +483,6 @@ const EscrowDetailPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Parties Information */}
                 <div className="bg-gray-50/50 rounded-xl p-6 border border-gray-100/50">
                   <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
                     <Users className="w-5 h-5 mr-2" />
@@ -493,7 +492,7 @@ const EscrowDetailPage: React.FC = () => {
                     <div className="bg-white p-4 rounded-lg border">
                       <div className="flex items-center justify-between mb-2">
                         <h5 className="font-medium text-gray-800">
-                          Initiator (Buyer)
+                          Initiator
                         </h5>
                         <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
                           <span className="text-white text-sm font-bold">
@@ -511,7 +510,7 @@ const EscrowDetailPage: React.FC = () => {
                     <div className="bg-white p-4 rounded-lg border">
                       <div className="flex items-center justify-between mb-2">
                         <h5 className="font-medium text-gray-800">
-                          Counterparty (Seller)
+                          Counterparty
                         </h5>
                         <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center">
                           <span className="text-white text-sm font-bold">
@@ -529,7 +528,6 @@ const EscrowDetailPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Timeline */}
                 <div className="bg-gray-50/50 rounded-xl p-6 border border-gray-100/50">
                   <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
                     <Clock className="w-5 h-5 mr-2" />
@@ -733,7 +731,6 @@ const EscrowDetailPage: React.FC = () => {
                                   </div>
                                 )}
 
-                                {/* Progress Bar */}
                                 <div className="mt-4">
                                   <div className="flex justify-between text-sm text-gray-500 mb-2">
                                     <span>Progress</span>
