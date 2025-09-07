@@ -202,7 +202,7 @@ const EscrowDetailPage: React.FC = () => {
             </p>
             <motion.button
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-primary-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
-              onClick={() => navigate("/escrows")}
+              onClick={() => navigate(-1)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
