@@ -37,6 +37,7 @@ import {
 import { escrowService } from "../../../api/services/escrow";
 import MonthlyEscrowTransactionsChart from "../../../components/escrow/MonthlyEscrowTransactionsChart";
 import DisputeResolution from "../../../components/escrow/DisputeResolution";
+import VolumeTrends from "../../../components/escrow/VolumeTrends";
 
 const EscrowDashboard: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("monthly");
@@ -62,6 +63,7 @@ const EscrowDashboard: React.FC = () => {
    useEffect(() => {
       fetchTransactionTrends();
       fetchDisputeStats();
+      fetchEScrowVolumeTrends();
    }, []);
 
    const fetchTransactionTrends = async () => {
@@ -79,6 +81,15 @@ const EscrowDashboard: React.FC = () => {
         setDisputeData(disputes);
       } catch (error) {
         console.error("Error fetching dispute stats:", error);
+      }
+   }
+
+   const fetchEScrowVolumeTrends = async () => {
+      try {
+        const volumeTrends = await escrowService.getEscrowVolumeTrend();
+        setVolumeData(volumeTrends);
+      } catch (error) {
+        console.error("Error fetching escrow volume trends:", error);
       }
    }
 
@@ -644,27 +655,7 @@ const EscrowDashboard: React.FC = () => {
                 <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={volumeData}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis tickFormatter={(value) => formatCurrency(value)} />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
-                  />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="volume"
-                    stroke="#6366f1"
-                    strokeWidth={3}
-                    dot={{ fill: "#6366f1", strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <VolumeTrends volumeData={volumeData} formatCurrency={formatCurrency} />
             )}
           </div>
         </motion.div>
