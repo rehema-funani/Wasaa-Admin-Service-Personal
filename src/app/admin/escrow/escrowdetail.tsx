@@ -4,7 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Download,
-  Edit,
   Clock,
   FileText,
   Target,
@@ -22,25 +21,14 @@ import {
   Timer,
   ArrowUpRight,
   DollarSign,
-  CreditCard,
   Users,
   Database,
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
   Receipt,
   Building,
-  Shield,
-  Hash,
   Info,
   Eye,
   ExternalLink,
-  Copy,
-  Flag,
-  Scale,
-  BookOpen,
-  Layers,
-  PieChart
+  BookOpen
 } from 'lucide-react';
 import { escrowService } from '../../../api/services/escrow';
 
@@ -252,7 +240,6 @@ const EscrowDetailPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50">
-      {/* Header */}
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-white/70 border-b border-white/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -307,7 +294,6 @@ const EscrowDetailPage: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Hero Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <motion.div
             className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 p-6 text-white"
@@ -414,7 +400,6 @@ const EscrowDetailPage: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Tab Navigation */}
         <motion.div
           className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20"
           initial={{ opacity: 0, y: 20 }}
@@ -443,7 +428,6 @@ const EscrowDetailPage: React.FC = () => {
             </nav>
           </div>
 
-          {/* Tab Content */}
           <div className="p-6">
             {activeTab === "overview" && (
               <motion.div
@@ -452,7 +436,6 @@ const EscrowDetailPage: React.FC = () => {
                 transition={{ duration: 0.3 }}
                 className="grid grid-cols-1 lg:grid-cols-2 gap-6"
               >
-                {/* Basic Information */}
                 <div className="bg-gray-50/50 rounded-xl p-6 border border-gray-100/50">
                   <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
                     <Info className="w-5 h-5 mr-2" />
@@ -856,110 +839,205 @@ const EscrowDetailPage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                {escrow.ledgerAccount ? (
+                {escrow.ledgerAccounts && escrow.ledgerAccounts.length > 0 ? (
                   <div className="space-y-6">
-                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <div className="flex items-center justify-between mb-6">
+                      <h4 className="text-lg font-semibold text-gray-800 flex items-center">
                         <Database className="w-5 h-5 mr-2" />
-                        Ledger Account Details
+                        Ledger Accounts ({escrow.ledgerAccounts.length})
                       </h4>
+                    </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                          <div>
-                            <label className="text-sm text-gray-500">
-                              Account ID
-                            </label>
-                            <p className="font-mono text-sm text-gray-800 bg-white p-2 rounded border mt-1">
-                              {escrow.ledgerAccount.id}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-500">
-                              Owner Type
-                            </label>
-                            <p className="text-sm text-gray-800 mt-1">
-                              {escrow.ledgerAccount.ownerType}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-500">
-                              Account Kind
-                            </label>
-                            <p className="text-sm text-gray-800 mt-1">
-                              {escrow.ledgerAccount.kind}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-500">
-                              Currency
-                            </label>
-                            <p className="text-sm text-gray-800 mt-1">
-                              {escrow.ledgerAccount.currency}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="space-y-4">
-                          <div>
-                            <label className="text-sm text-gray-500">
-                              Status
-                            </label>
-                            <div className="mt-1">
+                    <div className="grid grid-cols-1 gap-6">
+                      {escrow.ledgerAccounts.map(
+                        (account: any, index: number) => (
+                          <motion.div
+                            key={account.id}
+                            className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                          >
+                            <div className="flex items-center justify-between mb-4">
+                              <h5 className="font-medium text-gray-800">
+                                Account #{index + 1}
+                              </h5>
                               <span
                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  escrow.ledgerAccount.status === "ACTIVE"
+                                  account.status === "ACTIVE"
                                     ? "bg-green-100 text-green-800"
                                     : "bg-gray-100 text-gray-800"
                                 }`}
                               >
-                                {escrow.ledgerAccount.status}
+                                {account.status}
                               </span>
                             </div>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-500">
-                              Current Balance
-                            </label>
-                            <p className="text-lg font-bold text-gray-800 mt-1">
-                              {formatCurrency(
-                                escrow.ledgerAccount.balance || 0,
-                                escrow.ledgerAccount.currency
-                              )}
-                            </p>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label className="text-sm text-gray-500">
-                                Total Debit
-                              </label>
-                              <p className="text-sm font-medium text-red-600 mt-1">
-                                {formatCurrency(
-                                  escrow.ledgerAccount.debit || 0,
-                                  escrow.ledgerAccount.currency
-                                )}
-                              </p>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="text-sm text-gray-500">
+                                    Account ID
+                                  </label>
+                                  <p className="font-mono text-sm text-gray-800 bg-white p-2 rounded border mt-1">
+                                    {account.id}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-gray-500">
+                                    Owner Type
+                                  </label>
+                                  <p className="text-sm text-gray-800 mt-1">
+                                    {account.ownerType || "N/A"}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-gray-500">
+                                    Owner ID
+                                  </label>
+                                  <p className="font-mono text-xs text-gray-600 mt-1">
+                                    {account.ownerId?.slice(0, 8)}...
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-gray-500">
+                                    Account Kind
+                                  </label>
+                                  <p className="text-sm text-gray-800 mt-1">
+                                    {account.kind || "N/A"}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-gray-500">
+                                    Currency
+                                  </label>
+                                  <p className="text-sm text-gray-800 mt-1">
+                                    {account.currency || "N/A"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="text-sm text-gray-500">
+                                    Current Balance
+                                  </label>
+                                  <p className="text-lg font-bold text-gray-800 mt-1">
+                                    {formatCurrency(
+                                      account.balance || 0,
+                                      account.currency || "KES"
+                                    )}
+                                  </p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="text-sm text-gray-500">
+                                      Total Debit
+                                    </label>
+                                    <p className="text-sm font-medium text-red-600 mt-1">
+                                      {formatCurrency(
+                                        account.debit || 0,
+                                        account.currency || "KES"
+                                      )}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <label className="text-sm text-gray-500">
+                                      Total Credit
+                                    </label>
+                                    <p className="text-sm font-medium text-green-600 mt-1">
+                                      {formatCurrency(
+                                        account.credit || 0,
+                                        account.currency || "KES"
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-gray-500">
+                                    Created
+                                  </label>
+                                  <p className="text-sm text-gray-800 mt-1">
+                                    {formatDate(account.createdAt)}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="text-sm text-gray-500">
+                                    Escrow Agreement
+                                  </label>
+                                  <p className="font-mono text-xs text-gray-600 mt-1">
+                                    {account.escrowAgreementId?.slice(0, 12)}...
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                            <div>
-                              <label className="text-sm text-gray-500">
-                                Total Credit
-                              </label>
-                              <p className="text-sm font-medium text-green-600 mt-1">
-                                {formatCurrency(
-                                  escrow.ledgerAccount.credit || 0,
-                                  escrow.ledgerAccount.currency
-                                )}
-                              </p>
+
+                            {/* Account Summary */}
+                            <div className="mt-6 pt-4 border-t border-blue-200">
+                              <div className="flex items-center justify-between text-sm">
+                                <span className="text-gray-600">
+                                  Net Position:
+                                </span>
+                                <span
+                                  className={`font-medium ${
+                                    (account.credit || 0) -
+                                      (account.debit || 0) >=
+                                    0
+                                      ? "text-green-600"
+                                      : "text-red-600"
+                                  }`}
+                                >
+                                  {formatCurrency(
+                                    (account.credit || 0) -
+                                      (account.debit || 0),
+                                    account.currency || "KES"
+                                  )}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-500">
-                              Created
-                            </label>
-                            <p className="text-sm text-gray-800 mt-1">
-                              {formatDate(escrow.ledgerAccount.createdAt)}
-                            </p>
-                          </div>
+                          </motion.div>
+                        )
+                      )}
+                    </div>
+
+                    {/* Summary Card */}
+                    <div className="bg-white/60 backdrop-blur-xl rounded-xl p-6 border border-white/20">
+                      <h5 className="font-medium text-gray-800 mb-4">
+                        Accounts Summary
+                      </h5>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="text-center">
+                          <p className="text-2xl font-bold text-blue-600">
+                            {escrow.ledgerAccounts.length}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Total Accounts
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-2xl font-bold text-green-600">
+                            {
+                              escrow.ledgerAccounts.filter(
+                                (acc: any) => acc.status === "ACTIVE"
+                              ).length
+                            }
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Active Accounts
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-2xl font-bold text-gray-800">
+                            {formatCurrency(
+                              escrow.ledgerAccounts.reduce(
+                                (sum: number, acc: any) =>
+                                  sum + (acc.balance || 0),
+                                0
+                              ),
+                              escrow.currency || "KES"
+                            )}
+                          </p>
+                          <p className="text-sm text-gray-500">Total Balance</p>
                         </div>
                       </div>
                     </div>
@@ -968,7 +1046,7 @@ const EscrowDetailPage: React.FC = () => {
                   <div className="text-center py-12">
                     <Database className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h5 className="text-lg font-medium text-gray-900 mb-2">
-                      No Ledger Account
+                      No Ledger Accounts
                     </h5>
                     <p className="text-gray-500">
                       No ledger account information available for this escrow
@@ -994,7 +1072,6 @@ const EscrowDetailPage: React.FC = () => {
                         <h5 className="font-medium text-gray-800 mb-2">
                           Party {index + 1}
                         </h5>
-                        {/* Add party details here when available */}
                         <p className="text-gray-600">
                           Party information will be displayed here
                         </p>
