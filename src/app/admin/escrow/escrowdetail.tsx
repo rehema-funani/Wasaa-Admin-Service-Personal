@@ -20,14 +20,34 @@ import {
   Unlock,
   Plus,
   Timer,
-  ArrowUpRight
+  ArrowUpRight,
+  DollarSign,
+  CreditCard,
+  Users,
+  Database,
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
+  Receipt,
+  Building,
+  Shield,
+  Hash,
+  Info,
+  Eye,
+  ExternalLink,
+  Copy,
+  Flag,
+  Scale,
+  BookOpen,
+  Layers,
+  PieChart
 } from 'lucide-react';
 import { escrowService } from '../../../api/services/escrow';
 
 const EscrowDetailPage: React.FC = () => {
   const [escrow, setEscrow] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [ledgerData, setLedgerData] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("overview");
   const [showActionModal, setShowActionModal] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,7 +55,6 @@ const EscrowDetailPage: React.FC = () => {
   useEffect(() => {
     if (id) {
       fetchEscrowDetails();
-      fetchLedgerData();
     }
   }, [id]);
 
@@ -49,38 +68,6 @@ const EscrowDetailPage: React.FC = () => {
       setEscrow(null);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const fetchLedgerData = async () => {
-    try {
-      const mockLedger = [
-        {
-          id: "1",
-          type: "FUNDING",
-          amount: "300",
-          currency: "KES",
-          description: "Initial funding",
-          timestamp: "2025-09-07T13:13:42.015Z",
-          status: "COMPLETED",
-          reference: "PAY-001",
-          party: "Alvin Otieno",
-        },
-        {
-          id: "2",
-          type: "MILESTONE_CREATED",
-          amount: "300000",
-          currency: "KES",
-          description: "Milestone created",
-          timestamp: "2025-09-07T13:13:42.045Z",
-          status: "PENDING",
-          reference: "MS-001",
-          party: "System",
-        },
-      ];
-      setLedgerData(mockLedger);
-    } catch (error) {
-      console.error("Error fetching ledger data:", error);
     }
   };
 
@@ -102,9 +89,9 @@ const EscrowDetailPage: React.FC = () => {
         dot: "bg-blue-400",
       },
       PARTIALLY_RELEASED: {
-        color: "bg-primary-100/80 text-primary-700 border-primary-200",
+        color: "bg-purple-100/80 text-purple-700 border-purple-200",
         icon: ArrowUpRight,
-        dot: "bg-primary-400",
+        dot: "bg-purple-400",
       },
       RELEASED: {
         color: "bg-emerald-100/80 text-emerald-700 border-emerald-200",
@@ -130,20 +117,52 @@ const EscrowDetailPage: React.FC = () => {
 
     const config =
       statusConfig[status as keyof typeof statusConfig] || statusConfig.DRAFT;
-    const IconComponent = config.icon;
 
     return (
       <div
         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${config.color} backdrop-blur-sm`}
       >
-        <div className={`w-2 h-2 rounded-full ${config.dot}`} />
+        <div className={`w-2 h-2 rounded-full ${config.dot} animate-pulse`} />
         <span className="text-sm font-medium">{status.replace("_", " ")}</span>
       </div>
     );
   };
 
-  const formatCurrency = (amountMinor: string, currency: string) => {
-    const amount = parseInt(amountMinor) / 100;
+  const getMilestoneStatusBadge = (status: string) => {
+    const statusConfig = {
+      PENDING: {
+        color: "bg-yellow-100/80 text-yellow-700 border-yellow-200",
+        dot: "bg-yellow-400",
+      },
+      IN_PROGRESS: {
+        color: "bg-blue-100/80 text-blue-700 border-blue-200",
+        dot: "bg-blue-400",
+      },
+      COMPLETED: {
+        color: "bg-emerald-100/80 text-emerald-700 border-emerald-200",
+        dot: "bg-emerald-400",
+      },
+      DISPUTED: {
+        color: "bg-red-100/80 text-red-700 border-red-200",
+        dot: "bg-red-400",
+      },
+    };
+
+    const config =
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.PENDING;
+
+    return (
+      <div
+        className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full border ${config.color} backdrop-blur-sm`}
+      >
+        <div className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />
+        <span className="text-xs font-medium">{status.replace("_", " ")}</span>
+      </div>
+    );
+  };
+
+  const formatCurrency = (amountMinor: string | number, currency: string) => {
+    const amount = parseInt(amountMinor.toString()) / 100;
     return new Intl.NumberFormat("en-KE", {
       style: "currency",
       currency: currency,
@@ -153,6 +172,7 @@ const EscrowDetailPage: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return "Not set";
     return new Date(dateString).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
@@ -164,11 +184,26 @@ const EscrowDetailPage: React.FC = () => {
 
   const calculateProgress = () => {
     if (!escrow) return 0;
-    const total = parseInt(escrow.amountMinor);
-    const released = parseInt(escrow.releasedMinor);
-    const refunded = parseInt(escrow.refundedMinor);
+    const total = parseInt(escrow.amountMinor || "0");
+    const released = parseInt(escrow.releasedMinor || "0");
+    const refunded = parseInt(escrow.refundedMinor || "0");
     return total > 0 ? ((released + refunded) / total) * 100 : 0;
   };
+
+  const calculateMilestoneProgress = (milestone: any) => {
+    const total = parseInt(milestone.amountMinor || "0");
+    const released = parseInt(milestone.releasedMinor || "0");
+    return total > 0 ? (released / total) * 100 : 0;
+  };
+
+  const tabs = [
+    { id: "overview", label: "Overview", icon: Eye },
+    { id: "milestones", label: "Milestones", icon: Target },
+    { id: "ledger", label: "Ledger Account", icon: BookOpen },
+    { id: "parties", label: "Parties", icon: Users },
+    { id: "financial", label: "Financial", icon: DollarSign },
+    { id: "activity", label: "Activity", icon: Activity },
+  ];
 
   if (isLoading) {
     return (
@@ -177,7 +212,7 @@ const EscrowDetailPage: React.FC = () => {
           <div className="flex items-center justify-center h-64">
             <div className="relative">
               <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-              <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-primary-400 rounded-full animate-spin animation-delay-75" />
+              <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-purple-400 rounded-full animate-spin animation-delay-75" />
             </div>
           </div>
         </div>
@@ -201,7 +236,7 @@ const EscrowDetailPage: React.FC = () => {
               removed.
             </p>
             <motion.button
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-primary-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
               onClick={() => navigate(-1)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -236,7 +271,7 @@ const EscrowDetailPage: React.FC = () => {
                 </h1>
                 <div className="flex items-center gap-3 mt-1">
                   <span className="text-sm text-gray-500 font-mono">
-                    #{escrow.id.slice(0, 8)}
+                    #{escrow.id?.slice(0, 8) || "N/A"}
                   </span>
                   {getStatusBadge(escrow.status)}
                 </div>
@@ -259,7 +294,7 @@ const EscrowDetailPage: React.FC = () => {
                 <Download className="w-4 h-4 text-gray-600" />
               </motion.button>
               <motion.button
-                className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-primary-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
+                className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
                 onClick={() => setShowActionModal(true)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -275,7 +310,7 @@ const EscrowDetailPage: React.FC = () => {
         {/* Hero Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <motion.div
-            className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-primary-700 p-6 text-white"
+            className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 p-6 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -288,7 +323,10 @@ const EscrowDetailPage: React.FC = () => {
                     Total Value
                   </p>
                   <p className="text-3xl font-bold">
-                    {formatCurrency(escrow.amountMinor, escrow.currency)}
+                    {formatCurrency(
+                      escrow.amountMinor || "0",
+                      escrow.currency || "KES"
+                    )}
                   </p>
                 </div>
                 <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
@@ -323,7 +361,10 @@ const EscrowDetailPage: React.FC = () => {
               <div>
                 <p className="text-gray-600 text-sm font-medium">Funded</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">
-                  {formatCurrency(escrow.fundedMinor, escrow.currency)}
+                  {formatCurrency(
+                    escrow.fundedMinor || "0",
+                    escrow.currency || "KES"
+                  )}
                 </p>
                 <div className="flex items-center gap-1 mt-2">
                   <div className="w-2 h-2 bg-emerald-400 rounded-full" />
@@ -348,16 +389,21 @@ const EscrowDetailPage: React.FC = () => {
               <div>
                 <p className="text-gray-600 text-sm font-medium">Days Left</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">
-                  {Math.ceil(
-                    (new Date(escrow.deadline).getTime() -
-                      new Date().getTime()) /
-                      (1000 * 60 * 60 * 24)
-                  )}
+                  {escrow.deadline
+                    ? Math.max(
+                        0,
+                        Math.ceil(
+                          (new Date(escrow.deadline).getTime() -
+                            new Date().getTime()) /
+                            (1000 * 60 * 60 * 24)
+                        )
+                      )
+                    : "No deadline"}
                 </p>
                 <div className="flex items-center gap-1 mt-2">
                   <div className="w-2 h-2 bg-orange-400 rounded-full" />
                   <span className="text-sm text-orange-600 font-medium">
-                    Until deadline
+                    {escrow.deadline ? "Until deadline" : "Open-ended"}
                   </span>
                 </div>
               </div>
@@ -368,300 +414,775 @@ const EscrowDetailPage: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Main Info */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Overview Card */}
-            <motion.div
-              className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Overview</h3>
-                <motion.button
-                  className="p-2 hover:bg-white/50 rounded-xl transition-colors"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Edit className="w-4 h-4 text-gray-600" />
-                </motion.button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm text-gray-500 font-medium">
-                      Purpose
-                    </label>
-                    <p className="text-gray-900 font-medium mt-1">
-                      {escrow.purpose}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-500 font-medium">
-                      Created
-                    </label>
-                    <p className="text-gray-900 mt-1">
-                      {formatDate(escrow.createdAt)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-500 font-medium">
-                      Deadline
-                    </label>
-                    <p className="text-gray-900 mt-1">
-                      {formatDate(escrow.deadline)}
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm text-gray-500 font-medium">
-                      Initiator
-                    </label>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-primary-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-bold">
-                          {escrow.initiator.charAt(0)}
-                        </span>
-                      </div>
-                      <span className="text-gray-900 font-medium">
-                        {escrow.initiator}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-500 font-medium">
-                      Counterparty
-                    </label>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-bold">
-                          {escrow.counterparty.charAt(0)}
-                        </span>
-                      </div>
-                      <span className="text-gray-900 font-medium">
-                        {escrow.counterparty}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Milestones */}
-            {escrow.has_milestone &&
-              escrow.milestones &&
-              escrow.milestones.length > 0 && (
-                <motion.div
-                  className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                >
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                      <Target className="w-5 h-5" />
-                      Milestones ({escrow.milestones.length})
-                    </h3>
-                    <motion.button
-                      className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl text-sm font-medium transition-colors"
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <Plus className="w-4 h-4" />
-                    </motion.button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {escrow.milestones.map((milestone: any, index: number) => (
-                      <motion.div
-                        key={milestone.idx}
-                        className="flex items-center gap-4 p-4 bg-white/40 rounded-xl border border-white/30"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                      >
-                        <div className="flex-shrink-0">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-primary-600 rounded-xl flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">
-                              {index + 1}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-medium text-gray-900">
-                              {milestone.name || `Milestone ${index + 1}`}
-                            </h4>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                milestone.status === "COMPLETED"
-                                  ? "bg-emerald-100 text-emerald-700"
-                                  : milestone.status === "IN_PROGRESS"
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-amber-100 text-amber-700"
-                              }`}
-                            >
-                              {milestone.status}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {formatCurrency(
-                              milestone.amountMinor,
-                              escrow.currency
-                            )}
-                          </p>
-                          <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                            <div
-                              className={`h-1.5 rounded-full transition-all duration-500 ${
-                                milestone.status === "COMPLETED"
-                                  ? "bg-emerald-500"
-                                  : milestone.status === "IN_PROGRESS"
-                                  ? "bg-blue-500"
-                                  : "bg-gray-300"
-                              }`}
-                              style={{
-                                width:
-                                  milestone.status === "COMPLETED"
-                                    ? "100%"
-                                    : milestone.status === "IN_PROGRESS"
-                                    ? "50%"
-                                    : "10%",
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+        {/* Tab Navigation */}
+        <motion.div
+          className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <div className="border-b border-gray-200/50">
+            <nav className="flex space-x-8 px-6" aria-label="Tabs">
+              {tabs.map((tab) => {
+                const IconComponent = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`${
+                      activeTab === tab.id
+                        ? "border-blue-500 text-blue-600"
+                        : "border-transparent text-gray-500 hover:text-gray-700"
+                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center transition-all duration-200`}
+                  >
+                    <IconComponent className="w-4 h-4 mr-2" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </nav>
           </div>
 
-          {/* Right Column - Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <motion.div
-              className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Quick Actions
-              </h3>
-              <div className="space-y-3">
-                <motion.button
-                  className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Unlock className="w-4 h-4" />
-                  Release Funds
-                </motion.button>
-                <motion.button
-                  className="w-full flex items-center gap-3 p-3 bg-white/50 hover:bg-white/70 text-gray-700 rounded-xl font-medium border border-white/30 transition-all duration-200"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  Send Message
-                </motion.button>
-                <motion.button
-                  className="w-full flex items-center gap-3 p-3 bg-white/50 hover:bg-white/70 text-gray-700 rounded-xl font-medium border border-white/30 transition-all duration-200"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <FileText className="w-4 h-4" />
-                  View Documents
-                </motion.button>
-              </div>
-            </motion.div>
-
-            <motion.div
-              className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Financial Breakdown
-              </h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Total Amount</span>
-                  <span className="font-bold text-gray-900">
-                    {formatCurrency(escrow.amountMinor, escrow.currency)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Funded</span>
-                  <span className="font-medium text-blue-600">
-                    {formatCurrency(escrow.fundedMinor, escrow.currency)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Released</span>
-                  <span className="font-medium text-emerald-600">
-                    {formatCurrency(escrow.releasedMinor, escrow.currency)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Refunded</span>
-                  <span className="font-medium text-orange-600">
-                    {formatCurrency(escrow.refundedMinor, escrow.currency)}
-                  </span>
-                </div>
-                <div className="border-t border-gray-200 pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-700">Remaining</span>
-                    <span className="font-bold text-gray-900">
-                      {formatCurrency(
-                        (
-                          parseInt(escrow.amountMinor) -
-                          parseInt(escrow.releasedMinor) -
-                          parseInt(escrow.refundedMinor)
-                        ).toString(),
-                        escrow.currency
-                      )}
-                    </span>
+          {/* Tab Content */}
+          <div className="p-6">
+            {activeTab === "overview" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+              >
+                {/* Basic Information */}
+                <div className="bg-gray-50/50 rounded-xl p-6 border border-gray-100/50">
+                  <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                    <Info className="w-5 h-5 mr-2" />
+                    Basic Information
+                  </h4>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm text-gray-500">
+                          Escrow ID
+                        </label>
+                        <p className="font-mono text-sm text-gray-800 bg-white p-2 rounded border mt-1">
+                          {escrow.id || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm text-gray-500">Status</label>
+                        <div className="mt-2">
+                          {getStatusBadge(escrow.status)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm text-gray-500">Purpose</label>
+                        <p className="text-sm text-gray-800 mt-1">
+                          {escrow.purpose || "Not specified"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm text-gray-500">
+                          Payment Method
+                        </label>
+                        <p className="text-sm text-gray-800 mt-1">
+                          Method ID: {escrow.paymentMethodId || "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-sm text-gray-500">Tenant ID</label>
+                      <p className="font-mono text-xs text-gray-600 mt-1">
+                        {escrow.tenantId || "N/A"}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
 
-            {/* Activity Feed */}
-            <motion.div
-              className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.7 }}
-            >
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Recent Activity
-              </h3>
-              <div className="space-y-3">
-                {ledgerData.slice(0, 3).map((entry, index) => (
-                  <div key={entry.id} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
-                      <Activity className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {entry.type.replace("_", " ")}
+                {/* Parties Information */}
+                <div className="bg-gray-50/50 rounded-xl p-6 border border-gray-100/50">
+                  <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                    <Users className="w-5 h-5 mr-2" />
+                    Parties
+                  </h4>
+                  <div className="space-y-4">
+                    <div className="bg-white p-4 rounded-lg border">
+                      <div className="flex items-center justify-between mb-2">
+                        <h5 className="font-medium text-gray-800">
+                          Initiator (Buyer)
+                        </h5>
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">
+                            {escrow.initiator?.charAt(0) || "U"}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        {escrow.initiator || "Not specified"}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {formatDate(entry.timestamp)}
+                        ID: {escrow.buyerId || "N/A"}
+                      </p>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border">
+                      <div className="flex items-center justify-between mb-2">
+                        <h5 className="font-medium text-gray-800">
+                          Counterparty (Seller)
+                        </h5>
+                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">
+                            {escrow.counterparty?.charAt(0) || "U"}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        {escrow.counterparty || "Not specified"}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        ID: {escrow.sellerId || "N/A"}
                       </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </motion.div>
+                </div>
+
+                {/* Timeline */}
+                <div className="bg-gray-50/50 rounded-xl p-6 border border-gray-100/50">
+                  <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                    <Clock className="w-5 h-5 mr-2" />
+                    Timeline
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Created</span>
+                      <span className="text-sm text-gray-800">
+                        {formatDate(escrow.createdAt)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">
+                        Last Updated
+                      </span>
+                      <span className="text-sm text-gray-800">
+                        {formatDate(escrow.updatedAt)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Deadline</span>
+                      <span className="text-sm text-gray-800">
+                        {formatDate(escrow.deadline)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Financial Summary */}
+                <div className="bg-gray-50/50 rounded-xl p-6 border border-gray-100/50">
+                  <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                    <DollarSign className="w-5 h-5 mr-2" />
+                    Financial Summary
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">
+                        Total Amount
+                      </span>
+                      <span className="font-semibold text-gray-800">
+                        {formatCurrency(
+                          escrow.amountMinor || "0",
+                          escrow.currency || "KES"
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Funded</span>
+                      <span className="font-medium text-blue-600">
+                        {formatCurrency(
+                          escrow.fundedMinor || "0",
+                          escrow.currency || "KES"
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Released</span>
+                      <span className="font-medium text-emerald-600">
+                        {formatCurrency(
+                          escrow.releasedMinor || "0",
+                          escrow.currency || "KES"
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-500">Refunded</span>
+                      <span className="font-medium text-orange-600">
+                        {formatCurrency(
+                          escrow.refundedMinor || "0",
+                          escrow.currency || "KES"
+                        )}
+                      </span>
+                    </div>
+                    <div className="border-t pt-3">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium text-gray-700">
+                          Remaining
+                        </span>
+                        <span className="font-bold text-gray-800">
+                          {formatCurrency(
+                            (
+                              parseInt(escrow.amountMinor || "0") -
+                              parseInt(escrow.releasedMinor || "0") -
+                              parseInt(escrow.refundedMinor || "0")
+                            ).toString(),
+                            escrow.currency || "KES"
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === "milestones" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h4 className="text-lg font-semibold text-gray-800">
+                    Milestones ({escrow.milestones?.length || 0})
+                  </h4>
+                  {escrow.has_milestone && (
+                    <motion.button
+                      className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Milestone
+                    </motion.button>
+                  )}
+                </div>
+
+                {escrow.has_milestone ? (
+                  escrow.milestones && escrow.milestones.length > 0 ? (
+                    <div className="space-y-4">
+                      {escrow.milestones.map(
+                        (milestone: any, index: number) => (
+                          <motion.div
+                            key={milestone.idx}
+                            className="bg-white/40 rounded-xl p-6 border border-white/30"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-3 mb-3">
+                                  <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                                    <span className="text-sm font-medium text-blue-600">
+                                      {milestone.order || index + 1}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <h5 className="font-medium text-gray-800">
+                                      {milestone.name ||
+                                        `Milestone ${index + 1}`}
+                                    </h5>
+                                    <p className="text-xs text-gray-500">
+                                      ID: {milestone.idx?.slice(0, 8) || "N/A"}
+                                      ...
+                                    </p>
+                                  </div>
+                                  {getMilestoneStatusBadge(milestone.status)}
+                                </div>
+
+                                {milestone.description && (
+                                  <p className="text-sm text-gray-600 mb-3">
+                                    {milestone.description}
+                                  </p>
+                                )}
+
+                                <div className="grid grid-cols-2 gap-4 mb-3">
+                                  <div>
+                                    <label className="text-xs text-gray-500">
+                                      Amount
+                                    </label>
+                                    <p className="font-medium text-gray-800">
+                                      {formatCurrency(
+                                        milestone.amountMinor || "0",
+                                        escrow.currency || "KES"
+                                      )}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <label className="text-xs text-gray-500">
+                                      Released
+                                    </label>
+                                    <p className="font-medium text-green-600">
+                                      {formatCurrency(
+                                        milestone.releasedMinor || "0",
+                                        escrow.currency || "KES"
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {milestone.deadline && (
+                                  <div className="mb-3">
+                                    <label className="text-xs text-gray-500">
+                                      Deadline
+                                    </label>
+                                    <p className="text-sm text-gray-700">
+                                      {formatDate(milestone.deadline)}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {milestone.completedDate && (
+                                  <div className="mb-3">
+                                    <label className="text-xs text-gray-500">
+                                      Completed
+                                    </label>
+                                    <p className="text-sm text-gray-700">
+                                      {formatDate(milestone.completedDate)}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {/* Progress Bar */}
+                                <div className="mt-4">
+                                  <div className="flex justify-between text-sm text-gray-500 mb-2">
+                                    <span>Progress</span>
+                                    <span>
+                                      {Math.round(
+                                        calculateMilestoneProgress(milestone)
+                                      )}
+                                      %
+                                    </span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-3">
+                                    <div
+                                      className={`h-3 rounded-full transition-all duration-500 ${
+                                        milestone.status === "COMPLETED"
+                                          ? "bg-green-500"
+                                          : milestone.status === "IN_PROGRESS"
+                                          ? "bg-blue-500"
+                                          : "bg-gray-400"
+                                      }`}
+                                      style={{
+                                        width:
+                                          milestone.status === "COMPLETED"
+                                            ? "100%"
+                                            : `${Math.max(
+                                                calculateMilestoneProgress(
+                                                  milestone
+                                                ),
+                                                5
+                                              )}%`,
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+
+                                <p className="text-xs text-gray-500 mt-2">
+                                  Created: {formatDate(milestone.createdAt)}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center space-x-2 ml-4">
+                                <motion.button
+                                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  title="View Details"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </motion.button>
+                                {milestone.status !== "COMPLETED" && (
+                                  <motion.button
+                                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    title="Release Funds"
+                                  >
+                                    <Unlock className="w-4 h-4" />
+                                  </motion.button>
+                                )}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 bg-white/40 rounded-xl border-2 border-dashed border-gray-300">
+                      <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <h5 className="text-lg font-medium text-gray-900 mb-2">
+                        No milestones created yet
+                      </h5>
+                      <p className="text-gray-500 mb-4">
+                        Create milestones to break down the escrow into
+                        manageable releases
+                      </p>
+                      <motion.button
+                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create First Milestone
+                      </motion.button>
+                    </div>
+                  )
+                ) : (
+                  <div className="text-center py-12 bg-gray-50/50 rounded-xl">
+                    <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h5 className="text-lg font-medium text-gray-900 mb-2">
+                      This escrow doesn't use milestones
+                    </h5>
+                    <p className="text-gray-500">
+                      This is a simple escrow without milestone-based releases
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === "ledger" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {escrow.ledgerAccount ? (
+                  <div className="space-y-6">
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-100">
+                      <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <Database className="w-5 h-5 mr-2" />
+                        Ledger Account Details
+                      </h4>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm text-gray-500">
+                              Account ID
+                            </label>
+                            <p className="font-mono text-sm text-gray-800 bg-white p-2 rounded border mt-1">
+                              {escrow.ledgerAccount.id}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="text-sm text-gray-500">
+                              Owner Type
+                            </label>
+                            <p className="text-sm text-gray-800 mt-1">
+                              {escrow.ledgerAccount.ownerType}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="text-sm text-gray-500">
+                              Account Kind
+                            </label>
+                            <p className="text-sm text-gray-800 mt-1">
+                              {escrow.ledgerAccount.kind}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="text-sm text-gray-500">
+                              Currency
+                            </label>
+                            <p className="text-sm text-gray-800 mt-1">
+                              {escrow.ledgerAccount.currency}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm text-gray-500">
+                              Status
+                            </label>
+                            <div className="mt-1">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  escrow.ledgerAccount.status === "ACTIVE"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {escrow.ledgerAccount.status}
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-sm text-gray-500">
+                              Current Balance
+                            </label>
+                            <p className="text-lg font-bold text-gray-800 mt-1">
+                              {formatCurrency(
+                                escrow.ledgerAccount.balance || 0,
+                                escrow.ledgerAccount.currency
+                              )}
+                            </p>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="text-sm text-gray-500">
+                                Total Debit
+                              </label>
+                              <p className="text-sm font-medium text-red-600 mt-1">
+                                {formatCurrency(
+                                  escrow.ledgerAccount.debit || 0,
+                                  escrow.ledgerAccount.currency
+                                )}
+                              </p>
+                            </div>
+                            <div>
+                              <label className="text-sm text-gray-500">
+                                Total Credit
+                              </label>
+                              <p className="text-sm font-medium text-green-600 mt-1">
+                                {formatCurrency(
+                                  escrow.ledgerAccount.credit || 0,
+                                  escrow.ledgerAccount.currency
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-sm text-gray-500">
+                              Created
+                            </label>
+                            <p className="text-sm text-gray-800 mt-1">
+                              {formatDate(escrow.ledgerAccount.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Database className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h5 className="text-lg font-medium text-gray-900 mb-2">
+                      No Ledger Account
+                    </h5>
+                    <p className="text-gray-500">
+                      No ledger account information available for this escrow
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === "parties" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {escrow.parties && escrow.parties.length > 0 ? (
+                  <div className="space-y-4">
+                    {escrow.parties.map((party: any, index: number) => (
+                      <div
+                        key={index}
+                        className="bg-white/40 rounded-xl p-6 border border-white/30"
+                      >
+                        <h5 className="font-medium text-gray-800 mb-2">
+                          Party {index + 1}
+                        </h5>
+                        {/* Add party details here when available */}
+                        <p className="text-gray-600">
+                          Party information will be displayed here
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h5 className="text-lg font-medium text-gray-900 mb-2">
+                      No Additional Parties
+                    </h5>
+                    <p className="text-gray-500">
+                      Only the initiator and counterparty are involved in this
+                      escrow
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === "financial" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6"
+              >
+                {/* Holds */}
+                <div className="bg-amber-50 rounded-xl p-6 border border-amber-100">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <Lock className="w-5 h-5 mr-2" />
+                    Holds ({escrow.holds?.length || 0})
+                  </h4>
+                  {escrow.holds && escrow.holds.length > 0 ? (
+                    <div className="space-y-3">
+                      {escrow.holds.map((hold: any, index: number) => (
+                        <div
+                          key={index}
+                          className="bg-white p-4 rounded-lg border"
+                        >
+                          <p className="text-gray-800">Hold {index + 1}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-600">No holds on this escrow</p>
+                  )}
+                </div>
+
+                {/* Fees */}
+                <div className="bg-blue-50 rounded-xl p-6 border border-blue-100">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <Receipt className="w-5 h-5 mr-2" />
+                    Fees ({escrow.fees?.length || 0})
+                  </h4>
+                  {escrow.fees && escrow.fees.length > 0 ? (
+                    <div className="space-y-3">
+                      {escrow.fees.map((fee: any, index: number) => (
+                        <div
+                          key={index}
+                          className="bg-white p-4 rounded-lg border"
+                        >
+                          <p className="text-gray-800">Fee {index + 1}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-600">
+                      No fees applied to this escrow
+                    </p>
+                  )}
+                </div>
+
+                {/* Tax Items */}
+                <div className="bg-green-50 rounded-xl p-6 border border-green-100">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <Building className="w-5 h-5 mr-2" />
+                    Tax Items ({escrow.taxItems?.length || 0})
+                  </h4>
+                  {escrow.taxItems && escrow.taxItems.length > 0 ? (
+                    <div className="space-y-3">
+                      {escrow.taxItems.map((tax: any, index: number) => (
+                        <div
+                          key={index}
+                          className="bg-white p-4 rounded-lg border"
+                        >
+                          <p className="text-gray-800">Tax Item {index + 1}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-600">
+                      No tax items for this escrow
+                    </p>
+                  )}
+                </div>
+
+                {/* Payouts */}
+                <div className="bg-purple-50 rounded-xl p-6 border border-purple-100">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <ArrowUpRight className="w-5 h-5 mr-2" />
+                    Payouts ({escrow.payouts?.length || 0})
+                  </h4>
+                  {escrow.payouts && escrow.payouts.length > 0 ? (
+                    <div className="space-y-3">
+                      {escrow.payouts.map((payout: any, index: number) => (
+                        <div
+                          key={index}
+                          className="bg-white p-4 rounded-lg border"
+                        >
+                          <p className="text-gray-800">Payout {index + 1}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-600">No payouts processed yet</p>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === "activity" && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {escrow.disputes && escrow.disputes.length > 0 ? (
+                  <div className="space-y-6">
+                    <div className="bg-red-50 rounded-xl p-6 border border-red-100">
+                      <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <AlertTriangle className="w-5 h-5 mr-2" />
+                        Disputes ({escrow.disputes.length})
+                      </h4>
+                      <div className="space-y-3">
+                        {escrow.disputes.map((dispute: any, index: number) => (
+                          <motion.div
+                            key={dispute.id}
+                            className="bg-white p-4 rounded-lg border hover:shadow-md transition-shadow cursor-pointer"
+                            whileHover={{ scale: 1.01 }}
+                            onClick={() => navigate(`/disputes/${dispute.id}`)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="font-medium text-gray-800">
+                                  {dispute.reason?.slice(0, 60)}...
+                                </p>
+                                <p className="text-sm text-gray-500 mt-1">
+                                  {formatDate(dispute.createdAt)} • Priority:{" "}
+                                  {dispute.priority}
+                                </p>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <span
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    dispute.status === "RESOLVED"
+                                      ? "bg-green-100 text-green-700"
+                                      : dispute.status === "ESCALATED"
+                                      ? "bg-red-100 text-red-700"
+                                      : "bg-yellow-100 text-yellow-700"
+                                  }`}
+                                >
+                                  {dispute.status}
+                                </span>
+                                <ExternalLink className="w-4 h-4 text-gray-400" />
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h5 className="text-lg font-medium text-gray-900 mb-2">
+                      No Activity Yet
+                    </h5>
+                    <p className="text-gray-500">
+                      Activity history will appear here as the escrow progresses
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Action Modal */}
@@ -716,7 +1237,7 @@ const EscrowDetailPage: React.FC = () => {
                 <span className="text-sm font-medium">Dispute</span>
               </motion.button>
               <motion.button
-                className="flex flex-col items-center gap-2 p-4 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-xl transition-colors"
+                className="flex flex-col items-center gap-2 p-4 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl transition-colors"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
