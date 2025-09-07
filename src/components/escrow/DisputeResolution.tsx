@@ -17,10 +17,6 @@ const DisputeResolution = ({ disputeData, COLORS }) => {
         }))
       : [];
 
-  if (!mappedData.length) {
-    return <div className="text-gray-500">No dispute data available</div>;
-  }
-
   return (
     <ResponsiveContainer width="100%" height="100%">
       <RechartsPieChart>
