@@ -16,6 +16,7 @@ import {
   Users,
   Globe,
 } from "lucide-react";
+import { escrowService } from "../../../api/services/escrow";
 
 const AllTransactionsPage: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -28,9 +29,23 @@ const AllTransactionsPage: React.FC = () => {
   const [sortDirection, setSortDirection] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
+  const [data, setData] = useState<any[]>([]);
   const [selectedTransactions, setSelectedTransactions] = useState<string[]>(
     []
   );
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await escrowService.getEscrowTransactions();
+        setData(response);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    }
+
+    fetchTransactions();
+  })
 
   const mockTransactions = [
     {
