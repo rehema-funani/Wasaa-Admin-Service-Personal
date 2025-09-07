@@ -14,7 +14,6 @@ import {
   Activity,
   RefreshCw,
   MoreVertical,
-  Plus,
   PlayCircle,
   PauseCircle,
 } from "lucide-react";
@@ -28,25 +27,20 @@ const MilestonesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("desc");
-  const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // Fetch milestones on component mount
   useEffect(() => {
     fetchMilestones();
   }, []);
 
-  // Filter and search milestones
   useEffect(() => {
     let filtered = milestones;
 
-    // Apply status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter(
         (milestone) => milestone.status.toLowerCase() === statusFilter
       );
     }
 
-    // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(
         (milestone) =>
@@ -57,7 +51,6 @@ const MilestonesPage: React.FC = () => {
       );
     }
 
-    // Sort milestones
     filtered.sort((a, b) => {
       const dateA = new Date(a.createdAt);
       const dateB = new Date(b.createdAt);
@@ -81,7 +74,6 @@ const MilestonesPage: React.FC = () => {
     }
   };
 
-  // Calculate statistics
   const stats = {
     total: milestones.length,
     completed: milestones.filter((m) => m.status === "COMPLETED").length,
@@ -149,34 +141,8 @@ const MilestonesPage: React.FC = () => {
     });
   };
 
-  // Chart data for milestone trends
-  const chartData = milestones
-    .reduce((acc, milestone) => {
-      const date = new Date(milestone.createdAt).toLocaleDateString();
-      const existing = acc.find((item) => item.date === date);
-      if (existing) {
-        existing.count += 1;
-        if (milestone.status === "COMPLETED") existing.completed += 1;
-      } else {
-        acc.push({
-          date,
-          count: 1,
-          completed: milestone.status === "COMPLETED" ? 1 : 0,
-        });
-      }
-      return acc;
-    }, [] as any[])
-    .slice(-7); // Last 7 days
-
-  const statusDistribution = [
-    { name: "Completed", value: stats.completed, color: "#10B981" },
-    { name: "Pending", value: stats.pending, color: "#F59E0B" },
-    { name: "In Progress", value: stats.inProgress, color: "#3B82F6" },
-  ];
-
   return (
     <div className="p-6 max-w-[1800px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-      {/* Header */}
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -216,18 +182,6 @@ const MilestonesPage: React.FC = () => {
             {isLoading ? "Loading..." : "Refresh"}
           </motion.button>
           <motion.button
-            className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm shadow-lg"
-            onClick={() => setShowCreateModal(true)}
-            whileHover={{
-              y: -2,
-              boxShadow: "0 8px 25px rgba(59, 130, 246, 0.3)",
-            }}
-            whileTap={{ y: 0 }}
-          >
-            <Plus size={16} className="mr-2" strokeWidth={2} />
-            Create Milestone
-          </motion.button>
-          <motion.button
             className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg text-sm shadow-lg"
             whileHover={{
               y: -2,
@@ -241,7 +195,6 @@ const MilestonesPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Stats Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
         <motion.div
           className="col-span-1 lg:col-span-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-xl"
@@ -418,7 +371,6 @@ const MilestonesPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Milestones Table */}
       <motion.div
         className="bg-white dark:bg-gray-800 rounded-2xl"
         initial={{ opacity: 0, y: -10 }}
@@ -619,7 +571,6 @@ const MilestonesPage: React.FC = () => {
           </table>
         </div>
 
-        {/* Empty State */}
         {filteredMilestones.length === 0 && !isLoading && (
           <div className="text-center py-12">
             <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -631,21 +582,9 @@ const MilestonesPage: React.FC = () => {
                 ? "Try adjusting your search criteria or filters"
                 : "Get started by creating your first milestone"}
             </p>
-            {!searchTerm && statusFilter === "all" && (
-              <motion.button
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                onClick={() => setShowCreateModal(true)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Create Milestone
-              </motion.button>
-            )}
           </div>
         )}
 
-        {/* Loading State */}
         {isLoading && (
           <div className="text-center py-12">
             <motion.div
@@ -660,7 +599,6 @@ const MilestonesPage: React.FC = () => {
         )}
       </motion.div>
 
-      {/* Milestone Detail Modal */}
       {selectedMilestone && (
         <motion.div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
@@ -689,7 +627,6 @@ const MilestonesPage: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-              {/* Basic Information */}
               <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
                 <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-3">
                   Basic Information
@@ -730,7 +667,6 @@ const MilestonesPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Financial Information */}
               <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
                 <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-3">
                   Financial Details
