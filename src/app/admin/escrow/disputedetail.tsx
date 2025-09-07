@@ -4,8 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Download,
-  Share2,
-  MoreVertical,
   AlertTriangle,
   CheckCircle,
   XCircle,
@@ -13,50 +11,23 @@ import {
   Zap,
   Flag,
   Scale,
-  Eye,
   MessageSquare,
   FileText,
   Image,
-  Calendar,
-  User,
-  DollarSign,
-  Hash,
-  Timer,
   Activity,
   Shield,
-  Gavel,
   RefreshCw,
   Upload,
-  Send,
-  ThumbsUp,
-  ThumbsDown,
-  AlertCircle,
-  Info,
   ExternalLink,
-  Copy,
   Edit,
-  Trash2,
-  Play,
-  Pause,
-  Target,
-  Building,
-  Phone,
-  Mail,
-  MapPin,
-  Bookmark,
-  Star,
-  Bell,
-  Settings
 } from 'lucide-react';
 import { escrowService } from '../../../api/services/escrow';
 
 const DisputeDetailPage: React.FC = () => {
   const [dispute, setDispute] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");
   const [showActionModal, setShowActionModal] = useState(false);
   const [showResolutionModal, setShowResolutionModal] = useState(false);
-  const [newMessage, setNewMessage] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
 
