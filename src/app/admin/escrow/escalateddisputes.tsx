@@ -504,9 +504,8 @@ const EscalatedCasesPage: React.FC = () => {
           )}
         </motion.div>
 
-        {/* Escalated Cases Table */}
         <motion.div
-          className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden"
+          className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/20 overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -721,7 +720,7 @@ const EscalatedCasesPage: React.FC = () => {
                                 title="View Details"
                                 onClick={() =>
                                   window.open(
-                                    `/disputes/${dispute.id}`,
+                                    `/admin/escrow/disputes/${dispute.escrowId}`,
                                     "_blank"
                                   )
                                 }
@@ -743,7 +742,7 @@ const EscalatedCasesPage: React.FC = () => {
                                 title="View Escrow"
                                 onClick={() =>
                                   window.open(
-                                    `/escrows/${dispute.escrowId}`,
+                                    `/admin/escrow/disputes/${dispute.escrowId}`,
                                     "_blank"
                                   )
                                 }
@@ -767,7 +766,6 @@ const EscalatedCasesPage: React.FC = () => {
                 </table>
               </div>
 
-              {/* Pagination */}
               {filteredCases.length > 0 && (
                 <div className="px-6 py-3 bg-gray-50/50 border-t border-gray-200">
                   <div className="flex items-center justify-between">
@@ -811,7 +809,6 @@ const EscalatedCasesPage: React.FC = () => {
           )}
         </motion.div>
 
-        {/* Escalation Framework */}
         <motion.div
           className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
           initial={{ opacity: 0, y: 20 }}
