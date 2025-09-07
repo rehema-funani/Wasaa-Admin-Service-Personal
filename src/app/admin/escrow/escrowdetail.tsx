@@ -121,9 +121,9 @@ const EscrowDetailPage: React.FC = () => {
         dot: "bg-blue-400",
       },
       PARTIALLY_RELEASED: {
-        color: "bg-purple-100/80 text-purple-700 border-purple-200",
+        color: "bg-primary-100/80 text-primary-700 border-primary-200",
         icon: ArrowUpRight,
-        dot: "bg-purple-400",
+        dot: "bg-primary-400",
       },
       RELEASED: {
         color: "bg-emerald-100/80 text-emerald-700 border-emerald-200",
@@ -196,7 +196,7 @@ const EscrowDetailPage: React.FC = () => {
           <div className="flex items-center justify-center h-64">
             <div className="relative">
               <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-              <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-purple-400 rounded-full animate-spin animation-delay-75" />
+              <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-primary-400 rounded-full animate-spin animation-delay-75" />
             </div>
           </div>
         </div>
@@ -220,7 +220,7 @@ const EscrowDetailPage: React.FC = () => {
               removed.
             </p>
             <motion.button
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-primary-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
               onClick={() => navigate("/escrows")}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -278,7 +278,7 @@ const EscrowDetailPage: React.FC = () => {
                 <Download className="w-4 h-4 text-gray-600" />
               </motion.button>
               <motion.button
-                className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
+                className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-primary-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
                 onClick={() => setShowActionModal(true)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -294,7 +294,7 @@ const EscrowDetailPage: React.FC = () => {
         {/* Hero Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <motion.div
-            className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 p-6 text-white"
+            className="col-span-1 md:col-span-2 relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-primary-700 p-6 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -441,7 +441,7 @@ const EscrowDetailPage: React.FC = () => {
                       Initiator
                     </label>
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-primary-500 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-bold">
                           {escrow.initiator.charAt(0)}
                         </span>
@@ -503,7 +503,7 @@ const EscrowDetailPage: React.FC = () => {
                         transition={{ duration: 0.3, delay: index * 0.1 }}
                       >
                         <div className="flex-shrink-0">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-primary-600 rounded-xl flex items-center justify-center">
                             <span className="text-white font-bold text-sm">
                               {index + 1}
                             </span>
@@ -736,7 +736,7 @@ const EscrowDetailPage: React.FC = () => {
                 <span className="text-sm font-medium">Dispute</span>
               </motion.button>
               <motion.button
-                className="flex flex-col items-center gap-2 p-4 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl transition-colors"
+                className="flex flex-col items-center gap-2 p-4 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-xl transition-colors"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
