@@ -2,33 +2,24 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
-  Filter,
   Download,
-  Calendar,
   ArrowUpDown,
   Eye,
   MessageSquare,
   AlertTriangle,
   Clock,
   User,
-  FileText,
   CheckCircle,
-  XCircle,
   ExternalLink,
-  Globe,
-  CreditCard,
   Zap,
-  Scale,
   Flag,
   Users,
   DollarSign,
   Shield,
   UserCheck,
-  AlertCircle,
   TrendingUp,
   ArrowUp,
   RefreshCw,
-  Hash,
   Building,
   Target
 } from "lucide-react";
@@ -91,7 +82,6 @@ const EscalatedCasesPage: React.FC = () => {
       return matchesSearch && matchesPriority && matchesStatus;
     });
 
-    // Sort the filtered results
     filtered.sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
@@ -187,7 +177,6 @@ const EscalatedCasesPage: React.FC = () => {
     const config =
       statusConfig[status as keyof typeof statusConfig] ||
       statusConfig.ESCALATED;
-    const IconComponent = config.icon;
 
     return (
       <div
@@ -260,7 +249,6 @@ const EscalatedCasesPage: React.FC = () => {
     }
   };
 
-  // Pagination
   const totalPages = Math.ceil(filteredCases.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedCases = filteredCases.slice(
@@ -268,7 +256,6 @@ const EscalatedCasesPage: React.FC = () => {
     startIndex + itemsPerPage
   );
 
-  // Calculate summary stats
   const highPriorityCount = filteredCases.filter(
     (c) => c.priority === "HIGH"
   ).length;
@@ -289,7 +276,6 @@ const EscalatedCasesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50/30 to-orange-50">
-      {/* Header */}
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-white/70 border-b border-white/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -335,7 +321,6 @@ const EscalatedCasesPage: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Alert Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <motion.div
             className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
