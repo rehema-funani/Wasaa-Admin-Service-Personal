@@ -5,12 +5,7 @@ import {
   ArrowLeft,
   Download,
   Edit,
-  Share2,
-  MoreVertical,
-  Shield,
   Clock,
-  Users,
-  DollarSign,
   FileText,
   Target,
   AlertTriangle,
@@ -18,26 +13,13 @@ import {
   XCircle,
   Calendar,
   Activity,
-  Eye,
   MessageSquare,
   RefreshCw,
-  PlayCircle,
   Wallet,
   Lock,
   Unlock,
-  Zap,
-  Settings,
-  Copy,
-  ExternalLink,
-  BookOpen,
-  BarChart3,
-  Filter,
   Plus,
-  AlertCircle,
-  Info,
-  Hash,
   Timer,
-  TrendingUp,
   ArrowUpRight
 } from 'lucide-react';
 import { escrowService } from '../../../api/services/escrow';
@@ -45,7 +27,6 @@ import { escrowService } from '../../../api/services/escrow';
 const EscrowDetailPage: React.FC = () => {
   const [escrow, setEscrow] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");
   const [ledgerData, setLedgerData] = useState<any[]>([]);
   const [showActionModal, setShowActionModal] = useState(false);
   const { id } = useParams();
@@ -599,7 +580,6 @@ const EscrowDetailPage: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Financial Breakdown */}
             <motion.div
               className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
               initial={{ opacity: 0, y: 20 }}
