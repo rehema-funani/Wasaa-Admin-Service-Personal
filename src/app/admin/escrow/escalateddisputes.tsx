@@ -70,15 +70,23 @@ const EscalatedCasesPage: React.FC = () => {
         dispute.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         dispute.escrowId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         dispute.reason?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispute.raisedByName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispute.escrow?.initiator?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dispute.escrow?.counterparty?.toLowerCase().includes(searchTerm.toLowerCase());
+        dispute.raisedByName
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        dispute.escrow?.initiator
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        dispute.escrow?.counterparty
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
       const matchesPriority =
-        priorityFilter === "all" || dispute.priority?.toLowerCase() === priorityFilter.toLowerCase();
-      
+        priorityFilter === "all" ||
+        dispute.priority?.toLowerCase() === priorityFilter.toLowerCase();
+
       const matchesStatus =
-        statusFilter === "all" || dispute.status?.toLowerCase() === statusFilter.toLowerCase();
+        statusFilter === "all" ||
+        dispute.status?.toLowerCase() === statusFilter.toLowerCase();
 
       return matchesSearch && matchesPriority && matchesStatus;
     });
@@ -92,8 +100,8 @@ const EscalatedCasesPage: React.FC = () => {
         aValue = Number(a.escrow?.amountMinor || 0);
         bValue = Number(b.escrow?.amountMinor || 0);
       } else if (sortField === "createdAt" || sortField === "updatedAt") {
-        aValue = new Date(aValue || '');
-        bValue = new Date(bValue || '');
+        aValue = new Date(aValue || "");
+        bValue = new Date(bValue || "");
       } else if (sortField === "priority") {
         const priorityOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
         aValue = priorityOrder[aValue as keyof typeof priorityOrder] || 0;
@@ -109,32 +117,43 @@ const EscalatedCasesPage: React.FC = () => {
 
     setFilteredCases(filtered);
     setCurrentPage(1);
-  }, [searchTerm, priorityFilter, statusFilter, sortField, sortDirection, disputes]);
+  }, [
+    searchTerm,
+    priorityFilter,
+    statusFilter,
+    sortField,
+    sortDirection,
+    disputes,
+  ]);
 
   const getPriorityBadge = (priority: string) => {
     const priorityConfig = {
       HIGH: {
         color: "bg-red-100/80 text-red-700 border-red-200",
         icon: AlertTriangle,
-        dot: "bg-red-400"
+        dot: "bg-red-400",
       },
       MEDIUM: {
         color: "bg-amber-100/80 text-amber-700 border-amber-200",
         icon: Flag,
-        dot: "bg-amber-400"
+        dot: "bg-amber-400",
       },
       LOW: {
         color: "bg-blue-100/80 text-blue-700 border-blue-200",
         icon: Flag,
-        dot: "bg-blue-400"
-      }
+        dot: "bg-blue-400",
+      },
     };
 
-    const config = priorityConfig[priority as keyof typeof priorityConfig] || priorityConfig.MEDIUM;
+    const config =
+      priorityConfig[priority as keyof typeof priorityConfig] ||
+      priorityConfig.MEDIUM;
     const IconComponent = config.icon;
 
     return (
-      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${config.color} backdrop-blur-sm`}>
+      <div
+        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${config.color} backdrop-blur-sm`}
+      >
         <div className={`w-2 h-2 rounded-full ${config.dot} animate-pulse`} />
         <span className="text-sm font-medium">{priority}</span>
       </div>
@@ -146,32 +165,36 @@ const EscalatedCasesPage: React.FC = () => {
       ESCALATED: {
         color: "bg-red-100/80 text-red-700 border-red-200",
         icon: Zap,
-        dot: "bg-red-400"
+        dot: "bg-red-400",
       },
       UNDER_REVIEW: {
         color: "bg-amber-100/80 text-amber-700 border-amber-200",
         icon: Eye,
-        dot: "bg-amber-400"
+        dot: "bg-amber-400",
       },
       PENDING_RESPONSE: {
         color: "bg-orange-100/80 text-orange-700 border-orange-200",
         icon: Clock,
-        dot: "bg-orange-400"
+        dot: "bg-orange-400",
       },
       RESOLVED: {
         color: "bg-emerald-100/80 text-emerald-700 border-emerald-200",
         icon: CheckCircle,
-        dot: "bg-emerald-400"
-      }
+        dot: "bg-emerald-400",
+      },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.ESCALATED;
+    const config =
+      statusConfig[status as keyof typeof statusConfig] ||
+      statusConfig.ESCALATED;
     const IconComponent = config.icon;
 
     return (
-      <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${config.color} backdrop-blur-sm`}>
+      <div
+        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${config.color} backdrop-blur-sm`}
+      >
         <div className={`w-2 h-2 rounded-full ${config.dot}`} />
-        <span className="text-sm font-medium">{status.replace('_', ' ')}</span>
+        <span className="text-sm font-medium">{status.replace("_", " ")}</span>
       </div>
     );
   };
@@ -187,7 +210,7 @@ const EscalatedCasesPage: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
@@ -198,11 +221,13 @@ const EscalatedCasesPage: React.FC = () => {
   };
 
   const getTimeElapsed = (createdAt: string) => {
-    if (!createdAt) return 'N/A';
+    if (!createdAt) return "N/A";
     const now = new Date();
     const created = new Date(createdAt);
-    const diffInHours = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60));
-    
+    const diffInHours = Math.floor(
+      (now.getTime() - created.getTime()) / (1000 * 60 * 60)
+    );
+
     if (diffInHours < 24) {
       return `${diffInHours}h ago`;
     } else {
@@ -238,16 +263,29 @@ const EscalatedCasesPage: React.FC = () => {
   // Pagination
   const totalPages = Math.ceil(filteredCases.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedCases = filteredCases.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedCases = filteredCases.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   // Calculate summary stats
-  const highPriorityCount = filteredCases.filter((c) => c.priority === "HIGH").length;
+  const highPriorityCount = filteredCases.filter(
+    (c) => c.priority === "HIGH"
+  ).length;
   const overdueCount = filteredCases.filter((c) => {
-    const hoursElapsed = Math.floor((new Date().getTime() - new Date(c.createdAt).getTime()) / (1000 * 60 * 60));
-    return hoursElapsed > 48; // Consider overdue after 48 hours
+    const hoursElapsed = Math.floor(
+      (new Date().getTime() - new Date(c.createdAt).getTime()) /
+        (1000 * 60 * 60)
+    );
+    return hoursElapsed > 48;
   }).length;
-  const escalatedCount = filteredCases.filter((c) => c.status === "ESCALATED").length;
-  const totalValue = filteredCases.reduce((sum, c) => sum + parseInt(c.escrow?.amountMinor || '0'), 0);
+  const escalatedCount = filteredCases.filter(
+    (c) => c.status === "ESCALATED"
+  ).length;
+  const totalValue = filteredCases.reduce(
+    (sum, c) => sum + parseInt(c.escrow?.amountMinor || "0"),
+    0
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50/30 to-orange-50">
@@ -274,7 +312,10 @@ const EscalatedCasesPage: React.FC = () => {
               </motion.button>
               <motion.button
                 className="flex items-center px-3 py-2 bg-white/50 hover:bg-white/70 border border-white/30 rounded-xl text-gray-600 text-sm shadow-sm"
-                whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
+                whileHover={{
+                  y: -2,
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                }}
                 whileTap={{ y: 0 }}
               >
                 <Download size={16} className="mr-2" strokeWidth={1.8} />
@@ -304,11 +345,17 @@ const EscalatedCasesPage: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Escalated</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{filteredCases.length}</p>
+                <p className="text-gray-600 text-sm font-medium">
+                  Total Escalated
+                </p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {filteredCases.length}
+                </p>
                 <div className="flex items-center gap-1 mt-2">
                   <div className="w-2 h-2 bg-red-400 rounded-full" />
-                  <span className="text-sm text-red-600 font-medium">Active cases</span>
+                  <span className="text-sm text-red-600 font-medium">
+                    Active cases
+                  </span>
                 </div>
               </div>
               <div className="p-3 bg-red-100 rounded-2xl">
@@ -325,11 +372,17 @@ const EscalatedCasesPage: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">High Priority</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{highPriorityCount}</p>
+                <p className="text-gray-600 text-sm font-medium">
+                  High Priority
+                </p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {highPriorityCount}
+                </p>
                 <div className="flex items-center gap-1 mt-2">
                   <div className="w-2 h-2 bg-orange-400 rounded-full" />
-                  <span className="text-sm text-orange-600 font-medium">Urgent attention</span>
+                  <span className="text-sm text-orange-600 font-medium">
+                    Urgent attention
+                  </span>
                 </div>
               </div>
               <div className="p-3 bg-orange-100 rounded-2xl">
@@ -347,10 +400,14 @@ const EscalatedCasesPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Overdue</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{overdueCount}</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {overdueCount}
+                </p>
                 <div className="flex items-center gap-1 mt-2">
                   <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-                  <span className="text-sm text-red-600 font-medium">Past deadline</span>
+                  <span className="text-sm text-red-600 font-medium">
+                    Past deadline
+                  </span>
                 </div>
               </div>
               <div className="p-3 bg-red-100 rounded-2xl">
@@ -373,7 +430,9 @@ const EscalatedCasesPage: React.FC = () => {
                 </p>
                 <div className="flex items-center gap-1 mt-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full" />
-                  <span className="text-sm text-green-600 font-medium">At risk</span>
+                  <span className="text-sm text-green-600 font-medium">
+                    At risk
+                  </span>
                 </div>
               </div>
               <div className="p-3 bg-green-100 rounded-2xl">
@@ -480,9 +539,12 @@ const EscalatedCasesPage: React.FC = () => {
               <div className="p-6 border-b border-gray-200/50">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-800">Escalated Dispute Cases</h3>
+                    <h3 className="text-xl font-bold text-gray-800">
+                      Escalated Dispute Cases
+                    </h3>
                     <p className="text-sm text-gray-500 mt-1">
-                      Showing {filteredCases.length} of {disputes.length} escalated cases
+                      Showing {filteredCases.length} of {disputes.length}{" "}
+                      escalated cases
                     </p>
                   </div>
                 </div>
@@ -496,7 +558,10 @@ const EscalatedCasesPage: React.FC = () => {
                         <input
                           type="checkbox"
                           className="rounded border-gray-300"
-                          checked={selectedCases.length === paginatedCases.length && paginatedCases.length > 0}
+                          checked={
+                            selectedCases.length === paginatedCases.length &&
+                            paginatedCases.length > 0
+                          }
                           onChange={handleSelectAll}
                         />
                       </th>
@@ -550,10 +615,11 @@ const EscalatedCasesPage: React.FC = () => {
                             No escalated cases found
                           </h3>
                           <p className="text-gray-500">
-                            {searchTerm || priorityFilter !== "all" || statusFilter !== "all" 
+                            {searchTerm ||
+                            priorityFilter !== "all" ||
+                            statusFilter !== "all"
                               ? "Try adjusting your search criteria or filters"
-                              : "No cases have been escalated yet"
-                            }
+                              : "No cases have been escalated yet"}
                           </p>
                         </td>
                       </tr>
@@ -592,7 +658,8 @@ const EscalatedCasesPage: React.FC = () => {
                               {dispute.milestoneId && (
                                 <div className="text-xs text-gray-400 flex items-center mt-1">
                                   <Target className="w-3 h-3 mr-1" />
-                                  Milestone: {dispute.milestoneId.slice(0, 8)}...
+                                  Milestone: {dispute.milestoneId.slice(0, 8)}
+                                  ...
                                 </div>
                               )}
                             </div>
@@ -601,32 +668,39 @@ const EscalatedCasesPage: React.FC = () => {
                             <div className="space-y-2">
                               <div className="flex items-center text-sm">
                                 <User className="w-3 h-3 mr-1 text-gray-400" />
-                                <span className="font-medium text-gray-900">Initiator:</span>
+                                <span className="font-medium text-gray-900">
+                                  Initiator:
+                                </span>
                                 <span className="ml-1 text-gray-600">
-                                  {dispute.escrow?.initiator || 'N/A'}
+                                  {dispute.escrow?.initiator || "N/A"}
                                 </span>
                               </div>
                               <div className="flex items-center text-sm">
                                 <User className="w-3 h-3 mr-1 text-gray-400" />
-                                <span className="font-medium text-gray-900">Counterparty:</span>
+                                <span className="font-medium text-gray-900">
+                                  Counterparty:
+                                </span>
                                 <span className="ml-1 text-gray-600">
-                                  {dispute.escrow?.counterparty || 'N/A'}
+                                  {dispute.escrow?.counterparty || "N/A"}
                                 </span>
                               </div>
                               <div className="text-xs text-gray-500 flex items-center">
                                 <Flag className="w-3 h-3 mr-1" />
-                                Raised by: {dispute.raisedByName || 'Unknown'}
+                                Raised by: {dispute.raisedByName || "Unknown"}
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div>
                               <div className="text-sm font-medium text-gray-900">
-                                {formatCurrency(dispute.escrow?.amountMinor || '0', dispute.escrow?.currency || 'KES')}
+                                {formatCurrency(
+                                  dispute.escrow?.amountMinor || "0",
+                                  dispute.escrow?.currency || "KES"
+                                )}
                               </div>
                               <div className="text-sm text-gray-500 flex items-center">
                                 <Building className="w-3 h-3 mr-1" />
-                                {dispute.escrow?.purpose || 'N/A'}
+                                {dispute.escrow?.purpose || "N/A"}
                               </div>
                             </div>
                           </td>
@@ -648,4 +722,208 @@ const EscalatedCasesPage: React.FC = () => {
                               <div className="text-sm text-gray-500">
                                 Updated: {formatDate(dispute.updatedAt)}
                               </div>
-                              <div className="text-xs text-gray-
+                              <div className="text-xs text-gray-400 mt-1">
+                                Elapsed: {getTimeElapsed(dispute.createdAt)}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div className="flex items-center space-x-2">
+                              <motion.button
+                                className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                title="View Details"
+                                onClick={() =>
+                                  window.open(
+                                    `/disputes/${dispute.id}`,
+                                    "_blank"
+                                  )
+                                }
+                              >
+                                <Eye className="w-4 h-4" />
+                              </motion.button>
+                              <motion.button
+                                className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                title="Case Notes"
+                              >
+                                <MessageSquare className="w-4 h-4" />
+                              </motion.button>
+                              <motion.button
+                                className="text-purple-600 hover:text-purple-900 p-1 rounded hover:bg-purple-50"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                title="View Escrow"
+                                onClick={() =>
+                                  window.open(
+                                    `/escrows/${dispute.escrowId}`,
+                                    "_blank"
+                                  )
+                                }
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </motion.button>
+                              <motion.button
+                                className="text-orange-600 hover:text-orange-900 p-1 rounded hover:bg-orange-50"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                title="Assign Reviewer"
+                              >
+                                <UserCheck className="w-4 h-4" />
+                              </motion.button>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination */}
+              {filteredCases.length > 0 && (
+                <div className="px-6 py-3 bg-gray-50/50 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-gray-500">
+                      Showing {startIndex + 1} to{" "}
+                      {Math.min(
+                        startIndex + itemsPerPage,
+                        filteredCases.length
+                      )}{" "}
+                      of {filteredCases.length} results
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        className="px-3 py-1 text-sm border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
+                        disabled={currentPage === 1}
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                      >
+                        Previous
+                      </button>
+                      <span className="text-sm text-gray-500">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <button
+                        className="px-3 py-1 text-sm border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
+                        disabled={currentPage === totalPages}
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages)
+                          )
+                        }
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </motion.div>
+
+        {/* Escalation Framework */}
+        <motion.div
+          className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+        >
+          <h3 className="text-lg font-bold text-gray-800 mb-4">
+            Escalation Framework
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-red-50/50 p-4 rounded-xl border border-red-100">
+              <h4 className="font-medium text-red-800 mb-2 flex items-center">
+                <AlertTriangle className="w-4 h-4 mr-2" />
+                High Priority
+              </h4>
+              <p className="text-sm text-red-600">
+                Immediate escalation required. Involves fraud, regulatory
+                violations, or high financial risk.
+              </p>
+            </div>
+            <div className="bg-amber-50/50 p-4 rounded-xl border border-amber-100">
+              <h4 className="font-medium text-amber-800 mb-2 flex items-center">
+                <Flag className="w-4 h-4 mr-2" />
+                Medium Priority
+              </h4>
+              <p className="text-sm text-amber-600">
+                Senior review within 24 hours. Complex disputes or policy
+                violations.
+              </p>
+            </div>
+            <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+              <h4 className="font-medium text-blue-800 mb-2 flex items-center">
+                <Flag className="w-4 h-4 mr-2" />
+                Low Priority
+              </h4>
+              <p className="text-sm text-blue-600">
+                Review within 48 hours. Requires specialized knowledge or legal
+                consultation.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Quick Actions Panel */}
+        <motion.div
+          className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+        >
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-bold text-gray-800">Quick Actions</h3>
+              <p className="text-gray-500 text-sm">
+                Streamline escalated case management
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <motion.button
+                className="flex items-center px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl text-red-700 text-sm shadow-sm"
+                whileHover={{
+                  y: -2,
+                  boxShadow: "0 4px 12px rgba(239, 68, 68, 0.15)",
+                }}
+                whileTap={{ y: 0 }}
+              >
+                <AlertTriangle size={16} className="mr-2" strokeWidth={1.8} />
+                Review Critical Cases
+              </motion.button>
+              <motion.button
+                className="flex items-center px-4 py-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl text-purple-700 text-sm shadow-sm"
+                whileHover={{
+                  y: -2,
+                  boxShadow: "0 4px 12px rgba(147, 51, 234, 0.15)",
+                }}
+                whileTap={{ y: 0 }}
+              >
+                <Shield size={16} className="mr-2" strokeWidth={1.8} />
+                Regulatory Summary
+              </motion.button>
+              <motion.button
+                className="flex items-center px-4 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl text-blue-700 text-sm shadow-sm"
+                whileHover={{
+                  y: -2,
+                  boxShadow: "0 4px 12px rgba(59, 130, 246, 0.15)",
+                }}
+                whileTap={{ y: 0 }}
+              >
+                <Users size={16} className="mr-2" strokeWidth={1.8} />
+                Bulk Assignment
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+export default EscalatedCasesPage;
