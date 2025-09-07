@@ -168,6 +168,11 @@ const routes: Route[] = [
           },
           {
             type: "link",
+            path: "/admin/escrow/milestones",
+            title: "Milestones Management",
+          },
+          {
+            type: "link",
             path: "/admin/escrow/reports/compliance",
             title: "Compliance Reports",
           },
