@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -324,7 +324,6 @@ const EscrowSettingsPage: React.FC = () => {
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-      {/* Header */}
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -390,7 +389,6 @@ const EscrowSettingsPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Search Bar */}
       <motion.div
         className="mb-6"
         initial={{ opacity: 0, y: -10 }}
@@ -409,7 +407,6 @@ const EscrowSettingsPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Navigation Tabs */}
       <motion.div
         className="mb-8"
         initial={{ opacity: 0, y: -10 }}
@@ -441,9 +438,7 @@ const EscrowSettingsPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Tab Content */}
       <div className="space-y-6">
-        {/* General Settings Tab */}
         {activeTab === "general" && (
           <motion.div
             className="space-y-6"
