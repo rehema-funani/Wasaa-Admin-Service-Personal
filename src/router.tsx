@@ -169,6 +169,7 @@ const SupportAuditModule = {
 
   QueueConfig: lazy(() => import("./app/admin/support/queueconfig")),
   AvailableQueue: lazy(() => import("./app/admin/support/availabletickets")),
+  MyAssignedTickets: lazy(() => import("./app/admin/support/mytickets")),
 
   Logs: lazy(() => import("./app/admin/audits/page")),
   AuditDetails: lazy(() => import("./app/admin/audits/auditdetails")),
@@ -811,6 +812,10 @@ const supportAuditRoutes = [
   {
     path: PATHS.ADMIN.SUPPORT.AVAILABLE_QUEUE,
     element: SupportAuditModule.AvailableQueue,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.MY_ASSIGNED_TICKETS,
+    element: SupportAuditModule.MyAssignedTickets,
   },
   {
     path: PATHS.ADMIN.AUDITS.LOGS,
