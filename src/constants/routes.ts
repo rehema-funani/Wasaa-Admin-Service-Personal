@@ -408,6 +408,13 @@ const routes: Route[] = [
       },
       {
         type: "link",
+        path: "/admin/support/my-tickets",
+        title: "My Assigned Tickets",
+        icon: TicketIcon,
+        description: "Tickets assigned to me",
+      },
+      {
+        type: "link",
         path: "/admin/support/tickets",
         title: "Support Tickets",
         icon: TicketIcon,

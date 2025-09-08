@@ -358,6 +358,19 @@ const supportService = {
     const response = await supportaxios.get("/queue", { params });
     return response.data;
   },
+  transferTicket: async (ticketId: string, targetQueueId: string) => {
+    const response = await supportaxios.post(`/queue/${ticketId}/transfer`, {
+      targetQueueId,
+    });
+    return response.data;
+  },
+  getMyAssignedTickets: async (params?: {
+    page?: number;
+    limit?: number;
+  }) => {
+    const response = await supportaxios.get("/tickets/my-tickets", { params });
+    return response.data;
+  },
 };
 
 export default supportService;
