@@ -202,6 +202,7 @@ export const PATHS = {
       FAQ_DETAIL: "admin/support/faqs/:id",
       REPORTS: "admin/support/reports",
       QUEUE_CONFIG: "admin/support/queue-config",
+      AVAILABLE_QUEUE: "admin/support/available-queue",
     },
     AUDITS: {
       LOGS: "admin/logs",

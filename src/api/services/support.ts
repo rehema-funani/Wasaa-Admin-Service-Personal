@@ -348,6 +348,16 @@ const supportService = {
     const response = await supportaxios.post("/queue-config", data);
     return response.data;
   },
+
+  getAvailableTickets: async (params?: {
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: string;
+  }) => {
+    const response = await supportaxios.get("/queue", { params });
+    return response.data;
+  },
 };
 
 export default supportService;
