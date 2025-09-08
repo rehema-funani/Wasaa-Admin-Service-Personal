@@ -29,8 +29,8 @@ const LedgerAccountDetailPage = () => {
   const [account, setAccount] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [entriesFilter, setEntriesFilter] = useState('all'); // 'all', 'debit', 'credit'
-  const [sortOrder, setSortOrder] = useState('desc'); // 'asc', 'desc'
+  const [entriesFilter, setEntriesFilter] = useState("all"); // 'all', 'debit', 'credit'
+  const [sortOrder, setSortOrder] = useState("desc"); // 'asc', 'desc'
 
   useEffect(() => {
     if (id) {
@@ -44,16 +44,16 @@ const LedgerAccountDetailPage = () => {
       const response = await escrowService.getLedgerAccountById(id);
       setAccount(response);
     } catch (error) {
-      console.error('Error fetching ledger account details:', error);
-      setError('Failed to load account details');
+      console.error("Error fetching ledger account details:", error);
+      setError("Failed to load account details");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const formatCurrency = (amount: number, currency = 'KES') => {
-    return new Intl.NumberFormat('en-KE', {
-      style: 'currency',
+  const formatCurrency = (amount: number, currency = "KES") => {
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
       currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
@@ -61,37 +61,41 @@ const LedgerAccountDetailPage = () => {
   };
 
   const formatDate = (dateString: any) => {
-    if (dateString && typeof dateString === 'object' && Object.keys(dateString).length === 0) {
-      return 'N/A';
+    if (
+      dateString &&
+      typeof dateString === "object" &&
+      Object.keys(dateString).length === 0
+    ) {
+      return "N/A";
     }
-    
+
     try {
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) return 'N/A'; 
-      
-      return date.toLocaleString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      if (isNaN(date.getTime())) return "N/A";
+
+      return date.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch (error) {
-      return 'N/A';
+      return "N/A";
     }
   };
 
   // Filter and sort entries
-  const filteredEntries = account?.entries 
+  const filteredEntries = account?.entries
     ? account.entries
-        .filter(entry => {
-          if (entriesFilter === 'all') return true;
+        .filter((entry) => {
+          if (entriesFilter === "all") return true;
           return entry.direction === entriesFilter.toUpperCase();
         })
         .sort((a, b) => {
           const dateA = new Date(a.createdAt).getTime();
           const dateB = new Date(b.createdAt).getTime();
-          return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+          return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
         })
     : [];
 
@@ -122,7 +126,8 @@ const LedgerAccountDetailPage = () => {
               {error || "Account Not Found"}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
-              We couldn't load the account information. Please try again or check if the account exists.
+              We couldn't load the account information. Please try again or
+              check if the account exists.
             </p>
             <motion.button
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-600 dark:from-primary-500 dark:to-primary-500 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
@@ -164,17 +169,21 @@ const LedgerAccountDetailPage = () => {
                   </span>
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      account.status === 'ACTIVE'
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600'
+                      account.status === "ACTIVE"
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
                     }`}
                   >
-                    <div className={`w-1.5 h-1.5 rounded-full ${account.status === 'ACTIVE' ? 'bg-green-500 animate-pulse' : 'bg-gray-500'} mr-1`}></div>
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        account.status === "ACTIVE"
+                          ? "bg-green-500 animate-pulse"
+                          : "bg-gray-500"
+                      } mr-1`}
+                    ></div>
                     {account.status}
                   </span>
-                  <span
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
-                  >
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                     {account.kind}
                   </span>
                 </div>
@@ -221,17 +230,19 @@ const LedgerAccountDetailPage = () => {
                 {account.kind} account in {account.currency}
               </p>
             </div>
-            
+
             <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl p-4 border border-blue-100 dark:border-blue-800/30">
               <div className="text-center">
-                <div className="text-sm text-gray-500 dark:text-gray-400">Current Balance</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Current Balance
+                </div>
                 <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 bg-clip-text text-transparent">
                   {formatCurrency(account.balance || 0, account.currency)}
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-4 border border-blue-50 dark:border-blue-900/20">
               <div className="flex items-center gap-3 mb-2">
@@ -239,56 +250,70 @@ const LedgerAccountDetailPage = () => {
                   <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Owner</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{account.ownerType}</p>
+                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Owner
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {account.ownerType}
+                  </p>
                 </div>
               </div>
               <p className="font-mono text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-slate-700 p-2 rounded border border-gray-200 dark:border-gray-600 truncate">
                 {account.ownerId}
               </p>
             </div>
-            
+
             <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-4 border border-blue-50 dark:border-blue-900/20">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                   <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Financial Position</h3>
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Financial Position
+                </h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Total Debit</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Total Debit
+                  </p>
                   <p className="text-sm font-medium text-red-600 dark:text-red-400">
                     {formatCurrency(account.debit || 0, account.currency)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Total Credit</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Total Credit
+                  </p>
                   <p className="text-sm font-medium text-green-600 dark:text-green-400">
                     {formatCurrency(account.credit || 0, account.currency)}
                   </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-4 border border-blue-50 dark:border-blue-900/20">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                   <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Created</h3>
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Created
+                </h3>
               </div>
               <p className="text-sm text-gray-800 dark:text-gray-200">
                 {formatDate(account.createdAt)}
               </p>
             </div>
-            
+
             <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-4 border border-blue-50 dark:border-blue-900/20">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
                   <Briefcase className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Escrow Agreement</h3>
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Escrow Agreement
+                </h3>
               </div>
               <p className="font-mono text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-slate-700 p-2 rounded border border-gray-200 dark:border-gray-600 truncate">
                 {account.escrowAgreementId}
@@ -314,10 +339,12 @@ const LedgerAccountDetailPage = () => {
                 </span>
               )}
             </h2>
-            
+
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Filter:</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Filter:
+                </span>
                 <select
                   className="bg-white/50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-700 dark:text-gray-300 px-3 py-1.5 text-sm"
                   value={entriesFilter}
@@ -328,15 +355,19 @@ const LedgerAccountDetailPage = () => {
                   <option value="credit">Credit Only</option>
                 </select>
               </div>
-              
+
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Sort:</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Sort:
+                </span>
                 <button
                   className="flex items-center gap-1 px-3 py-1.5 bg-white/50 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-lg text-gray-700 dark:text-gray-300 text-sm"
-                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                  onClick={() =>
+                    setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                  }
                 >
                   Date
-                  {sortOrder === 'asc' ? (
+                  {sortOrder === "asc" ? (
                     <ChevronUp className="w-4 h-4" />
                   ) : (
                     <ChevronDown className="w-4 h-4" />
@@ -365,9 +396,9 @@ const LedgerAccountDetailPage = () => {
                   <motion.div
                     key={entry.id}
                     className={`p-4 ${
-                      index % 2 === 0 
-                        ? 'bg-white/50 dark:bg-slate-800/50' 
-                        : 'bg-gray-50/50 dark:bg-slate-700/50'
+                      index % 2 === 0
+                        ? "bg-white/50 dark:bg-slate-800/50"
+                        : "bg-gray-50/50 dark:bg-slate-700/50"
                     } hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors`}
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -375,31 +406,33 @@ const LedgerAccountDetailPage = () => {
                   >
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          entry.direction === 'DEBIT' 
-                            ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' 
-                            : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
-                        }`}>
-                          {entry.direction === 'DEBIT' ? '-' : '+'}
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                            entry.direction === "DEBIT"
+                              ? "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                              : "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                          }`}
+                        >
+                          {entry.direction === "DEBIT" ? "-" : "+"}
                         </div>
                         <div>
                           <p className="font-medium text-gray-900 dark:text-gray-100">
-                            {entry.direction === 'DEBIT' ? 'Debit' : 'Credit'}
+                            {entry.direction === "DEBIT" ? "Debit" : "Credit"}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
                             {formatDate(entry.createdAt)}
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="md:col-span-2">
                         {entry.transaction && (
                           <>
                             <p className="font-medium text-gray-800 dark:text-gray-200 text-sm">
-                              {entry.transaction.txnType || 'TRANSFER'}
+                              {entry.transaction.txnType || "TRANSFER"}
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                              Ref: {entry.transaction.reference || 'N/A'}
+                              Ref: {entry.transaction.reference || "N/A"}
                             </p>
                             {entry.transaction.memo && (
                               <p className="text-xs text-gray-600 dark:text-gray-300">
@@ -409,25 +442,32 @@ const LedgerAccountDetailPage = () => {
                           </>
                         )}
                       </div>
-                      
+
                       <div className="text-right">
-                        <p className={`font-medium ${
-                          entry.direction === 'DEBIT' 
-                            ? 'text-red-600 dark:text-red-400' 
-                            : 'text-green-600 dark:text-green-400'
-                        }`}>
-                          {entry.direction === 'DEBIT' ? '-' : '+'}
-                          {formatCurrency(entry.amountMinor || 0, account.currency)}
+                        <p
+                          className={`font-medium ${
+                            entry.direction === "DEBIT"
+                              ? "text-red-600 dark:text-red-400"
+                              : "text-green-600 dark:text-green-400"
+                          }`}
+                        >
+                          {entry.direction === "DEBIT" ? "-" : "+"}
+                          {formatCurrency(
+                            entry.amountMinor || 0,
+                            account.currency
+                          )}
                         </p>
                       </div>
-                      
+
                       <div className="text-right">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Balance</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Balance
+                        </p>
                         <p className="font-medium text-gray-900 dark:text-gray-100">
                           {formatCurrency(entry.balance || 0, account.currency)}
                         </p>
                       </div>
-                      
+
                       <div className="text-right">
                         <button className="px-3 py-1.5 text-xs bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-lg font-medium transition-colors">
                           View Details
@@ -439,15 +479,307 @@ const LedgerAccountDetailPage = () => {
               </div>
             </div>
           )}
-          
+
           {/* Transaction Summary */}
           <div className="p-4 bg-gray-50/80 dark:bg-slate-700/50 border-t border-gray-200 dark:border-gray-600">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center justify-between py-2 px-4 bg-white/70 dark:bg-slate-800/70 rounded-lg border border-gray-200 dark:border-gray-600">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Total Entries:</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Total Entries:
+                </span>
                 <span className="font-medium text-gray-900 dark:text-gray-100">
                   {account.entries ? account.entries.length : 0}
                 </span>
               </div>
-              
-              <div className="flex items-center justify-between py-2 px-4 bg-red-50/70 dark:bg-red-900/20 rounded-lg border border-red-
+
+              <div className="flex items-center justify-between py-2 px-4 bg-red-50/70 dark:bg-red-900/20 rounded-lg border border-red-100 dark:border-red-800/30">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Total Debits:
+                </span>
+                <span className="font-medium text-red-600 dark:text-red-400">
+                  {formatCurrency(account.debit || 0, account.currency)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between py-2 px-4 bg-green-50/70 dark:bg-green-900/20 rounded-lg border border-green-100 dark:border-green-800/30">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Total Credits:
+                </span>
+                <span className="font-medium text-green-600 dark:text-green-400">
+                  {formatCurrency(account.credit || 0, account.currency)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Account Details Card */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <motion.div
+            className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-slate-700/30"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Shield className="w-5 h-5 text-primary-500" />
+              Account Details
+            </h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm text-gray-500 dark:text-gray-400">
+                    Account ID
+                  </label>
+                  <p className="font-mono text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-slate-700 p-2 rounded border border-gray-200 dark:border-gray-600 break-all">
+                    {account.id}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm text-gray-500 dark:text-gray-400">
+                    Tenant ID
+                  </label>
+                  <p className="font-mono text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-slate-700 p-2 rounded border border-gray-200 dark:border-gray-600 break-all">
+                    {account.tenantId}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm text-gray-500 dark:text-gray-400">
+                    Owner Type
+                  </label>
+                  <p className="text-sm text-gray-800 dark:text-gray-200 p-2 bg-gray-50 dark:bg-slate-700 rounded border border-gray-200 dark:border-gray-600">
+                    {account.ownerType}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm text-gray-500 dark:text-gray-400">
+                    Owner ID
+                  </label>
+                  <p className="font-mono text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-slate-700 p-2 rounded border border-gray-200 dark:border-gray-600 break-all">
+                    {account.ownerId}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm text-gray-500 dark:text-gray-400">
+                    Account Kind
+                  </label>
+                  <p className="text-sm text-gray-800 dark:text-gray-200 p-2 bg-gray-50 dark:bg-slate-700 rounded border border-gray-200 dark:border-gray-600">
+                    {account.kind}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm text-gray-500 dark:text-gray-400">
+                    Currency
+                  </label>
+                  <p className="text-sm text-gray-800 dark:text-gray-200 p-2 bg-gray-50 dark:bg-slate-700 rounded border border-gray-200 dark:border-gray-600">
+                    {account.currency}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm text-gray-500 dark:text-gray-400">
+                    Status
+                  </label>
+                  <p className="text-sm text-gray-800 dark:text-gray-200 p-2 bg-gray-50 dark:bg-slate-700 rounded border border-gray-200 dark:border-gray-600">
+                    {account.status}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-sm text-gray-500 dark:text-gray-400">
+                  Escrow Agreement ID
+                </label>
+                <p className="font-mono text-sm text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-slate-700 p-2 rounded border border-gray-200 dark:border-gray-600 break-all">
+                  {account.escrowAgreementId}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-slate-700/30"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <Activity className="w-5 h-5 text-primary-500" />
+              Financial Summary
+            </h3>
+
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-4 border border-green-100 dark:border-green-800/30">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-lg">
+                    <CreditCard className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Credit Activity
+                  </h4>
+                </div>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  {formatCurrency(account.credit || 0, account.currency)}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {account.entries
+                    ? account.entries.filter((e) => e.direction === "CREDIT")
+                        .length
+                    : 0}{" "}
+                  credit transactions
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-xl p-4 border border-red-100 dark:border-red-800/30">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-red-100 dark:bg-red-900/50 rounded-lg">
+                    <Activity className="w-5 h-5 text-red-600 dark:text-red-400" />
+                  </div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Debit Activity
+                  </h4>
+                </div>
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                  {formatCurrency(account.debit || 0, account.currency)}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {account.entries
+                    ? account.entries.filter((e) => e.direction === "DEBIT")
+                        .length
+                    : 0}{" "}
+                  debit transactions
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                  Net Position
+                </label>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Credit - Debit
+                  </span>
+                  <span
+                    className={`text-lg font-bold ${
+                      (account.credit || 0) - (account.debit || 0) >= 0
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {formatCurrency(
+                      (account.credit || 0) - (account.debit || 0),
+                      account.currency
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                  Current Balance
+                </label>
+                <div className="h-8 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full ${
+                      (account.balance || 0) > 0
+                        ? "bg-green-500 dark:bg-green-600"
+                        : "bg-red-500 dark:bg-red-600"
+                    }`}
+                    style={{
+                      width: `${Math.min(
+                        Math.abs(
+                          (account.balance || 0) /
+                            Math.max(account.debit || 1, account.credit || 1)
+                        ) * 100,
+                        100
+                      )}%`,
+                    }}
+                  ></div>
+                </div>
+                <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span>0</span>
+                  <span>
+                    {formatCurrency(
+                      Math.max(account.debit || 0, account.credit || 0),
+                      account.currency
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <label className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                  Transaction Volume
+                </label>
+                <div className="grid grid-cols-7 gap-1 h-20">
+                  {/* This would ideally be dynamic based on transaction history by day */}
+                  {[25, 40, 60, 30, 80, 45, 20].map((height, index) => (
+                    <div key={index} className="flex flex-col items-center">
+                      <div className="flex-1 w-full relative">
+                        <div
+                          className="absolute bottom-0 left-0 right-0 bg-blue-500 dark:bg-blue-600 rounded-t"
+                          style={{ height: `${height}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {["M", "T", "W", "T", "F", "S", "S"][index]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+                  Last 7 days transaction activity
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Related Accounts */}
+        <motion.div
+          className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-slate-700/30"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <Database className="w-5 h-5 text-primary-500" />
+            Related Accounts
+          </h3>
+
+          <div className="bg-gray-50/80 dark:bg-slate-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 text-center">
+              This section would show other accounts related to the same escrow
+              agreement or owner.
+            </p>
+          </div>
+
+          <div className="flex justify-center">
+            <motion.button
+              className="px-4 py-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-lg font-medium transition-colors flex items-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() =>
+                navigate(
+                  `/admin/escrow/escrow-details/${account.escrowAgreementId}`
+                )
+              }
+            >
+              View Escrow Agreement
+              <ChevronDown className="w-4 h-4" />
+            </motion.button>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+export default LedgerAccountDetailPage;
