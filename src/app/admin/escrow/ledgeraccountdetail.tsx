@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -7,19 +7,15 @@ import {
   RefreshCw,
   Download,
   Activity,
-  Wallet,
   Shield,
   CreditCard,
   Calendar,
   Users,
   DollarSign,
   Briefcase,
-  Clock,
-  Zap,
   AlertCircle,
   ChevronDown,
   ChevronUp,
-  Filter
 } from 'lucide-react';
 import { escrowService } from '../../../api/services/escrow';
 
@@ -29,8 +25,8 @@ const LedgerAccountDetailPage = () => {
   const [account, setAccount] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [entriesFilter, setEntriesFilter] = useState("all"); // 'all', 'debit', 'credit'
-  const [sortOrder, setSortOrder] = useState("desc"); // 'asc', 'desc'
+  const [entriesFilter, setEntriesFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
     if (id) {
