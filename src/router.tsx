@@ -180,6 +180,7 @@ const EscrowModule = {
   EscrowList: lazy(() => import("./app/admin/escrow/escrowlist")),
   EscrowDetail: lazy(() => import("./app/admin/escrow/escrowdetail")),
   LedgerAccounts: lazy(() => import("./app/admin/escrow/ledgeraccounts")),
+  LedgerAccountDetail: lazy(() => import("./app/admin/escrow/ledgeraccountdetail")),
   EscrowTransactions: lazy(() => import("./app/admin/escrow/transactions")),
   EscrowPendingTransactions: lazy(
     () => import("./app/admin/escrow/pendingapprovals")
@@ -187,7 +188,7 @@ const EscrowModule = {
   EscrowRefunds: lazy(() => import("./app/admin/escrow/refundsandreversals")),
   EscrowCreate: lazy(() => import("./app/admin/escrow/createescrow")),
   EscrowDisputes: lazy(() => import("./app/admin/escrow/activedisputes")),
-  EscrowDisputeDetail: lazy(() => import("./app/admin/escrow/disputedetail")),  
+  EscrowDisputeDetail: lazy(() => import("./app/admin/escrow/disputedetail")),
   EscrowEscalatedDisputes: lazy(
     () => import("./app/admin/escrow/escalateddisputes")
   ),
@@ -198,11 +199,17 @@ const EscrowModule = {
   TransactionReports: lazy(
     () => import("./app/admin/escrow/reports/transactionreports")
   ),
-  DisputeReports: lazy(() => import("./app/admin/escrow/reports/disputeanalytics")),
-  RevenueReports: lazy(() => import("./app/admin/escrow/reports/revenueandcommisions")),
-  ComplianceReports: lazy(() => import("./app/admin/escrow/reports/compliancereport")),
+  DisputeReports: lazy(
+    () => import("./app/admin/escrow/reports/disputeanalytics")
+  ),
+  RevenueReports: lazy(
+    () => import("./app/admin/escrow/reports/revenueandcommisions")
+  ),
+  ComplianceReports: lazy(
+    () => import("./app/admin/escrow/reports/compliancereport")
+  ),
   EscrowSettings: lazy(() => import("./app/admin/escrow/settings")),
-  EscrowMilestones: lazy(() => import("./app/admin/escrow/milestones"))
+  EscrowMilestones: lazy(() => import("./app/admin/escrow/milestones")),
 };
 
 const fundraisingModule = {
@@ -423,6 +430,11 @@ const escrowRoutes = [
   {
     path: PATHS.ADMIN.ESCROW.LEDGER_ACCOUNTS,
     element: EscrowModule.LedgerAccounts,
+    // permissions: PermissionMap.Escrow.view,
+  },
+  {
+    path: PATHS.ADMIN.ESCROW.LEDGER_ACCOUNT_DETAIL,
+    element: EscrowModule.LedgerAccountDetail,
     // permissions: PermissionMap.Escrow.view,
   },
   {
