@@ -201,6 +201,7 @@ export const PATHS = {
       FAQ_EDIT: "admin/support/faqs/:id/edit",
       FAQ_DETAIL: "admin/support/faqs/:id",
       REPORTS: "admin/support/reports",
+      QUEUE_CONFIG: "admin/support/queue-config",
     },
     AUDITS: {
       LOGS: "admin/logs",

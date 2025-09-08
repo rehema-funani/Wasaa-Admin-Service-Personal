@@ -1,16 +1,15 @@
 import supportaxios from "../support-axios";
 
 const supportService = {
-
   // ======= HEALTH CHECK =======
   healthCheck: async () => {
-    const response = await supportaxios.get('/health');
+    const response = await supportaxios.get("/health");
     return response.data;
   },
 
   //  ======= TICKETS =======
   createTicket: async (ticketData: any) => {
-    const response = await supportaxios.post('/tickets', ticketData);
+    const response = await supportaxios.post("/tickets", ticketData);
     return response.data;
   },
 
@@ -23,7 +22,7 @@ const supportService = {
     assignedTo?: string;
     search?: string;
   }) => {
-    const response = await supportaxios.get('/tickets', { params });
+    const response = await supportaxios.get("/tickets", { params });
     return response.data;
   },
 
@@ -38,12 +37,17 @@ const supportService = {
   },
 
   assignTicket: async (id: string, userId: string) => {
-    const response = await supportaxios.patch(`/tickets/${id}/assign`, { userId });
+    const response = await supportaxios.patch(`/tickets/${id}/assign`, {
+      userId,
+    });
     return response.data;
   },
 
   escalateTicket: async (id: string, escalationData: any) => {
-    const response = await supportaxios.patch(`/tickets/${id}/escalate`, escalationData);
+    const response = await supportaxios.patch(
+      `/tickets/${id}/escalate`,
+      escalationData
+    );
     return response.data;
   },
 
@@ -58,7 +62,10 @@ const supportService = {
   },
 
   createMessage: async (ticketId: string, messageData: any) => {
-    const response = await supportaxios.post(`/tickets/${ticketId}/messages`, messageData);
+    const response = await supportaxios.post(
+      `/tickets/${ticketId}/messages`,
+      messageData
+    );
     return response.data;
   },
 
@@ -68,7 +75,10 @@ const supportService = {
   },
 
   resolveTicket: async (id: string, resolutionData: any) => {
-    const response = await supportaxios.patch(`/tickets/${id}/resolve`, resolutionData);
+    const response = await supportaxios.patch(
+      `/tickets/${id}/resolve`,
+      resolutionData
+    );
     return response.data;
   },
 
@@ -77,39 +87,43 @@ const supportService = {
     return response.data;
   },
 
-getTicketStats: async (params?: {
-    dateFrom?: string;
-    dateTo?: string;
-  }) => {
-    const response = await supportaxios.get('/tickets/statistics');
+  getTicketStats: async (params?: { dateFrom?: string; dateTo?: string }) => {
+    const response = await supportaxios.get("/tickets/statistics");
     return response.data;
   },
 
   //  ======= USERS =======
   createUser: async (userData: any) => {
-    const response = await supportaxios.post('/users', userData);
+    const response = await supportaxios.post("/users", userData);
     return response.data;
   },
 
   getUsers: async () => {
-    const response = await supportaxios.get('/users');
+    const response = await supportaxios.get("/users");
     return response.data;
   },
 
   getOnlineAgents: async () => {
-    const response = await supportaxios.get('/users/agents/online');
+    const response = await supportaxios.get("/users/agents/online");
     return response.data;
   },
 
-  getAgentPerformance: async (id: string, params?: {
-    period?: string;
-  }) => {
-    const response = await supportaxios.get(`/users/${id}/performance`, { params });
+  getAgentPerformance: async (
+    id: string,
+    params?: {
+      period?: string;
+    }
+  ) => {
+    const response = await supportaxios.get(`/users/${id}/performance`, {
+      params,
+    });
     return response.data;
   },
 
   updateUserAgentStatus: async (id: string, status: string) => {
-    const response = await supportaxios.patch(`/users/${id}/status`, { status });
+    const response = await supportaxios.patch(`/users/${id}/status`, {
+      status,
+    });
     return response.data;
   },
 
@@ -120,26 +134,22 @@ getTicketStats: async (params?: {
 
   // ======= SLA ========
   createSLARule: async (slaData: any) => {
-    const response = await supportaxios.post('/sla', slaData);
+    const response = await supportaxios.post("/sla", slaData);
     return response.data;
   },
 
-  getSLARules: async (params?: {
-    includeInactive?: boolean;
-  }) => {
-    const response = await supportaxios.get('/sla', { params });
+  getSLARules: async (params?: { includeInactive?: boolean }) => {
+    const response = await supportaxios.get("/sla", { params });
     return response.data;
   },
 
-  getSLAMetrics: async (params?: {
-    period?: string;
-  }) => {
-    const response = await supportaxios.get('/sla/metrics', { params });
+  getSLAMetrics: async (params?: { period?: string }) => {
+    const response = await supportaxios.get("/sla/metrics", { params });
     return response.data;
   },
 
   processExpiredTickets: async () => {
-    const response = await supportaxios.post('/sla/process-expired');
+    const response = await supportaxios.post("/sla/process-expired");
     return response.data;
   },
 
@@ -160,12 +170,12 @@ getTicketStats: async (params?: {
 
   // ======== CATEGORIES =======
   createCategory: async (categoryData: any) => {
-    const response = await supportaxios.post('/categories', categoryData);
+    const response = await supportaxios.post("/categories", categoryData);
     return response.data;
   },
 
   getCategories: async () => {
-    const response = await supportaxios.get('/categories');
+    const response = await supportaxios.get("/categories");
     return response.data;
   },
 
@@ -175,7 +185,10 @@ getTicketStats: async (params?: {
   },
 
   updateCategory: async (id: string, categoryData: any) => {
-    const response = await supportaxios.patch(`/categories/${id}`, categoryData);
+    const response = await supportaxios.patch(
+      `/categories/${id}`,
+      categoryData
+    );
     return response.data;
   },
 
@@ -186,12 +199,12 @@ getTicketStats: async (params?: {
 
   // ======== AGENTS =======
   createAgent: async (agentData: any) => {
-    const response = await supportaxios.post('/agents', agentData);
+    const response = await supportaxios.post("/agents", agentData);
     return response.data;
   },
 
   getAgents: async () => {
-    const response = await supportaxios.get('/agents');
+    const response = await supportaxios.get("/agents");
     return response.data;
   },
 
@@ -206,7 +219,9 @@ getTicketStats: async (params?: {
   },
 
   updateAgentStatus: async (id: string, status: string) => {
-    const response = await supportaxios.patch(`/agents/${id}/status`, { status });
+    const response = await supportaxios.patch(`/agents/${id}/status`, {
+      status,
+    });
     return response.data;
   },
 
@@ -222,12 +237,12 @@ getTicketStats: async (params?: {
 
   // ======== CANNED RESPONSES =======
   createCannedResponse: async (responseData: any) => {
-    const response = await supportaxios.post('/canned-responses', responseData);
+    const response = await supportaxios.post("/canned-responses", responseData);
     return response.data;
   },
 
   getCannedResponses: async () => {
-    const response = await supportaxios.get('/canned-responses');
+    const response = await supportaxios.get("/canned-responses");
     return response.data;
   },
 
@@ -237,7 +252,10 @@ getTicketStats: async (params?: {
   },
 
   updateCannedResponse: async (id: string, responseData: any) => {
-    const response = await supportaxios.patch(`/canned-responses/${id}`, responseData);
+    const response = await supportaxios.patch(
+      `/canned-responses/${id}`,
+      responseData
+    );
     return response.data;
   },
 
@@ -247,18 +265,21 @@ getTicketStats: async (params?: {
   },
 
   getPopularTags: async () => {
-    const response = await supportaxios.get('/tickets/tags/popular');
+    const response = await supportaxios.get("/tickets/tags/popular");
     return response.data;
   },
 
   renderCannedResponseTemplate: async (templateData: any, id: string) => {
-    const response = await supportaxios.post(`/canned-responses/${id}/render`, templateData);
+    const response = await supportaxios.post(
+      `/canned-responses/${id}/render`,
+      templateData
+    );
     return response.data;
   },
 
   // ======== FAQS =======
   createFAQ: async (faqData: any) => {
-    const response = await supportaxios.post('/faqs', faqData);
+    const response = await supportaxios.post("/faqs", faqData);
     return response.data;
   },
 
@@ -267,7 +288,7 @@ getTicketStats: async (params?: {
     language?: string;
     tags?: string;
   }) => {
-    const response = await supportaxios.get('/faqs');
+    const response = await supportaxios.get("/faqs");
     return response.data;
   },
 
@@ -293,7 +314,7 @@ getTicketStats: async (params?: {
 
   // ========= REPORTS =========
   generateReports: async (reportData: any) => {
-    const response = await supportaxios.post('/reports/generate', reportData);
+    const response = await supportaxios.post("/reports/generate", reportData);
     return response.data;
   },
   getAvailableReports: async (params?: {
@@ -302,21 +323,31 @@ getTicketStats: async (params?: {
     type: string;
     status?: string;
   }) => {
-    const response = await supportaxios.get('/reports/available', { params });
+    const response = await supportaxios.get("/reports/available", { params });
     return response.data;
   },
 
   downloadReport: async (reportId: string) => {
     const response = await supportaxios.get(`/reports/download/${reportId}`, {
-      responseType: 'blob'
+      responseType: "blob",
     });
     return response.data;
   },
 
   getQuickStats: async () => {
-    const response = await supportaxios.get('/reports/quick-stats');
+    const response = await supportaxios.get("/reports/quick-stats");
     return response.data;
-  }
+  },
+
+  // Queues
+  getQueueConfigs: async () => {
+    const response = await supportaxios.get("/queue-config");
+    return response.data;
+  },
+  createQueueConfig: async (data: any) => {
+    const response = await supportaxios.post("/queue-config", data);
+    return response.data;
+  },
 };
 
 export default supportService;

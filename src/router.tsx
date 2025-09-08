@@ -166,6 +166,9 @@ const SupportAuditModule = {
   FAQCreate: lazy(() => import("./app/admin/support/faqcreate")),
   FAQDetail: lazy(() => import("./app/admin/support/faqdetail")),
   SupportReports: lazy(() => import("./app/admin/support/reports")),
+
+  CreateConfig: lazy(() => import("./app/admin/support/queueconfig")),
+
   Logs: lazy(() => import("./app/admin/audits/page")),
   AuditDetails: lazy(() => import("./app/admin/audits/auditdetails")),
 };
@@ -799,6 +802,10 @@ const supportAuditRoutes = [
   {
     path: PATHS.ADMIN.SUPPORT.REPORTS,
     element: SupportAuditModule.SupportReports,
+  },
+  {
+    path: PATHS.ADMIN.SUPPORT.QUEUE_CONFIG,
+    element: SupportAuditModule.CreateConfig,
   },
   {
     path: PATHS.ADMIN.AUDITS.LOGS,
