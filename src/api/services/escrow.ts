@@ -18,6 +18,14 @@ export const escrowService = {
   },
 
   //   Escrow transactions
+  getLedgerAccounts: async () => {
+    const response = await escrow.get("/ledger-accounts");
+    return response.data;
+  },
+  getLedgerAccountById: async (id: string) => {
+    const response = await escrow.get(`/ledger-accounts/${id}`);
+    return response.data;
+  },
   getEscrowTransactions: async () => {
     const response = await escrow.get("/transactions");
     return response.data;

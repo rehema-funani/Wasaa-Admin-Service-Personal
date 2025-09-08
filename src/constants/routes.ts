@@ -73,10 +73,15 @@ const routes: Route[] = [
       },
       {
         type: "dropdown",
-        title: "Transaction Management",
+        title: "Ledger Management",
         icon: Receipt,
         key: "escrow-transactions",
         items: [
+          {
+            type: "link",
+            path: "/admin/escrow/ledger-accounts",
+            title: "All Ledger Accounts",
+          },
           {
             type: "link",
             path: "/admin/escrow/transactions",
