@@ -364,13 +364,38 @@ const supportService = {
     });
     return response.data;
   },
-  getMyAssignedTickets: async (params?: {
-    page?: number;
-    limit?: number;
-  }) => {
-    const response = await supportaxios.get("/tickets/my-tickets", { params });
+  getMyAssignedTickets: async (params?: { page?: number; limit?: number }) => {
+    const response = await supportaxios.get("/queue/assigned-to-me", {
+      params,
+    });
     return response.data;
   },
+  takeTicketOwnership: async (ticketId: string) => {
+    const response = await supportaxios.post(
+      `/queue/${ticketId}/take-ownership`
+    );
+    return response.data;
+  },
+  releaseTiicketOwnership: async (ticketId: string) => {
+    const response = await supportaxios.post(`/queue/${ticketId}/release`);
+    return response.data;
+  },
+  getQueueStats: async () => {
+    const response = await supportaxios.get("/queue/statistics");
+    return response.data;
+  },
+  getAgentWorkloads: async () => {
+    const response = await supportaxios.get("/queue/agent-workloads");
+    return response.data;
+  },
+  lockTicketForEditing: async (ticketId: string) => {
+    const response = await supportaxios.post(`/tickets/${ticketId}/lock`);
+    return response.data;
+  },
+  checkLockStatus: async (ticketId: string) => {
+    const response = await supportaxios.get(`/tickets/${ticketId}/lock-status`);
+    return response.data;
+  }
 };
 
 export default supportService;
