@@ -12,13 +12,26 @@ import {
 const TransactionVolumeTrend = ({
   transactionTrendData,
   selectedMetric,
-  setSelectedMetric,
   formatCurrency,
   formatNumber,
   CustomTooltip,
   weekLabel,
   handleWeekChange,
 }) => {
+  const normalizedData = (transactionTrendData || []).map((d) => ({
+    ...d,
+    volume: Number(d.amount),
+    count: Number(d.count || 0),
+  }));
+
+  if (!normalizedData.length) {
+    return (
+      <div className="h-64 flex items-center justify-center text-gray-500">
+        Loading trend data...
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -31,32 +44,30 @@ const TransactionVolumeTrend = ({
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-2">
-            <button
-              className="px-2 py-1 text-xs border rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={() => handleWeekChange(-1)}
-            >
-              ← Prev Week
-            </button>
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              {weekLabel}
-            </span>
-            <button
-              className="px-2 py-1 text-xs border rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={() => handleWeekChange(1)}
-            >
-              Next Week →
-            </button>
-          </div>
-
+          <button
+            className="px-2 py-1 text-xs border rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={() => handleWeekChange(-1)}
+          >
+            ← Prev Week
+          </button>
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            {weekLabel}
+          </span>
+          <button
+            className="px-2 py-1 text-xs border rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={() => handleWeekChange(1)}
+          >
+            Next Week →
+          </button>
           <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
             <Maximize2 className="w-4 h-4 text-gray-400" />
           </button>
         </div>
       </div>
+
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={transactionTrendData}>
+          <AreaChart data={normalizedData}>
             <defs>
               <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
@@ -64,7 +75,20 @@ const TransactionVolumeTrend = ({
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-            <XAxis dataKey="date" stroke="#6B7280" fontSize={12} />
+            <XAxis
+              dataKey="date"
+              stroke="#6B7280"
+              fontSize={12}
+              tickFormatter={(value, index) => {
+                const item = normalizedData[index];
+                if (!item) return value;
+                const dateObj = new Date(item.date);
+                const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+                const day = String(dateObj.getDate()).padStart(2, "0");
+                return `${item.dayName} (${month}-${day})`;
+              }}
+            />
+
             <YAxis
               stroke="#6B7280"
               fontSize={12}
