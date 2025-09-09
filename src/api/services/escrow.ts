@@ -211,4 +211,8 @@ export const escrowService = {
 
     return response.data;
   },
+  getLedgerEntryAverageStats: async () => {
+    const response = await escrow.get("/ledger-entries/average/stats");
+    return response.data;
+  }
 };

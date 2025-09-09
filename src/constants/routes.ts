@@ -156,20 +156,8 @@ const routes: Route[] = [
             type: "link",
             path: "/admin/escrow/sar",
             title: "Suspicious Activity Reports",
-          },
-          {
-            type: "link",
-            path: "/admin/escrow/audit-logs",
-            title: "Audit Trail",
-          },
+          }
         ],
-      },
-      {
-        type: "link",
-        path: "/admin/escrow/support",
-        title: "Support & Tickets",
-        icon: LifeBuoy,
-        description: "Escrow-related support cases",
       },
       {
         type: "dropdown",

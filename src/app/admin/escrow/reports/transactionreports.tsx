@@ -45,6 +45,7 @@ const TransactionReportsPage: React.FC = () => {
   const [selectedMetric, setSelectedMetric] = useState("volume");
   const [pieStats, setPieStats] = useState<any>(null);
   const [paymentMethodStats, setPaymentMethodStats] = useState<any>(null);
+  const [averageSize, setAverageSize] = useState<any>(null);
   const [currentWeekStart, setCurrentWeekStart] = useState(
     getMonday(new Date())
   );
@@ -112,6 +113,15 @@ const TransactionReportsPage: React.FC = () => {
     }
   };
 
+  const fetchAverageSize = async () => {
+    try {
+      const response = await escrowService.getLedgerEntryAverageStats();
+      setAverageSize(response);
+    } catch (error) {
+      console.error("Error fetching payment method stats:", error);
+    }
+  };
+
   const fetchSuccessRate = async () => {
     try {
       const response = await escrowService.getLedgerEntrySuccessRate();
@@ -127,6 +137,7 @@ const TransactionReportsPage: React.FC = () => {
     fetchWeekData(currentWeekStart);
     fetchPieStats();
     fetchPaymentMethodStats();
+    fetchAverageSize();
   }, []);
 
   const categoryData = [
@@ -134,37 +145,6 @@ const TransactionReportsPage: React.FC = () => {
     { name: "Services", value: 389, volume: 14200000, color: "#10B981" },
     { name: "Digital", value: 245, volume: 8900000, color: "#F59E0B" },
     { name: "Real Estate", value: 90, volume: 4000000, color: "#EF4444" },
-  ];
-
-  const paymentMethodData = [
-    {
-      name: "Wallet",
-      count: 489,
-      volume: 17800000,
-      success: 98.2,
-      icon: Wallet,
-    },
-    {
-      name: "Mobile Money",
-      count: 356,
-      volume: 13200000,
-      success: 96.8,
-      icon: Smartphone,
-    },
-    {
-      name: "Bank Transfer",
-      count: 278,
-      volume: 11400000,
-      success: 94.5,
-      icon: Building,
-    },
-    {
-      name: "Card",
-      count: 124,
-      volume: 3200000,
-      success: 97.1,
-      icon: CreditCard,
-    },
   ];
 
   const performanceMetrics = {
@@ -196,10 +176,12 @@ const TransactionReportsPage: React.FC = () => {
   ];
 
   const refreshData = async () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
+    fetchVolume();
+    fetchSuccessRate();
+    fetchWeekData(currentWeekStart);
+    fetchPieStats();
+    fetchPaymentMethodStats();
+    fetchAverageSize();
   };
 
   const formatCurrency = (amount: number) => {
@@ -384,12 +366,12 @@ const TransactionReportsPage: React.FC = () => {
                 Avg Amount
               </p>
               <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                {formatCurrency(performanceMetrics.averageAmount)}
+                {formatCurrency(averageSize?.thisMonthAverage)}
               </p>
               <div className="flex items-center mt-1">
                 <ArrowUpRight className="w-4 h-4 text-green-500 mr-1" />
                 <span className="text-sm text-green-600 dark:text-green-400">
-                  +{performanceMetrics.growth.averageAmount}%
+                  +{averageSize?.percentChange}%
                 </span>
               </div>
             </div>

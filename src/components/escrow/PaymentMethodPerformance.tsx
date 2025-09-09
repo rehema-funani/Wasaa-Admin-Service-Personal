@@ -7,7 +7,7 @@ const PaymentMethodPerformance = ({
 }) => {
   return (
     <div className="space-y-4">
-      {paymentMethodStats.map((method: any) => {
+      {paymentMethodStats?.map((method: any) => {
         return (
           <div
             key={method.paymentMethod}
