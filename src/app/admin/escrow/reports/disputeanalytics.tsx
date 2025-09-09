@@ -18,8 +18,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Timer,
-  Award,
-  ThumbsUp,
 } from "lucide-react";
 import {
   LineChart as RechartsLineChart,
@@ -41,8 +39,8 @@ import { escrowService } from "../../../../api/services/escrow";
 const DisputeAnalyticsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("30days");
   const [selectedMetric, setSelectedMetric] = useState("count");
-  const [isLoading, setIsLoading] = useState(false);
   const [resolutionRate, setResolutionRate] = useState(null);
+  const [escalationRate, setEscalationRate] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   type DisputeCountStats = {
     thisPeriodCount: number;
@@ -70,10 +68,19 @@ const DisputeAnalyticsPage: React.FC = () => {
       console.error("Error fetching dispute count stats:", error);
     }
   };
+  const fetchDisputeEscalationRate = async () => {
+    try {
+      const response = await escrowService.getDisputeEscalationStats();
+      setEscalationRate(response);
+    } catch (error) {
+      console.error("Error fetching dispute count stats:", error);
+    }
+  };
 
   useEffect(() => {
     fetchDisputeCount();
     fetchDisputeResolutionRate();
+    fetchDisputeEscalationRate();
   }, []);
 
   const disputeTrendData = [
@@ -421,8 +428,7 @@ const DisputeAnalyticsPage: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
@@ -508,33 +514,6 @@ const DisputeAnalyticsPage: React.FC = () => {
           className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.4 }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Satisfaction
-              </p>
-              <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                {performanceMetrics.satisfactionScore}/5.0
-              </p>
-              <div className="flex items-center mt-1">
-                <ArrowUpRight className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 dark:text-green-400">
-                  +{performanceMetrics.growth.satisfaction}%
-                </span>
-              </div>
-            </div>
-            <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
-              <ThumbsUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.5 }}
         >
           <div className="flex items-center justify-between">
@@ -543,12 +522,12 @@ const DisputeAnalyticsPage: React.FC = () => {
                 Escalation Rate
               </p>
               <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                {performanceMetrics.escalationRate}%
+                {escalationRate?.thisPeriodRate}%
               </p>
               <div className="flex items-center mt-1">
                 <ArrowDownRight className="w-4 h-4 text-green-500 mr-1" />
                 <span className="text-sm text-green-600 dark:text-green-400">
-                  {Math.abs(performanceMetrics.growth.escalation)}%
+                  {Math.abs(escalationRate?.percentChange)}%
                 </span>
               </div>
             </div>
@@ -557,38 +536,9 @@ const DisputeAnalyticsPage: React.FC = () => {
             </div>
           </div>
         </motion.div>
-
-        <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.6 }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                SLA Compliance
-              </p>
-              <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                {performanceMetrics.slaCompliance}%
-              </p>
-              <div className="flex items-center mt-1">
-                <ArrowUpRight className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 dark:text-green-400">
-                  +{performanceMetrics.growth.slaCompliance}%
-                </span>
-              </div>
-            </div>
-            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/20 rounded-lg">
-              <Award className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-            </div>
-          </div>
-        </motion.div>
       </div>
 
-      {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Dispute Trend Analysis */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
