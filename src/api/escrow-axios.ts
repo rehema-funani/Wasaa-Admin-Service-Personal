@@ -34,6 +34,7 @@ escrow.interceptors.request.use(
   (config) => {
     try {
       const token = getToken(tokenConfig.storageType);
+      console.log("Escrow Token:", token);
 
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
