@@ -8,6 +8,10 @@ export const escrowService = {
   },
 
   //   Escrow agreements
+  createSystemEscrow: async (data: any) => {
+    const response = await escrow.post("/escrow-agreements/system/create", data);
+    return response.data;
+  },
   getEscrowAgreements: async () => {
     const response = await escrow.get("/escrow-agreements");
     return response.data;
@@ -147,6 +151,22 @@ export const escrowService = {
   },
   getTotalVolumeMetrics: async () => {
     const response = await escrow.get("/escrow-agreements/stats/volume");
+    return response.data;
+  },
+  getLedgerEntryVolumeStats: async () => {
+    const response = await escrow.get("/ledger-entries/volume/stats");
+    return response.data;
+  },
+  getLedgerEntrySuccessRate: async () => {
+    const response = await escrow.get("/ledger-entries/success-rate");
+    return response.data;
+  },
+  getLedgerEntryCountStats: async () => {
+    const response = await escrow.get("/ledger-entries/count/stats");
+    return response.data;
+  },
+  getLedgerEntryDailyVolumeTrend: async (from: string, to: string) => {
+    const response = await escrow.get(`/ledger-entries/daily-volume-trend?from=${from}&to=${to}`);
     return response.data;
   },
 };

@@ -66,6 +66,13 @@ const routes: Route[] = [
       },
       {
         type: "link",
+        path: "/admin/escrow/transactions/create",
+        title: "Create Escrow",
+        icon: FileText,
+        description: "Initiate a new escrow transaction",
+      },
+      {
+        type: "link",
         path: "/admin/escrow/all-escrow-agreements",
         title: "Escrow Agreements",
         icon: FileText,

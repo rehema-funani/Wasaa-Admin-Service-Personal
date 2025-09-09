@@ -55,11 +55,37 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { escrowService } from "../../../../api/services/escrow";
 
 const TransactionReportsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const [selectedMetric, setSelectedMetric] = useState("volume");
   const [refreshing, setRefreshing] = useState(false);
+  const [volume, setVolume] = useState<any>(null);
+  const [successRate, setSuccessRate] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchVolume = async () => {
+      try {
+        const response = await escrowService.getEscrowVolumeTrend();
+        setVolume(response);
+      } catch (error) {
+        console.error("Error fetching volume trend:", error);
+      }
+    };
+
+    const fetchSuccessRate = async () => {
+      try {
+        const response = await escrowService.getLedgerEntrySuccessRate();
+        setSuccessRate(response);
+      } catch (error) {
+        console.error("Error fetching volume trend:", error);
+      }
+    };
+
+    fetchVolume();
+    fetchSuccessRate();
+  }, []);
 
   const transactionTrendData = [
     {
@@ -222,7 +248,6 @@ const TransactionReportsPage: React.FC = () => {
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-      {/* Header */}
       <motion.div
         className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4"
         initial={{ opacity: 0, y: -20 }}
@@ -342,12 +367,12 @@ const TransactionReportsPage: React.FC = () => {
                 Success Rate
               </p>
               <p className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-                {performanceMetrics.successRate}%
+                {successRate?.thisMonthRate}%
               </p>
               <div className="flex items-center mt-1">
                 <ArrowUpRight className="w-4 h-4 text-green-500 mr-1" />
                 <span className="text-sm text-green-600 dark:text-green-400">
-                  +{performanceMetrics.growth.successRate}%
+                  +{successRate?.percentChange}%
                 </span>
               </div>
             </div>

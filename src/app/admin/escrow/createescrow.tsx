@@ -1,1123 +1,905 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
-  ArrowRight,
   Save,
-  Users,
+  Plus,
+  Minus,
+  Calendar,
   DollarSign,
-  Shield,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  Search,
-  Upload,
-  Info,
-  Clock,
-} from "lucide-react";
+  Target,
+  User,
+  Briefcase,
+  AlertCircle,
+  X,
+  Check,
+  CreditCard,
+  Info
+} from 'lucide-react';
+import { escrowService } from '../../../api/services/escrow';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import toast from 'react-hot-toast';
 
-const CreateEscrowPage: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+const CreateSystemEscrowPage = () => {
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const [formData, setFormData] = useState({
+    tenantId: "82208244-c5f4-4144-9d08-fa3779b5c154", // default tenant ID
     buyerId: "",
-    buyerName: "",
-    buyerEmail: "",
-    buyerPhone: "",
-    buyerKycStatus: "",
-
-    // Seller Information
     sellerId: "",
-    sellerName: "",
-    sellerEmail: "",
-    sellerPhone: "",
-    sellerKycStatus: "",
-
-    // Transaction Details
-    amount: "",
+    paymentMethodId: "3",
+    has_milestone: false,
+    agreementType: "BUSINESS",
     currency: "KES",
-    category: "",
-    subcategory: "",
+    amountMinor: "",
+    system: "yes",
+    purpose: "",
+    deadline: new Date(new Date().setMonth(new Date().getMonth() + 3)), // 3 months from now
+    milestones: [] as any[],
+  });
+
+  const [milestone, setMilestone] = useState({
+    amountMinor: "",
+    name: "",
     description: "",
-
-    // Payment & Terms
-    paymentMethod: "",
-    releaseConditions: "",
-    expiryDate: "",
-    autoRelease: false,
-
-    documents: [],
-    adminNotes: "",
-    tags: [],
-
-    riskLevel: "medium",
-    complianceFlags: [],
-    requiresApproval: false,
+    deadline: new Date(new Date().setMonth(new Date().getMonth() + 3)), // 3 months from now
+    completedDate: new Date(new Date().setMonth(new Date().getMonth() + 3)), // 3 months from now
+    order: 0,
   });
 
-  const [searchResults, setSearchResults] = useState({
-    buyers: [],
-    sellers: [],
-  });
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
 
-  const [validation, setValidation] = useState({
-    errors: {},
-    warnings: [],
-  });
+    // Required fields
+    if (!formData.buyerId) newErrors.buyerId = "Buyer ID is required";
+    if (!formData.sellerId) newErrors.sellerId = "Seller ID is required";
+    if (!formData.amountMinor) newErrors.amountMinor = "Amount is required";
+    if (!formData.purpose) newErrors.purpose = "Purpose is required";
 
-  const steps = [
-    { id: 1, title: "Parties", description: "Select buyer and seller" },
-    { id: 2, title: "Transaction", description: "Amount and details" },
-    { id: 3, title: "Terms", description: "Payment and conditions" },
-    { id: 4, title: "Review", description: "Confirm and create" },
-  ];
+    // Validate amount
+    if (
+      formData.amountMinor &&
+      parseInt(formData.amountMinor.toString()) <= 0
+    ) {
+      newErrors.amountMinor = "Amount must be greater than 0";
+    }
 
-  const currencies = [
-    { code: "KES", name: "Kenyan Shilling", symbol: "KES" },
-    { code: "USD", name: "US Dollar", symbol: "$" },
-    { code: "EUR", name: "Euro", symbol: "€" },
-    { code: "NGN", name: "Nigerian Naira", symbol: "₦" },
-    { code: "ZAR", name: "South African Rand", symbol: "R" },
-  ];
+    // Validate milestones if has_milestone is true
+    if (formData.has_milestone && formData.milestones.length === 0) {
+      newErrors.milestones = "At least one milestone is required";
+    }
 
-  const categories = [
-    {
-      value: "goods",
-      label: "Physical Goods",
-      subcategories: [
-        "Electronics",
-        "Clothing",
-        "Furniture",
-        "Automotive",
-        "Books",
-        "Other",
-      ],
-    },
-    {
-      value: "services",
-      label: "Services",
-      subcategories: [
-        "Consulting",
-        "Development",
-        "Design",
-        "Marketing",
-        "Legal",
-        "Other",
-      ],
-    },
-    {
-      value: "digital",
-      label: "Digital Goods",
-      subcategories: [
-        "Software",
-        "Content",
-        "Courses",
-        "Subscriptions",
-        "Other",
-      ],
-    },
-    {
-      value: "real_estate",
-      label: "Real Estate",
-      subcategories: ["Residential", "Commercial", "Land", "Rental Deposit"],
-    },
-    {
-      value: "freelance",
-      label: "Freelance Work",
-      subcategories: [
-        "Writing",
-        "Programming",
-        "Design",
-        "Translation",
-        "Other",
-      ],
-    },
-  ];
-
-  const paymentMethods = [
-    {
-      value: "wallet",
-      label: "WasaaChat Wallet",
-      description: "Instant transfer from wallet balance",
-    },
-    {
-      value: "mobile_money",
-      label: "Mobile Money",
-      description: "M-Pesa, Airtel Money, etc.",
-    },
-    {
-      value: "bank_transfer",
-      label: "Bank Transfer",
-      description: "Direct bank account transfer",
-    },
-    {
-      value: "card",
-      label: "Credit/Debit Card",
-      description: "Visa, Mastercard, etc.",
-    },
-  ];
-
-  const searchUsers = async (query: string, type: "buyer" | "seller") => {
-    if (query.length < 2) return;
-
-    setIsLoading(true);
-    setTimeout(() => {
-      const mockUsers = [
-        {
-          id: "user001",
-          name: "John Doe",
-          email: "john.doe@example.com",
-          phone: "+254700123456",
-          kycStatus: "verified",
-          riskScore: 85,
-        },
-        {
-          id: "user002",
-          name: "Mary Johnson",
-          email: "mary.j@example.com",
-          phone: "+254700234567",
-          kycStatus: "verified",
-          riskScore: 92,
-        },
-        {
-          id: "user003",
-          name: "David Chen",
-          email: "david.c@example.com",
-          phone: "+254700345678",
-          kycStatus: "pending",
-          riskScore: 76,
-        },
-        {
-          id: "user004",
-          name: "Sarah Ahmed",
-          email: "sarah.a@example.com",
-          phone: "+254700456789",
-          kycStatus: "expired",
-          riskScore: 68,
-        },
-      ].filter(
-        (user) =>
-          user.name.toLowerCase().includes(query.toLowerCase()) ||
-          user.email.toLowerCase().includes(query.toLowerCase())
+    // Validate that milestone amounts don't exceed total amount
+    if (
+      formData.has_milestone &&
+      formData.milestones.length > 0 &&
+      formData.amountMinor
+    ) {
+      const totalMilestoneAmount = formData.milestones.reduce(
+        (sum, m) => sum + parseInt(m.amountMinor.toString()),
+        0
       );
 
-      setSearchResults((prev) => ({
-        ...prev,
-        [type === "buyer" ? "buyers" : "sellers"]: mockUsers,
-      }));
-      setIsLoading(false);
-    }, 500);
-  };
-
-  const selectUser = (user: any, type: "buyer" | "seller") => {
-    const prefix = type === "buyer" ? "buyer" : "seller";
-    setFormData((prev) => ({
-      ...prev,
-      [`${prefix}Id`]: user.id,
-      [`${prefix}Name`]: user.name,
-      [`${prefix}Email`]: user.email,
-      [`${prefix}Phone`]: user.phone,
-      [`${prefix}KycStatus`]: user.kycStatus,
-    }));
-
-    // Clear search results
-    setSearchResults((prev) => ({
-      ...prev,
-      [type === "buyer" ? "buyers" : "sellers"]: [],
-    }));
-  };
-
-  const getKycStatusBadge = (status: string) => {
-    const statusConfig = {
-      verified: {
-        color:
-          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-        icon: CheckCircle,
-      },
-      pending: {
-        color:
-          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-        icon: Clock,
-      },
-      expired: {
-        color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-        icon: AlertTriangle,
-      },
-    };
-
-    const config =
-      statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    const IconComponent = config.icon;
-
-    return (
-      <span
-        className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.color}`}
-      >
-        <IconComponent className="w-3 h-3 mr-1" />
-        {status || "Unknown"}
-      </span>
-    );
-  };
-
-  const validateStep = (step: number) => {
-    const errors: any = {};
-    const warnings: string[] = [];
-
-    switch (step) {
-      case 1:
-        if (!formData.buyerId) errors.buyer = "Buyer is required";
-        if (!formData.sellerId) errors.seller = "Seller is required";
-        if (formData.buyerId === formData.sellerId)
-          errors.parties = "Buyer and seller cannot be the same person";
-        if (formData.buyerKycStatus !== "verified")
-          warnings.push("Buyer KYC is not verified");
-        if (formData.sellerKycStatus !== "verified")
-          warnings.push("Seller KYC is not verified");
-        break;
-      case 2:
-        if (!formData.amount || parseFloat(formData.amount) <= 0)
-          errors.amount = "Valid amount is required";
-        if (!formData.category) errors.category = "Category is required";
-        if (!formData.description.trim())
-          errors.description = "Description is required";
-        if (parseFloat(formData.amount) > 1000000)
-          warnings.push("High value transaction requires additional approval");
-        break;
-      case 3:
-        if (!formData.paymentMethod)
-          errors.paymentMethod = "Payment method is required";
-        if (!formData.expiryDate) errors.expiryDate = "Expiry date is required";
-        if (new Date(formData.expiryDate) <= new Date())
-          errors.expiryDate = "Expiry date must be in the future";
-        break;
+      if (totalMilestoneAmount > parseInt(formData.amountMinor.toString())) {
+        newErrors.milestones =
+          "Total milestone amounts cannot exceed the escrow amount";
+      }
     }
 
-    setValidation({ errors, warnings });
-    return Object.keys(errors).length === 0;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const nextStep = () => {
-    if (validateStep(currentStep)) {
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length));
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value, type } = e.target;
+
+    // Handle checkboxes
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData({ ...formData, [name]: checked });
+      return;
+    }
+
+    // Handle numeric inputs
+    if (name === "amountMinor") {
+      // Only allow numbers
+      if (value && !/^\d+$/.test(value)) return;
+    }
+
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleMilestoneChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+
+    // Handle numeric inputs
+    if (name === "amountMinor") {
+      // Only allow numbers
+      if (value && !/^\d+$/.test(value)) return;
+    }
+
+    setMilestone({ ...milestone, [name]: value });
+  };
+
+  const handleDateChange = (date: Date | null, fieldName: string) => {
+    if (date) {
+      setFormData({ ...formData, [fieldName]: date });
     }
   };
 
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  const handleMilestoneDateChange = (date: Date | null, fieldName: string) => {
+    if (date) {
+      setMilestone({ ...milestone, [fieldName]: date });
+    }
   };
 
-  const handleSubmit = async () => {
-    if (!validateStep(currentStep)) return;
+  const addMilestone = () => {
+    // Validate milestone
+    if (!milestone.name) {
+      setErrors({ ...errors, milestoneName: "Milestone name is required" });
+      return;
+    }
+    if (!milestone.amountMinor) {
+      setErrors({ ...errors, milestoneAmount: "Milestone amount is required" });
+      return;
+    }
 
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Creating escrow with data:", formData);
-      setIsLoading(false);
-      // Redirect to transaction details or success page
-    }, 2000);
+    // Add milestone to the list
+    const newMilestones = [
+      ...formData.milestones,
+      { ...milestone, order: formData.milestones.length },
+    ];
+
+    setFormData({ ...formData, milestones: newMilestones });
+
+    // Reset milestone form
+    setMilestone({
+      amountMinor: "",
+      name: "",
+      description: "",
+      deadline: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+      completedDate: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+      order: formData.milestones.length + 1,
+    });
+
+    // Clear milestone errors
+    const { milestoneName, milestoneAmount, ...restErrors } = errors;
+    setErrors(restErrors);
   };
 
-  const formatCurrency = (amount: string, currency: string) => {
-    if (!amount) return "";
-    const num = parseFloat(amount);
-    if (isNaN(num)) return amount;
+  const removeMilestone = (index: number) => {
+    const newMilestones = [...formData.milestones];
+    newMilestones.splice(index, 1);
 
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(num);
+    // Update order for remaining milestones
+    newMilestones.forEach((m, i) => {
+      m.order = i;
+    });
+
+    setFormData({ ...formData, milestones: newMilestones });
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      toast.error("Please fix the errors before submitting");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const escrowData = {
+        ...formData,
+        amountMinor: parseInt(formData.amountMinor.toString()),
+        milestones: formData.has_milestone
+          ? formData.milestones.map((m) => ({
+              ...m,
+              amountMinor: parseInt(m.amountMinor.toString()),
+              deadline: m.deadline.toISOString(),
+              completedDate: m.completedDate.toISOString(),
+            }))
+          : [],
+        deadline: formData.deadline.toISOString(),
+      };
+
+      const response = await escrowService.createSystemEscrow(escrowData);
+
+      toast.success("System escrow created successfully");
+      navigate(`/admin/escrow/system-escrow/${response.id}`);
+    } catch (error) {
+      console.error("Failed to create system escrow:", error);
+      toast.error("Failed to create system escrow");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const totalMilestoneAmount = formData.milestones.reduce(
+    (sum, m) => sum + parseInt(m.amountMinor.toString()),
+    0
+  );
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50 dark:from-slate-900 dark:via-blue-900/20 dark:to-purple-950">
       {/* Header */}
-      <motion.div
-        className="flex items-center justify-between mb-6"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="flex items-center space-x-4">
-          <motion.button
-            className="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-            whileHover={{ x: -2 }}
-            whileTap={{ x: 0 }}
-          >
-            <ArrowLeft size={20} />
-          </motion.button>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-              Create Escrow Transaction
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Set up a secure escrow transaction between parties
-            </p>
+      <div className="sticky top-0 z-10 backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border-b border-white/20 dark:border-slate-700/30">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <motion.button
+                className="p-2 hover:bg-white/50 dark:hover:bg-slate-800/50 rounded-xl transition-colors"
+                onClick={() => navigate("/admin/escrow/system-escrows")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              </motion.button>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 bg-clip-text text-transparent">
+                  Create System Escrow
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Set up a new system escrow agreement
+                </p>
+              </div>
+            </div>
+
+            <motion.button
+              className={`px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200 flex items-center gap-2 ${
+                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+              }`}
+              onClick={handleSubmit}
+              whileHover={isSubmitting ? {} : { scale: 1.02 }}
+              whileTap={isSubmitting ? {} : { scale: 0.98 }}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Create Escrow
+                </>
+              )}
+            </motion.button>
           </div>
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          Step {currentStep} of {steps.length}
-        </div>
-      </motion.div>
+      </div>
 
-      {/* Progress Steps */}
-      <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        <div className="flex items-center justify-between">
-          {steps.map((step, index) => (
-            <div key={step.id} className="flex items-center">
-              <div className="flex items-center">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
-                    currentStep === step.id
-                      ? "bg-primary-600 text-white"
-                      : currentStep > step.id
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-                  }`}
-                >
-                  {currentStep > step.id ? <CheckCircle size={16} /> : step.id}
-                </div>
-                <div className="ml-3">
-                  <div
-                    className={`text-sm font-medium ${
-                      currentStep >= step.id
-                        ? "text-gray-900 dark:text-gray-100"
-                        : "text-gray-500 dark:text-gray-400"
-                    }`}
-                  >
-                    {step.title}
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {step.description}
-                  </div>
-                </div>
-              </div>
-              {index < steps.length - 1 && (
-                <div
-                  className={`mx-6 h-0.5 w-16 ${
-                    currentStep > step.id
-                      ? "bg-green-600"
-                      : "bg-gray-200 dark:bg-gray-700"
-                  }`}
-                ></div>
-              )}
-            </div>
-          ))}
-        </div>
-      </motion.div>
+      <div className="max-w-7xl mx-auto p-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Information */}
+          <motion.div
+            className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-slate-700/30"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+              <Info className="w-5 h-5 text-primary-500" />
+              Basic Information
+            </h2>
 
-      {/* Validation Messages */}
-      {(Object.keys(validation.errors).length > 0 ||
-        validation.warnings.length > 0) && (
-        <motion.div
-          className="mb-6 space-y-2"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {Object.values(validation.errors).map((error, index) => (
-            <div
-              key={index}
-              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 flex items-center"
-            >
-              <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 mr-2" />
-              <span className="text-red-700 dark:text-red-300 text-sm">
-                {error as string}
-              </span>
-            </div>
-          ))}
-          {validation.warnings.map((warning, index) => (
-            <div
-              key={index}
-              className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 flex items-center"
-            >
-              <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mr-2" />
-              <span className="text-amber-700 dark:text-amber-300 text-sm">
-                {warning}
-              </span>
-            </div>
-          ))}
-        </motion.div>
-      )}
-
-      {/* Step Content */}
-      <motion.div
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
-      >
-        <div className="p-6">
-          {/* Step 1: Parties */}
-          {currentStep === 1 && (
-            <div className="space-y-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <Users className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  Select Parties
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Buyer Selection */}
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-800 dark:text-gray-100">
-                    Buyer Information
-                  </h4>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search buyer by name or email..."
-                      className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      onChange={(e) => searchUsers(e.target.value, "buyer")}
-                    />
-                    {searchResults.buyers.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                        {searchResults.buyers.map((user: any) => (
-                          <div
-                            key={user.id}
-                            className="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer border-b border-gray-100 dark:border-gray-600 last:border-b-0"
-                            onClick={() => selectUser(user, "buyer")}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <div className="font-medium text-gray-900 dark:text-gray-100">
-                                  {user.name}
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">
-                                  {user.email}
-                                </div>
-                              </div>
-                              {getKycStatusBadge(user.kycStatus)}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  {formData.buyerId && (
-                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-blue-800 dark:text-blue-200">
-                          Selected Buyer
-                        </span>
-                        {getKycStatusBadge(formData.buyerKycStatus)}
-                      </div>
-                      <div className="text-blue-700 dark:text-blue-300">
-                        <div className="font-medium">{formData.buyerName}</div>
-                        <div className="text-sm">{formData.buyerEmail}</div>
-                        <div className="text-sm">{formData.buyerPhone}</div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Seller Selection */}
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-800 dark:text-gray-100">
-                    Seller Information
-                  </h4>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search seller by name or email..."
-                      className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      onChange={(e) => searchUsers(e.target.value, "seller")}
-                    />
-                    {searchResults.sellers.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                        {searchResults.sellers.map((user: any) => (
-                          <div
-                            key={user.id}
-                            className="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer border-b border-gray-100 dark:border-gray-600 last:border-b-0"
-                            onClick={() => selectUser(user, "seller")}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <div className="font-medium text-gray-900 dark:text-gray-100">
-                                  {user.name}
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">
-                                  {user.email}
-                                </div>
-                              </div>
-                              {getKycStatusBadge(user.kycStatus)}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  {formData.sellerId && (
-                    <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-green-800 dark:text-green-200">
-                          Selected Seller
-                        </span>
-                        {getKycStatusBadge(formData.sellerKycStatus)}
-                      </div>
-                      <div className="text-green-700 dark:text-green-300">
-                        <div className="font-medium">{formData.sellerName}</div>
-                        <div className="text-sm">{formData.sellerEmail}</div>
-                        <div className="text-sm">{formData.sellerPhone}</div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Transaction Details */}
-          {currentStep === 2 && (
-            <div className="space-y-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <DollarSign className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  Transaction Details
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Amount *
-                    </label>
-                    <div className="flex">
-                      <select
-                        value={formData.currency}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            currency: e.target.value,
-                          }))
-                        }
-                        className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-l-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      >
-                        {currencies.map((currency) => (
-                          <option key={currency.code} value={currency.code}>
-                            {currency.code}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        type="number"
-                        value={formData.amount}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            amount: e.target.value,
-                          }))
-                        }
-                        placeholder="0.00"
-                        className="flex-1 px-3 py-2 border-t border-r border-b border-gray-200 dark:border-gray-600 rounded-r-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      />
-                    </div>
-                    {formData.amount && (
-                      <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        {formatCurrency(formData.amount, formData.currency)}
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Category *
-                    </label>
-                    <select
-                      value={formData.category}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          category: e.target.value,
-                          subcategory: "",
-                        }))
-                      }
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
-                      <option value="">Select category...</option>
-                      {categories.map((category) => (
-                        <option key={category.value} value={category.value}>
-                          {category.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {formData.category && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Subcategory
-                      </label>
-                      <select
-                        value={formData.subcategory}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            subcategory: e.target.value,
-                          }))
-                        }
-                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      >
-                        <option value="">Select subcategory...</option>
-                        {categories
-                          .find((c) => c.value === formData.category)
-                          ?.subcategories.map((sub) => (
-                            <option
-                              key={sub}
-                              value={sub.toLowerCase().replace(" ", "_")}
-                            >
-                              {sub}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Description *
-                    </label>
-                    <textarea
-                      value={formData.description}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          description: e.target.value,
-                        }))
-                      }
-                      placeholder="Describe the goods or services being escrowed..."
-                      rows={4}
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                    <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      {formData.description.length}/500 characters
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Risk Assessment
-                    </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {["low", "medium", "high"].map((level) => (
-                        <button
-                          key={level}
-                          type="button"
-                          onClick={() =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              riskLevel: level,
-                            }))
-                          }
-                          className={`px-3 py-2 text-sm font-medium rounded-lg border ${
-                            formData.riskLevel === level
-                              ? level === "low"
-                                ? "bg-green-100 border-green-300 text-green-800 dark:bg-green-900 dark:border-green-700 dark:text-green-200"
-                                : level === "medium"
-                                ? "bg-yellow-100 border-yellow-300 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-200"
-                                : "bg-red-100 border-red-300 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-200"
-                              : "bg-white border-gray-200 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                          }`}
-                        >
-                          {level.charAt(0).toUpperCase() + level.slice(1)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Payment & Terms */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <Shield className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  Payment & Terms
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Payment Method *
-                    </label>
-                    <div className="space-y-2">
-                      {paymentMethods.map((method) => (
-                        <div
-                          key={method.value}
-                          onClick={() =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              paymentMethod: method.value,
-                            }))
-                          }
-                          className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                            formData.paymentMethod === method.value
-                              ? "border-primary-300 bg-primary-50 dark:border-primary-700 dark:bg-primary-900/20"
-                              : "border-gray-200 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-500"
-                          }`}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div
-                              className={`w-4 h-4 rounded-full border-2 ${
-                                formData.paymentMethod === method.value
-                                  ? "border-primary-600 bg-primary-600"
-                                  : "border-gray-300 dark:border-gray-600"
-                              }`}
-                            >
-                              {formData.paymentMethod === method.value && (
-                                <div className="w-2 h-2 bg-white rounded-full m-0.5"></div>
-                              )}
-                            </div>
-                            <div>
-                              <div className="font-medium text-gray-900 dark:text-gray-100">
-                                {method.label}
-                              </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {method.description}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Expiry Date *
-                    </label>
-                    <input
-                      type="datetime-local"
-                      value={formData.expiryDate}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          expiryDate: e.target.value,
-                        }))
-                      }
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                    <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      Transaction will expire if not completed by this date
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="autoRelease"
-                      checked={formData.autoRelease}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          autoRelease: e.target.checked,
-                        }))
-                      }
-                      className="rounded border-gray-300 dark:border-gray-600"
-                    />
-                    <label
-                      htmlFor="autoRelease"
-                      className="text-sm text-gray-700 dark:text-gray-300"
-                    >
-                      Enable auto-release on expiry
-                    </label>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Release Conditions
-                    </label>
-                    <textarea
-                      value={formData.releaseConditions}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          releaseConditions: e.target.value,
-                        }))
-                      }
-                      placeholder="Specify conditions that must be met before funds are released..."
-                      rows={4}
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Supporting Documents
-                    </label>
-                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
-                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                      <div className="mt-2">
-                        <button className="text-primary-600 dark:text-primary-400 hover:text-primary-500">
-                          Upload files
-                        </button>
-                        <span className="text-gray-500 dark:text-gray-400">
-                          {" "}
-                          or drag and drop
-                        </span>
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        PDF, DOC, JPG, PNG up to 10MB each
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Admin Notes (Internal)
-                    </label>
-                    <textarea
-                      value={formData.adminNotes}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          adminNotes: e.target.value,
-                        }))
-                      }
-                      placeholder="Internal notes for admin reference..."
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 4: Review */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <div className="flex items-center space-x-2 mb-4">
-                <FileText className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  Review & Confirm
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Transaction Summary */}
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-800 dark:text-gray-100 mb-3">
-                    Transaction Summary
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Amount:
-                      </span>
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        {formatCurrency(formData.amount, formData.currency)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Category:
-                      </span>
-                      <span className="text-gray-900 dark:text-gray-100">
-                        {
-                          categories.find((c) => c.value === formData.category)
-                            ?.label
-                        }
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Payment Method:
-                      </span>
-                      <span className="text-gray-900 dark:text-gray-100">
-                        {
-                          paymentMethods.find(
-                            (p) => p.value === formData.paymentMethod
-                          )?.label
-                        }
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Risk Level:
-                      </span>
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${
-                          formData.riskLevel === "low"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                            : formData.riskLevel === "medium"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                        }`}
-                      >
-                        {formData.riskLevel.charAt(0).toUpperCase() +
-                          formData.riskLevel.slice(1)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">
-                        Expires:
-                      </span>
-                      <span className="text-gray-900 dark:text-gray-100">
-                        {formData.expiryDate
-                          ? new Date(formData.expiryDate).toLocaleDateString()
-                          : "N/A"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Parties Summary */}
-                <div className="space-y-4">
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">
-                      Buyer
-                    </h4>
-                    <div className="text-sm text-blue-700 dark:text-blue-300">
-                      <div className="font-medium">{formData.buyerName}</div>
-                      <div>{formData.buyerEmail}</div>
-                      <div className="mt-1">
-                        {getKycStatusBadge(formData.buyerKycStatus)}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-                    <h4 className="font-medium text-green-800 dark:text-green-200 mb-2">
-                      Seller
-                    </h4>
-                    <div className="text-sm text-green-700 dark:text-green-300">
-                      <div className="font-medium">{formData.sellerName}</div>
-                      <div>{formData.sellerEmail}</div>
-                      <div className="mt-1">
-                        {getKycStatusBadge(formData.sellerKycStatus)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Description & Conditions */}
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium text-gray-800 dark:text-gray-100 mb-2">
-                    Description
-                  </h4>
-                  <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                    {formData.description || "No description provided"}
-                  </div>
-                </div>
-
-                {formData.releaseConditions && (
-                  <div>
-                    <h4 className="font-medium text-gray-800 dark:text-gray-100 mb-2">
-                      Release Conditions
-                    </h4>
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                      {formData.releaseConditions}
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Purpose <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="purpose"
+                  value={formData.purpose}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.purpose
+                      ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500"
+                  } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                  placeholder="E.g., Raising school fees"
+                />
+                {errors.purpose && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.purpose}
+                  </p>
                 )}
               </div>
 
-              {/* Final Confirmation */}
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-                <div className="flex items-start space-x-3">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-amber-700 dark:text-amber-300">
-                    <div className="font-medium mb-1">Important Notice</div>
-                    <div>
-                      Please review all details carefully. Once created, this
-                      escrow transaction will be binding and funds will be held
-                      securely until release conditions are met or the
-                      transaction expires.
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Agreement Type
+                </label>
+                <select
+                  name="agreementType"
+                  value={formData.agreementType}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                >
+                  <option value="USER">User</option>
+                  <option value="BUSINESS">Business</option>
+                  <option value="FUNDRAISER">Fundraiser</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Buyer ID <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="buyerId"
+                  value={formData.buyerId}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.buyerId
+                      ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500"
+                  } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                  placeholder="Enter buyer ID"
+                />
+                {errors.buyerId && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.buyerId}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Seller ID <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="sellerId"
+                  value={formData.sellerId}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 rounded-xl border ${
+                    errors.sellerId
+                      ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
+                      : "border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500"
+                  } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                  placeholder="Enter seller ID"
+                />
+                {errors.sellerId && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.sellerId}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Currency
+                </label>
+                <select
+                  name="currency"
+                  value={formData.currency}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                >
+                  <option value="KES">KES (Kenyan Shilling)</option>
+                  <option value="USD">USD (US Dollar)</option>
+                  <option value="EUR">EUR (Euro)</option>
+                  <option value="GBP">GBP (British Pound)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Amount <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <DollarSign className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="amountMinor"
+                    value={formData.amountMinor}
+                    onChange={handleInputChange}
+                    className={`w-full pl-10 pr-4 py-3 rounded-xl border ${
+                      errors.amountMinor
+                        ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
+                        : "border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500"
+                    } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                    placeholder="Enter amount"
+                  />
+                </div>
+                {errors.amountMinor && (
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.amountMinor}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Deadline
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Calendar className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <DatePicker
+                    selected={formData.deadline}
+                    onChange={(date) => handleDateChange(date, "deadline")}
+                    minDate={new Date()}
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                    dateFormat="yyyy-MM-dd"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Payment Method ID
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <CreditCard className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="paymentMethodId"
+                    value={formData.paymentMethodId}
+                    onChange={handleInputChange}
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Enter payment method ID"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="has_milestone"
+                  name="has_milestone"
+                  checked={formData.has_milestone}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      has_milestone: e.target.checked,
+                    })
+                  }
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded"
+                />
+                <label
+                  htmlFor="has_milestone"
+                  className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                >
+                  Has Milestones
+                </label>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Milestones */}
+          {formData.has_milestone && (
+            <motion.div
+              className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-slate-700/30"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <Target className="w-5 h-5 text-primary-500" />
+                  Milestones
+                </h2>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Total: {totalMilestoneAmount} / {formData.amountMinor || 0}{" "}
+                    {formData.currency}
+                  </span>
+                  <div className="w-32 h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                    <div
+                      className={`h-full rounded-full ${
+                        totalMilestoneAmount >
+                        parseInt(formData.amountMinor || "0")
+                          ? "bg-red-500"
+                          : "bg-green-500"
+                      }`}
+                      style={{
+                        width: formData.amountMinor
+                          ? `${Math.min(
+                              (totalMilestoneAmount /
+                                parseInt(formData.amountMinor || "1")) *
+                                100,
+                              100
+                            )}%`
+                          : "0%",
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              {errors.milestones && (
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-lg text-red-600 dark:text-red-400 text-sm">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    {errors.milestones}
+                  </div>
+                </div>
+              )}
+
+              {/* Add Milestone Form */}
+              <div className="bg-gray-50/80 dark:bg-slate-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700 mb-6">
+                <h3 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-4">
+                  Add New Milestone
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={milestone.name}
+                      onChange={handleMilestoneChange}
+                      className={`w-full px-3 py-2 rounded-lg border ${
+                        errors.milestoneName
+                          ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
+                          : "border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500"
+                      } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                      placeholder="E.g., Design Phase"
+                    />
+                    {errors.milestoneName && (
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                        {errors.milestoneName}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Amount <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <DollarSign className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        name="amountMinor"
+                        value={milestone.amountMinor}
+                        onChange={handleMilestoneChange}
+                        className={`w-full pl-9 pr-3 py-2 rounded-lg border ${
+                          errors.milestoneAmount
+                            ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
+                            : "border-gray-300 dark:border-gray-600 focus:ring-primary-500 focus:border-primary-500"
+                        } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                        placeholder="Enter amount"
+                      />
+                    </div>
+                    {errors.milestoneAmount && (
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                        {errors.milestoneAmount}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    value={milestone.description}
+                    onChange={handleMilestoneChange}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                    rows={2}
+                    placeholder="Enter milestone description"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Deadline
+                    </label>
+                    <DatePicker
+                      selected={milestone.deadline}
+                      onChange={(date: Date | null) =>
+                        handleMilestoneDateChange(date, "deadline")
+                      }
+                      minDate={new Date()}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                      dateFormat="yyyy-MM-dd"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Completed Date
+                    </label>
+                    <DatePicker
+                      selected={milestone.completedDate}
+                      onChange={(date) =>
+                        handleMilestoneDateChange(date, "completedDate")
+                      }
+                      minDate={new Date()}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                      dateFormat="yyyy-MM-dd"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <motion.button
+                    type="button"
+                    className="px-4 py-2 bg-primary-600 dark:bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors flex items-center gap-1"
+                    onClick={addMilestone}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Milestone
+                  </motion.button>
+                </div>
+              </div>
+
+              {/* Milestones List */}
+              {formData.milestones.length > 0 ? (
+                <div className="space-y-3">
+                  {formData.milestones.map((m, index) => (
+                    <motion.div
+                      key={index}
+                      className="bg-white/80 dark:bg-slate-800/80 border border-gray-200 dark:border-gray-700 rounded-lg p-4 flex justify-between items-center"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-medium px-2 py-0.5 rounded-full">
+                            #{index + 1}
+                          </span>
+                          <h4 className="font-medium text-gray-800 dark:text-gray-200">
+                            {m.name}
+                          </h4>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+                          <p className="text-gray-600 dark:text-gray-400">
+                            Amount:{" "}
+                            <span className="font-semibold text-gray-800 dark:text-gray-200">
+                              {m.amountMinor} {formData.currency}
+                            </span>
+                          </p>
+                          <p className="text-gray-600 dark:text-gray-400">
+                            Deadline:{" "}
+                            <span className="font-mono text-gray-800 dark:text-gray-200">
+                              {m.deadline.toLocaleDateString()}
+                            </span>
+                          </p>
+                          {m.description && (
+                            <p className="text-gray-600 dark:text-gray-400 md:col-span-3 truncate">
+                              {m.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <motion.button
+                        type="button"
+                        className="ml-2 p-2 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                        onClick={() => removeMilestone(index)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <Minus className="w-4 h-4" />
+                      </motion.button>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 bg-gray-50/50 dark:bg-slate-700/30 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+                  <Target className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+                  <h3 className="text-gray-500 dark:text-gray-400 mb-1">
+                    No Milestones Added
+                  </h3>
+                  <p className="text-sm text-gray-400 dark:text-gray-500">
+                    Add milestones to track progress
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Advanced Settings */}
+          <motion.div
+            className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl p-6 border border-white/20 dark:border-slate-700/30"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-primary-500" />
+              Advanced Settings
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Tenant ID
+                </label>
+                <input
+                  type="text"
+                  name="tenantId"
+                  value={formData.tenantId}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                  placeholder="Enter tenant ID"
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Default: 82208244-c5f4-4144-9d08-fa3779b5c154
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  System
+                </label>
+                <select
+                  name="system"
+                  value={formData.system}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-primary-500 focus:border-primary-500"
+                >
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Determines if this is a system escrow
+                </p>
+              </div>
+            </div>
+
+            {/* Summary Section */}
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
+              <h3 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-4">
+                Escrow Summary
+              </h3>
+
+              <div className="bg-gray-50/80 dark:bg-slate-700/50 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Agreement Type
+                      </span>
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {formData.agreementType}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Currency
+                      </span>
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {formData.currency}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Amount
+                      </span>
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {formData.amountMinor
+                          ? `${formData.amountMinor} ${formData.currency}`
+                          : "-"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Has Milestones
+                      </span>
+                      <span className="text-sm font-medium">
+                        <span
+                          className={`px-2 py-0.5 rounded text-xs ${
+                            formData.has_milestone
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          {formData.has_milestone ? "Yes" : "No"}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Deadline
+                      </span>
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {formData.deadline.toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Payment Method
+                      </span>
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {formData.paymentMethodId}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Milestones Count
+                      </span>
+                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {formData.milestones.length}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        System Escrow
+                      </span>
+                      <span className="text-sm font-medium">
+                        <span
+                          className={`px-2 py-0.5 rounded text-xs ${
+                            formData.system === "yes"
+                              ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          {formData.system === "yes" ? "Yes" : "No"}
+                        </span>
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </motion.div>
 
-        {/* Navigation Buttons */}
-        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between">
+          {/* Submit Button */}
+          <div className="flex justify-end">
             <motion.button
-              className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg ${
-                currentStep === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              type="submit"
+              className={`px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200 flex items-center gap-2 ${
+                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
               }`}
-              onClick={prevStep}
-              disabled={currentStep === 1}
-              whileHover={currentStep > 1 ? { x: -2 } : {}}
-              whileTap={currentStep > 1 ? { x: 0 } : {}}
+              whileHover={isSubmitting ? {} : { scale: 1.02 }}
+              whileTap={isSubmitting ? {} : { scale: 0.98 }}
+              disabled={isSubmitting}
             >
-              <ArrowLeft size={16} className="mr-2" />
-              Previous
-            </motion.button>
-
-            <div className="flex items-center space-x-2">
-              <motion.button
-                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-                whileHover={{ y: -1 }}
-                whileTap={{ y: 0 }}
-              >
-                <Save size={16} className="mr-2" />
-                Save Draft
-              </motion.button>
-
-              {currentStep < steps.length ? (
-                <motion.button
-                  className="flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 dark:bg-primary-700 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-600"
-                  onClick={nextStep}
-                  whileHover={{ x: 2 }}
-                  whileTap={{ x: 0 }}
-                >
-                  Next
-                  <ArrowRight size={16} className="ml-2" />
-                </motion.button>
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Creating...
+                </>
               ) : (
-                <motion.button
-                  className="flex items-center px-6 py-2 text-sm font-medium text-white bg-green-600 dark:bg-green-700 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50"
-                  onClick={handleSubmit}
-                  disabled={isLoading}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle size={16} className="mr-2" />
-                      Create Escrow
-                    </>
-                  )}
-                </motion.button>
+                <>
+                  <Save className="w-4 h-4" />
+                  Create System Escrow
+                </>
               )}
-            </div>
+            </motion.button>
           </div>
-        </div>
-      </motion.div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default CreateEscrowPage;
+export default CreateSystemEscrowPage;
