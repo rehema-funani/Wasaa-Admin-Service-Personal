@@ -54,96 +54,76 @@ import TransactionVolumeTrend from "../../../../components/escrow/TransactionVol
 
 const TransactionReportsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
-  const [selectedMetric, setSelectedMetric] = useState("volume");
   const [refreshing, setRefreshing] = useState(false);
   const [volume, setVolume] = useState<any>(null);
-  const [dailyVolume, setDailyVolume] = useState<any>(null);
   const [successRate, setSuccessRate] = useState<any>(null);
 
+  const [transactionTrendData, setTransactionTrendData] = useState([]);
+  const [selectedMetric, setSelectedMetric] = useState("volume");
+  const [currentWeekStart, setCurrentWeekStart] = useState(
+    getMonday(new Date())
+  );
+  const [weekLabel, setWeekLabel] = useState("");
+
+  function getMonday(d: Date) {
+    const date = new Date(d);
+    const day = date.getDay(); 
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(date.setDate(diff));
+  }
+
+  const formatDate = (d: Date) => d.toISOString().split("T")[0];
+
+  const fetchWeekData = async (start: Date) => {
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+
+    const from = formatDate(start);
+    const to = formatDate(end);
+
+    try {
+      const response = await escrowService.getLedgerEntryDailyVolumeTrend(
+        from,
+        to
+      );
+      setTransactionTrendData(response);
+      setWeekLabel(`${from} → ${to}`);
+    } catch (err) {
+      console.error("Error fetching weekly trend:", err);
+    }
+  };
+
+  const handleWeekChange = (direction: number) => {
+    const newStart = new Date(currentWeekStart);
+    newStart.setDate(newStart.getDate() + direction * 7);
+    setCurrentWeekStart(newStart);
+    fetchWeekData(newStart);
+  };
+
+  const fetchVolume = async () => {
+    try {
+      const response = await escrowService.getEscrowVolumeTrend();
+      setVolume(response);
+    } catch (error) {
+      console.error("Error fetching volume trend:", error);
+    }
+  };
+
+  const fetchSuccessRate = async () => {
+    try {
+      const response = await escrowService.getLedgerEntrySuccessRate();
+      setSuccessRate(response);
+    } catch (error) {
+      console.error("Error fetching volume trend:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchVolume = async () => {
-      try {
-        const response = await escrowService.getEscrowVolumeTrend();
-        setVolume(response);
-      } catch (error) {
-        console.error("Error fetching volume trend:", error);
-      }
-    };
-
-    const fetchSuccessRate = async () => {
-      try {
-        const response = await escrowService.getLedgerEntrySuccessRate();
-        setSuccessRate(response);
-      } catch (error) {
-        console.error("Error fetching volume trend:", error);
-      }
-    };
-
-    const fetchDailyVolume = async () => {
-      try {
-        const response = await escrowService.getLedgerEntryDailyVolumeTrend();
-        setDailyVolume(response);
-      } catch (error) {
-        console.error("Error fetching daily volume trend:", error);
-      }
-    };
-
     fetchVolume();
     fetchSuccessRate();
-    fetchDailyVolume();
+    fetchWeekData(currentWeekStart);
   }, []);
 
-  const transactionTrendData = [
-    {
-      date: "Jan 01",
-      volume: 45600000,
-      count: 1247,
-      success: 96.1,
-      failed: 49,
-    },
-    {
-      date: "Jan 02",
-      volume: 52300000,
-      count: 1389,
-      success: 97.2,
-      failed: 38,
-    },
-    {
-      date: "Jan 03",
-      volume: 48900000,
-      count: 1298,
-      success: 95.8,
-      failed: 55,
-    },
-    {
-      date: "Jan 04",
-      volume: 67800000,
-      count: 1567,
-      success: 98.1,
-      failed: 30,
-    },
-    {
-      date: "Jan 05",
-      volume: 71200000,
-      count: 1645,
-      success: 96.9,
-      failed: 51,
-    },
-    {
-      date: "Jan 06",
-      volume: 59400000,
-      count: 1423,
-      success: 97.5,
-      failed: 36,
-    },
-    {
-      date: "Jan 07",
-      volume: 63100000,
-      count: 1501,
-      success: 96.3,
-      failed: 56,
-    },
-  ];
 
   const categoryData = [
     { name: "Goods", value: 523, volume: 18500000, color: "#3B82F6" },
@@ -430,6 +410,8 @@ const TransactionReportsPage: React.FC = () => {
             formatCurrency={formatCurrency}
             formatNumber={formatNumber}
             CustomTooltip={CustomTooltip}
+            weekLabel={weekLabel}
+            handleWeekChange={handleWeekChange}
           />
         </motion.div>
 

@@ -1,14 +1,23 @@
-import { Maximize2 } from 'lucide-react';
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Maximize2 } from "lucide-react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 const TransactionVolumeTrend = ({
-    transactionTrendData,
-    selectedMetric,
-    setSelectedMetric,
-    formatCurrency,
-    formatNumber,
-    CustomTooltip
-    
+  transactionTrendData,
+  selectedMetric,
+  setSelectedMetric,
+  formatCurrency,
+  formatNumber,
+  CustomTooltip,
+  weekLabel,
+  handleWeekChange,
 }) => {
   return (
     <div>
@@ -22,15 +31,24 @@ const TransactionVolumeTrend = ({
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <select
-            className="px-2 py-1 text-xs border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-            value={selectedMetric}
-            onChange={(e) => setSelectedMetric(e.target.value)}
-          >
-            <option value="volume">Volume</option>
-            <option value="count">Count</option>
-            <option value="success">Success Rate</option>
-          </select>
+          <div className="flex items-center space-x-2">
+            <button
+              className="px-2 py-1 text-xs border rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+              onClick={() => handleWeekChange(-1)}
+            >
+              ← Prev Week
+            </button>
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              {weekLabel}
+            </span>
+            <button
+              className="px-2 py-1 text-xs border rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+              onClick={() => handleWeekChange(1)}
+            >
+              Next Week →
+            </button>
+          </div>
+
           <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
             <Maximize2 className="w-4 h-4 text-gray-400" />
           </button>
@@ -69,6 +87,6 @@ const TransactionVolumeTrend = ({
       </div>
     </div>
   );
-}
+};
 
-export default TransactionVolumeTrend
+export default TransactionVolumeTrend;
