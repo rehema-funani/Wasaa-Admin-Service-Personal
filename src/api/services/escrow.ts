@@ -252,4 +252,17 @@ export const escrowService = {
     );
     return response.data;
   },
+  getDisputeVolumeStats: async (from?: string, to?: string) => {
+    const now = new Date();
+    const year = now.getFullYear();
+
+    const defaultFrom = `${year}-01-01`;
+    const defaultTo = `${year}-12-31`;
+    const response = await escrow.get(
+      `/disputes/escalation-rate-stats?from=${from || defaultFrom}&to=${
+        to || defaultTo
+      }`
+    );
+    return response.data;
+  },
 };
