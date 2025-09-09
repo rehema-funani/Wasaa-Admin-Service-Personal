@@ -701,4 +701,4 @@ const EscrowSettingsPage = () => {
                 description="Configure dispute handling and escalation settings"
                 icon={Gavel}
               >
-                <div className="space-y-4 divide-y divide-gray-100
+                
