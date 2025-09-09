@@ -16,8 +16,12 @@ export const escrowService = {
     const response = await escrow.get(`/escrow-agreements/${id}`);
     return response.data;
   },
-  getsystemEscrowAgreements: async () => {
+  getSystemEscrowAgreements: async () => {
     const response = await escrow.get("/escrow-agreements/system");
+    return response.data;
+  },
+  getSystemEscrowById: async (id: string) => {
+    const response = await escrow.get(`/escrow-agreements/system/${id}`);
     return response.data;
   },
 
@@ -144,5 +148,5 @@ export const escrowService = {
   getTotalVolumeMetrics: async () => {
     const response = await escrow.get("/escrow-agreements/stats/volume");
     return response.data;
-  }
+  },
 };
