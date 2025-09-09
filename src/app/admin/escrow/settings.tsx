@@ -701,4 +701,691 @@ const EscrowSettingsPage = () => {
                 description="Configure dispute handling and escalation settings"
                 icon={Gavel}
               >
-                
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Enable Disputes" 
+                    tooltip="Allow users to initiate dispute resolution for escrow transactions"
+                  >
+                    <ToggleSwitch
+                      enabled={generalSettings.enableDisputes}
+                      onToggle={() => toggleSetting("general", "enableDisputes")}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Max Dispute Duration (days)" 
+                    tooltip="Maximum time allowed for resolving a dispute before system intervention"
+                    disabled={!generalSettings.enableDisputes}
+                  >
+                    <NumberInput
+                      value={generalSettings.maxDisputeDuration}
+                      onChange={(value) => updateNumericSetting("general", "maxDisputeDuration", value)}
+                      min={1}
+                      max={60}
+                      disabled={!generalSettings.enableDisputes}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Enable Auto-Escalation" 
+                    tooltip="Automatically escalate unresolved disputes to an administrator"
+                    disabled={!generalSettings.enableDisputes}
+                  >
+                    <ToggleSwitch
+                      enabled={generalSettings.enableAutoEscalation}
+                      onToggle={() => toggleSetting("general", "enableAutoEscalation")}
+                      disabled={!generalSettings.enableDisputes}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Escalation Threshold (hours)" 
+                    tooltip="Time after which a dispute is automatically escalated"
+                    disabled={!generalSettings.enableDisputes || !generalSettings.enableAutoEscalation}
+                  >
+                    <NumberInput
+                      value={generalSettings.escalationThreshold}
+                      onChange={(value) => updateNumericSetting("general", "escalationThreshold", value)}
+                      min={1}
+                      max={168}
+                      disabled={!generalSettings.enableDisputes || !generalSettings.enableAutoEscalation}
+                    />
+                  </SettingRow>
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                title="Currency & Multi-Currency"
+                description="Configure supported currencies and conversion settings"
+                icon={DollarSign}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Default Currency" 
+                    tooltip="The primary currency for escrow transactions"
+                  >
+                    <select
+                      value={generalSettings.defaultCurrency}
+                      onChange={(e) => {
+                        setGeneralSettings((prev) => ({
+                          ...prev,
+                          defaultCurrency: e.target.value,
+                        }));
+                        setHasChanges(true);
+                      }}
+                      className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-shadow"
+                    >
+                      <option value="KES">KES - Kenyan Shilling</option>
+                      <option value="USD">USD - US Dollar</option>
+                      <option value="EUR">EUR - Euro</option>
+                      <option value="GBP">GBP - British Pound</option>
+                    </select>
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Enable Multi-Currency" 
+                    tooltip="Allow escrow transactions in multiple currencies"
+                  >
+                    <ToggleSwitch
+                      enabled={generalSettings.multiCurrencyEnabled}
+                      onToggle={() => toggleSetting("general", "multiCurrencyEnabled")}
+                    />
+                  </SettingRow>
+                  
+                  <div className="pt-4">
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                      <div className="flex items-start space-x-3">
+                        <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <div className="text-sm text-blue-700 dark:text-blue-300">
+                          <p className="font-medium mb-1">Currency Settings</p>
+                          <p>
+                            Currency settings affect all financial transactions. Changes may require updates to payment providers and financial reports.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                title="Advanced Features"
+                description="Enable advanced escrow features like partial releases and milestones"
+                icon={Target}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Enable Partial Release" 
+                    tooltip="Allow releasing funds in portions rather than all at once"
+                  >
+                    <ToggleSwitch
+                      enabled={generalSettings.enablePartialRelease}
+                      onToggle={() => toggleSetting("general", "enablePartialRelease")}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Enable Milestones" 
+                    tooltip="Allow breaking escrow agreements into sequential deliverable milestones"
+                  >
+                    <ToggleSwitch
+                      enabled={generalSettings.enableMilestones}
+                      onToggle={() => toggleSetting("general", "enableMilestones")}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Max Milestones per Escrow" 
+                    tooltip="Maximum number of milestones allowed per escrow agreement"
+                    disabled={!generalSettings.enableMilestones}
+                  >
+                    <NumberInput
+                      value={generalSettings.maxMilestones}
+                      onChange={(value) => updateNumericSetting("general", "maxMilestones", value)}
+                      min={1}
+                      max={50}
+                      disabled={!generalSettings.enableMilestones}
+                    />
+                  </SettingRow>
+                  
+                  <div className="pt-4">
+                    <motion.div 
+                      className={`p-4 rounded-xl border ${
+                        generalSettings.enableMilestones 
+                          ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30' 
+                          : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700'
+                      }`}
+                      animate={{
+                        backgroundColor: generalSettings.enableMilestones 
+                          ? 'rgba(240, 253, 244, 0.8)' 
+                          : 'rgba(249, 250, 251, 0.8)'
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="flex items-start">
+                        <Check className={`w-5 h-5 ${
+                          generalSettings.enableMilestones 
+                            ? 'text-green-600 dark:text-green-400' 
+                            : 'text-gray-400 dark:text-gray-500'
+                        } mt-0.5 mr-3 flex-shrink-0`} />
+                        <div className="text-sm">
+                          <p className={`font-medium ${
+                            generalSettings.enableMilestones 
+                              ? 'text-green-800 dark:text-green-300' 
+                              : 'text-gray-600 dark:text-gray-300'
+                          }`}>
+                            {generalSettings.enableMilestones 
+                              ? "Milestones Enabled" 
+                              : "Milestones Disabled"}
+                          </p>
+                          <p className={`mt-1 ${
+                            generalSettings.enableMilestones 
+                              ? 'text-green-700/80 dark:text-green-400/80' 
+                              : 'text-gray-500 dark:text-gray-400'
+                          }`}>
+                            {generalSettings.enableMilestones 
+                              ? "Users can create escrows with structured milestones for better project management." 
+                              : "Enable milestones to allow users to structure payments according to project deliverables."}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </SettingCard>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Fee Structure Tab */}
+        {activeTab === "fees" && (
+          <motion.div
+            className="space-y-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <SettingCard
+                title="Standard Fee Structure"
+                description="Configure base fees for escrow transactions"
+                icon={Percent}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Standard Fee (%)" 
+                    tooltip="Base percentage fee applied to all escrow transactions"
+                  >
+                    <NumberInput
+                      value={feeSettings.standardFee}
+                      onChange={(value) => updateNumericSetting("fees", "standardFee", value)}
+                      min={0}
+                      max={20}
+                      step={0.1}
+                      suffix="%"
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Express Fee Surcharge (%)" 
+                    tooltip="Additional fee for expedited processing"
+                  >
+                    <NumberInput
+                      value={feeSettings.expressFeeSurcharge}
+                      onChange={(value) => updateNumericSetting("fees", "expressFeeSurcharge", value)}
+                      min={0}
+                      max={10}
+                      step={0.1}
+                      suffix="%"
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="High-Value Discount (%)" 
+                    tooltip="Fee discount for transactions above the volume threshold"
+                  >
+                    <NumberInput
+                      value={feeSettings.highValueDiscount}
+                      onChange={(value) => updateNumericSetting("fees", "highValueDiscount", value)}
+                      min={0}
+                      max={5}
+                      step={0.1}
+                      suffix="%"
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Volume Discount Threshold" 
+                    tooltip="Transaction amount required to qualify for the high-value discount"
+                  >
+                    <NumberInput
+                      value={feeSettings.volumeDiscountThreshold}
+                      onChange={(value) => updateNumericSetting("fees", "volumeDiscountThreshold", value)}
+                      min={0}
+                      className="w-40"
+                      prefix="KES"
+                    />
+                  </SettingRow>
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                title="Fee Limits & Thresholds"
+                description="Set minimum and maximum fee amounts and volume thresholds"
+                icon={Scale}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Minimum Fee (KES)" 
+                    tooltip="Lowest possible fee for any transaction"
+                  >
+                    <NumberInput
+                      value={feeSettings.minimumFee}
+                      onChange={(value) => updateNumericSetting("fees", "minimumFee", value)}
+                      min={0}
+                      className="w-32"
+                      prefix="KES"
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Maximum Fee (KES)" 
+                    tooltip="Highest possible fee for any transaction"
+                  >
+                    <NumberInput
+                      value={feeSettings.maximumFee}
+                      onChange={(value) => updateNumericSetting("fees", "maximumFee", value)}
+                      min={0}
+                      className="w-32"
+                      prefix="KES"
+                    />
+                  </SettingRow>
+                  
+                  <div className="pt-4">
+                    <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800/30">
+                      <div className="flex items-center justify-between mb-3">
+                        <h5 className="text-sm font-medium text-purple-800 dark:text-purple-300">Fee Calculation Preview</h5>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-purple-600 dark:text-purple-400">KES 10,000 transaction:</span>
+                          <span className="text-sm font-medium text-purple-800 dark:text-purple-300">
+                            {new Intl.NumberFormat('en-KE', { 
+                              style: 'currency', 
+                              currency: 'KES' 
+                            }).format(Math.max(Math.min(10000 * (feeSettings.standardFee / 100), feeSettings.maximumFee), feeSettings.minimumFee))}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-purple-600 dark:text-purple-400">KES 100,000 transaction:</span>
+                          <span className="text-sm font-medium text-purple-800 dark:text-purple-300">
+                            {new Intl.NumberFormat('en-KE', { 
+                              style: 'currency', 
+                              currency: 'KES' 
+                            }).format(Math.max(Math.min(100000 * (feeSettings.standardFee / 100), feeSettings.maximumFee), feeSettings.minimumFee))}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-purple-600 dark:text-purple-400">KES 1,000,000 transaction:</span>
+                          <span className="text-sm font-medium text-purple-800 dark:text-purple-300">
+                            {new Intl.NumberFormat('en-KE', { 
+                              style: 'currency', 
+                              currency: 'KES' 
+                            }).format(Math.max(Math.min(1000000 * (feeSettings.standardFee / 100) * (1 - (feeSettings.highValueDiscount / 100)), feeSettings.maximumFee), feeSettings.minimumFee))}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                title="Processing Fees"
+                description="Configure fees for special processing services"
+                icon={CreditCard}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Refund Processing Fee (KES)" 
+                    tooltip="Fee charged for processing refunds"
+                  >
+                    <NumberInput
+                      value={feeSettings.refundProcessingFee}
+                      onChange={(value) => updateNumericSetting("fees", "refundProcessingFee", value)}
+                      min={0}
+                      className="w-32"
+                      prefix="KES"
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Dispute Processing Fee (KES)" 
+                    tooltip="Fee charged for processing dispute claims"
+                  >
+                    <NumberInput
+                      value={feeSettings.disputeProcessingFee}
+                      onChange={(value) => updateNumericSetting("fees", "disputeProcessingFee", value)}
+                      min={0}
+                      className="w-32"
+                      prefix="KES"
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Expedited Processing Fee (KES)" 
+                    tooltip="Fee charged for expedited transaction processing"
+                  >
+                    <NumberInput
+                      value={feeSettings.expeditedProcessingFee}
+                      onChange={(value) => updateNumericSetting("fees", "expeditedProcessingFee", value)}
+                      min={0}
+                      className="w-32"
+                      prefix="KES"
+                    />
+                  </SettingRow>
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                title="Currency Conversion"
+                description="Configure currency conversion spreads and fees"
+                icon={Globe}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Currency Conversion Spread (%)" 
+                    tooltip="Percentage added to the market exchange rate when converting currencies"
+                  >
+                    <NumberInput
+                      value={feeSettings.currencyConversionSpread}
+                      onChange={(value) => updateNumericSetting("fees", "currencyConversionSpread", value)}
+                      min={0}
+                      max={10}
+                      step={0.1}
+                      suffix="%"
+                    />
+                  </SettingRow>
+                  
+                  <div className="pt-4">
+                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800/30">
+                      <div className="flex items-start space-x-3">
+                        <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <div className="text-sm text-blue-700 dark:text-blue-300">
+                          <p className="font-medium mb-1">Currency Conversion</p>
+                          <p>
+                            Applied when users transact in different currencies.
+                            This spread is added to the market rate to account for volatility and risk.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </SettingCard>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Risk & Compliance Tab */}
+        {activeTab === "risk" && (
+          <motion.div
+            className="space-y-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <SettingCard
+                title="KYC & Identity Verification"
+                description="Configure know-your-customer verification requirements"
+                icon={UserCheck}
+                warning={!riskSettings.enableKYCCheck}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Enable KYC Checks" 
+                    tooltip="Require identity verification for users"
+                    warning={!riskSettings.enableKYCCheck}
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.enableKYCCheck}
+                      onToggle={() => toggleSetting("risk", "enableKYCCheck")}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Strict KYC Mode" 
+                    tooltip="Require enhanced verification for all transactions"
+                    disabled={!riskSettings.enableKYCCheck}
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.strictKYCMode}
+                      onToggle={() => toggleSetting("risk", "strictKYCMode")}
+                      disabled={!riskSettings.enableKYCCheck}
+                    />
+                  </SettingRow>
+                  
+                  {!riskSettings.enableKYCCheck && (
+                    <div className="pt-4">
+                      <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-200 dark:border-orange-800/30">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                          <span className="text-sm font-medium text-orange-700 dark:text-orange-300">
+                            Security Warning
+                          </span>
+                        </div>
+                        <p className="text-sm text-orange-600 dark:text-orange-400 ml-7">
+                          KYC verification is disabled. This significantly increases compliance risk and may violate regulatory requirements in certain jurisdictions.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                title="AML & Sanctions Screening"
+                description="Configure anti-money laundering and sanctions checking"
+                icon={Shield}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Enable AML Screening" 
+                    tooltip="Screen transactions for potential money laundering patterns"
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.enableAMLScreening}
+                      onToggle={() => toggleSetting("risk", "enableAMLScreening")}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="AML Threshold (KES)" 
+                    tooltip="Transaction amount that triggers AML screening"
+                    disabled={!riskSettings.enableAMLScreening}
+                  >
+                    <NumberInput
+                      value={riskSettings.amlThreshold}
+                      onChange={(value) => updateNumericSetting("risk", "amlThreshold", value)}
+                      min={0}
+                      className="w-40"
+                      prefix="KES"
+                      disabled={!riskSettings.enableAMLScreening}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Enable Sanctions Check" 
+                    tooltip="Screen users against international sanctions lists"
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.enableSanctionsCheck}
+                      onToggle={() => toggleSetting("risk", "enableSanctionsCheck")}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Enable PEP Screening" 
+                    tooltip="Screen for politically exposed persons"
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.enablePEPCheck}
+                      onToggle={() => toggleSetting("risk", "enablePEPCheck")}
+                    />
+                  </SettingRow>
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                title="Transaction Limits"
+                description="Set maximum transaction amounts and daily limits"
+                icon={Target}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Max Transaction Amount (KES)" 
+                    tooltip="Maximum amount allowed for a single transaction"
+                  >
+                    <NumberInput
+                      value={riskSettings.maxTransactionAmount}
+                      onChange={(value) => updateNumericSetting("risk", "maxTransactionAmount", value)}
+                      min={0}
+                      className="w-40"
+                      prefix="KES"
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Daily Transaction Limit (KES)" 
+                    tooltip="Maximum total amount allowed per user per day"
+                  >
+                    <NumberInput
+                      value={riskSettings.dailyTransactionLimit}
+                      onChange={(value) => updateNumericSetting("risk", "dailyTransactionLimit", value)}
+                      min={0}
+                      className="w-40"
+                      prefix="KES"
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Enable Velocity Checks" 
+                    tooltip="Detect and flag unusual transaction patterns"
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.enableVelocityChecks}
+                      onToggle={() => toggleSetting("risk", "enableVelocityChecks")}
+                    />
+                  </SettingRow>
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                title="Fraud Detection"
+                description="Configure fraud detection and prevention mechanisms"
+                icon={Scan}
+              >
+                <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
+                  <SettingRow 
+                    label="Enable Fraud Detection" 
+                    tooltip="Activate fraud detection and prevention systems"
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.enableFraudDetection}
+                      onToggle={() => toggleSetting("risk", "enableFraudDetection")}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Fraud Score Threshold" 
+                    tooltip="Score above which transactions are flagged for review (0-100)"
+                    disabled={!riskSettings.enableFraudDetection}
+                  >
+                    <div className="flex items-center gap-3">
+                      <NumberInput
+                        value={riskSettings.fraudScoreThreshold}
+                        onChange={(value) => updateNumericSetting("risk", "fraudScoreThreshold", value)}
+                        min={0}
+                        max={100}
+                        disabled={!riskSettings.enableFraudDetection}
+                        className="w-20"
+                      />
+                      <div className="w-32 h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full">
+                        <div className="w-2 h-5 bg-white dark:bg-gray-200 rounded-full border border-gray-300 shadow-md relative -mt-1.5" style={{ marginLeft: `${riskSettings.fraudScoreThreshold}%` }}></div>
+                      </div>
+                    </div>
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Enable Device Fingerprinting" 
+                    tooltip="Track unique device characteristics to prevent fraud"
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.enableDeviceFingerprinting}
+                      onToggle={() => toggleSetting("risk", "enableDeviceFingerprinting")}
+                    />
+                  </SettingRow>
+                  
+                  <SettingRow 
+                    label="Enable Geo-blocking" 
+                    tooltip="Block transactions from restricted countries"
+                  >
+                    <ToggleSwitch
+                      enabled={riskSettings.enableGeoBlocking}
+                      onToggle={() => toggleSetting("risk", "enableGeoBlocking")}
+                    />
+                  </SettingRow>
+                </div>
+              </SettingCard>
+            </div>
+          </motion.div>
+        )}
+
+        {/* More tabs implementation... */}
+      </div>
+
+      {/* Fixed notification for unsaved changes */}
+      <AnimatePresence>
+        {hasChanges && (
+          <motion.div
+            className="fixed bottom-6 right-6 z-50"
+            initial={{ opacity: 0, y: 100, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 100, scale: 0.8 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-2xl border border-gray-200 dark:border-gray-700 max-w-md backdrop-blur-sm bg-opacity-90 dark:bg-opacity-80">
+              <div className="flex items-start space-x-4">
+                <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex-shrink-0">
+                  <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Unsaved Changes
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                    You have unsaved configuration changes. Save them to apply the
+                    new settings.
+                  </p>
+                  <div className="flex space-x-3">
+                    <motion.button
+                      className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium"
+                      onClick={saveSettings}
+                      disabled={isLoading}
+                      whileHover={{ scale: 1.02, boxShadow: "0 4px 15px rgba(59, 130, 246, 0.3)" }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {isLoading ? (
+                        <RefreshCw size={14} className="mr-2 animate-spin" />
+                      ) : (
+                        <Save size={14} className="mr-2" />
+                      )}
+                      {isLoading ? "Saving..." : "Save Changes"}
+                    </motion.button>
+                    <motion.button
+                      className="px-4 py-2 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-lg text-sm bg-white/80 dark:bg-gray-800/80"
+                      onClick={() => setHasChanges(false)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    ></motion.button>
