@@ -13,7 +13,6 @@ import {
   DollarSign,
   Target,
   Activity,
-  Layers,
   Scale,
   Percent,
   Smartphone,
@@ -35,12 +34,11 @@ import {
   Edit,
   Trash2,
   X,
-  ChevronRight,
   Check,
   ArrowRight,
   Eye,
   EyeOff,
-  Sliders
+  Sliders,
 } from "lucide-react";
 
 const EscrowSettingsPage = () => {
@@ -66,7 +64,6 @@ const EscrowSettingsPage = () => {
     escalationThreshold: 48,
   });
 
-  // Fee Structure State
   const [feeSettings, setFeeSettings] = useState({
     standardFee: 2.5,
     expressFeeSurcharge: 1.0,
@@ -148,7 +145,6 @@ const EscrowSettingsPage = () => {
     },
   ]);
 
-  // API & Integration Settings State
   const [apiSettings, setApiSettings] = useState({
     enableAPIAccess: true,
     rateLimitPerMinute: 1000,
@@ -174,7 +170,6 @@ const EscrowSettingsPage = () => {
     { id: "risk", name: "Risk & Compliance", icon: Shield },
     { id: "notifications", name: "Notifications", icon: Bell },
     { id: "automation", name: "Automation Rules", icon: Brain },
-    { id: "api", name: "API & Integration", icon: Database },
   ];
 
   const saveSettings = async () => {
@@ -250,24 +245,27 @@ const EscrowSettingsPage = () => {
     setHasChanges(true);
   };
 
-  const ToggleSwitch = ({ enabled, onToggle, disabled = false, size = "default" }) => {
-    const sizeClasses = size === "small" 
-      ? "h-5 w-9" 
-      : size === "large" 
-        ? "h-7 w-14" 
-        : "h-6 w-11";
-    
-    const thumbSizeClasses = size === "small" 
-      ? "h-3.5 w-3.5" 
-      : size === "large" 
-        ? "h-5 w-5" 
+  const ToggleSwitch = ({
+    enabled,
+    onToggle,
+    disabled = false,
+    size = "default",
+  }) => {
+    const sizeClasses =
+      size === "small" ? "h-5 w-9" : size === "large" ? "h-7 w-14" : "h-6 w-11";
+
+    const thumbSizeClasses =
+      size === "small"
+        ? "h-3.5 w-3.5"
+        : size === "large"
+        ? "h-5 w-5"
         : "h-4 w-4";
 
     return (
       <motion.button
         className={`relative inline-flex items-center rounded-full transition-colors ${sizeClasses} ${
-          enabled 
-            ? "bg-gradient-to-r from-blue-500 to-purple-500" 
+          enabled
+            ? "bg-gradient-to-r from-blue-500 to-purple-500"
             : "bg-gray-200 dark:bg-gray-700"
         } ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
         onClick={disabled ? undefined : onToggle}
@@ -276,18 +274,18 @@ const EscrowSettingsPage = () => {
         <motion.span
           className={`inline-block transform rounded-full bg-white shadow-md ${thumbSizeClasses}`}
           initial={false}
-          animate={{ 
-            x: enabled 
-              ? size === "small" 
-                ? 20 
-                : size === "large" 
-                  ? 32 
-                  : 24 
-              : size === "small" 
-                ? 2 
-                : size === "large" 
-                  ? 4 
-                  : 3 
+          animate={{
+            x: enabled
+              ? size === "small"
+                ? 20
+                : size === "large"
+                ? 32
+                : 24
+              : size === "small"
+              ? 2
+              : size === "large"
+              ? 4
+              : 3,
           }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         />
@@ -339,25 +337,21 @@ const EscrowSettingsPage = () => {
       </div>
     </motion.div>
   );
-  
-  const NumberInput = ({ 
-    value, 
-    onChange, 
-    min, 
-    max, 
-    step = 1, 
-    prefix, 
-    suffix, 
+
+  const NumberInput = ({
+    value,
+    onChange,
+    min,
+    max,
+    step = 1,
+    prefix,
+    suffix,
     disabled = false,
     className = "w-24",
-    placeholder = ""
+    placeholder = "",
   }) => (
     <div className="relative flex items-center">
-      {prefix && (
-        <div className="absolute left-3 text-gray-400">
-          {prefix}
-        </div>
-      )}
+      {prefix && <div className="absolute left-3 text-gray-400">{prefix}</div>}
       <input
         type="number"
         value={value}
@@ -367,7 +361,9 @@ const EscrowSettingsPage = () => {
         step={step}
         disabled={disabled}
         placeholder={placeholder}
-        className={`${className} px-3 ${prefix ? 'pl-8' : 'pl-3'} ${suffix ? 'pr-10' : 'pr-3'} py-2 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed transition-shadow duration-200`}
+        className={`${className} px-3 ${prefix ? "pl-8" : "pl-3"} ${
+          suffix ? "pr-10" : "pr-3"
+        } py-2 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed transition-shadow duration-200`}
       />
       {suffix && (
         <div className="absolute right-3 text-gray-500 dark:text-gray-400 pointer-events-none">
@@ -377,14 +373,18 @@ const EscrowSettingsPage = () => {
     </div>
   );
 
-  const SettingRow = ({ 
-    label, 
-    tooltip, 
-    children, 
+  const SettingRow = ({
+    label,
+    tooltip,
+    children,
     disabled = false,
-    warning = false
+    warning = false,
   }) => (
-    <div className={`flex items-center justify-between py-3 ${disabled ? 'opacity-60' : ''}`}>
+    <div
+      className={`flex items-center justify-between py-3 ${
+        disabled ? "opacity-60" : ""
+      }`}
+    >
       <div className="flex items-center">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {label}
@@ -445,22 +445,27 @@ const EscrowSettingsPage = () => {
             <RefreshCw size={16} className="mr-2" strokeWidth={2} />
             Reset to Defaults
           </motion.button>
-          
+
           <motion.button
             className="flex items-center px-4 py-2.5 rounded-xl text-sm shadow-md font-medium border border-transparent"
             onClick={() => setShowSettingsSummary(!showSettingsSummary)}
             whileHover={{ y: -2 }}
             whileTap={{ y: 0 }}
             style={{
-              background: "linear-gradient(to right, rgba(59, 130, 246, 0.1), rgba(124, 58, 237, 0.1))",
+              background:
+                "linear-gradient(to right, rgba(59, 130, 246, 0.1), rgba(124, 58, 237, 0.1))",
               color: "rgb(59, 130, 246)",
-              border: "1px solid rgba(59, 130, 246, 0.2)"
+              border: "1px solid rgba(59, 130, 246, 0.2)",
             }}
           >
-            {showSettingsSummary ? <EyeOff size={16} className="mr-2" /> : <Eye size={16} className="mr-2" />}
+            {showSettingsSummary ? (
+              <EyeOff size={16} className="mr-2" />
+            ) : (
+              <Eye size={16} className="mr-2" />
+            )}
             {showSettingsSummary ? "Hide Overview" : "View Overview"}
           </motion.button>
-          
+
           <motion.button
             className={`flex items-center px-6 py-2.5 rounded-xl text-sm shadow-lg font-medium ${
               hasChanges
@@ -494,16 +499,16 @@ const EscrowSettingsPage = () => {
         {showSettingsSummary && (
           <motion.div
             className="mb-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm"
-            initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
-            animate={{ opacity: 1, height: 'auto', overflow: 'visible' }}
-            exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+            initial={{ opacity: 0, height: 0, overflow: "hidden" }}
+            animate={{ opacity: 1, height: "auto", overflow: "visible" }}
+            exit={{ opacity: 0, height: 0, overflow: "hidden" }}
             transition={{ duration: 0.3 }}
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
               <Sliders className="w-5 h-5 mr-2 text-blue-500" />
               Configuration Overview
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-4">
                 <h4 className="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
@@ -512,22 +517,38 @@ const EscrowSettingsPage = () => {
                 </h4>
                 <ul className="space-y-2 text-sm">
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Default Expiry:</span>
-                    <span className="font-medium text-gray-900 dark:text-gray-100">{generalSettings.defaultExpiry} hours</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Auto-Release:</span>
-                    <span className={`font-medium ${generalSettings.autoRelease ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {generalSettings.autoRelease ? 'Enabled' : 'Disabled'}
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Default Expiry:
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      {generalSettings.defaultExpiry} hours
                     </span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Default Currency:</span>
-                    <span className="font-medium text-gray-900 dark:text-gray-100">{generalSettings.defaultCurrency}</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Auto-Release:
+                    </span>
+                    <span
+                      className={`font-medium ${
+                        generalSettings.autoRelease
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
+                      }`}
+                    >
+                      {generalSettings.autoRelease ? "Enabled" : "Disabled"}
+                    </span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Default Currency:
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      {generalSettings.defaultCurrency}
+                    </span>
                   </li>
                 </ul>
               </div>
-              
+
               <div className="space-y-4">
                 <h4 className="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
                   <Shield className="w-4 h-4 text-blue-500" />
@@ -535,26 +556,49 @@ const EscrowSettingsPage = () => {
                 </h4>
                 <ul className="space-y-2 text-sm">
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">KYC Verification:</span>
-                    <span className={`font-medium ${riskSettings.enableKYCCheck ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {riskSettings.enableKYCCheck ? 'Enabled' : 'Disabled'}
+                    <span className="text-gray-600 dark:text-gray-400">
+                      KYC Verification:
+                    </span>
+                    <span
+                      className={`font-medium ${
+                        riskSettings.enableKYCCheck
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
+                      }`}
+                    >
+                      {riskSettings.enableKYCCheck ? "Enabled" : "Disabled"}
                     </span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Max Transaction:</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Max Transaction:
+                    </span>
                     <span className="font-medium text-gray-900 dark:text-gray-100">
-                      {new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(riskSettings.maxTransactionAmount)}
+                      {new Intl.NumberFormat("en-KE", {
+                        style: "currency",
+                        currency: "KES",
+                      }).format(riskSettings.maxTransactionAmount)}
                     </span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Fraud Detection:</span>
-                    <span className={`font-medium ${riskSettings.enableFraudDetection ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {riskSettings.enableFraudDetection ? 'Enabled' : 'Disabled'}
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Fraud Detection:
+                    </span>
+                    <span
+                      className={`font-medium ${
+                        riskSettings.enableFraudDetection
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
+                      }`}
+                    >
+                      {riskSettings.enableFraudDetection
+                        ? "Enabled"
+                        : "Disabled"}
                     </span>
                   </li>
                 </ul>
               </div>
-              
+
               <div className="space-y-4">
                 <h4 className="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-blue-500" />
@@ -562,19 +606,33 @@ const EscrowSettingsPage = () => {
                 </h4>
                 <ul className="space-y-2 text-sm">
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Standard Fee:</span>
-                    <span className="font-medium text-gray-900 dark:text-gray-100">{feeSettings.standardFee}%</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Minimum Fee:</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Standard Fee:
+                    </span>
                     <span className="font-medium text-gray-900 dark:text-gray-100">
-                      {new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(feeSettings.minimumFee)}
+                      {feeSettings.standardFee}%
                     </span>
                   </li>
                   <li className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Maximum Fee:</span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Minimum Fee:
+                    </span>
                     <span className="font-medium text-gray-900 dark:text-gray-100">
-                      {new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(feeSettings.maximumFee)}
+                      {new Intl.NumberFormat("en-KE", {
+                        style: "currency",
+                        currency: "KES",
+                      }).format(feeSettings.minimumFee)}
+                    </span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Maximum Fee:
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">
+                      {new Intl.NumberFormat("en-KE", {
+                        style: "currency",
+                        currency: "KES",
+                      }).format(feeSettings.maximumFee)}
                     </span>
                   </li>
                 </ul>
@@ -652,20 +710,22 @@ const EscrowSettingsPage = () => {
                 icon={Clock}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Default Expiry (hours)" 
+                  <SettingRow
+                    label="Default Expiry (hours)"
                     tooltip="The time period after which an escrow will automatically expire if not funded"
                   >
                     <NumberInput
                       value={generalSettings.defaultExpiry}
-                      onChange={(value) => updateNumericSetting("general", "defaultExpiry", value)}
+                      onChange={(value) =>
+                        updateNumericSetting("general", "defaultExpiry", value)
+                      }
                       min={1}
                       max={720}
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable Auto-Release" 
+
+                  <SettingRow
+                    label="Enable Auto-Release"
                     tooltip="Automatically release funds to the seller after the escrow period ends without disputes"
                   >
                     <ToggleSwitch
@@ -673,24 +733,28 @@ const EscrowSettingsPage = () => {
                       onToggle={() => toggleSetting("general", "autoRelease")}
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Require Buyer Confirmation" 
+
+                  <SettingRow
+                    label="Require Buyer Confirmation"
                     tooltip="Require explicit confirmation from the buyer before releasing funds"
                   >
                     <ToggleSwitch
                       enabled={generalSettings.requireBuyerConfirmation}
-                      onToggle={() => toggleSetting("general", "requireBuyerConfirmation")}
+                      onToggle={() =>
+                        toggleSetting("general", "requireBuyerConfirmation")
+                      }
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Require Seller Confirmation" 
+
+                  <SettingRow
+                    label="Require Seller Confirmation"
                     tooltip="Require explicit confirmation from the seller before releasing funds"
                   >
                     <ToggleSwitch
                       enabled={generalSettings.requireSellerConfirmation}
-                      onToggle={() => toggleSetting("general", "requireSellerConfirmation")}
+                      onToggle={() =>
+                        toggleSetting("general", "requireSellerConfirmation")
+                      }
                     />
                   </SettingRow>
                 </div>
@@ -702,53 +766,75 @@ const EscrowSettingsPage = () => {
                 icon={Gavel}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Enable Disputes" 
+                  <SettingRow
+                    label="Enable Disputes"
                     tooltip="Allow users to initiate dispute resolution for escrow transactions"
                   >
                     <ToggleSwitch
                       enabled={generalSettings.enableDisputes}
-                      onToggle={() => toggleSetting("general", "enableDisputes")}
+                      onToggle={() =>
+                        toggleSetting("general", "enableDisputes")
+                      }
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Max Dispute Duration (days)" 
+
+                  <SettingRow
+                    label="Max Dispute Duration (days)"
                     tooltip="Maximum time allowed for resolving a dispute before system intervention"
                     disabled={!generalSettings.enableDisputes}
                   >
                     <NumberInput
                       value={generalSettings.maxDisputeDuration}
-                      onChange={(value) => updateNumericSetting("general", "maxDisputeDuration", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "general",
+                          "maxDisputeDuration",
+                          value
+                        )
+                      }
                       min={1}
                       max={60}
                       disabled={!generalSettings.enableDisputes}
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable Auto-Escalation" 
+
+                  <SettingRow
+                    label="Enable Auto-Escalation"
                     tooltip="Automatically escalate unresolved disputes to an administrator"
                     disabled={!generalSettings.enableDisputes}
                   >
                     <ToggleSwitch
                       enabled={generalSettings.enableAutoEscalation}
-                      onToggle={() => toggleSetting("general", "enableAutoEscalation")}
+                      onToggle={() =>
+                        toggleSetting("general", "enableAutoEscalation")
+                      }
                       disabled={!generalSettings.enableDisputes}
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Escalation Threshold (hours)" 
+
+                  <SettingRow
+                    label="Escalation Threshold (hours)"
                     tooltip="Time after which a dispute is automatically escalated"
-                    disabled={!generalSettings.enableDisputes || !generalSettings.enableAutoEscalation}
+                    disabled={
+                      !generalSettings.enableDisputes ||
+                      !generalSettings.enableAutoEscalation
+                    }
                   >
                     <NumberInput
                       value={generalSettings.escalationThreshold}
-                      onChange={(value) => updateNumericSetting("general", "escalationThreshold", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "general",
+                          "escalationThreshold",
+                          value
+                        )
+                      }
                       min={1}
                       max={168}
-                      disabled={!generalSettings.enableDisputes || !generalSettings.enableAutoEscalation}
+                      disabled={
+                        !generalSettings.enableDisputes ||
+                        !generalSettings.enableAutoEscalation
+                      }
                     />
                   </SettingRow>
                 </div>
@@ -760,8 +846,8 @@ const EscrowSettingsPage = () => {
                 icon={DollarSign}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Default Currency" 
+                  <SettingRow
+                    label="Default Currency"
                     tooltip="The primary currency for escrow transactions"
                   >
                     <select
@@ -781,17 +867,19 @@ const EscrowSettingsPage = () => {
                       <option value="GBP">GBP - British Pound</option>
                     </select>
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable Multi-Currency" 
+
+                  <SettingRow
+                    label="Enable Multi-Currency"
                     tooltip="Allow escrow transactions in multiple currencies"
                   >
                     <ToggleSwitch
                       enabled={generalSettings.multiCurrencyEnabled}
-                      onToggle={() => toggleSetting("general", "multiCurrencyEnabled")}
+                      onToggle={() =>
+                        toggleSetting("general", "multiCurrencyEnabled")
+                      }
                     />
                   </SettingRow>
-                  
+
                   <div className="pt-4">
                     <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
                       <div className="flex items-start space-x-3">
@@ -799,7 +887,9 @@ const EscrowSettingsPage = () => {
                         <div className="text-sm text-blue-700 dark:text-blue-300">
                           <p className="font-medium mb-1">Currency Settings</p>
                           <p>
-                            Currency settings affect all financial transactions. Changes may require updates to payment providers and financial reports.
+                            Currency settings affect all financial transactions.
+                            Changes may require updates to payment providers and
+                            financial reports.
                           </p>
                         </div>
                       </div>
@@ -814,77 +904,89 @@ const EscrowSettingsPage = () => {
                 icon={Target}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Enable Partial Release" 
+                  <SettingRow
+                    label="Enable Partial Release"
                     tooltip="Allow releasing funds in portions rather than all at once"
                   >
                     <ToggleSwitch
                       enabled={generalSettings.enablePartialRelease}
-                      onToggle={() => toggleSetting("general", "enablePartialRelease")}
+                      onToggle={() =>
+                        toggleSetting("general", "enablePartialRelease")
+                      }
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable Milestones" 
+
+                  <SettingRow
+                    label="Enable Milestones"
                     tooltip="Allow breaking escrow agreements into sequential deliverable milestones"
                   >
                     <ToggleSwitch
                       enabled={generalSettings.enableMilestones}
-                      onToggle={() => toggleSetting("general", "enableMilestones")}
+                      onToggle={() =>
+                        toggleSetting("general", "enableMilestones")
+                      }
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Max Milestones per Escrow" 
+
+                  <SettingRow
+                    label="Max Milestones per Escrow"
                     tooltip="Maximum number of milestones allowed per escrow agreement"
                     disabled={!generalSettings.enableMilestones}
                   >
                     <NumberInput
                       value={generalSettings.maxMilestones}
-                      onChange={(value) => updateNumericSetting("general", "maxMilestones", value)}
+                      onChange={(value) =>
+                        updateNumericSetting("general", "maxMilestones", value)
+                      }
                       min={1}
                       max={50}
                       disabled={!generalSettings.enableMilestones}
                     />
                   </SettingRow>
-                  
+
                   <div className="pt-4">
-                    <motion.div 
+                    <motion.div
                       className={`p-4 rounded-xl border ${
-                        generalSettings.enableMilestones 
-                          ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30' 
-                          : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700'
+                        generalSettings.enableMilestones
+                          ? "bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30"
+                          : "bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700"
                       }`}
                       animate={{
-                        backgroundColor: generalSettings.enableMilestones 
-                          ? 'rgba(240, 253, 244, 0.8)' 
-                          : 'rgba(249, 250, 251, 0.8)'
+                        backgroundColor: generalSettings.enableMilestones
+                          ? "rgba(240, 253, 244, 0.8)"
+                          : "rgba(249, 250, 251, 0.8)",
                       }}
                       transition={{ duration: 0.3 }}
                     >
                       <div className="flex items-start">
-                        <Check className={`w-5 h-5 ${
-                          generalSettings.enableMilestones 
-                            ? 'text-green-600 dark:text-green-400' 
-                            : 'text-gray-400 dark:text-gray-500'
-                        } mt-0.5 mr-3 flex-shrink-0`} />
+                        <Check
+                          className={`w-5 h-5 ${
+                            generalSettings.enableMilestones
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-gray-400 dark:text-gray-500"
+                          } mt-0.5 mr-3 flex-shrink-0`}
+                        />
                         <div className="text-sm">
-                          <p className={`font-medium ${
-                            generalSettings.enableMilestones 
-                              ? 'text-green-800 dark:text-green-300' 
-                              : 'text-gray-600 dark:text-gray-300'
-                          }`}>
-                            {generalSettings.enableMilestones 
-                              ? "Milestones Enabled" 
+                          <p
+                            className={`font-medium ${
+                              generalSettings.enableMilestones
+                                ? "text-green-800 dark:text-green-300"
+                                : "text-gray-600 dark:text-gray-300"
+                            }`}
+                          >
+                            {generalSettings.enableMilestones
+                              ? "Milestones Enabled"
                               : "Milestones Disabled"}
                           </p>
-                          <p className={`mt-1 ${
-                            generalSettings.enableMilestones 
-                              ? 'text-green-700/80 dark:text-green-400/80' 
-                              : 'text-gray-500 dark:text-gray-400'
-                          }`}>
-                            {generalSettings.enableMilestones 
-                              ? "Users can create escrows with structured milestones for better project management." 
+                          <p
+                            className={`mt-1 ${
+                              generalSettings.enableMilestones
+                                ? "text-green-700/80 dark:text-green-400/80"
+                                : "text-gray-500 dark:text-gray-400"
+                            }`}
+                          >
+                            {generalSettings.enableMilestones
+                              ? "Users can create escrows with structured milestones for better project management."
                               : "Enable milestones to allow users to structure payments according to project deliverables."}
                           </p>
                         </div>
@@ -912,55 +1014,71 @@ const EscrowSettingsPage = () => {
                 icon={Percent}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Standard Fee (%)" 
+                  <SettingRow
+                    label="Standard Fee (%)"
                     tooltip="Base percentage fee applied to all escrow transactions"
                   >
                     <NumberInput
                       value={feeSettings.standardFee}
-                      onChange={(value) => updateNumericSetting("fees", "standardFee", value)}
+                      onChange={(value) =>
+                        updateNumericSetting("fees", "standardFee", value)
+                      }
                       min={0}
                       max={20}
                       step={0.1}
                       suffix="%"
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Express Fee Surcharge (%)" 
+
+                  <SettingRow
+                    label="Express Fee Surcharge (%)"
                     tooltip="Additional fee for expedited processing"
                   >
                     <NumberInput
                       value={feeSettings.expressFeeSurcharge}
-                      onChange={(value) => updateNumericSetting("fees", "expressFeeSurcharge", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "fees",
+                          "expressFeeSurcharge",
+                          value
+                        )
+                      }
                       min={0}
                       max={10}
                       step={0.1}
                       suffix="%"
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="High-Value Discount (%)" 
+
+                  <SettingRow
+                    label="High-Value Discount (%)"
                     tooltip="Fee discount for transactions above the volume threshold"
                   >
                     <NumberInput
                       value={feeSettings.highValueDiscount}
-                      onChange={(value) => updateNumericSetting("fees", "highValueDiscount", value)}
+                      onChange={(value) =>
+                        updateNumericSetting("fees", "highValueDiscount", value)
+                      }
                       min={0}
                       max={5}
                       step={0.1}
                       suffix="%"
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Volume Discount Threshold" 
+
+                  <SettingRow
+                    label="Volume Discount Threshold"
                     tooltip="Transaction amount required to qualify for the high-value discount"
                   >
                     <NumberInput
                       value={feeSettings.volumeDiscountThreshold}
-                      onChange={(value) => updateNumericSetting("fees", "volumeDiscountThreshold", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "fees",
+                          "volumeDiscountThreshold",
+                          value
+                        )
+                      }
                       min={0}
                       className="w-40"
                       prefix="KES"
@@ -975,63 +1093,101 @@ const EscrowSettingsPage = () => {
                 icon={Scale}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Minimum Fee (KES)" 
+                  <SettingRow
+                    label="Minimum Fee (KES)"
                     tooltip="Lowest possible fee for any transaction"
                   >
                     <NumberInput
                       value={feeSettings.minimumFee}
-                      onChange={(value) => updateNumericSetting("fees", "minimumFee", value)}
+                      onChange={(value) =>
+                        updateNumericSetting("fees", "minimumFee", value)
+                      }
                       min={0}
                       className="w-32"
                       prefix="KES"
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Maximum Fee (KES)" 
+
+                  <SettingRow
+                    label="Maximum Fee (KES)"
                     tooltip="Highest possible fee for any transaction"
                   >
                     <NumberInput
                       value={feeSettings.maximumFee}
-                      onChange={(value) => updateNumericSetting("fees", "maximumFee", value)}
+                      onChange={(value) =>
+                        updateNumericSetting("fees", "maximumFee", value)
+                      }
                       min={0}
                       className="w-32"
                       prefix="KES"
                     />
                   </SettingRow>
-                  
+
                   <div className="pt-4">
                     <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-purple-100 dark:border-purple-800/30">
                       <div className="flex items-center justify-between mb-3">
-                        <h5 className="text-sm font-medium text-purple-800 dark:text-purple-300">Fee Calculation Preview</h5>
+                        <h5 className="text-sm font-medium text-purple-800 dark:text-purple-300">
+                          Fee Calculation Preview
+                        </h5>
                       </div>
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-purple-600 dark:text-purple-400">KES 10,000 transaction:</span>
+                          <span className="text-xs text-purple-600 dark:text-purple-400">
+                            KES 10,000 transaction:
+                          </span>
                           <span className="text-sm font-medium text-purple-800 dark:text-purple-300">
-                            {new Intl.NumberFormat('en-KE', { 
-                              style: 'currency', 
-                              currency: 'KES' 
-                            }).format(Math.max(Math.min(10000 * (feeSettings.standardFee / 100), feeSettings.maximumFee), feeSettings.minimumFee))}
+                            {new Intl.NumberFormat("en-KE", {
+                              style: "currency",
+                              currency: "KES",
+                            }).format(
+                              Math.max(
+                                Math.min(
+                                  10000 * (feeSettings.standardFee / 100),
+                                  feeSettings.maximumFee
+                                ),
+                                feeSettings.minimumFee
+                              )
+                            )}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-purple-600 dark:text-purple-400">KES 100,000 transaction:</span>
+                          <span className="text-xs text-purple-600 dark:text-purple-400">
+                            KES 100,000 transaction:
+                          </span>
                           <span className="text-sm font-medium text-purple-800 dark:text-purple-300">
-                            {new Intl.NumberFormat('en-KE', { 
-                              style: 'currency', 
-                              currency: 'KES' 
-                            }).format(Math.max(Math.min(100000 * (feeSettings.standardFee / 100), feeSettings.maximumFee), feeSettings.minimumFee))}
+                            {new Intl.NumberFormat("en-KE", {
+                              style: "currency",
+                              currency: "KES",
+                            }).format(
+                              Math.max(
+                                Math.min(
+                                  100000 * (feeSettings.standardFee / 100),
+                                  feeSettings.maximumFee
+                                ),
+                                feeSettings.minimumFee
+                              )
+                            )}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-purple-600 dark:text-purple-400">KES 1,000,000 transaction:</span>
+                          <span className="text-xs text-purple-600 dark:text-purple-400">
+                            KES 1,000,000 transaction:
+                          </span>
                           <span className="text-sm font-medium text-purple-800 dark:text-purple-300">
-                            {new Intl.NumberFormat('en-KE', { 
-                              style: 'currency', 
-                              currency: 'KES' 
-                            }).format(Math.max(Math.min(1000000 * (feeSettings.standardFee / 100) * (1 - (feeSettings.highValueDiscount / 100)), feeSettings.maximumFee), feeSettings.minimumFee))}
+                            {new Intl.NumberFormat("en-KE", {
+                              style: "currency",
+                              currency: "KES",
+                            }).format(
+                              Math.max(
+                                Math.min(
+                                  1000000 *
+                                    (feeSettings.standardFee / 100) *
+                                    (1 - feeSettings.highValueDiscount / 100),
+                                  feeSettings.maximumFee
+                                ),
+                                feeSettings.minimumFee
+                              )
+                            )}
                           </span>
                         </div>
                       </div>
@@ -1046,39 +1202,57 @@ const EscrowSettingsPage = () => {
                 icon={CreditCard}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Refund Processing Fee (KES)" 
+                  <SettingRow
+                    label="Refund Processing Fee (KES)"
                     tooltip="Fee charged for processing refunds"
                   >
                     <NumberInput
                       value={feeSettings.refundProcessingFee}
-                      onChange={(value) => updateNumericSetting("fees", "refundProcessingFee", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "fees",
+                          "refundProcessingFee",
+                          value
+                        )
+                      }
                       min={0}
                       className="w-32"
                       prefix="KES"
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Dispute Processing Fee (KES)" 
+
+                  <SettingRow
+                    label="Dispute Processing Fee (KES)"
                     tooltip="Fee charged for processing dispute claims"
                   >
                     <NumberInput
                       value={feeSettings.disputeProcessingFee}
-                      onChange={(value) => updateNumericSetting("fees", "disputeProcessingFee", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "fees",
+                          "disputeProcessingFee",
+                          value
+                        )
+                      }
                       min={0}
                       className="w-32"
                       prefix="KES"
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Expedited Processing Fee (KES)" 
+
+                  <SettingRow
+                    label="Expedited Processing Fee (KES)"
                     tooltip="Fee charged for expedited transaction processing"
                   >
                     <NumberInput
                       value={feeSettings.expeditedProcessingFee}
-                      onChange={(value) => updateNumericSetting("fees", "expeditedProcessingFee", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "fees",
+                          "expeditedProcessingFee",
+                          value
+                        )
+                      }
                       min={0}
                       className="w-32"
                       prefix="KES"
@@ -1093,29 +1267,38 @@ const EscrowSettingsPage = () => {
                 icon={Globe}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Currency Conversion Spread (%)" 
+                  <SettingRow
+                    label="Currency Conversion Spread (%)"
                     tooltip="Percentage added to the market exchange rate when converting currencies"
                   >
                     <NumberInput
                       value={feeSettings.currencyConversionSpread}
-                      onChange={(value) => updateNumericSetting("fees", "currencyConversionSpread", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "fees",
+                          "currencyConversionSpread",
+                          value
+                        )
+                      }
                       min={0}
                       max={10}
                       step={0.1}
                       suffix="%"
                     />
                   </SettingRow>
-                  
+
                   <div className="pt-4">
                     <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800/30">
                       <div className="flex items-start space-x-3">
                         <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                         <div className="text-sm text-blue-700 dark:text-blue-300">
-                          <p className="font-medium mb-1">Currency Conversion</p>
+                          <p className="font-medium mb-1">
+                            Currency Conversion
+                          </p>
                           <p>
                             Applied when users transact in different currencies.
-                            This spread is added to the market rate to account for volatility and risk.
+                            This spread is added to the market rate to account
+                            for volatility and risk.
                           </p>
                         </div>
                       </div>
@@ -1143,8 +1326,8 @@ const EscrowSettingsPage = () => {
                 warning={!riskSettings.enableKYCCheck}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Enable KYC Checks" 
+                  <SettingRow
+                    label="Enable KYC Checks"
                     tooltip="Require identity verification for users"
                     warning={!riskSettings.enableKYCCheck}
                   >
@@ -1153,9 +1336,9 @@ const EscrowSettingsPage = () => {
                       onToggle={() => toggleSetting("risk", "enableKYCCheck")}
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Strict KYC Mode" 
+
+                  <SettingRow
+                    label="Strict KYC Mode"
                     tooltip="Require enhanced verification for all transactions"
                     disabled={!riskSettings.enableKYCCheck}
                   >
@@ -1165,7 +1348,7 @@ const EscrowSettingsPage = () => {
                       disabled={!riskSettings.enableKYCCheck}
                     />
                   </SettingRow>
-                  
+
                   {!riskSettings.enableKYCCheck && (
                     <div className="pt-4">
                       <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-200 dark:border-orange-800/30">
@@ -1176,7 +1359,9 @@ const EscrowSettingsPage = () => {
                           </span>
                         </div>
                         <p className="text-sm text-orange-600 dark:text-orange-400 ml-7">
-                          KYC verification is disabled. This significantly increases compliance risk and may violate regulatory requirements in certain jurisdictions.
+                          KYC verification is disabled. This significantly
+                          increases compliance risk and may violate regulatory
+                          requirements in certain jurisdictions.
                         </p>
                       </div>
                     </div>
@@ -1190,43 +1375,49 @@ const EscrowSettingsPage = () => {
                 icon={Shield}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Enable AML Screening" 
+                  <SettingRow
+                    label="Enable AML Screening"
                     tooltip="Screen transactions for potential money laundering patterns"
                   >
                     <ToggleSwitch
                       enabled={riskSettings.enableAMLScreening}
-                      onToggle={() => toggleSetting("risk", "enableAMLScreening")}
+                      onToggle={() =>
+                        toggleSetting("risk", "enableAMLScreening")
+                      }
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="AML Threshold (KES)" 
+
+                  <SettingRow
+                    label="AML Threshold (KES)"
                     tooltip="Transaction amount that triggers AML screening"
                     disabled={!riskSettings.enableAMLScreening}
                   >
                     <NumberInput
                       value={riskSettings.amlThreshold}
-                      onChange={(value) => updateNumericSetting("risk", "amlThreshold", value)}
+                      onChange={(value) =>
+                        updateNumericSetting("risk", "amlThreshold", value)
+                      }
                       min={0}
                       className="w-40"
                       prefix="KES"
                       disabled={!riskSettings.enableAMLScreening}
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable Sanctions Check" 
+
+                  <SettingRow
+                    label="Enable Sanctions Check"
                     tooltip="Screen users against international sanctions lists"
                   >
                     <ToggleSwitch
                       enabled={riskSettings.enableSanctionsCheck}
-                      onToggle={() => toggleSetting("risk", "enableSanctionsCheck")}
+                      onToggle={() =>
+                        toggleSetting("risk", "enableSanctionsCheck")
+                      }
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable PEP Screening" 
+
+                  <SettingRow
+                    label="Enable PEP Screening"
                     tooltip="Screen for politically exposed persons"
                   >
                     <ToggleSwitch
@@ -1243,39 +1434,53 @@ const EscrowSettingsPage = () => {
                 icon={Target}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Max Transaction Amount (KES)" 
+                  <SettingRow
+                    label="Max Transaction Amount (KES)"
                     tooltip="Maximum amount allowed for a single transaction"
                   >
                     <NumberInput
                       value={riskSettings.maxTransactionAmount}
-                      onChange={(value) => updateNumericSetting("risk", "maxTransactionAmount", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "risk",
+                          "maxTransactionAmount",
+                          value
+                        )
+                      }
                       min={0}
                       className="w-40"
                       prefix="KES"
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Daily Transaction Limit (KES)" 
+
+                  <SettingRow
+                    label="Daily Transaction Limit (KES)"
                     tooltip="Maximum total amount allowed per user per day"
                   >
                     <NumberInput
                       value={riskSettings.dailyTransactionLimit}
-                      onChange={(value) => updateNumericSetting("risk", "dailyTransactionLimit", value)}
+                      onChange={(value) =>
+                        updateNumericSetting(
+                          "risk",
+                          "dailyTransactionLimit",
+                          value
+                        )
+                      }
                       min={0}
                       className="w-40"
                       prefix="KES"
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable Velocity Checks" 
+
+                  <SettingRow
+                    label="Enable Velocity Checks"
                     tooltip="Detect and flag unusual transaction patterns"
                   >
                     <ToggleSwitch
                       enabled={riskSettings.enableVelocityChecks}
-                      onToggle={() => toggleSetting("risk", "enableVelocityChecks")}
+                      onToggle={() =>
+                        toggleSetting("risk", "enableVelocityChecks")
+                      }
                     />
                   </SettingRow>
                 </div>
@@ -1287,53 +1492,70 @@ const EscrowSettingsPage = () => {
                 icon={Scan}
               >
                 <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                  <SettingRow 
-                    label="Enable Fraud Detection" 
+                  <SettingRow
+                    label="Enable Fraud Detection"
                     tooltip="Activate fraud detection and prevention systems"
                   >
                     <ToggleSwitch
                       enabled={riskSettings.enableFraudDetection}
-                      onToggle={() => toggleSetting("risk", "enableFraudDetection")}
+                      onToggle={() =>
+                        toggleSetting("risk", "enableFraudDetection")
+                      }
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Fraud Score Threshold" 
+
+                  <SettingRow
+                    label="Fraud Score Threshold"
                     tooltip="Score above which transactions are flagged for review (0-100)"
                     disabled={!riskSettings.enableFraudDetection}
                   >
                     <div className="flex items-center gap-3">
                       <NumberInput
                         value={riskSettings.fraudScoreThreshold}
-                        onChange={(value) => updateNumericSetting("risk", "fraudScoreThreshold", value)}
+                        onChange={(value) =>
+                          updateNumericSetting(
+                            "risk",
+                            "fraudScoreThreshold",
+                            value
+                          )
+                        }
                         min={0}
                         max={100}
                         disabled={!riskSettings.enableFraudDetection}
                         className="w-20"
                       />
                       <div className="w-32 h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full">
-                        <div className="w-2 h-5 bg-white dark:bg-gray-200 rounded-full border border-gray-300 shadow-md relative -mt-1.5" style={{ marginLeft: `${riskSettings.fraudScoreThreshold}%` }}></div>
+                        <div
+                          className="w-2 h-5 bg-white dark:bg-gray-200 rounded-full border border-gray-300 shadow-md relative -mt-1.5"
+                          style={{
+                            marginLeft: `${riskSettings.fraudScoreThreshold}%`,
+                          }}
+                        ></div>
                       </div>
                     </div>
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable Device Fingerprinting" 
+
+                  <SettingRow
+                    label="Enable Device Fingerprinting"
                     tooltip="Track unique device characteristics to prevent fraud"
                   >
                     <ToggleSwitch
                       enabled={riskSettings.enableDeviceFingerprinting}
-                      onToggle={() => toggleSetting("risk", "enableDeviceFingerprinting")}
+                      onToggle={() =>
+                        toggleSetting("risk", "enableDeviceFingerprinting")
+                      }
                     />
                   </SettingRow>
-                  
-                  <SettingRow 
-                    label="Enable Geo-blocking" 
+
+                  <SettingRow
+                    label="Enable Geo-blocking"
                     tooltip="Block transactions from restricted countries"
                   >
                     <ToggleSwitch
                       enabled={riskSettings.enableGeoBlocking}
-                      onToggle={() => toggleSetting("risk", "enableGeoBlocking")}
+                      onToggle={() =>
+                        toggleSetting("risk", "enableGeoBlocking")
+                      }
                     />
                   </SettingRow>
                 </div>
@@ -1365,15 +1587,18 @@ const EscrowSettingsPage = () => {
                     Unsaved Changes
                   </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                    You have unsaved configuration changes. Save them to apply the
-                    new settings.
+                    You have unsaved configuration changes. Save them to apply
+                    the new settings.
                   </p>
                   <div className="flex space-x-3">
                     <motion.button
                       className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg text-sm font-medium"
                       onClick={saveSettings}
                       disabled={isLoading}
-                      whileHover={{ scale: 1.02, boxShadow: "0 4px 15px rgba(59, 130, 246, 0.3)" }}
+                      whileHover={{
+                        scale: 1.02,
+                        boxShadow: "0 4px 15px rgba(59, 130, 246, 0.3)",
+                      }}
                       whileTap={{ scale: 0.98 }}
                     >
                       {isLoading ? (
@@ -1422,53 +1647,61 @@ const EscrowSettingsPage = () => {
               icon={Bell}
             >
               <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                <SettingRow 
-                  label="Email Notifications" 
+                <SettingRow
+                  label="Email Notifications"
                   tooltip="Send notifications via email"
                 >
                   <div className="flex items-center gap-3">
                     <ToggleSwitch
                       enabled={notificationSettings.emailNotifications}
-                      onToggle={() => toggleSetting("notifications", "emailNotifications")}
+                      onToggle={() =>
+                        toggleSetting("notifications", "emailNotifications")
+                      }
                     />
                     <Mail className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </div>
                 </SettingRow>
-                
-                <SettingRow 
-                  label="SMS Notifications" 
+
+                <SettingRow
+                  label="SMS Notifications"
                   tooltip="Send notifications via text messages"
                 >
                   <div className="flex items-center gap-3">
                     <ToggleSwitch
                       enabled={notificationSettings.smsNotifications}
-                      onToggle={() => toggleSetting("notifications", "smsNotifications")}
+                      onToggle={() =>
+                        toggleSetting("notifications", "smsNotifications")
+                      }
                     />
                     <Phone className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </div>
                 </SettingRow>
-                
-                <SettingRow 
-                  label="Webhook Notifications" 
+
+                <SettingRow
+                  label="Webhook Notifications"
                   tooltip="Send notifications to third-party webhooks"
                 >
                   <div className="flex items-center gap-3">
                     <ToggleSwitch
                       enabled={notificationSettings.webhookNotifications}
-                      onToggle={() => toggleSetting("notifications", "webhookNotifications")}
+                      onToggle={() =>
+                        toggleSetting("notifications", "webhookNotifications")
+                      }
                     />
                     <Database className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </div>
                 </SettingRow>
-                
-                <SettingRow 
-                  label="Push Notifications" 
+
+                <SettingRow
+                  label="Push Notifications"
                   tooltip="Send notifications to mobile devices"
                 >
                   <div className="flex items-center gap-3">
                     <ToggleSwitch
                       enabled={notificationSettings.pushNotifications}
-                      onToggle={() => toggleSetting("notifications", "pushNotifications")}
+                      onToggle={() =>
+                        toggleSetting("notifications", "pushNotifications")
+                      }
                     />
                     <Smartphone className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </div>
@@ -1482,53 +1715,63 @@ const EscrowSettingsPage = () => {
               icon={Activity}
             >
               <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                <SettingRow 
-                  label="Notify on Escrow Creation" 
+                <SettingRow
+                  label="Notify on Escrow Creation"
                   tooltip="Send notification when a new escrow is created"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.notifyOnCreation}
-                    onToggle={() => toggleSetting("notifications", "notifyOnCreation")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "notifyOnCreation")
+                    }
                   />
                 </SettingRow>
-                
-                <SettingRow 
-                  label="Notify on Funding" 
+
+                <SettingRow
+                  label="Notify on Funding"
                   tooltip="Send notification when an escrow is funded"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.notifyOnFunding}
-                    onToggle={() => toggleSetting("notifications", "notifyOnFunding")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "notifyOnFunding")
+                    }
                   />
                 </SettingRow>
-                
-                <SettingRow 
-                  label="Notify on Release" 
+
+                <SettingRow
+                  label="Notify on Release"
                   tooltip="Send notification when funds are released"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.notifyOnRelease}
-                    onToggle={() => toggleSetting("notifications", "notifyOnRelease")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "notifyOnRelease")
+                    }
                   />
                 </SettingRow>
-                
-                <SettingRow 
-                  label="Notify on Dispute" 
+
+                <SettingRow
+                  label="Notify on Dispute"
                   tooltip="Send notification when a dispute is initiated"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.notifyOnDispute}
-                    onToggle={() => toggleSetting("notifications", "notifyOnDispute")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "notifyOnDispute")
+                    }
                   />
                 </SettingRow>
-                
-                <SettingRow 
-                  label="Notify on Expiry" 
+
+                <SettingRow
+                  label="Notify on Expiry"
                   tooltip="Send notification when an escrow is about to expire"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.notifyOnExpiry}
-                    onToggle={() => toggleSetting("notifications", "notifyOnExpiry")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "notifyOnExpiry")
+                    }
                   />
                 </SettingRow>
               </div>
@@ -1540,28 +1783,36 @@ const EscrowSettingsPage = () => {
               icon={Clock}
             >
               <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                <SettingRow 
-                  label="Reminder Before Expiry (hours)" 
+                <SettingRow
+                  label="Reminder Before Expiry (hours)"
                   tooltip="How long before expiry to send a reminder notification"
                 >
                   <NumberInput
                     value={notificationSettings.reminderBefore}
-                    onChange={(value) => updateNumericSetting("notifications", "reminderBefore", value)}
+                    onChange={(value) =>
+                      updateNumericSetting(
+                        "notifications",
+                        "reminderBefore",
+                        value
+                      )
+                    }
                     min={1}
                     max={168}
                   />
                 </SettingRow>
-                
-                <SettingRow 
-                  label="Escalation Notifications" 
+
+                <SettingRow
+                  label="Escalation Notifications"
                   tooltip="Send notifications when disputes are escalated"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.escalationNotifications}
-                    onToggle={() => toggleSetting("notifications", "escalationNotifications")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "escalationNotifications")
+                    }
                   />
                 </SettingRow>
-                
+
                 <div className="pt-4">
                   <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
                     <h5 className="text-sm font-medium text-indigo-800 dark:text-indigo-300 mb-3 flex items-center">
@@ -1570,17 +1821,33 @@ const EscrowSettingsPage = () => {
                     </h5>
                     <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-indigo-200/50 dark:border-indigo-800/50 mb-3">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Email Subject</span>
-                        <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 px-1.5 py-0.5 rounded">Email</span>
+                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                          Email Subject
+                        </span>
+                        <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 px-1.5 py-0.5 rounded">
+                          Email
+                        </span>
                       </div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Your Escrow Transaction is Expiring Soon</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        Your Escrow Transaction is Expiring Soon
+                      </p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-indigo-200/50 dark:border-indigo-800/50">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Message Preview</span>
-                        <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-1.5 py-0.5 rounded">SMS</span>
+                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                          Message Preview
+                        </span>
+                        <span className="text-xs bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-1.5 py-0.5 rounded">
+                          SMS
+                        </span>
                       </div>
-                      <p className="text-sm text-gray-900 dark:text-gray-100">Your escrow transaction #ESC-12345 will expire in <span className="font-medium">{notificationSettings.reminderBefore} hours</span>. Please take action.</p>
+                      <p className="text-sm text-gray-900 dark:text-gray-100">
+                        Your escrow transaction #ESC-12345 will expire in{" "}
+                        <span className="font-medium">
+                          {notificationSettings.reminderBefore} hours
+                        </span>
+                        . Please take action.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1593,36 +1860,42 @@ const EscrowSettingsPage = () => {
               icon={ShieldCheck}
             >
               <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                <SettingRow 
-                  label="Admin Alerts" 
+                <SettingRow
+                  label="Admin Alerts"
                   tooltip="Send notifications to administrators about system events"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.adminAlerts}
-                    onToggle={() => toggleSetting("notifications", "adminAlerts")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "adminAlerts")
+                    }
                   />
                 </SettingRow>
-                
-                <SettingRow 
-                  label="System Maintenance Alerts" 
+
+                <SettingRow
+                  label="System Maintenance Alerts"
                   tooltip="Send notifications about scheduled maintenance"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.systemMaintenanceAlerts}
-                    onToggle={() => toggleSetting("notifications", "systemMaintenanceAlerts")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "systemMaintenanceAlerts")
+                    }
                   />
                 </SettingRow>
-                
-                <SettingRow 
-                  label="Security Alerts" 
+
+                <SettingRow
+                  label="Security Alerts"
                   tooltip="Send notifications about security-related events"
                 >
                   <ToggleSwitch
                     enabled={notificationSettings.securityAlerts}
-                    onToggle={() => toggleSetting("notifications", "securityAlerts")}
+                    onToggle={() =>
+                      toggleSetting("notifications", "securityAlerts")
+                    }
                   />
                 </SettingRow>
-                
+
                 <div className="pt-4">
                   <div className="flex gap-4">
                     <button className="flex-1 text-sm text-center py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 transition-colors">
@@ -1661,7 +1934,10 @@ const EscrowSettingsPage = () => {
             </div>
             <motion.button
               className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm shadow-sm hover:shadow-md"
-              whileHover={{ y: -2, boxShadow: "0 8px 20px rgba(59, 130, 246, 0.2)" }}
+              whileHover={{
+                y: -2,
+                boxShadow: "0 8px 20px rgba(59, 130, 246, 0.2)",
+              }}
               whileTap={{ y: 0 }}
             >
               <Plus size={16} className="mr-1" />
@@ -1677,7 +1953,10 @@ const EscrowSettingsPage = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 * index }}
-                whileHover={{ y: -2, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)" }}
+                whileHover={{
+                  y: -2,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)",
+                }}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -1722,7 +2001,13 @@ const EscrowSettingsPage = () => {
                                   : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                               }`}
                             >
-                              <div className={`w-1.5 h-1.5 rounded-full mr-1 ${rule.enabled ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}></div>
+                              <div
+                                className={`w-1.5 h-1.5 rounded-full mr-1 ${
+                                  rule.enabled
+                                    ? "bg-green-500 animate-pulse"
+                                    : "bg-gray-400"
+                                }`}
+                              ></div>
                               {rule.enabled ? "Active" : "Inactive"}
                             </span>
                           </div>
@@ -1749,7 +2034,13 @@ const EscrowSettingsPage = () => {
                           </label>
                           <span className="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800/30">
                             <Activity className="w-4 h-4 mr-2" />
-                            {rule.action.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                            {rule.action
+                              .split("_")
+                              .map(
+                                (word) =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                              )
+                              .join(" ")}
                           </span>
                         </div>
                       </div>
@@ -1788,7 +2079,7 @@ const EscrowSettingsPage = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500 dark:text-gray-400">
@@ -1802,7 +2093,7 @@ const EscrowSettingsPage = () => {
               </motion.div>
             ))}
           </div>
-          
+
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-100 dark:border-blue-800/30">
             <div className="flex items-start space-x-4">
               <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
@@ -1813,7 +2104,9 @@ const EscrowSettingsPage = () => {
                   About Automation Rules
                 </h4>
                 <p className="text-blue-700 dark:text-blue-400 mb-4">
-                  Automation rules enable the system to perform actions automatically based on specific conditions. Use them to streamline workflows and reduce manual intervention.
+                  Automation rules enable the system to perform actions
+                  automatically based on specific conditions. Use them to
+                  streamline workflows and reduce manual intervention.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-3 border border-blue-200/50 dark:border-blue-800/50">
@@ -1821,7 +2114,8 @@ const EscrowSettingsPage = () => {
                       Condition Syntax
                     </h5>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Use logical operators (AND, OR) and comparison operators (=, &lt;, &gt;) to define conditions.
+                      Use logical operators (AND, OR) and comparison operators
+                      (=, &lt;, &gt;) to define conditions.
                     </p>
                   </div>
                   <div className="bg-white/70 dark:bg-gray-800/70 rounded-lg p-3 border border-blue-200/50 dark:border-blue-800/50">
@@ -1829,7 +2123,8 @@ const EscrowSettingsPage = () => {
                       Available Actions
                     </h5>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Actions include auto_release, expedite_processing, manual_review, and more.
+                      Actions include auto_release, expedite_processing,
+                      manual_review, and more.
                     </p>
                   </div>
                 </div>
@@ -1838,176 +2133,8 @@ const EscrowSettingsPage = () => {
           </div>
         </motion.div>
       )}
+    </div>
+  );
+};
 
-      {/* API & Integration Tab */}
-      {activeTab === "api" && (
-        <motion.div
-          className="space-y-6"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SettingCard
-              title="API Access Control"
-              description="Configure API access and authentication settings"
-              icon={Key}
-            >
-              <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                <SettingRow 
-                  label="Enable API Access" 
-                  tooltip="Allow external applications to access the system via API"
-                >
-                  <ToggleSwitch
-                    enabled={apiSettings.enableAPIAccess}
-                    onToggle={() => toggleSetting("api", "enableAPIAccess")}
-                  />
-                </SettingRow>
-                
-                <SettingRow 
-                  label="Rate Limit (requests/minute)" 
-                  tooltip="Maximum number of API requests allowed per minute"
-                  disabled={!apiSettings.enableAPIAccess}
-                >
-                  <NumberInput
-                    value={apiSettings.rateLimitPerMinute}
-                    onChange={(value) => updateNumericSetting("api", "rateLimitPerMinute", value)}
-                    min={1}
-                    className="w-32"
-                    disabled={!apiSettings.enableAPIAccess}
-                  />
-                </SettingRow>
-                
-                <SettingRow 
-                  label="Require API Authentication" 
-                  tooltip="Require authentication for all API requests"
-                  disabled={!apiSettings.enableAPIAccess}
-                >
-                  <ToggleSwitch
-                    enabled={apiSettings.requireAPIAuthentication}
-                    onToggle={() => toggleSetting("api", "requireAPIAuthentication")}
-                    disabled={!apiSettings.enableAPIAccess}
-                  />
-                </SettingRow>
-                
-                <SettingRow 
-                  label="Enable OAuth" 
-                  tooltip="Use OAuth for API authentication"
-                  disabled={!apiSettings.enableAPIAccess || !apiSettings.requireAPIAuthentication}
-                >
-                  <ToggleSwitch
-                    enabled={apiSettings.enableOAuth}
-                    onToggle={() => toggleSetting("api", "enableOAuth")}
-                    disabled={!apiSettings.enableAPIAccess || !apiSettings.requireAPIAuthentication}
-                  />
-                </SettingRow>
-                
-                <div className="pt-4">
-                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-purple-100 dark:border-purple-800/30">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Key className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                      <h5 className="font-medium text-purple-800 dark:text-purple-300">API Credentials</h5>
-                    </div>
-                    <p className="text-sm text-purple-700 dark:text-purple-400 mb-3 ml-8">
-                      Manage your API keys and access tokens in the Developer Portal.
-                    </p>
-                    <div className="ml-8">
-                      <button className="px-4 py-2 bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-400 rounded-lg text-sm font-medium border border-purple-200 dark:border-purple-800/50 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors">
-                        Go to Developer Portal
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </SettingCard>
-
-            <SettingCard
-              title="Webhook Configuration"
-              description="Configure webhook delivery and retry settings"
-              icon={Wifi}
-            >
-              <div className="space-y-4 divide-y divide-gray-100 dark:divide-gray-700">
-                <SettingRow 
-                  label="Enable Webhooks" 
-                  tooltip="Send event notifications to external endpoints"
-                >
-                  <ToggleSwitch
-                    enabled={apiSettings.enableWebhooks}
-                    onToggle={() => toggleSetting("api", "enableWebhooks")}
-                  />
-                </SettingRow>
-                
-                <SettingRow 
-                  label="Retry Attempts" 
-                  tooltip="Number of times to retry failed webhook deliveries"
-                  disabled={!apiSettings.enableWebhooks}
-                >
-                  <NumberInput
-                    value={apiSettings.webhookRetryAttempts}
-                    onChange={(value) => updateNumericSetting("api", "webhookRetryAttempts", value)}
-                    min={0}
-                    max={10}
-                    disabled={!apiSettings.enableWebhooks}
-                  />
-                </SettingRow>
-                
-                <SettingRow 
-                  label="Timeout (seconds)" 
-                  tooltip="Maximum time to wait for webhook response"
-                  disabled={!apiSettings.enableWebhooks}
-                >
-                  <NumberInput
-                    value={apiSettings.webhookTimeout}
-                    onChange={(value) => updateNumericSetting("api", "webhookTimeout", value)}
-                    min={1}
-                    max={120}
-                    disabled={!apiSettings.enableWebhooks}
-                  />
-                </SettingRow>
-                
-                <div className="pt-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Webhook Test
-                  </label>
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="text"
-                      placeholder="https://example.com/webhook"
-                      className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      disabled={!apiSettings.enableWebhooks}
-                    />
-                    <button
-                      className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                        apiSettings.enableWebhooks
-                          ? "bg-blue-600 text-white hover:bg-blue-700"
-                          : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                      }`}
-                      disabled={!apiSettings.enableWebhooks}
-                    >
-                      Test
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </SettingCard>
-
-            <SettingCard
-              title="CORS & Allowed Origins"
-              description="Configure Cross-Origin Resource Sharing and allowed domains"
-              icon={Globe}
-              className="lg:col-span-2"
-            >
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Allowed Origins
-                  </label>
-                  <div className="space-y-2">
-                    {apiSettings.allowedOrigins.map((origin, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <input
-                          type="text"
-                          value={origin}
-                          onChange={(e) => {
-                            const newOrigins = [...apiSettings.allowedOrigins];
-                            newOrigins[index] = e.target.value;
+export default EscrowSettingsPage;
