@@ -35,14 +35,8 @@ import {
   Smartphone,
   Building,
   ArrowUpRight,
-  ArrowDownRight,
-  Percent,
 } from "lucide-react";
 import {
-  LineChart as RechartsLineChart,
-  Line,
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   PieChart as RechartsPieChart,
@@ -63,6 +57,7 @@ const TransactionReportsPage: React.FC = () => {
   const [selectedMetric, setSelectedMetric] = useState("volume");
   const [refreshing, setRefreshing] = useState(false);
   const [volume, setVolume] = useState<any>(null);
+  const [dailyVolume, setDailyVolume] = useState<any>(null);
   const [successRate, setSuccessRate] = useState<any>(null);
 
   useEffect(() => {
@@ -84,8 +79,18 @@ const TransactionReportsPage: React.FC = () => {
       }
     };
 
+    const fetchDailyVolume = async () => {
+      try {
+        const response = await escrowService.getLedgerEntryDailyVolumeTrend();
+        setDailyVolume(response);
+      } catch (error) {
+        console.error("Error fetching daily volume trend:", error);
+      }
+    };
+
     fetchVolume();
     fetchSuccessRate();
+    fetchDailyVolume();
   }, []);
 
   const transactionTrendData = [
@@ -428,7 +433,6 @@ const TransactionReportsPage: React.FC = () => {
           />
         </motion.div>
 
-        {/* Category Distribution */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}

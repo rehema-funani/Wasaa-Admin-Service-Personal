@@ -9,7 +9,10 @@ export const escrowService = {
 
   //   Escrow agreements
   createSystemEscrow: async (data: any) => {
-    const response = await escrow.post("/escrow-agreements/system/create", data);
+    const response = await escrow.post(
+      "/escrow-agreements/system/create",
+      data
+    );
     return response.data;
   },
   getEscrowAgreements: async () => {
@@ -165,8 +168,28 @@ export const escrowService = {
     const response = await escrow.get("/ledger-entries/count/stats");
     return response.data;
   },
-  getLedgerEntryDailyVolumeTrend: async (from: string, to: string) => {
-    const response = await escrow.get(`/ledger-entries/daily-volume-trend?from=${from}&to=${to}`);
+  getLedgerEntryDailyVolumeTrend: async (from?: string, to?: string) => {
+    const now = new Date();
+    const day = now.getDay();
+    const diffToMonday = (day === 0 ? -6 : 1) - day;
+
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + diffToMonday);
+
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    const formatDate = (d: Date) => d.toISOString().split("T")[0];
+
+    const defaultFrom = formatDate(monday);
+    const defaultTo = formatDate(sunday);
+
+    const response = await escrow.get(
+      `/ledger-entries/daily-volume-trend?from=${from || defaultFrom}&to=${
+        to || defaultTo
+      }`
+    );
+
     return response.data;
   },
 };
