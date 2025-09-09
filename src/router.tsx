@@ -181,6 +181,7 @@ const EscrowModule = {
   EscrowDetail: lazy(() => import("./app/admin/escrow/escrowdetail")),
   LedgerAccounts: lazy(() => import("./app/admin/escrow/ledgeraccounts")),
   LedgerAccountDetail: lazy(() => import("./app/admin/escrow/ledgeraccountdetail")),
+  SystemEscrows: lazy(() => import("./app/admin/escrow/systemescrows")),
   EscrowTransactions: lazy(() => import("./app/admin/escrow/transactions")),
   EscrowPendingTransactions: lazy(
     () => import("./app/admin/escrow/pendingapprovals")
@@ -435,6 +436,11 @@ const escrowRoutes = [
   {
     path: PATHS.ADMIN.ESCROW.LEDGER_ACCOUNT_DETAIL,
     element: EscrowModule.LedgerAccountDetail,
+    // permissions: PermissionMap.Escrow.view,
+  },
+  {
+    path: PATHS.ADMIN.ESCROW.SYSTEM_ESCROWS,
+    element: EscrowModule.SystemEscrows,
     // permissions: PermissionMap.Escrow.view,
   },
   {

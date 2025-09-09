@@ -16,6 +16,10 @@ export const escrowService = {
     const response = await escrow.get(`/escrow-agreements/${id}`);
     return response.data;
   },
+  getsystemEscrowAgreements: async () => {
+    const response = await escrow.get("/escrow-agreements/system");
+    return response.data;
+  },
 
   //   Escrow transactions
   getLedgerAccounts: async () => {

@@ -19,11 +19,11 @@ import {
   Shield,
   Candy,
   ListEnd,
-  List
-} from 'lucide-react';
+  List,
+} from "lucide-react";
 
 export type LinkRoute = {
-  type: 'link';
+  type: "link";
   path: string;
   title: string;
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
@@ -31,13 +31,13 @@ export type LinkRoute = {
 };
 
 export type DropdownItem = {
-  type: 'link';
+  type: "link";
   path: string;
   title: string;
 };
 
 export type DropdownRoute = {
-  type: 'dropdown';
+  type: "dropdown";
   title: string;
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
   key: string;
@@ -45,7 +45,7 @@ export type DropdownRoute = {
 };
 
 export type SectionRoute = {
-  type: 'section';
+  type: "section";
   title: string;
   items: (LinkRoute | DropdownRoute)[];
 };
@@ -70,6 +70,13 @@ const routes: Route[] = [
         title: "Escrow Agreements",
         icon: FileText,
         description: "Manage all escrow agreements",
+      },
+      {
+        type: "link",
+        path: "/admin/escrow/system-escrows",
+        title: "System Escrow",
+        icon: FileText,
+        description: "Manage all system escrow accounts",
       },
       {
         type: "dropdown",

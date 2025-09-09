@@ -55,6 +55,7 @@ export const PATHS = {
       ESCROW_DETAIL: "admin/escrow/escrow-details/:id",
       LEDGER_ACCOUNTS: "admin/escrow/ledger-accounts",
       LEDGER_ACCOUNT_DETAIL: "admin/escrow/ledger-account/:id",
+      SYSTEM_ESCROWS: "admin/escrow/system-escrows",  
       TRANSACTIONS: "admin/escrow/transactions",
       PENDING: "admin/escrow/transactions/pending",
       TRANSACTION_DETAIL: "admin/escrow/transactions/:id",

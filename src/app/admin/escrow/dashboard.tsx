@@ -41,105 +41,104 @@ const EscrowDashboard: React.FC = () => {
   const [disputeData, setDisputeData] = useState<any[]>([]);
   const [riskData, setRiskData] = useState<any[]>([]);
   const [volumeData, setVolumeData] = useState<any[]>([]);
-  
+
   const [activeStats, setActiveStats] = useState<any>(null);
   const [pendingDisputes, setPendingDisputes] = useState<any[]>([]);
   const [volumeMetrics, setVolumeMetrics] = useState<any>(null);
   const [escrowData, setEscrowData] = useState<any[]>([]);
   const [transactionTrends, setTransactionTrends] = useState<any[]>([]);
 
+  useEffect(() => {
+    fetchDashboardData();
+  }, [selectedPeriod, selectedYear, selectedMonth, selectedQuarter]);
 
-   useEffect(() => {
-     fetchDashboardData();
-   }, [selectedPeriod, selectedYear, selectedMonth, selectedQuarter]);
+  useEffect(() => {
+    fetchTransactionTrends();
+    fetchDisputeStats();
+    fetchEScrowVolumeTrends();
+  }, []);
 
-   useEffect(() => {
-      fetchTransactionTrends();
-      fetchDisputeStats();
-      fetchEScrowVolumeTrends();
-   }, []);
+  const fetchTransactionTrends = async () => {
+    try {
+      const trends = await escrowService.getTransactionReports();
+      setTransactionTrends(trends);
+    } catch (error) {
+      console.error("Error fetching transaction trends:", error);
+    }
+  };
 
-   const fetchTransactionTrends = async () => {
-      try {
-        const trends = await escrowService.getTransactionReports();
-        setTransactionTrends(trends);
-      } catch (error) {
-        console.error("Error fetching transaction trends:", error);
-      }
-   }
+  const fetchDisputeStats = async () => {
+    try {
+      const disputes = await escrowService.getDisputeReports();
+      setDisputeData(disputes);
+    } catch (error) {
+      console.error("Error fetching dispute stats:", error);
+    }
+  };
 
-   const fetchDisputeStats = async () => {
-      try {
-        const disputes = await escrowService.getDisputeReports();
-        setDisputeData(disputes);
-      } catch (error) {
-        console.error("Error fetching dispute stats:", error);
-      }
-   }
+  const fetchEScrowVolumeTrends = async () => {
+    try {
+      const volumeTrends = await escrowService.getEscrowVolumeTrend();
+      setVolumeData(volumeTrends);
+    } catch (error) {
+      console.error("Error fetching escrow volume trends:", error);
+    }
+  };
 
-   const fetchEScrowVolumeTrends = async () => {
-      try {
-        const volumeTrends = await escrowService.getEscrowVolumeTrend();
-        setVolumeData(volumeTrends);
-      } catch (error) {
-        console.error("Error fetching escrow volume trends:", error);
-      }
-   }
+  const fetchDashboardData = async () => {
+    setIsLoading(true);
+    try {
+      const [stats, disputes, volume] = await Promise.all([
+        escrowService.getActiveEscrowStats(),
+        escrowService.getPendingDisputes(),
+        escrowService.getTotalVolumeMetrics(),
+      ]);
 
-   const fetchDashboardData = async () => {
-     setIsLoading(true);
-     try {
-       const [stats, disputes, volume] = await Promise.all([
-         escrowService.getActiveEscrowStats(),
-         escrowService.getPendingDisputes(),
-         escrowService.getTotalVolumeMetrics(),
-       ]);
+      setActiveStats(stats);
+      setPendingDisputes(disputes);
+      setVolumeMetrics(volume);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-       setActiveStats(stats);
-       setPendingDisputes(disputes);
-       setVolumeMetrics(volume);
-     } catch (error) {
-       console.error("Error fetching dashboard data:", error);
-     } finally {
-       setIsLoading(false);
-     }
-   };
+  const formatCurrency = (amount: number, abbreviated = false) => {
+    if (abbreviated && amount >= 1000000) {
+      return `KES ${(amount / 1000000).toFixed(1)}M`;
+    } else if (abbreviated && amount >= 1000) {
+      return `KES ${(amount / 1000).toFixed(0)}K`;
+    }
+    return `KES ${amount.toLocaleString()}`;
+  };
 
-   const formatCurrency = (amount: number, abbreviated = false) => {
-     if (abbreviated && amount >= 1000000) {
-       return `KES ${(amount / 1000000).toFixed(1)}M`;
-     } else if (abbreviated && amount >= 1000) {
-       return `KES ${(amount / 1000).toFixed(0)}K`;
-     }
-     return `KES ${amount.toLocaleString()}`;
-   };
+  const formatPercentageChange = (change: number) => {
+    const sign = change >= 0 ? "+" : "";
+    return `${sign}${change.toFixed(1)}%`;
+  };
 
-   const formatPercentageChange = (change: number) => {
-     const sign = change >= 0 ? "+" : "";
-     return `${sign}${change.toFixed(1)}%`;
-   };
-
-   const dashboardStats = {
-     activeEscrows: {
-       current: activeStats?.currentCount || 0,
-       previous: activeStats?.previousCount || 0,
-       change: activeStats?.percentChange || 0,
-     },
-     pendingDisputesCount: {
-       current: pendingDisputes?.currentCount || 0,
-       previous: activeStats?.previousCount || 0,
-       change: activeStats?.percentChange || 0,
-     },
-     totalVolume: {
-       current: volumeMetrics?.currentVolume || 0,
-       previous: volumeMetrics?.previousVolume || 0,
-       change: volumeMetrics?.percentChange || 0,
-     },
-     fraudAlerts: {
-       current: activeStats?.fraudAlertCount || 0,
-       actionRequired: activeStats?.fraudAlertsRequiringAction || 0,
-     },
-   };
+  const dashboardStats = {
+    activeEscrows: {
+      current: activeStats?.currentCount || 0,
+      previous: activeStats?.previousCount || 0,
+      change: activeStats?.percentChange || 0,
+    },
+    pendingDisputesCount: {
+      current: pendingDisputes?.currentCount || 0,
+      previous: activeStats?.previousCount || 0,
+      change: activeStats?.percentChange || 0,
+    },
+    totalVolume: {
+      current: volumeMetrics?.currentVolume || 0,
+      previous: volumeMetrics?.previousVolume || 0,
+      change: volumeMetrics?.percentChange || 0,
+    },
+    fraudAlerts: {
+      current: activeStats?.fraudAlertCount || 0,
+      actionRequired: activeStats?.fraudAlertsRequiringAction || 0,
+    },
+  };
 
   const monthlyEscrowData = [
     {
@@ -260,67 +259,6 @@ const EscrowDashboard: React.FC = () => {
           <p className="text-gray-500 dark:text-gray-400 mt-1">
             Monitor escrow transactions, disputes, and compliance metrics
           </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-1 flex items-center">
-            <button
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                selectedPeriod === "weekly"
-                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-              }`}
-              onClick={() => handlePeriodChange("weekly")}
-            >
-              Weekly
-            </button>
-            <button
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                selectedPeriod === "monthly"
-                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-              }`}
-              onClick={() => handlePeriodChange("monthly")}
-            >
-              Monthly
-            </button>
-            <button
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                selectedPeriod === "quarterly"
-                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300"
-                  : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-              }`}
-              onClick={() => handlePeriodChange("quarterly")}
-            >
-              Quarterly
-            </button>
-          </div>
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-          >
-            <Calendar size={16} className="mr-2" strokeWidth={1.8} />
-            {selectedPeriod === "monthly" && `April ${selectedYear}`}
-            {selectedPeriod === "quarterly" &&
-              `Q${selectedQuarter} ${selectedYear}`}
-            {selectedPeriod === "weekly" && `April Week 4, ${selectedYear}`}
-          </motion.button>
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-          >
-            <Filter size={16} className="mr-2" strokeWidth={1.8} />
-            Filters
-          </motion.button>
-          <motion.button
-            className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm"
-            whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
-            whileTap={{ y: 0 }}
-          >
-            <Download size={16} className="mr-2" strokeWidth={1.8} />
-            Export
-          </motion.button>
         </div>
       </motion.div>
 
@@ -648,7 +586,10 @@ const EscrowDashboard: React.FC = () => {
                 <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
               </div>
             ) : (
-              <VolumeTrends volumeData={volumeData} formatCurrency={formatCurrency} />
+              <VolumeTrends
+                volumeData={volumeData}
+                formatCurrency={formatCurrency}
+              />
             )}
           </div>
         </motion.div>
