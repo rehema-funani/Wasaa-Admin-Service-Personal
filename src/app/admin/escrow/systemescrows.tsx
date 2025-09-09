@@ -682,7 +682,7 @@ const SystemEscrowsPage = () => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() =>
-                        navigate(`/admin/escrow/escrow-details/${escrow.id}`)
+                        navigate(`/admin/escrow/system-escrow/${escrow.id}`)
                       }
                     >
                       <ChevronRight className="w-3.5 h-3.5" />
