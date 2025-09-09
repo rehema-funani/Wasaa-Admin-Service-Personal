@@ -53,16 +53,14 @@ const SystemEscrowDetailPage = () => {
     }
   };
 
-  const formatCurrency = (amount: string | number, currency = "KES") => {
-    if (!amount) return formatCurrency(0, currency);
-    const numericAmount =
-      typeof amount === "string" ? parseInt(amount) : amount;
+  const formatCurrency = (amountMinor: string | number, currency: string) => {
+    const amount = parseInt(amountMinor.toString()) / 100;
     return new Intl.NumberFormat("en-KE", {
       style: "currency",
       currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
-    }).format(numericAmount);
+    }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
