@@ -192,4 +192,23 @@ export const escrowService = {
 
     return response.data;
   },
+  getLedgerTransactionPieStats: async () => {
+    const response = await escrow.get("/ledger-entries/transaction-pie");
+    return response.data;
+  },
+  getLedgerEntryStatsByPaymentMethod: async (from?: string, to?: string) => {
+    const now = new Date();
+    const year = now.getFullYear();
+
+    const defaultFrom = `${year}-01-01`;
+    const defaultTo = `${year}-12-31`;
+
+    const response = await escrow.get(
+      `/ledger-entries/payment-method-stats?from=${from || defaultFrom}&to=${
+        to || defaultTo
+      }`
+    );
+
+    return response.data;
+  },
 };

@@ -1,35 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  Search,
-  Filter,
   Download,
-  Calendar,
-  ArrowUpDown,
-  Eye,
-  BarChart3,
-  PieChart,
   TrendingUp,
-  TrendingDown,
-  Clock,
-  Users,
   FileText,
   CheckCircle,
-  ExternalLink,
-  Globe,
   CreditCard,
   DollarSign,
   Target,
   Activity,
-  Layers,
   ArrowRight,
   RefreshCw,
-  Settings,
-  Share2,
-  Database,
-  LineChart,
   MoreVertical,
-  Maximize2,
   CalendarDays,
   Wallet,
   Smartphone,
@@ -51,6 +33,7 @@ import {
 } from "recharts";
 import { escrowService } from "../../../../api/services/escrow";
 import TransactionVolumeTrend from "../../../../components/escrow/TransactionVolumeTrend";
+import PaymentMethodPerformance from "../../../../components/escrow/PaymentMethodPerformance";
 
 const TransactionReportsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
@@ -60,6 +43,8 @@ const TransactionReportsPage: React.FC = () => {
 
   const [transactionTrendData, setTransactionTrendData] = useState([]);
   const [selectedMetric, setSelectedMetric] = useState("volume");
+  const [pieStats, setPieStats] = useState<any>(null);
+  const [paymentMethodStats, setPaymentMethodStats] = useState<any>(null);
   const [currentWeekStart, setCurrentWeekStart] = useState(
     getMonday(new Date())
   );
@@ -67,7 +52,7 @@ const TransactionReportsPage: React.FC = () => {
 
   function getMonday(d: Date) {
     const date = new Date(d);
-    const day = date.getDay(); 
+    const day = date.getDay();
     const diff = date.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(date.setDate(diff));
   }
@@ -109,6 +94,24 @@ const TransactionReportsPage: React.FC = () => {
     }
   };
 
+  const fetchPieStats = async () => {
+    try {
+      const response = await escrowService.getLedgerTransactionPieStats();
+      setPieStats(response);
+    } catch (error) {
+      console.error("Error fetching pie stats:", error);
+    }
+  };
+
+  const fetchPaymentMethodStats = async () => {
+    try {
+      const response = await escrowService.getLedgerEntryStatsByPaymentMethod();
+      setPaymentMethodStats(response);
+    } catch (error) {
+      console.error("Error fetching payment method stats:", error);
+    }
+  };
+
   const fetchSuccessRate = async () => {
     try {
       const response = await escrowService.getLedgerEntrySuccessRate();
@@ -122,8 +125,9 @@ const TransactionReportsPage: React.FC = () => {
     fetchVolume();
     fetchSuccessRate();
     fetchWeekData(currentWeekStart);
+    fetchPieStats();
+    fetchPaymentMethodStats();
   }, []);
-
 
   const categoryData = [
     { name: "Goods", value: 523, volume: 18500000, color: "#3B82F6" },
@@ -466,9 +470,7 @@ const TransactionReportsPage: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Charts Row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Payment Methods Performance */}
         <motion.div
           className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
@@ -485,72 +487,13 @@ const TransactionReportsPage: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className="space-y-4">
-            {paymentMethodData.map((method, index) => {
-              const IconComponent = method.icon;
-              return (
-                <div
-                  key={method.name}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-white dark:bg-gray-600 rounded-lg">
-                      <IconComponent className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                        {method.name}
-                      </h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatNumber(method.count)} transactions
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-6">
-                    <div className="text-right">
-                      <p className="font-medium text-gray-900 dark:text-gray-100">
-                        {formatCurrency(method.volume)}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Volume
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p
-                        className={`font-medium ${
-                          method.success > 97
-                            ? "text-green-600 dark:text-green-400"
-                            : method.success > 95
-                            ? "text-yellow-600 dark:text-yellow-400"
-                            : "text-red-600 dark:text-red-400"
-                        }`}
-                      >
-                        {method.success}%
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Success
-                      </p>
-                    </div>
-                    <div className="w-20 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full ${
-                          method.success > 97
-                            ? "bg-green-500"
-                            : method.success > 95
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
-                        }`}
-                        style={{ width: `${method.success}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <PaymentMethodPerformance
+            paymentMethodStats={paymentMethodStats}
+            formatCurrency={formatCurrency}
+            formatNumber={formatNumber}
+          />
         </motion.div>
 
-        {/* Hourly Activity */}
         <motion.div
           className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700"
           initial={{ opacity: 0, y: -10 }}
