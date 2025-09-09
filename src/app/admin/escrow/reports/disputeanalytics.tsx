@@ -1,47 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  Search,
-  Filter,
   Download,
-  Calendar,
-  ArrowUpDown,
-  Eye,
   BarChart3,
-  PieChart,
   TrendingUp,
-  TrendingDown,
-  Clock,
   Users,
-  FileText,
   CheckCircle,
-  XCircle,
   AlertTriangle,
-  Globe,
-  CreditCard,
-  DollarSign,
   Target,
-  Activity,
-  Layers,
   ArrowRight,
   RefreshCw,
-  Settings,
-  Share2,
-  Database,
-  LineChart,
   MoreVertical,
   Maximize2,
-  CalendarDays,
   Scale,
   MessageSquare,
   Zap,
   ArrowUpRight,
   ArrowDownRight,
-  Percent,
   Timer,
   Award,
   ThumbsUp,
-  ThumbsDown
 } from "lucide-react";
 import {
   LineChart as RechartsLineChart,
@@ -56,16 +34,48 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ComposedChart
-} from 'recharts';
+  ComposedChart,
+} from "recharts";
+import { escrowService } from "../../../../api/services/escrow";
 
 const DisputeAnalyticsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("30days");
   const [selectedMetric, setSelectedMetric] = useState("count");
   const [isLoading, setIsLoading] = useState(false);
+  const [resolutionRate, setResolutionRate] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  type DisputeCountStats = {
+    thisPeriodCount: number;
+    percentChange: number;
+  };
 
-  // Mock data for charts
+  const [count, setCount] = useState<DisputeCountStats>({
+    thisPeriodCount: 0,
+    percentChange: 0,
+  });
+
+  const fetchDisputeCount = async () => {
+    try {
+      const response = await escrowService.getDisputeCountStats();
+      setCount(response);
+    } catch (error) {
+      console.error("Error fetching dispute count stats:", error);
+    }
+  };
+  const fetchDisputeResolutionRate = async () => {
+    try {
+      const response = await escrowService.getDisputeResolutionRateStats();
+      setResolutionRate(response);
+    } catch (error) {
+      console.error("Error fetching dispute count stats:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDisputeCount();
+    fetchDisputeResolutionRate();
+  }, []);
+
   const disputeTrendData = [
     {
       date: "Jan 01",
@@ -425,12 +435,12 @@ const DisputeAnalyticsPage: React.FC = () => {
                 Total Disputes
               </p>
               <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                {formatNumber(performanceMetrics.totalDisputes)}
+                {count?.thisPeriodCount || 0}
               </p>
               <div className="flex items-center mt-1">
                 <ArrowDownRight className="w-4 h-4 text-green-500 mr-1" />
                 <span className="text-sm text-green-600 dark:text-green-400">
-                  {Math.abs(performanceMetrics.growth.disputes)}%
+                  {Math.abs(count?.percentChange)}%
                 </span>
               </div>
             </div>
@@ -452,12 +462,12 @@ const DisputeAnalyticsPage: React.FC = () => {
                 Resolution Rate
               </p>
               <p className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                {performanceMetrics.resolutionRate}%
+                {resolutionRate?.thisPeriodRate}%
               </p>
               <div className="flex items-center mt-1">
                 <ArrowUpRight className="w-4 h-4 text-green-500 mr-1" />
                 <span className="text-sm text-green-600 dark:text-green-400">
-                  +{performanceMetrics.growth.resolutionRate}%
+                  +{resolutionRate?.percentChange}%
                 </span>
               </div>
             </div>
