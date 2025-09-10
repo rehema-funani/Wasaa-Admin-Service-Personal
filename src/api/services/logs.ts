@@ -1,8 +1,8 @@
 import { logsaudit } from "../logs-audit";
 
 export const logsService = {
-  getAuditLogs: async (params?: Record<string, any>) => {
-    const response = await logsaudit.get('/audit/logs');
+  getAuditLogs: async (limit: any, offset: any) => {
+    const response = await logsaudit.get(`/audit/logs?limit=${limit}&offset=${offset}`);
     return response.data;
   },
 

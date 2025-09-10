@@ -625,7 +625,6 @@ const CreateSubwalletPage = () => {
       </div>
 
       <div className="max-w-4xl mx-auto p-6">
-        {/* Step Indicator */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             {[1, 2, 3].map((stepNumber) => (

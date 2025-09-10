@@ -33,8 +33,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../../components/common/Button";
 import { Card } from "../../../components/common/Card";
 import { logsService } from "../../../api/services/logs";
-import { AuditLog } from "../../../types";
-import getEventTypeBadge from "../../../components/audit/getEventTypeBadge";
 import { getUsernameDisplay } from "../../../utils/audit";
 
 interface SecurityMetrics {
@@ -48,7 +46,7 @@ const AuditLogsPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -74,7 +72,7 @@ const AuditLogsPage: React.FC = () => {
 
   const [page, setPage] = useState(() => {
     const pageParam = searchParams.get("page");
-    return pageParam ? parseInt(pageParam) : 1;
+    return pageParam ? parseInt(pageParam) : 0;
   });
 
   const [itemsPerPage, setItemsPerPage] = useState(() => {
@@ -104,20 +102,14 @@ const AuditLogsPage: React.FC = () => {
     setRefreshing(true);
 
     try {
-      const params: Record<string, any> = {
-        page: page,
-        pageSize: itemsPerPage,
-      };
+      const response = await logsService.getAuditLogs(itemsPerPage, page);
 
-      const response = await logsService.getAuditLogs(params);
-
-      setAuditLogs(response.results || []);
+      setAuditLogs(response.logs || []);
       setTotalLogs(response.stats.totalAudits || 0);
-      setTotalPages(response.stats.totalPages || 0);
+      setTotalPages(response.total || 0);
       setLastUpdated(new Date());
     } catch (err) {
-      setError("Failed to fetch audit logs. Please try again later.");
-      console.error(err);
+      // setError("Failed to fetch audit logs. Please try again later.");
     } finally {
       setIsLoading(false);
       setTimeout(() => setRefreshing(false), 500);
@@ -732,10 +724,10 @@ const AuditLogsPage: React.FC = () => {
                   <tbody className="divide-y divide-slate-200 dark:divide-gray-700">
                     {filteredLogs.map((log) => (
                       <motion.tr
-                        key={log._id}
+                        key={log.id}
                         className="group hover:bg-indigo-50/30 dark:hover:bg-indigo-900/20 transition-colors cursor-pointer relative"
-                        onClick={() => handleViewDetails(log._id)}
-                        onMouseEnter={() => setHoveredLog(log._id)}
+                        onClick={() => handleViewDetails(log.id)}
+                        onMouseEnter={() => setHoveredLog(log.id)}
                         onMouseLeave={() => setHoveredLog(null)}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -743,9 +735,12 @@ const AuditLogsPage: React.FC = () => {
                           backgroundColor: "rgba(238, 242, 255, 0.5)",
                         }}
                       >
+                        {/* Event Type */}
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {getEventTypeBadge(log.event_type)}
+                          {log.action_type}
                         </td>
+
+                        {/* User */}
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center mr-3 text-white shadow-sm">
@@ -753,34 +748,40 @@ const AuditLogsPage: React.FC = () => {
                             </div>
                             <div>
                               <div className="text-sm font-medium text-slate-900 dark:text-gray-200">
-                                {getUsernameDisplay(log)}
+                                {log.actor?.actor_id || "Unknown"}
                               </div>
                               <div className="text-xs text-slate-500 dark:text-gray-400">
-                                {/* {getUserEmailDisplay(log)} */}
+                                {log.actor?.role || ""}
                               </div>
                             </div>
                           </div>
                         </td>
+
+                        {/* Service */}
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-gray-600 inline-flex items-center gap-1.5">
                             <Globe size={12} />
-                            <span>{log.service_name}</span>
+                            <span>{log.microservice}</span>
                           </div>
                         </td>
+
+                        {/* Date */}
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-xs text-slate-500 dark:text-gray-400 flex flex-col">
                             <span className="text-slate-700 dark:text-gray-300 font-medium">
-                              {formatTimeAgo(log.createdAt)}
+                              {formatTimeAgo(log.created_at)}
                             </span>
-                            <span>{formatDate(log.createdAt)}</span>
+                            <span>{formatDate(log.created_at)}</span>
                           </div>
                         </td>
+
+                        {/* Actions */}
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <button
                             className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-700 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors shadow-sm"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleViewDetails(log._id);
+                              handleViewDetails(log.id);
                             }}
                           >
                             <ExternalLink size={12} className="mr-1.5" />
@@ -788,7 +789,7 @@ const AuditLogsPage: React.FC = () => {
                           </button>
                         </td>
 
-                        {hoveredLog === log._id && (
+                        {hoveredLog === log.id && (
                           <td className="absolute inset-0 pointer-events-none overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-100/10 dark:via-indigo-800/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                           </td>
