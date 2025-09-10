@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-const baseURL = import.meta.env.VITE_API_URL || 'http://138.68.190.213:5001/api/v1/';
+const baseURL = import.meta.env.VITE_API_URL || 'http://138.68.190.213:4006/';
 const apiKey = import.meta.env.VITE_API_KEY || 'QgR1v+o16jphR9AMSJ9Qf8SnOqmMd4HPziLZvMU1Mt0t7ocaT38q/8AsuOII2YxM60WaXQMkFIYv2bqo+pS/sw==';
 
 export const logsaudit = axios.create({
@@ -30,11 +30,12 @@ logsaudit.interceptors.request.use(
   (config) => {
     try {
       const token = localStorage.getItem('authToken');
+      console.log(token);
 
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-      config.headers['x-device-id'] = getDeviceId();
+      // config.headers['x-device-id'] = getDeviceId();
 
       return config;
     } catch (error) {

@@ -73,6 +73,13 @@ const routes: Route[] = [
       },
       {
         type: "link",
+        path: "/admin/escrow/subwallets",
+        title: "Escrow Subwallets",
+        icon: FileText,
+        description: "Manage escrow subwallets",
+      },
+      {
+        type: "link",
         path: "/admin/escrow/all-escrow-agreements",
         title: "Escrow Agreements",
         icon: FileText,
@@ -156,7 +163,7 @@ const routes: Route[] = [
             type: "link",
             path: "/admin/escrow/sar",
             title: "Suspicious Activity Reports",
-          }
+          },
         ],
       },
       {
