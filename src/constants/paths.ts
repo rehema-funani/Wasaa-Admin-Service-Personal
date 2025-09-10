@@ -58,6 +58,7 @@ export const PATHS = {
       SYSTEM_ESCROWS: "admin/escrow/system-escrows",
       SYSTEM_ESCROW_DETAIL: "admin/escrow/system-escrow/:id",
       SUB_WALLETS: "admin/escrow/subwallets",
+      SUB_WALLET_DETAIL: "admin/escrow/subwallet/:id",
       TRANSACTIONS: "admin/escrow/transactions",
       PENDING: "admin/escrow/transactions/pending",
       TRANSACTION_DETAIL: "admin/escrow/transactions/:id",

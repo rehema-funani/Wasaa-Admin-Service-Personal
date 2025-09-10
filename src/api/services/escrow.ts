@@ -23,6 +23,10 @@ export const escrowService = {
     const response = await escrow.post(`/escrow-subwallets/${id}/${status}`);
     return response.data;
   },
+  getSubwalletById: async (id: string) => {
+    const response = await escrow.get(`/escrow-subwallets/${id}`);
+    return response.data;
+  },
   getEscrowAgreements: async () => {
     const response = await escrow.get("/escrow-agreements");
     return response.data;
