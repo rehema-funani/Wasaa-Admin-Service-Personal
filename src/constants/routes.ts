@@ -64,19 +64,26 @@ const routes: Route[] = [
         icon: Shield,
         description: "Overview of all escrow operations",
       },
-      {
-        type: "link",
-        path: "/admin/escrow/transactions/create",
-        title: "Create Escrow",
-        icon: FileText,
-        description: "Initiate a new escrow transaction",
-      },
+      // {
+      //   type: "link",
+      //   path: "/admin/escrow/transactions/create",
+      //   title: "Create Escrow",
+      //   icon: FileText,
+      //   description: "Initiate a new escrow transaction",
+      // },
       {
         type: "link",
         path: "/admin/escrow/subwallets",
         title: "Escrow Subwallets",
         icon: FileText,
         description: "Manage escrow subwallets",
+      },
+      {
+        type: "link",
+        path: "/admin/escrow/subwallets/create",
+        title: "Create Subwallet account",
+        icon: FileText,
+        description: "Create a new subwallet account",
       },
       {
         type: "link",

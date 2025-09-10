@@ -14,7 +14,6 @@ import {
   AlertTriangle,
   CheckCircle,
   Activity,
-  CreditCard,
   Download,
   Lock,
   Unlock,
@@ -36,7 +35,6 @@ const SubwalletDetailPage = () => {
   const [showTransactionHistory, setShowTransactionHistory] = useState(true);
   const [showAuditTrail, setShowAuditTrail] = useState(true);
 
-  // For transaction history pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
@@ -143,7 +141,7 @@ const SubwalletDetailPage = () => {
     );
   };
 
-  const getKycStatusBadge = (status) => {
+  const getKycStatusBadge = (status: string) => {
     const statusConfig = {
       VERIFIED: {
         color:
@@ -186,7 +184,6 @@ const SubwalletDetailPage = () => {
       const newStatus = subwallet.status === "FROZEN" ? "ACTIVE" : "FROZEN";
       await escrowService.updateSubwalletStatus(id, newStatus);
 
-      // Update local state
       setSubwallet({
         ...subwallet,
         status: newStatus,
@@ -202,7 +199,6 @@ const SubwalletDetailPage = () => {
     try {
       await escrowService.updateSubwalletStatus(id, "CLOSED");
 
-      // Update local state
       setSubwallet({
         ...subwallet,
         status: "CLOSED",
@@ -212,7 +208,6 @@ const SubwalletDetailPage = () => {
     }
   };
 
-  // For transaction history pagination
   const totalTransactionPages = subwallet?.transactions
     ? Math.ceil(subwallet.transactions.length / itemsPerPage)
     : 0;
