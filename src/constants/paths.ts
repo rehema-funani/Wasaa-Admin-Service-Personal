@@ -54,6 +54,7 @@ export const PATHS = {
       ESCROW_ACCOUNTS_DASHBOARD: "admin/escrow/accounts-dashboard",
       ALL: "admin/escrow/all-escrow-agreements",
       ESCROW_DETAIL: "admin/escrow/escrow-details/:id",
+      FUNDRAISER_SUB_WALLET_DETAIL: "admin/escrow/fundraiser-subwallet/:id",
       LEDGER_ACCOUNTS: "admin/escrow/ledger-accounts",
       LEDGER_ACCOUNT_DETAIL: "admin/escrow/ledger-account/:id",
       SYSTEM_ESCROWS: "admin/escrow/system-escrows",
