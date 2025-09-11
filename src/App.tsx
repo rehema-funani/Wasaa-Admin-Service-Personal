@@ -13,6 +13,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
         <h2 className="mb-4 text-2xl font-bold text-red-600 dark:text-red-400">
           Something went wrong
         </h2>
+        {/* test */}
         <div className="p-3 mb-4 overflow-auto text-sm bg-gray-100 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600">
           <pre className="text-gray-800 dark:text-gray-200">
             {error.message}
