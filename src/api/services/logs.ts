@@ -7,7 +7,7 @@ export const logsService = {
   },
 
   getAuditLogById: async (id: string) => {
-    const response = await logsaudit.get(`/audits/${id}`);
+    const response = await logsaudit.get(`/audit/logs/${id}`);
     return response.data;
   },
 
