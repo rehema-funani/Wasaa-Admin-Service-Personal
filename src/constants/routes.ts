@@ -64,6 +64,13 @@ const routes: Route[] = [
         icon: Shield,
         description: "Overview of all escrow operations",
       },
+      {
+        type: "link",
+        path: "/admin/escrow/accounts-dashboard",
+        title: "Escrow Accounts Dashboard",
+        icon: Shield,
+        description: "Overview of all escrow accounts",
+      },
       // {
       //   type: "link",
       //   path: "/admin/escrow/transactions/create",
