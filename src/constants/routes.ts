@@ -99,6 +99,13 @@ const routes: Route[] = [
         icon: FileText,
         description: "Manage all system escrow accounts",
       },
+      // {
+      //   type: "link",
+      //   path: "/admin/escrow/master-escrows",
+      //   title: "System Escrow",
+      //   icon: FileText,
+      //   description: "Manage all system escrow accounts",
+      // },
       {
         type: "dropdown",
         title: "Ledger Management",

@@ -7,6 +7,11 @@ export const escrowService = {
     return response.data;
   },
 
+  getEscrowAlerts: async () => {
+    const response = await escrow.get("/alerts");
+    return response.data;
+  },
+
   //   Escrow agreements
   createSystemEscrow: async (data: any) => {
     const response = await escrow.post(

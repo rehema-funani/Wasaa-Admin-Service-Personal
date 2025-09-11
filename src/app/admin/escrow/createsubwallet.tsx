@@ -12,7 +12,8 @@ import {
   AlertCircle,
   ChevronRight,
   Check,
-  X
+  X,
+  Shield
 } from 'lucide-react';
 import { escrowService } from '../../../api/services/escrow';
 
@@ -20,28 +21,8 @@ const CreateSubwalletPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
-  type ErrorsType = {
-    tenantId?: string;
-    ownerType?: string;
-    ownerId?: string;
-    kind?: string;
-    currency?: string;
-    submit?: string;
-  };
-  const [errors, setErrors] = useState<ErrorsType>({});
-  type FormDataType = {
-    tenantId: string;
-    ownerType: string;
-    ownerId: string;
-    ownerName: string;
-    kind: string;
-    currency: string;
-    initialBalance: number | string;
-    escrowAgreementId: string;
-    status: string;
-  };
-
-  const [formData, setFormData] = useState<FormDataType>({
+  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
     tenantId: "",
     ownerType: "USER",
     ownerId: "",
@@ -120,6 +101,15 @@ const CreateSubwalletPage = () => {
     }
   };
 
+  const handleOwnerSelect = (owner) => {
+    setFormData((prev) => ({
+      ...prev,
+      ownerId: owner.id,
+      ownerName:
+        owner.name || `${owner.firstName} ${owner.lastName}` || owner.id,
+    }));
+  };
+
   const handleNumberInput = (e) => {
     const { name, value } = e.target;
     const numericValue = value.replace(/[^0-9]/g, "");
@@ -187,8 +177,11 @@ const CreateSubwalletPage = () => {
       case 1:
         return (
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-              Step 1: Basic Information
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
+                <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              Basic Information
             </h2>
 
             <div className="space-y-4">
@@ -203,8 +196,8 @@ const CreateSubwalletPage = () => {
                   className={`w-full px-4 py-3 rounded-xl border ${
                     errors.tenantId
                       ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                  } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                      : "border-gray-200 dark:border-slate-700 focus:ring-blue-500 focus:border-blue-500"
+                  } bg-white/80 dark:bg-slate-800/80 text-gray-900 dark:text-gray-100 backdrop-blur-sm transition-all`}
                 >
                   <option value="">Select Tenant</option>
                   {tenants.map((tenant) => (
@@ -224,20 +217,73 @@ const CreateSubwalletPage = () => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Owner Type <span className="text-red-500">*</span>
                 </label>
-                <select
-                  name="ownerType"
-                  value={formData.ownerType}
-                  onChange={handleInputChange}
-                  className={`w-full px-4 py-3 rounded-xl border ${
-                    errors.ownerType
-                      ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                  } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
-                >
-                  <option value="USER">User</option>
-                  <option value="BUSINESS">Business</option>
-                  <option value="TRANSACTION">Transaction</option>
-                </select>
+                <div className="grid grid-cols-2 gap-3">
+                  <motion.button
+                    type="button"
+                    className={`flex flex-col items-center justify-center py-4 px-3 rounded-xl border ${
+                      formData.ownerType === "USER"
+                        ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30"
+                        : "bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700"
+                    } transition-colors`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() =>
+                      handleInputChange({
+                        target: { name: "ownerType", value: "USER" },
+                      })
+                    }
+                  >
+                    <Users
+                      className={`w-6 h-6 mb-2 ${
+                        formData.ownerType === "USER"
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    />
+                    <span
+                      className={`text-sm font-medium ${
+                        formData.ownerType === "USER"
+                          ? "text-blue-700 dark:text-blue-300"
+                          : "text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      User
+                    </span>
+                  </motion.button>
+
+                  <motion.button
+                    type="button"
+                    className={`flex flex-col items-center justify-center py-4 px-3 rounded-xl border ${
+                      formData.ownerType === "BUSINESS"
+                        ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30"
+                        : "bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700"
+                    } transition-colors`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() =>
+                      handleInputChange({
+                        target: { name: "ownerType", value: "BUSINESS" },
+                      })
+                    }
+                  >
+                    <Briefcase
+                      className={`w-6 h-6 mb-2 ${
+                        formData.ownerType === "BUSINESS"
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    />
+                    <span
+                      className={`text-sm font-medium ${
+                        formData.ownerType === "BUSINESS"
+                          ? "text-blue-700 dark:text-blue-300"
+                          : "text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      Business
+                    </span>
+                  </motion.button>
+                </div>
                 {errors.ownerType && (
                   <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.ownerType}
@@ -258,8 +304,8 @@ const CreateSubwalletPage = () => {
                       className={`w-full px-4 py-3 rounded-xl border ${
                         errors.ownerId
                           ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
-                          : "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                      } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                          : "border-gray-200 dark:border-slate-700 focus:ring-blue-500 focus:border-blue-500"
+                      } bg-white/80 dark:bg-slate-800/80 text-gray-900 dark:text-gray-100 backdrop-blur-sm transition-all`}
                     >
                       <option value="">Select Owner</option>
                       {owners.map((owner) => (
@@ -271,7 +317,12 @@ const CreateSubwalletPage = () => {
                       ))}
                     </select>
                     {formData.ownerId && (
-                      <div className="p-4 bg-blue-50/50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                      <motion.div
+                        className="p-4 bg-blue-50/80 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
                         <div className="flex items-center gap-3">
                           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                             {formData.ownerType === "USER" ? (
@@ -290,7 +341,7 @@ const CreateSubwalletPage = () => {
                             </p>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     )}
                   </div>
                 ) : (
@@ -304,8 +355,8 @@ const CreateSubwalletPage = () => {
                       className={`w-full px-4 py-3 rounded-xl border ${
                         errors.ownerId
                           ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
-                          : "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                      } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
+                          : "border-gray-200 dark:border-slate-700 focus:ring-blue-500 focus:border-blue-500"
+                      } bg-white/80 dark:bg-slate-800/80 text-gray-900 dark:text-gray-100 backdrop-blur-sm transition-all`}
                     />
                     <input
                       type="text"
@@ -313,7 +364,7 @@ const CreateSubwalletPage = () => {
                       value={formData.ownerName}
                       onChange={handleInputChange}
                       placeholder="Enter Owner Name (optional)"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-gray-900 dark:text-gray-100 backdrop-blur-sm transition-all focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 )}
@@ -329,30 +380,56 @@ const CreateSubwalletPage = () => {
       case 2:
         return (
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-              Step 2: Account Details
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
+                <Database className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              Account Details
             </h2>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Account Type <span className="text-red-500">*</span>
                 </label>
-                <select
-                  name="kind"
-                  value={formData.kind}
-                  onChange={handleInputChange}
-                  className={`w-full px-4 py-3 rounded-xl border ${
-                    errors.kind
-                      ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                  } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
-                >
-                  <option value="TRUST">Trust</option>
-                  <option value="OPERATING">Operating</option>
-                  <option value="COMMISSION">Commission</option>
-                  <option value="FEE">Fee</option>
-                </select>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: "TRUST", label: "Trust", icon: Shield },
+                    { value: "OPERATING", label: "Operating", icon: Database },
+                    {
+                      value: "COMMISSION",
+                      label: "Commission",
+                      icon: DollarSign,
+                    },
+                    { value: "FEE", label: "Fee", icon: DollarSign },
+                  ].map((type, index) => (
+                    <motion.button
+                      key={type.value}
+                      type="button"
+                      className={`flex items-center gap-2 p-3 rounded-xl border ${
+                        formData.kind === type.value
+                          ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30 text-blue-700 dark:text-blue-300"
+                          : "bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300"
+                      } transition-colors`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() =>
+                        handleInputChange({
+                          target: { name: "kind", value: type.value },
+                        })
+                      }
+                    >
+                      <type.icon
+                        className={`w-4 h-4 ${
+                          formData.kind === type.value
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-gray-500 dark:text-gray-400"
+                        }`}
+                      />
+                      <span className="text-sm font-medium">{type.label}</span>
+                    </motion.button>
+                  ))}
+                </div>
                 {errors.kind && (
                   <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.kind}
@@ -364,51 +441,68 @@ const CreateSubwalletPage = () => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Currency <span className="text-red-500">*</span>
                 </label>
-                <select
-                  name="currency"
-                  value={formData.currency}
-                  onChange={handleInputChange}
-                  className={`w-full px-4 py-3 rounded-xl border ${
-                    errors.currency
-                      ? "border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                  } bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100`}
-                >
-                  <option value="KES">KES - Kenyan Shilling</option>
-                  <option value="USD">USD - US Dollar</option>
-                  <option value="EUR">EUR - Euro</option>
-                  <option value="GBP">GBP - British Pound</option>
-                </select>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: "KES", label: "KES", flag: "🇰🇪" },
+                    { value: "USD", label: "USD", flag: "🇺🇸" },
+                    { value: "EUR", label: "EUR", flag: "🇪🇺" },
+                    { value: "GBP", label: "GBP", flag: "🇬🇧" },
+                  ].map((currency) => (
+                    <motion.button
+                      key={currency.value}
+                      type="button"
+                      className={`flex items-center gap-2 p-3 rounded-xl border ${
+                        formData.currency === currency.value
+                          ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30 text-blue-700 dark:text-blue-300"
+                          : "bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300"
+                      } transition-colors`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() =>
+                        handleInputChange({
+                          target: { name: "currency", value: currency.value },
+                        })
+                      }
+                    >
+                      <span className="text-lg">{currency.flag}</span>
+                      <span className="text-sm font-medium">
+                        {currency.label}
+                      </span>
+                    </motion.button>
+                  ))}
+                </div>
                 {errors.currency && (
                   <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.currency}
                   </p>
                 )}
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Initial Balance
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <DollarSign className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    name="initialBalance"
-                    value={formData.initialBalance}
-                    onChange={handleNumberInput}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="0"
-                  />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Initial Balance
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <DollarSign className="w-5 h-5 text-gray-400" />
                 </div>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Initial balance in {formData.currency}. Leave 0 if no initial
-                  funding.
-                </p>
+                <input
+                  type="text"
+                  name="initialBalance"
+                  value={formData.initialBalance}
+                  onChange={handleNumberInput}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-gray-900 dark:text-gray-100 backdrop-blur-sm transition-all focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="0"
+                />
               </div>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Initial balance in {formData.currency}. Leave 0 if no initial
+                funding.
+              </p>
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Escrow Agreement (Optional)
@@ -417,7 +511,7 @@ const CreateSubwalletPage = () => {
                   name="escrowAgreementId"
                   value={formData.escrowAgreementId}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-gray-900 dark:text-gray-100 backdrop-blur-sm transition-all focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">None</option>
                   {escrowAgreements.map((agreement) => (
@@ -427,7 +521,7 @@ const CreateSubwalletPage = () => {
                   ))}
                 </select>
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Link this subwallet to an existing escrow agreement.
+                  Link this subwallet to an existing escrow agreement
                 </p>
               </div>
 
@@ -435,15 +529,57 @@ const CreateSubwalletPage = () => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Status
                 </label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="ACTIVE">Active</option>
-                  <option value="FROZEN">Frozen</option>
-                </select>
+                <div className="flex gap-3">
+                  <motion.button
+                    type="button"
+                    className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border ${
+                      formData.status === "ACTIVE"
+                        ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/30 text-green-700 dark:text-green-300"
+                        : "bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300"
+                    } transition-colors`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() =>
+                      handleInputChange({
+                        target: { name: "status", value: "ACTIVE" },
+                      })
+                    }
+                  >
+                    <Check
+                      className={`w-4 h-4 ${
+                        formData.status === "ACTIVE"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    />
+                    <span className="text-sm font-medium">Active</span>
+                  </motion.button>
+
+                  <motion.button
+                    type="button"
+                    className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border ${
+                      formData.status === "FROZEN"
+                        ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30 text-blue-700 dark:text-blue-300"
+                        : "bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300"
+                    } transition-colors`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() =>
+                      handleInputChange({
+                        target: { name: "status", value: "FROZEN" },
+                      })
+                    }
+                  >
+                    <Shield
+                      className={`w-4 h-4 ${
+                        formData.status === "FROZEN"
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    />
+                    <span className="text-sm font-medium">Frozen</span>
+                  </motion.button>
+                </div>
               </div>
             </div>
           </div>
@@ -451,22 +587,28 @@ const CreateSubwalletPage = () => {
       case 3:
         return (
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-              Step 3: Review & Confirm
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
+                <Check className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              Review & Confirm
             </h2>
 
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-5 border border-blue-100 dark:border-blue-800/30 mb-6">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-5 border border-blue-100 dark:border-blue-800/30 backdrop-blur-sm">
               <div className="flex items-center gap-3 mb-4">
-                <Database className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="p-3 bg-blue-100/80 dark:bg-blue-900/40 rounded-xl">
+                  <Database className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                   New Subwallet Summary
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-4 border border-gray-100 dark:border-gray-700/50 backdrop-blur-sm">
+                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-1.5">
+                      <Users className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       Basic Information
                     </h4>
                     <div className="grid grid-cols-1 gap-2 mt-2">
@@ -509,8 +651,9 @@ const CreateSubwalletPage = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <div className="bg-white/60 dark:bg-slate-800/60 rounded-lg p-4 border border-gray-100 dark:border-gray-700/50 backdrop-blur-sm">
+                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-1.5">
+                      <Database className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       Account Details
                     </h4>
                     <div className="grid grid-cols-1 gap-2 mt-2">
@@ -545,7 +688,13 @@ const CreateSubwalletPage = () => {
                         <span className="text-sm text-gray-600 dark:text-gray-400">
                           Status
                         </span>
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        <span
+                          className={`text-sm font-medium px-2 py-0.5 rounded-full ${
+                            formData.status === "ACTIVE"
+                              ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                              : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                          }`}
+                        >
                           {formData.status}
                         </span>
                       </div>
@@ -564,7 +713,7 @@ const CreateSubwalletPage = () => {
             </div>
 
             {errors.submit && (
-              <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/30">
+              <div className="p-4 bg-red-50/80 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/30 backdrop-blur-sm">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-red-700 dark:text-red-400">
@@ -574,7 +723,7 @@ const CreateSubwalletPage = () => {
               </div>
             )}
 
-            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-100 dark:border-yellow-800/30">
+            <div className="p-4 bg-yellow-50/80 dark:bg-yellow-900/20 rounded-xl border border-yellow-100 dark:border-yellow-800/30 backdrop-blur-sm">
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
                 <div>
@@ -612,7 +761,7 @@ const CreateSubwalletPage = () => {
                 <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </motion.button>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                   Create System Escrow Account
                 </h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -625,17 +774,23 @@ const CreateSubwalletPage = () => {
       </div>
 
       <div className="max-w-4xl mx-auto p-6">
-        <div className="mb-8">
+        {/* Step Indicator */}
+        <motion.div
+          className="mb-8 bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-xl p-6 border border-white/20 dark:border-slate-700/30 shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <div className="flex items-center justify-between">
             {[1, 2, 3].map((stepNumber) => (
               <div key={stepNumber} className="flex flex-col items-center">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                  className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium ${
                     step === stepNumber
-                      ? "bg-blue-600 text-white"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
                       : step > stepNumber
                       ? "bg-green-500 text-white"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                      : "bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-slate-600"
                   }`}
                 >
                   {step > stepNumber ? (
@@ -644,7 +799,7 @@ const CreateSubwalletPage = () => {
                     stepNumber
                   )}
                 </div>
-                <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                   {stepNumber === 1 && "Basic Info"}
                   {stepNumber === 2 && "Account Details"}
                   {stepNumber === 3 && "Review"}
@@ -652,21 +807,21 @@ const CreateSubwalletPage = () => {
               </div>
             ))}
           </div>
-          <div className="relative mt-3">
-            <div className="absolute top-0 left-5 right-5 h-1 bg-gray-200 dark:bg-gray-700"></div>
+          <div className="relative mt-6">
+            <div className="absolute top-0 left-6 right-6 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
             <div
-              className="absolute top-0 left-5 h-1 bg-blue-600 dark:bg-blue-500 transition-all duration-300"
+              className="absolute top-0 left-6 h-1 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 rounded-full transition-all duration-300"
               style={{ width: `${((step - 1) / 2) * 100}%` }}
             ></div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Form Content */}
         <motion.div
           className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl p-8 border border-white/20 dark:border-slate-700/30 shadow-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
           <form onSubmit={handleSubmit}>
             {renderStepContent()}
@@ -675,11 +830,12 @@ const CreateSubwalletPage = () => {
               {step > 1 ? (
                 <motion.button
                   type="button"
-                  className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  className="px-5 py-2.5 bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600 transition-colors flex items-center gap-2"
                   onClick={prevStep}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.02, x: -2 }}
                   whileTap={{ scale: 0.98 }}
                 >
+                  <ArrowLeft className="w-4 h-4" />
                   Back
                 </motion.button>
               ) : (
@@ -689,9 +845,9 @@ const CreateSubwalletPage = () => {
               {step < 3 ? (
                 <motion.button
                   type="button"
-                  className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-2"
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2"
                   onClick={nextStep}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.02, x: 2 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   Next
@@ -700,7 +856,7 @@ const CreateSubwalletPage = () => {
               ) : (
                 <motion.button
                   type="submit"
-                  className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white rounded-lg hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   disabled={isLoading}
