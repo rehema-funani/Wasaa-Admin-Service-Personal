@@ -106,6 +106,13 @@ const routes: Route[] = [
         icon: FileText,
         description: "Manage all system escrow accounts",
       },
+      {
+        type: "link",
+        path: "/admin/escrow/reconciliation-dashboard",
+        title: "Reconciliation Dashboard",
+        icon: FileText,
+        description: "View reconciliation status and reports",
+      },
       // {
       //   type: "link",
       //   path: "/admin/escrow/master-escrows",
