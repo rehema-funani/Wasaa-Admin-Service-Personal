@@ -20,6 +20,13 @@ import {
   Candy,
   ListEnd,
   List,
+  PieChart,
+  ShoppingBag,
+  Search,
+  Tag,
+  BarChart2,
+  Briefcase,
+  PenTool,
 } from "lucide-react";
 
 export type LinkRoute = {
@@ -71,13 +78,6 @@ const routes: Route[] = [
         icon: Shield,
         description: "Overview of all escrow accounts",
       },
-      // {
-      //   type: "link",
-      //   path: "/admin/escrow/transactions/create",
-      //   title: "Create Escrow",
-      //   icon: FileText,
-      //   description: "Initiate a new escrow transaction",
-      // },
       {
         type: "link",
         path: "/admin/escrow/subwallets",
@@ -113,13 +113,6 @@ const routes: Route[] = [
         icon: FileText,
         description: "View reconciliation status and reports",
       },
-      // {
-      //   type: "link",
-      //   path: "/admin/escrow/master-escrows",
-      //   title: "System Escrow",
-      //   icon: FileText,
-      //   description: "Manage all system escrow accounts",
-      // },
       {
         type: "dropdown",
         title: "Ledger Management",
@@ -233,6 +226,187 @@ const routes: Route[] = [
         title: "Escrow Settings",
         icon: Settings,
         description: "Configure escrow parameters",
+      },
+    ],
+  },
+  {
+    type: "section",
+    title: "Business",
+    items: [
+      {
+        type: "link",
+        path: "/admin/business/dashboard",
+        title: "Business Dashboard",
+        icon: BarChart2,
+        description: "Overview of all businesses on the platform",
+      },
+      {
+        type: "link",
+        path: "/admin/business/all-businesses",
+        title: "All Businesses",
+        icon: Briefcase,
+        description: "Comprehensive business directory",
+      },
+      {
+        type: "link",
+        path: "/admin/business/registration",
+        title: "Business Registration",
+        icon: FileText,
+        description: "New business onboarding interface",
+      },
+      {
+        type: "link",
+        path: "/admin/business/categories",
+        title: "Business Categories",
+        icon: Tag,
+        description: "Category management for business classification",
+      },
+      {
+        type: "link",
+        path: "/admin/business/settings",
+        title: "Business Settings",
+        icon: Settings,
+        description: "Configure platform-wide business parameters",
+      },
+      {
+        type: "dropdown",
+        title: "Verification & Compliance",
+        icon: Search,
+        key: "business-verification",
+        items: [
+          {
+            type: "link",
+            path: "/admin/business/verification/queue",
+            title: "KYC Verification Queue",
+          },
+          {
+            type: "link",
+            path: "/admin/business/verification/verified",
+            title: "Verified Businesses",
+          },
+          {
+            type: "link",
+            path: "/admin/business/compliance/monitoring",
+            title: "Compliance Monitoring",
+          },
+          {
+            type: "link",
+            path: "/admin/business/documents",
+            title: "Business Documents",
+          },
+        ],
+      },
+      {
+        type: "dropdown",
+        title: "Business Management",
+        icon: PenTool,
+        key: "business-management",
+        items: [
+          {
+            type: "link",
+            path: "/admin/business/profiles",
+            title: "Business Profiles",
+          },
+          {
+            type: "link",
+            path: "/admin/business/tiers",
+            title: "Tier Management",
+          },
+          {
+            type: "link",
+            path: "/admin/business/status",
+            title: "Account Status",
+          },
+          {
+            type: "link",
+            path: "/admin/business/owners",
+            title: "Business Owners",
+          },
+        ],
+      },
+      {
+        type: "dropdown",
+        title: "Products & Services",
+        icon: ShoppingBag,
+        key: "business-products",
+        items: [
+          {
+            type: "link",
+            path: "/admin/business/products/catalog",
+            title: "Product Catalog",
+          },
+          {
+            type: "link",
+            path: "/admin/business/products/categories",
+            title: "Product Categories",
+          },
+          {
+            type: "link",
+            path: "/admin/business/products/approvals",
+            title: "Product Approvals",
+          },
+          {
+            type: "link",
+            path: "/admin/business/products/featured",
+            title: "Featured Products",
+          },
+        ],
+      },
+      {
+        type: "dropdown",
+        title: "Analytics & Reporting",
+        icon: PieChart,
+        key: "business-analytics",
+        items: [
+          {
+            type: "link",
+            path: "/admin/business/analytics/performance",
+            title: "Business Performance",
+          },
+          {
+            type: "link",
+            path: "/admin/business/analytics/categories",
+            title: "Category Insights",
+          },
+          {
+            type: "link",
+            path: "/admin/business/analytics/geography",
+            title: "Geographic Distribution",
+          },
+          {
+            type: "link",
+            path: "/admin/business/reports/growth",
+            title: "Growth Reports",
+          },
+        ],
+      },
+      {
+        type: "dropdown",
+        title: "Compliance & Risk",
+        icon: AlertTriangle,
+        key: "business-risk",
+        items: [
+          {
+            type: "link",
+            path: "/admin/business/risk/high-risk",
+            title: "High-Risk Businesses",
+          },
+          {
+            type: "link",
+            path: "/admin/business/complaints",
+            title: "Business Complaints",
+          },
+          {
+            type: "link",
+            path: "/admin/business/violations",
+            title: "Policy Violations",
+          },
+          {
+            type: "link",
+            path: "/admin/business/fraud",
+            title: "Fraud Prevention",
+          },
+        ],
       },
     ],
   },

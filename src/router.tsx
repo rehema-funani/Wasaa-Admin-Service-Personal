@@ -43,6 +43,10 @@ const UserModule = {
   ),
 };
 
+const BusinessModule = {
+  BusinessDashboard: lazy(() => import("./app/admin/business/dashboard")),
+};
+
 const GroupModule = {
   GroupList: lazy(() => import("./app/admin/Group/all-group-list/page")),
   GroupDetailPage: lazy(
@@ -345,6 +349,10 @@ const authRoutes = [
   { path: PATHS.AUTH.SET_PASSWORD, element: AuthModule.Set },
   { path: PATHS.ERROR.UNAUTHORIZED, element: CoreModule.UnauthorizedPage },
 ];
+
+const BusinessRoutes = [
+  {path: PATHS.ADMIN.BUSINESS.DASHBOARD, element: BusinessModule.BusinessDashboard}
+]
 
 const userRoutes = [
   { path: PATHS.ADMIN.PROFILE, element: CoreModule.UserProfile },
@@ -969,6 +977,7 @@ const protectedRoutes = [
   ...supportAuditRoutes,
   ...fundraisingRoutes,
   ...escrowRoutes,
+  ...BusinessRoutes,
 ];
 
 const AppRouter: React.FC = () => {
