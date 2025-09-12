@@ -285,7 +285,6 @@ const AllBusinessesPage = () => {
       );
     }
 
-    // Apply filters
     if (filters.status && filters.status !== "All Statuses") {
       result = result.filter((business) => business.status === filters.status);
     }

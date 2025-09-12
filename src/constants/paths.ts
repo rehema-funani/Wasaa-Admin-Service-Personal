@@ -52,6 +52,7 @@ export const PATHS = {
     BUSINESS: {
       DASHBOARD: "admin/business/dashboard",
       BUSINESS_ACCOUNTS: "admin/business/all-businesses",
+      BUSINESS_DETAIL: "admin/business/view/:id",
     },
     ESCROW: {
       DASHBOARD: "admin/escrow/dashboard",
