@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { PATHS } from "./constants/paths";
 import { PermissionMap } from "./utils/permissions";
 import PermissionRouteGuard from "./components/PermissionGuard";
+import { path } from "framer-motion/client";
 
 type RouteConfig = {
   path: string;
@@ -45,6 +46,7 @@ const UserModule = {
 
 const BusinessModule = {
   BusinessDashboard: lazy(() => import("./app/admin/business/dashboard")),
+  AllAccounts: lazy(() => import("./app/admin/business/allaccounts")),
 };
 
 const GroupModule = {
@@ -351,7 +353,8 @@ const authRoutes = [
 ];
 
 const BusinessRoutes = [
-  {path: PATHS.ADMIN.BUSINESS.DASHBOARD, element: BusinessModule.BusinessDashboard}
+  {path: PATHS.ADMIN.BUSINESS.DASHBOARD, element: BusinessModule.BusinessDashboard},
+  {path: PATHS.ADMIN.BUSINESS.BUSINESS_ACCOUNTS, element: BusinessModule.AllAccounts}
 ]
 
 const userRoutes = [
