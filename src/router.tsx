@@ -48,6 +48,7 @@ const BusinessModule = {
   BusinessDashboard: lazy(() => import("./app/admin/business/dashboard")),
   AllAccounts: lazy(() => import("./app/admin/business/allaccounts")),
   BusinessDetail: lazy(() => import("./app/admin/business/businessdetail")),
+  RegisterBusiness: lazy(() => import("./app/admin/business/registerbusiness")),
 };
 
 const GroupModule = {
@@ -354,10 +355,23 @@ const authRoutes = [
 ];
 
 const BusinessRoutes = [
-  {path: PATHS.ADMIN.BUSINESS.DASHBOARD, element: BusinessModule.BusinessDashboard},
-  {path: PATHS.ADMIN.BUSINESS.BUSINESS_ACCOUNTS, element: BusinessModule.AllAccounts},
-  {path: PATHS.ADMIN.BUSINESS.BUSINESS_DETAIL, element: BusinessModule.BusinessDetail},
-]
+  {
+    path: PATHS.ADMIN.BUSINESS.DASHBOARD,
+    element: BusinessModule.BusinessDashboard,
+  },
+  {
+    path: PATHS.ADMIN.BUSINESS.BUSINESS_ACCOUNTS,
+    element: BusinessModule.AllAccounts,
+  },
+  {
+    path: PATHS.ADMIN.BUSINESS.BUSINESS_DETAIL,
+    element: BusinessModule.BusinessDetail,
+  },
+  {
+    path: PATHS.ADMIN.BUSINESS.CREATE_BUSINESS,
+    element: BusinessModule.RegisterBusiness,
+  },
+];
 
 const userRoutes = [
   { path: PATHS.ADMIN.PROFILE, element: CoreModule.UserProfile },

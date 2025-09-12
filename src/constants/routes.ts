@@ -249,7 +249,7 @@ const routes: Route[] = [
       },
       {
         type: "link",
-        path: "/admin/business/registration",
+        path: "/admin/business/register",
         title: "Business Registration",
         icon: FileText,
         description: "New business onboarding interface",
