@@ -53,6 +53,9 @@ const BusinessModule = {
     () => import("./app/admin/business/businesscategories")
   ),
   BusinessSettings: lazy(() => import("./app/admin/business/businesssettings")),
+  VerificationQueue: lazy(
+    () => import("./app/admin/business/verificationqueue")
+  ),
 };
 
 const GroupModule = {
@@ -382,6 +385,10 @@ const BusinessRoutes = [
   {
     path: PATHS.ADMIN.BUSINESS.BUSINESS_SETTINGS,
     element: BusinessModule.BusinessSettings,
+  },
+  {
+    path: PATHS.ADMIN.BUSINESS.VERIFICATION_QUEUE,
+    element: BusinessModule.VerificationQueue,
   },
 ];
 

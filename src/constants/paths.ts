@@ -56,6 +56,7 @@ export const PATHS = {
       CREATE_BUSINESS: "admin/business/register",
       BUSINESS_CATEGORIES: "admin/business/categories",
       BUSINESS_SETTINGS: "admin/business/settings",
+      VERIFICATION_QUEUE: "admin/business/verification/queue",
     },
     ESCROW: {
       DASHBOARD: "admin/escrow/dashboard",
