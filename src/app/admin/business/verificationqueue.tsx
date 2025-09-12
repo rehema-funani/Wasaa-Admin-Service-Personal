@@ -766,7 +766,6 @@ const KYCVerificationQueuePage = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
-      {/* Header */}
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border-b border-white/20 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -809,8 +808,6 @@ const KYCVerificationQueuePage = () => {
               </motion.button>
             </div>
           </div>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -1804,6 +1801,7 @@ const KYCVerificationQueuePage = () => {
         </div>
       )}
     </div>
+  </div>
   );
 };
 
