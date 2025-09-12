@@ -53,9 +53,9 @@ const KYCVerificationQueuePage = () => {
   const [showDocumentViewer, setShowDocumentViewer] = useState(false);
   const [currentDocument, setCurrentDocument] = useState(null);
   const [filters, setFilters] = useState({
-    status: "all", // all, pending, approved, rejected
-    priority: "all", // all, high, medium, low
-    dateRange: "all", // all, today, week, month
+    status: "all", 
+    priority: "all", 
+    dateRange: "all", 
     documentType: "all" // all, businessRegistration, taxCertificate, ownerIdentification, etc.
   });
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -534,7 +534,7 @@ const KYCVerificationQueuePage = () => {
     setCurrentPage(1);
   };
   
-  const viewRequest = (request) => {
+  const viewRequest = (request: any) => {
     setSelectedRequest(request);
   };
   
@@ -543,12 +543,12 @@ const KYCVerificationQueuePage = () => {
     setNotesInput("");
   };
   
-  const viewDocument = (document) => {
+  const viewDocument = (document: any) => {
     setCurrentDocument(document);
     setShowDocumentViewer(true);
   };
   
-  const approveDocument = (documentId) => {
+  const approveDocument = (documentId: string) => {
     const updatedDocuments = selectedRequest.documents.map(doc => {
       if (doc.id === documentId) {
         return { ...doc, status: "approved" };
@@ -562,7 +562,7 @@ const KYCVerificationQueuePage = () => {
     });
   };
   
-  const rejectDocument = (documentId, reason) => {
+  const rejectDocument = (documentId: string, reason: any) => {
     const updatedDocuments = selectedRequest.documents.map(doc => {
       if (doc.id === documentId) {
         return { ...doc, status: "rejected", flag: reason };
@@ -576,7 +576,7 @@ const KYCVerificationQueuePage = () => {
     });
   };
   
-  const flagDocument = (documentId, flag) => {
+  const flagDocument = (documentId: any, flag: any) => {
     const updatedDocuments = selectedRequest.documents.map(doc => {
       if (doc.id === documentId) {
         return { ...doc, status: "flagged", flag };
@@ -659,7 +659,7 @@ const KYCVerificationQueuePage = () => {
     closeRequestDetails();
   };
   
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
@@ -669,7 +669,7 @@ const KYCVerificationQueuePage = () => {
     });
   };
   
-  const getTimeElapsed = (dateString) => {
+  const getTimeElapsed = (dateString: string) => {
     const now = new Date();
     const date = new Date(dateString);
     const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
@@ -682,7 +682,7 @@ const KYCVerificationQueuePage = () => {
     }
   };
   
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string) => {
     const statusConfig = {
       "pending": {
         color: "bg-amber-100/80 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800",
@@ -714,7 +714,7 @@ const KYCVerificationQueuePage = () => {
     );
   };
   
-  const getPriorityBadge = (priority) => {
+  const getPriorityBadge = (priority: string) => {
     const priorityConfig = {
       "high": {
         color: "bg-red-100/80 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800",
@@ -742,7 +742,7 @@ const KYCVerificationQueuePage = () => {
     );
   };
   
-  const getDocumentStatusBadge = (status) => {
+  const getDocumentStatusBadge = (status: string) => {
     const statusConfig = {
       "pending": { color: "text-amber-600 dark:text-amber-400" },
       "approved": { color: "text-green-600 dark:text-green-400" },
@@ -1100,7 +1100,6 @@ const KYCVerificationQueuePage = () => {
         )}
       </div>
       
-      {/* Request Details Sidebar */}
       {selectedRequest && (
         <div className="fixed inset-0 z-20 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
