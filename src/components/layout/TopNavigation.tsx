@@ -733,19 +733,6 @@ const TopNavigation = () => {
         </div>
 
         <div className="px-4 lg:px-8 h-16 lg:h-20 flex items-center justify-between relative">
-          <div className="flex items-center mr-4 lg:mr-12 ">
-            <div className="relative">
-              <img
-                src={isDarkMode ? dark : light}
-                data-tour="nav-logo"
-                alt="Logo"
-                className="w-[150px] h-auto cursor-pointer transition-transform duration-500 hover:scale-105"
-                onClick={() => navigate("/")}
-              />
-              <div className="absolute -inset-1 bg-indigo-500/5 dark:bg-indigo-400/5 blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"></div>
-            </div>
-          </div>
-
           <nav
             className="hidden xl:flex items-center flex-1 justify-center"
             data-tour="nav-sections"

@@ -13,34 +13,24 @@ import {
   Eye,
   Download,
   FileText,
-  UserCheck,
   Image as ImageIcon,
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  MoreHorizontal,
-  Calendar,
   BarChart2,
-  Clock as ClockIcon,
   Flag,
   User,
   MapPin,
   Briefcase,
   Phone,
   Mail,
-  ExternalLink,
   X,
-  Upload,
-  ThumbsUp,
-  ThumbsDown,
   MessageSquare,
-  Send,
   Info,
-  HelpCircle,
   Settings
 } from "lucide-react";
 
-const KYCVerificationQueuePage = () => {
+const KYCVerificationQueuePage: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [verificationRequests, setVerificationRequests] = useState([]);
@@ -56,7 +46,7 @@ const KYCVerificationQueuePage = () => {
     status: "all", 
     priority: "all", 
     dateRange: "all", 
-    documentType: "all" // all, businessRegistration, taxCertificate, ownerIdentification, etc.
+    documentType: "all"
   });
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [stats, setStats] = useState({
@@ -767,7 +757,7 @@ const KYCVerificationQueuePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
       <div className="sticky top-0 z-10 backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border-b border-white/20 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="w-full mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <motion.button
@@ -810,7 +800,7 @@ const KYCVerificationQueuePage = () => {
           </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="w-full mx-auto px-6 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <motion.div
