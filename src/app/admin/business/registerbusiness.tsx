@@ -9,22 +9,13 @@ import {
   User,
   Phone,
   Mail,
-  Calendar,
-  Tag,
   Shield,
   FileText,
   Upload,
   CheckCircle,
   AlertTriangle,
   X,
-  Eye,
-  ChevronDown,
-  ChevronUp,
-  HelpCircle,
   Globe,
-  Flag,
-  Building,
-  CheckSquare,
   Image,
   Info,
   Settings,
@@ -39,7 +30,6 @@ const BusinessRegistrationPage = () => {
   const [newBusinessId, setNewBusinessId] = useState("");
   
   const [formData, setFormData] = useState({
-    // Basic Info
     name: "",
     category: "",
     tier: "SME",
@@ -47,24 +37,20 @@ const BusinessRegistrationPage = () => {
     description: "",
     logo: null,
     
-    // Contact Info
     email: "",
     phone: "",
     website: "",
     address: "",
     
-    // Owner Info
     ownerName: "",
     ownerEmail: "",
     ownerPhone: "",
     ownerRole: "",
     
-    // Documents
     businessCertificate: null,
     taxCertificate: null,
     ownerIdDocument: null,
     
-    // Additional Settings
     verifyImmediately: true,
     notifyBusiness: true,
     enableStorefront: true,
@@ -72,7 +58,6 @@ const BusinessRegistrationPage = () => {
     notes: "",
   });
   
-  // Options lists
   const categories = [
     { value: "", label: "Select a category" },
     { value: "Technology", label: "Technology" },
