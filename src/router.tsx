@@ -49,7 +49,10 @@ const BusinessModule = {
   AllAccounts: lazy(() => import("./app/admin/business/allaccounts")),
   BusinessDetail: lazy(() => import("./app/admin/business/businessdetail")),
   RegisterBusiness: lazy(() => import("./app/admin/business/registerbusiness")),
-  BusinessCategories: lazy(() => import("./app/admin/business/businesscategories")),
+  BusinessCategories: lazy(
+    () => import("./app/admin/business/businesscategories")
+  ),
+  BusinessSettings: lazy(() => import("./app/admin/business/businesssettings")),
 };
 
 const GroupModule = {
@@ -375,6 +378,10 @@ const BusinessRoutes = [
   {
     path: PATHS.ADMIN.BUSINESS.BUSINESS_CATEGORIES,
     element: BusinessModule.BusinessCategories,
+  },
+  {
+    path: PATHS.ADMIN.BUSINESS.BUSINESS_SETTINGS,
+    element: BusinessModule.BusinessSettings,
   },
 ];
 
