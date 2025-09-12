@@ -34,21 +34,19 @@ const BusinessCategoriesPage: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentCategory, setCurrentCategory] = useState(null);
-  const [viewMode, setViewMode] = useState("grid"); // grid or list
+  const [viewMode, setViewMode] = useState("grid");
   const [expandedParents, setExpandedParents] = useState({});
   const [isReordering, setIsReordering] = useState(false);
   const [showCategorySettings, setShowCategorySettings] = useState(false);
 
-  // Form states
   const [newCategory, setNewCategory] = useState({
     name: "",
     description: "",
     icon: "",
-    color: "#6366f1", // Default blue color
+    color: "#6366f1",
     parentId: "",
   });
 
-  // Sample data - in a real app, this would come from API
   const sampleCategories = [
     {
       id: "cat-001",
@@ -242,7 +240,6 @@ const BusinessCategoriesPage: React.FC = () => {
     },
   ];
 
-  // Settings for category system
   const [categorySettings, setCategorySettings] = useState({
     allowCustomColors: true,
     allowSubcategories: true,
@@ -250,10 +247,9 @@ const BusinessCategoriesPage: React.FC = () => {
     requireApproval: false,
     showBusinessCount: true,
     showInSearch: true,
-    defaultSortOrder: "alphabetical", // alphabetical, businessCount, custom
+    defaultSortOrder: "alphabetical",
   });
 
-  // Get flat list of all categories including subcategories
   const getAllCategories = (categoriesArray) => {
     let result = [];
 
@@ -279,7 +275,6 @@ const BusinessCategoriesPage: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
 
-    // Simulate API call with timeout
     setTimeout(() => {
       setCategories(sampleCategories);
       setFilteredCategories(sampleCategories);
@@ -309,21 +304,17 @@ const BusinessCategoriesPage: React.FC = () => {
 
     const lowercaseSearch = searchTerm.toLowerCase();
 
-    // Create a deep copy of categories for filtering
     const filterCategories = (categoriesArray) => {
       return categoriesArray.filter((category) => {
-        // Check if the current category matches the search
         const categoryMatches =
           category.name.toLowerCase().includes(lowercaseSearch) ||
           category.description.toLowerCase().includes(lowercaseSearch);
 
-        // Check subcategories if available
         let matchingSubcategories = [];
         if (category.subCategories && category.subCategories.length > 0) {
           matchingSubcategories = filterCategories(category.subCategories);
         }
 
-        // Return the category with filtered subcategories if it matches
         if (categoryMatches) {
           return {
             ...category,
@@ -331,12 +322,10 @@ const BusinessCategoriesPage: React.FC = () => {
           };
         }
 
-        // Return null if neither the category nor its subcategories match
         if (matchingSubcategories.length === 0) {
           return false;
         }
 
-        // Return the category with only matching subcategories
         return {
           ...category,
           subCategories: matchingSubcategories,
@@ -396,10 +385,8 @@ const BusinessCategoriesPage: React.FC = () => {
     };
 
     if (!newCategory.parentId) {
-      // Add as a top-level category
       setCategories([...categories, newCategoryObj]);
     } else {
-      // Add as a subcategory
       const updatedCategories = [...categories];
       const addSubcategory = (categoriesArray) => {
         return categoriesArray.map((category) => {
@@ -510,13 +497,11 @@ const BusinessCategoriesPage: React.FC = () => {
     });
   };
 
-  // For drag and drop reordering
   const onDragEnd = (result) => {
     if (!result.destination) return;
 
     const { source, destination } = result;
 
-    // If dropped in the same position, do nothing
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
@@ -524,7 +509,6 @@ const BusinessCategoriesPage: React.FC = () => {
       return;
     }
 
-    // If it's the main droppable (top-level categories)
     if (
       source.droppableId === "main-categories" &&
       destination.droppableId === "main-categories"
