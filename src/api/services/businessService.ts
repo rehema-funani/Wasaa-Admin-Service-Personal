@@ -226,35 +226,198 @@ const updateBusinessProfile = async (businessId: string, profileData: any): Prom
         throw new Error('An unexpected error occurred while updating the business profile.');
     }
 };
-
-const getBusinessUsers = async (businessId: string): Promise<any[]> => {
-    try {
-        const response = await businessApi.get(`/business-users/${businessId}/users`);
-        return response.data.users || [];
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            // A 404 might just mean no users, not a critical error for this page logic
-            if (error.response.status === 404) return [];
-            const errorMessage = error.response.data?.message || 'Failed to fetch business users';
-            throw new Error(errorMessage);
-        }
-        throw new Error('An unexpected error occurred while fetching business users.');
+const getBusinessUsers = async (businessId: string) => {
+  try {
+    console.log(`🔍 Fetching users for business ID: ${businessId}`);
+    
+    // Try the most likely endpoint based on your assignment API structure
+    const response = await businessApi.get(`/business-users/${businessId}`);
+    
+    console.log(`📊 API Response for business ${businessId}:`, response.data);
+    
+    // Handle different possible response structures
+    if (response.data) {
+      // If response.data is directly an array
+      if (Array.isArray(response.data)) {
+        return response.data;
+      }
+      
+      // If response.data has a nested structure like { users: [...] }
+      if (response.data.users && Array.isArray(response.data.users)) {
+        return response.data.users;
+      }
+      
+      // If response.data has data property like { data: [...] }
+      if (response.data.data && Array.isArray(response.data.data)) {
+        return response.data.data;
+      }
+      
+      // If it's a single object, wrap in array
+      if (typeof response.data === 'object' && !Array.isArray(response.data)) {
+        return [response.data];
+      }
     }
+    
+    // Fallback to empty array if no recognizable structure
+    console.warn(`⚠️ Unexpected response structure for business ${businessId}:`, response.data);
+    return [];
+    
+  } catch (error) {
+    // If the primary endpoint fails, try alternative endpoints
+    console.warn(`⚠️ Primary endpoint failed for business ${businessId}, trying alternatives...`);
+    
+    const alternativeEndpoints = [
+      `/business-users/${businessId}/users`,
+      `/businesses/${businessId}/users`,
+      `/businesses/${businessId}/business-users`,
+      `/business/${businessId}/users`
+    ];
+    
+    for (const endpoint of alternativeEndpoints) {
+      try {
+        console.log(`🔄 Trying alternative endpoint: ${endpoint}`);
+        const response = await businessApi.get(endpoint);
+        
+        if (response.data) {
+          console.log(`✅ Success with endpoint ${endpoint}:`, response.data);
+          
+          // Handle the response structure
+          if (Array.isArray(response.data)) {
+            return response.data;
+          }
+          if (response.data.users && Array.isArray(response.data.users)) {
+            return response.data.users;
+          }
+          if (response.data.data && Array.isArray(response.data.data)) {
+            return response.data.data;
+          }
+        }
+      } catch (altError) {
+        console.log(`❌ Alternative endpoint ${endpoint} also failed:`, altError.message);
+        continue;
+      }
+    }
+    
+    console.error(`💥 All endpoints failed for business ${businessId}:`, error.message);
+    throw new Error(`Failed to fetch users for business ${businessId}: ${error.message}`);
+  }
 };
-
-const assignUserToBusiness = async (businessId: string, userId: string, roleId: string): Promise<any> => {
+const assignUserToBusiness = async (businessId: string, userId: string, roleId: string) => {
+  try {
+    console.log(`📝 Assigning user ${userId} to business ${businessId} with role ${roleId}`);
+    
+    const response = await businessApi.post(`/business-users/${businessId}/user/${userId}/assign-role/${roleId}`);
+    
+    console.log(`✅ Assignment successful:`, response.data);
+    return response.data;
+    
+  } catch (error) {
+    console.error(`❌ Assignment failed:`, error);
+    throw error;
+  }
+};
+const createBusinessRole = async (businessId: string, roleData: { title: string; description: string; permissions: string[] }): Promise<any> => {
     try {
-        // Using POST as per the endpoint documentation for creating an assignment
-        const response = await businessApi.post(`/business-users/${businessId}/user/${userId}/assign-role/${roleId}`);
+        const response = await businessApi.post(`/business-roles/${businessId}`, roleData);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-            const errorMessage = error.response.data?.message || 'Failed to assign user to business';
+            const errorMessage = error.response.data?.message || 'Failed to create business role';
             throw new Error(errorMessage);
         }
-        throw new Error('An unexpected error occurred while assigning the user.');
+        throw new Error('An unexpected error occurred while creating the business role.');
     }
 };
+
+const getBusinessRoles = async (businessId: string): Promise<any[]> => {
+    try {
+        const response = await businessApi.get(`/business-roles/business/${businessId}`);
+        return response.data || [];
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || 'Failed to fetch roles for business';
+            throw new Error(errorMessage);
+        }
+        throw new Error('An unexpected error occurred while fetching business roles.');
+    }
+};
+
+const getBusinessRoleById = async (roleId: string): Promise<any> => {
+    try {
+        const response = await businessApi.get(`/business-roles/${roleId}`);
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || 'Failed to fetch business role';
+            throw new Error(errorMessage);
+        }
+        throw new Error('An unexpected error occurred while fetching the business role.');
+    }
+};
+
+const updateBusinessRole = async (roleId: string, roleData: { title: string; description: string; permissions: string[] }): Promise<any> => {
+    try {
+        const response = await businessApi.put(`/business-roles/${roleId}`, roleData);
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || 'Failed to update business role';
+            throw new Error(errorMessage);
+        }
+        throw new Error('An unexpected error occurred while updating the business role.');
+    }
+};
+
+const deleteBusinessRole = async (roleId: string): Promise<void> => {
+    try {
+        await businessApi.delete(`/business-roles/${roleId}`);
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || 'Failed to delete business role';
+            throw new Error(errorMessage);
+        }
+        throw new Error('An unexpected error occurred while deleting the business role.');
+    }
+};
+
+const getBusinessRolePermissions = async (): Promise<string[]> => {
+    try {
+        const response = await businessApi.get('/business-roles/permissions');
+        return response.data || [];
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || 'Failed to fetch business role permissions';
+            throw new Error(errorMessage);
+        }
+        throw new Error('An unexpected error occurred while fetching permissions.');
+    }
+};
+
+const updateBusinessUserRole = async (businessUserId: string, roleId: string): Promise<any> => {
+    try {
+        const response = await businessApi.put(`/business-users/${businessUserId}/role/${roleId}`);
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || 'Failed to update business user role';
+            throw new Error(errorMessage);
+        }
+        throw new Error('An unexpected error occurred while updating the user role.');
+    }
+};
+
+const removeBusinessUser = async (businessUserId: string): Promise<void> => {
+    try {
+        await businessApi.delete(`/business-users/${businessUserId}`);
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || 'Failed to remove business user';
+            throw new Error(errorMessage);
+        }
+        throw new Error('An unexpected error occurred while removing the user.');
+    }
+};
+
 const businessService = {
     registerBusiness,
     getAllBusinesses,
@@ -273,6 +436,14 @@ const businessService = {
     updateBusinessProfile,
     getBusinessUsers,
     assignUserToBusiness,
+    createBusinessRole,
+    getBusinessRoles,
+    getBusinessRoleById,
+    updateBusinessRole,
+    deleteBusinessRole,
+    getBusinessRolePermissions,
+    updateBusinessUserRole,
+    removeBusinessUser,
 };
 
 export default businessService;
