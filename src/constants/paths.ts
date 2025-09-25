@@ -245,5 +245,9 @@ export const PATHS = {
       REPORTS: "admin/fundraising/reports",
       METRICS: "admin/fundraising/performance",
     },
+    CALLS: {
+      DASHBOARD: "admin/calls/dashboard",
+      MONITORING: "admin/calls/monitoring/*",
+    },
   },
 };

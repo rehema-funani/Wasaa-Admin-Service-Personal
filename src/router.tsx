@@ -49,6 +49,12 @@ const BusinessModule = {
   AllAccounts: lazy(() => import("./app/admin/business/allaccounts")),
   BusinessDetail: lazy(() => import("./app/admin/business/businessdetail")),
   RegisterBusiness: lazy(() => import("./app/admin/business/registerbusiness")),
+  EditBusiness: lazy(() => import("./app/admin/business/editbusiness")),
+  BusinessProfile: lazy(() => import("./app/admin/business/businessprofile")),
+  BusinessProfilesList: lazy(
+    () => import("./app/admin/business/businessprofileslist")
+  ),
+  BusinessOwners: lazy(() => import("./app/admin/business/businessowners")),
   BusinessCategories: lazy(
     () => import("./app/admin/business/businesscategories")
   ),
@@ -263,6 +269,11 @@ const fundraisingModule = {
   DonorInsights: lazy(() => import("./app/admin/fundraiser/donorinsights")),
 };
 
+const CallsModule = {
+  Dashboard: lazy(() => import("./app/admin/calls/dashboard")),
+  Monitoring: lazy(() => import("./app/admin/calls/monitoring")),
+};
+
 const LoadingFallback = () => {
   const [isLongLoad, setIsLongLoad] = React.useState(false);
 
@@ -371,17 +382,33 @@ const BusinessRoutes = [
     element: BusinessModule.AllAccounts,
   },
   {
-    path: PATHS.ADMIN.BUSINESS.BUSINESS_DETAIL,
+    path: "/admin/business/view/:id",
     element: BusinessModule.BusinessDetail,
   },
   {
-    path: PATHS.ADMIN.BUSINESS.CREATE_BUSINESS,
+    path: "/admin/business/profiles",
+    element: BusinessModule.BusinessProfilesList,
+  },
+  {
+    path: "/admin/business/register",
     element: BusinessModule.RegisterBusiness,
   },
   {
-    path: PATHS.ADMIN.BUSINESS.BUSINESS_CATEGORIES,
-    element: BusinessModule.BusinessCategories,
+    path: "/admin/business/edit/:id",
+    element: BusinessModule.EditBusiness,
   },
+  {
+    path: "/admin/business/profile/:id",
+    element: BusinessModule.BusinessProfile,
+  },
+  // {
+  {
+    path: "/admin/business/owners",
+    element: BusinessModule.BusinessOwners,
+  },
+  //   path: PATHS.ADMIN.BUSINESS.BUSINESS_CATEGORIES,
+  //   element: BusinessModule.BusinessCategories,
+  // },
   {
     path: PATHS.ADMIN.BUSINESS.BUSINESS_SETTINGS,
     element: BusinessModule.BusinessSettings,
@@ -1004,6 +1031,17 @@ const fundraisingRoutes = [
   },
 ];
 
+const callsRoutes = [
+  {
+    path: PATHS.ADMIN.CALLS.DASHBOARD,
+    element: CallsModule.Dashboard,
+  },
+  {
+    path: PATHS.ADMIN.CALLS.MONITORING,
+    element: CallsModule.Monitoring,
+  },
+];
+
 const protectedRoutes = [
   { path: PATHS.ADMIN.DASHBOARD, element: CoreModule.Dashboard },
   ...userRoutes,
@@ -1016,6 +1054,7 @@ const protectedRoutes = [
   ...fundraisingRoutes,
   ...escrowRoutes,
   ...BusinessRoutes,
+  ...callsRoutes,
 ];
 
 const AppRouter: React.FC = () => {

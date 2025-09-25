@@ -15,6 +15,9 @@ import {
   Search,
   ChevronRight,
 } from "lucide-react";
+import businessService from "../../../api/services/businessService";
+import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
 import {
   BarChart,
   Bar,
@@ -38,134 +41,18 @@ const BusinessDashboard = () => {
   const [selectedYear, setSelectedYear] = useState(2025);
   const [selectedMonth, setSelectedMonth] = useState(4);
   const [isLoading, setIsLoading] = useState(true);
+  const [kpiData, setKpiData] = useState({
+    total: 0,
+    pendingVerification: 0,
+    active: 0,
+    suspended: 0,
+  });
+  const [recentBusinesses, setRecentBusinesses] = useState([]);
+  const [pendingVerificationBusinesses, setPendingVerificationBusinesses] = useState([]);
   const [businessData, setBusinessData] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [trendData, setTrendData] = useState([]);
   const [regionData, setRegionData] = useState([]);
-
-  // Dummy data
-  const businessGrowthData = [
-    { name: "Jan", total: 1240, new: 320, active: 980 },
-    { name: "Feb", total: 1410, new: 350, active: 1120 },
-    { name: "Mar", total: 1680, new: 420, active: 1340 },
-    { name: "Apr", total: 1940, new: 480, active: 1580 },
-  ];
-
-  const businessCategoryData = [
-    { name: "Retail", value: 35, count: 679 },
-    { name: "Food & Beverage", value: 25, count: 485 },
-    { name: "Services", value: 20, count: 388 },
-    { name: "Health", value: 10, count: 194 },
-    { name: "Technology", value: 10, count: 194 },
-  ];
-
-  const businessStatusData = [
-    { name: "Active", value: 81, count: 1571 },
-    { name: "Pending Verification", value: 12, count: 233 },
-    { name: "Suspended", value: 5, count: 97 },
-    { name: "Incomplete", value: 2, count: 39 },
-  ];
-
-  const businessRegionData = [
-    { name: "Nairobi", count: 720 },
-    { name: "Mombasa", count: 310 },
-    { name: "Kisumu", count: 210 },
-    { name: "Nakuru", count: 180 },
-    { name: "Eldoret", count: 140 },
-    { name: "Other", count: 380 },
-  ];
-
-  const businessTierData = [
-    { name: "SME", count: 1552, value: 80 },
-    { name: "Enterprise", count: 194, value: 10 },
-    { name: "NGO", count: 194, value: 10 },
-  ];
-
-  const recentBusinessData = [
-    {
-      id: "BUS-001243",
-      name: "TechnoHub Solutions",
-      category: "Technology",
-      tier: "Enterprise",
-      status: "Active",
-      dateJoined: "2025-04-01",
-      region: "Nairobi",
-    },
-    {
-      id: "BUS-001244",
-      name: "Fresh Harvest Grocers",
-      category: "Retail",
-      tier: "SME",
-      status: "Active",
-      dateJoined: "2025-04-01",
-      region: "Mombasa",
-    },
-    {
-      id: "BUS-001245",
-      name: "Healing Hands Clinic",
-      category: "Health",
-      tier: "SME",
-      status: "Pending Verification",
-      dateJoined: "2025-04-02",
-      region: "Kisumu",
-    },
-    {
-      id: "BUS-001246",
-      name: "Eco Warriors NGO",
-      category: "Environmental",
-      tier: "NGO",
-      status: "Active",
-      dateJoined: "2025-04-02",
-      region: "Nairobi",
-    },
-    {
-      id: "BUS-001247",
-      name: "Urban Eats Restaurant",
-      category: "Food & Beverage",
-      tier: "SME",
-      status: "Incomplete",
-      dateJoined: "2025-04-03",
-      region: "Nakuru",
-    },
-  ];
-
-  const pendingVerificationData = [
-    {
-      id: "BUS-001245",
-      name: "Healing Hands Clinic",
-      category: "Health",
-      tier: "SME",
-      documents: 3,
-      dateSubmitted: "2025-04-02",
-    },
-    {
-      id: "BUS-001249",
-      name: "SafariTech Solutions",
-      category: "Technology",
-      tier: "SME",
-      documents: 4,
-      dateSubmitted: "2025-04-03",
-    },
-    {
-      id: "BUS-001252",
-      name: "Artisan Crafts Cooperative",
-      category: "Retail",
-      tier: "SME",
-      documents: 2,
-      dateSubmitted: "2025-04-03",
-    },
-  ];
-
-  const businessKpiData = [
-    { metric: "Total Businesses", value: "1,940", change: "+15.5%" },
-    { metric: "New This Month", value: "480", change: "+14.3%" },
-    { metric: "Average Daily Signups", value: "16", change: "+6.7%" },
-    { metric: "Verification Rate", value: "83.2%", change: "+2.1%" },
-    { metric: "KYC Completion Rate", value: "91.8%", change: "+3.4%" },
-    { metric: "Active Rate", value: "81.4%", change: "-1.2%" },
-    { metric: "Churn Rate", value: "4.2%", change: "+0.5%" },
-    { metric: "Average Onboarding Time", value: "1.8 days", change: "-0.3 days" },
-  ];
 
   const COLORS = [
     "#6366f1", // Primary blue
@@ -181,17 +68,102 @@ const BusinessDashboard = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
+    const fetchDashboardData = async () => {
+      setIsLoading(true);
+      
+      try {
+        // Fetch both stats and the full list of businesses
+        const [stats, allBusinesses] = await Promise.all([
+          businessService.getBusinessStats(),
+          businessService.getAllBusinesses(),
+        ]);
 
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      setBusinessData(businessGrowthData);
-      setCategoryData(businessCategoryData);
-      setTrendData(businessStatusData);
-      setRegionData(businessRegionData);
-      setIsLoading(false);
-    }, 1000);
-  }, [selectedPeriod, selectedYear, selectedMonth]);
+        // --- Process data for KPI cards from stats endpoint ---
+        setKpiData({
+          total: stats.total || 0,
+          active: stats.status?.find(s => s.status === 'ACTIVE')?._count.status || 0,
+          pendingVerification: stats.verification_status?.find(s => s.verification_status === 'PENDING')?._count.verification_status || 0,
+          suspended: stats.status?.find(s => s.status === 'SUSPENDED')?._count.status || 0,
+        });
+
+        // --- Process data for tables ---
+        setRecentBusinesses(stats.last_created || []);
+        setPendingVerificationBusinesses(stats.pending_verification || []);
+
+        // --- Process data for charts ---
+        // Business Growth (Calculated from all businesses)
+        const monthlyData = allBusinesses.reduce((acc, business) => {
+          const month = new Date(business.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
+          if (!acc[month]) {
+            acc[month] = { new: 0, active: 0, total: 0, date: new Date(business.createdAt) };
+          }
+          acc[month].new += 1;
+          // A simple definition of active: not suspended.
+          if (business.status !== 'SUSPENDED') {
+            acc[month].active += 1;
+          }
+          return acc;
+        }, {});
+
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => monthlyData[a].date - monthlyData[b].date);
+        let cumulativeTotal = 0;
+        const growthChartData = sortedMonths.map(monthKey => {
+          cumulativeTotal += monthlyData[monthKey].new;
+          return { name: monthKey.split(' ')[0], ...monthlyData[monthKey], total: cumulativeTotal };
+        });
+
+        // last 6 months of data for clarity
+        setBusinessData(growthChartData.slice(-6));
+
+        // Category Distribution (using 'type' from stats)
+        const typeDistribution = stats.type?.map(item => ({
+          name: item.type.charAt(0).toUpperCase() + item.type.slice(1).toLowerCase(),
+          value: item._count.type,
+          count: item._count.type,
+        })) || [];
+        const totalTypeCount = typeDistribution.reduce((acc, curr) => acc + curr.count, 0);
+        const typeDistributionWithPercentage = typeDistribution.map(item => ({
+          ...item,
+          value: totalTypeCount > 0 ? (item.count / totalTypeCount) * 100 : 0,
+        }));
+        setCategoryData(typeDistributionWithPercentage);
+
+        // Business Status Overview
+        const statusDistribution = stats.status?.map(item => ({
+          name: item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase(),
+          value: item._count.status, // count for the pie chart value
+          count: item._count.status,
+        })) || [];
+        const totalStatusCount = statusDistribution.reduce((acc, curr) => acc + curr.count, 0);
+        const statusDistributionWithPercentage = statusDistribution.map(item => ({
+          ...item,
+          value: totalStatusCount > 0 ? (item.count / totalStatusCount) * 100 : 0,
+        }));
+        setTrendData(statusDistributionWithPercentage);
+
+        // Regional Distribution (calculated from all businesses)
+        const regionCounts = allBusinesses.reduce((acc, business) => {
+          const region = business.country || "Unknown";
+          acc[region] = (acc[region] || 0) + 1;
+          return acc;
+        }, {});
+        const regionChartData = Object.entries(regionCounts).map(([name, count]) => ({ name, count }));
+        setRegionData(regionChartData);
+
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats. Charts will be empty.", error);
+        toast.error("Could not load dashboard statistics for charts.");
+        setBusinessData([]);
+        setCategoryData([]);
+        setTrendData([]);
+        setRegionData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [selectedPeriod]); // Refetch data if the period changes
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -285,7 +257,7 @@ const BusinessDashboard = () => {
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Total Businesses</p>
               <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                1,940
+                {isLoading ? "..." : kpiData.total}
               </h3>
               <p className="text-sm font-medium text-green-600 dark:text-green-400 mt-1">
                 +15.5% <span className="text-gray-500 dark:text-gray-400">from last month</span>
@@ -307,7 +279,7 @@ const BusinessDashboard = () => {
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Verification Pending</p>
               <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                233
+                {isLoading ? "..." : kpiData.pendingVerification}
               </h3>
               <p className="text-sm font-medium text-amber-600 dark:text-amber-400 mt-1">
                 +8.3% <span className="text-gray-500 dark:text-gray-400">from last month</span>
@@ -329,7 +301,7 @@ const BusinessDashboard = () => {
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Active Businesses</p>
               <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                1,580
+                {isLoading ? "..." : kpiData.active}
               </h3>
               <p className="text-sm font-medium text-green-600 dark:text-green-400 mt-1">
                 +17.9% <span className="text-gray-500 dark:text-gray-400">from last month</span>
@@ -351,7 +323,7 @@ const BusinessDashboard = () => {
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Suspended Accounts</p>
               <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-1">
-                97
+                {isLoading ? "..." : kpiData.suspended}
               </h3>
               <p className="text-sm font-medium text-red-600 dark:text-red-400 mt-1">
                 +3.2% <span className="text-gray-500 dark:text-gray-400">from last month</span>
@@ -616,7 +588,7 @@ const BusinessDashboard = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {recentBusinessData.map((business, index) => (
+                {recentBusinesses.map((business, index) => (
                   <tr key={index}>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center">
@@ -624,7 +596,7 @@ const BusinessDashboard = () => {
                           <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
                             {business.name}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             {business.id}
                           </div>
                         </div>
@@ -632,20 +604,20 @@ const BusinessDashboard = () => {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="text-sm text-gray-700 dark:text-gray-300">
-                        {business.category}
+                        {business.category || 'N/A'}
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 text-xs rounded-full ${
-                          business.tier === "Enterprise"
+                          business.type === "Enterprise"
                             ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
                             : business.tier === "NGO"
                             ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                             : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                         }`}
                       >
-                        {business.tier}
+                        {business.type}
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
@@ -664,7 +636,7 @@ const BusinessDashboard = () => {
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                      {new Date(business.dateJoined).toLocaleDateString()}
+                      {new Date(business.createdAt).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
@@ -718,7 +690,7 @@ const BusinessDashboard = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {pendingVerificationData.map((business, index) => (
+                {pendingVerificationBusinesses.map((business, index) => (
                   <tr key={index}>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center">
@@ -726,7 +698,7 @@ const BusinessDashboard = () => {
                           <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
                             {business.name}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             {business.id}
                           </div>
                         </div>
@@ -734,147 +706,34 @@ const BusinessDashboard = () => {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="text-sm text-gray-700 dark:text-gray-300">
-                        {business.category}
+                        {business.category || 'N/A'}
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 text-xs rounded-full ${
-                          business.tier === "Enterprise"
+                          business.type === "Enterprise"
                             ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
                             : business.tier === "NGO"
                             ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                             : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                         }`}
                       >
-                        {business.tier}
+                        {business.type}
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="text-sm text-gray-700 dark:text-gray-300">
-                        {business.documents} files
+                        {business.documents?.length || 0} files
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                      {new Date(business.dateSubmitted).toLocaleDateString()}
+                      {new Date(business.createdAt).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Business Tiers & KPIs */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.8 }}
-        >
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Business Tier Distribution
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Distribution by business tier
-            </p>
-          </div>
-          <div className="h-72">
-            {isLoading ? (
-              <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsPieChart>
-                  <Pie
-                    data={businessTierData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) =>
-                      `${name}: ${(percent * 100).toFixed(0)}%`
-                    }
-                  >
-                    {businessTierData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={
-                          entry.name === "SME"
-                            ? "#6366f1"
-                            : entry.name === "Enterprise"
-                            ? "#8b5cf6"
-                            : "#f59e0b"
-                        }
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value, name, props) => [`${value}%`, props.payload.count]} />
-                </RechartsPieChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-2"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.9 }}
-        >
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Business KPIs
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Key performance indicators for business accounts
-            </p>
-          </div>
-          <div className="h-72 overflow-y-auto">
-            {isLoading ? (
-              <div className="h-full flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md w-full h-full"></div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {businessKpiData.map((kpi, index) => (
-                  <div 
-                    key={index} 
-                    className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
-                  >
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {kpi.metric}
-                    </p>
-                    <div className="flex justify-between items-center mt-1">
-                      <h4 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-                        {kpi.value}
-                      </h4>
-                      <span 
-                        className={`text-sm font-medium ${
-                          kpi.change.startsWith("+") && !kpi.change.includes("days")
-                            ? "text-green-600 dark:text-green-400"
-                            : kpi.change.startsWith("-") && !kpi.change.includes("days")
-                            ? "text-red-600 dark:text-red-400"
-                            : kpi.change.includes("days") && kpi.change.startsWith("-")
-                            ? "text-green-600 dark:text-green-400"
-                            : kpi.change.includes("days") && kpi.change.startsWith("+")
-                            ? "text-red-600 dark:text-red-400"
-                            : "text-gray-600 dark:text-gray-400"
-                        }`}
-                      >
-                        {kpi.change}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </motion.div>
       </div>
@@ -896,8 +755,9 @@ const BusinessDashboard = () => {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <motion.a
-              href="/admin/business/registration"
+            <motion.div>
+            <Link
+              to="/admin/business/register"
               className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 dark:text-gray-100 rounded-xl text-sm shadow-sm hover:bg-primary-700 dark:hover:bg-primary-600"
               whileHover={{
                 y: -2,
@@ -908,9 +768,11 @@ const BusinessDashboard = () => {
             >
               <Briefcase size={16} className="mr-2" strokeWidth={1.8} />
               Add Business
-            </motion.a>
-            <motion.a
-              href="/admin/business/verification/queue"
+            </Link>
+            </motion.div>
+            <motion.div>
+            <Link
+              to="/admin/business/verification/queue"
               className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
@@ -920,9 +782,11 @@ const BusinessDashboard = () => {
             >
               <Search size={16} className="mr-2 text-amber-500" strokeWidth={1.8} />
               Verify Businesses
-            </motion.a>
-            <motion.a
-              href="/admin/business/categories"
+            </Link>
+            </motion.div>
+            <motion.div>
+            <Link
+              to="/admin/business/categories"
               className="flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-200 text-sm shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600"
               whileHover={{
                 y: -2,
@@ -932,7 +796,8 @@ const BusinessDashboard = () => {
             >
               <ShoppingBag size={16} className="mr-2 text-primary-500" strokeWidth={1.8} />
               Manage Categories
-            </motion.a>
+            </Link>
+            </motion.div>
           </div>
         </div>
       </motion.div>

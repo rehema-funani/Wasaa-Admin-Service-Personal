@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   Download,
   Filter,
@@ -22,6 +23,8 @@ import {
   Tag,
   MoreHorizontal,
 } from "lucide-react";
+import businessService from "../../../api/services/businessService";
+import { toast } from "react-hot-toast";
 
 const AllBusinessesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -43,190 +46,6 @@ const AllBusinessesPage = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
-  // Dummy data
-  const businessesData = [
-    {
-      id: "BUS-001243",
-      name: "TechnoHub Solutions",
-      category: "Technology",
-      tier: "Enterprise",
-      status: "Active",
-      dateJoined: "2025-04-01",
-      region: "Nairobi",
-      kycStatus: "Verified",
-      owner: "John Kamau",
-      email: "info@technohub.co.ke",
-      phone: "+254 712 345 678",
-      productsCount: 25,
-      revenue: 12500000,
-    },
-    {
-      id: "BUS-001244",
-      name: "Fresh Harvest Grocers",
-      category: "Retail",
-      tier: "SME",
-      status: "Active",
-      dateJoined: "2025-04-01",
-      region: "Mombasa",
-      kycStatus: "Verified",
-      owner: "Sarah Ochieng",
-      email: "fresh@harvest.co.ke",
-      phone: "+254 723 456 789",
-      productsCount: 120,
-      revenue: 3500000,
-    },
-    {
-      id: "BUS-001245",
-      name: "Healing Hands Clinic",
-      category: "Health",
-      tier: "SME",
-      status: "Pending Verification",
-      dateJoined: "2025-04-02",
-      region: "Kisumu",
-      kycStatus: "Pending",
-      owner: "Dr. Michael Okoth",
-      email: "clinic@healinghands.co.ke",
-      phone: "+254 734 567 890",
-      productsCount: 15,
-      revenue: 2200000,
-    },
-    {
-      id: "BUS-001246",
-      name: "Eco Warriors NGO",
-      category: "Environmental",
-      tier: "NGO",
-      status: "Active",
-      dateJoined: "2025-04-02",
-      region: "Nairobi",
-      kycStatus: "Verified",
-      owner: "Lucy Wambui",
-      email: "info@ecowarriors.org",
-      phone: "+254 745 678 901",
-      productsCount: 5,
-      revenue: 8500000,
-    },
-    {
-      id: "BUS-001247",
-      name: "Urban Eats Restaurant",
-      category: "Food & Beverage",
-      tier: "SME",
-      status: "Incomplete",
-      dateJoined: "2025-04-03",
-      region: "Nakuru",
-      kycStatus: "Incomplete",
-      owner: "David Mutua",
-      email: "info@urbaneats.co.ke",
-      phone: "+254 756 789 012",
-      productsCount: 45,
-      revenue: 1800000,
-    },
-    {
-      id: "BUS-001248",
-      name: "Safari Adventures",
-      category: "Tourism",
-      tier: "SME",
-      status: "Active",
-      dateJoined: "2025-04-03",
-      region: "Mombasa",
-      kycStatus: "Verified",
-      owner: "James Omondi",
-      email: "booking@safariadventures.co.ke",
-      phone: "+254 767 890 123",
-      productsCount: 12,
-      revenue: 9500000,
-    },
-    {
-      id: "BUS-001249",
-      name: "SafariTech Solutions",
-      category: "Technology",
-      tier: "SME",
-      status: "Pending Verification",
-      dateJoined: "2025-04-03",
-      region: "Nairobi",
-      kycStatus: "Pending",
-      owner: "Mercy Wanjiku",
-      email: "info@safaritech.co.ke",
-      phone: "+254 778 901 234",
-      productsCount: 8,
-      revenue: 4200000,
-    },
-    {
-      id: "BUS-001250",
-      name: "Nairobi Financial Services",
-      category: "Finance",
-      tier: "Enterprise",
-      status: "Active",
-      dateJoined: "2025-04-04",
-      region: "Nairobi",
-      kycStatus: "Verified",
-      owner: "Esther Mwangi",
-      email: "info@nairobifinance.co.ke",
-      phone: "+254 789 012 345",
-      productsCount: 10,
-      revenue: 25000000,
-    },
-    {
-      id: "BUS-001251",
-      name: "Sunrise Education Center",
-      category: "Education",
-      tier: "NGO",
-      status: "Active",
-      dateJoined: "2025-04-04",
-      region: "Eldoret",
-      kycStatus: "Verified",
-      owner: "Samuel Kipchoge",
-      email: "info@sunriseedu.org",
-      phone: "+254 790 123 456",
-      productsCount: 7,
-      revenue: 6500000,
-    },
-    {
-      id: "BUS-001252",
-      name: "Artisan Crafts Cooperative",
-      category: "Retail",
-      tier: "SME",
-      status: "Pending Verification",
-      dateJoined: "2025-04-03",
-      region: "Nakuru",
-      kycStatus: "Pending",
-      owner: "Jane Njeri",
-      email: "sales@artisancrafts.co.ke",
-      phone: "+254 701 234 567",
-      productsCount: 85,
-      revenue: 1200000,
-    },
-    {
-      id: "BUS-001253",
-      name: "Green Energy Solutions",
-      category: "Energy",
-      tier: "Enterprise",
-      status: "Active",
-      dateJoined: "2025-04-05",
-      region: "Nairobi",
-      kycStatus: "Verified",
-      owner: "Peter Njoroge",
-      email: "info@greenenergy.co.ke",
-      phone: "+254 712 345 678",
-      productsCount: 12,
-      revenue: 18500000,
-    },
-    {
-      id: "BUS-001254",
-      name: "Mombasa Seafood Market",
-      category: "Food & Beverage",
-      tier: "SME",
-      status: "Suspended",
-      dateJoined: "2025-04-05",
-      region: "Mombasa",
-      kycStatus: "Verified",
-      owner: "Ali Hassan",
-      email: "sales@mombasaseafood.co.ke",
-      phone: "+254 723 456 789",
-      productsCount: 65,
-      revenue: 4200000,
-    },
-  ];
-
   const categories = [
     "All Categories",
     "Technology",
@@ -242,6 +61,7 @@ const AllBusinessesPage = () => {
 
   const regions = [
     "All Regions",
+    "Kenya",
     "Nairobi",
     "Mombasa",
     "Kisumu",
@@ -257,48 +77,84 @@ const AllBusinessesPage = () => {
     "Pending Verification",
     "Incomplete",
     "Suspended",
+    "ONBOARDING",
   ];
 
-  useEffect(() => {
-    setIsLoading(true);
-
-    // Simulate API call with a timeout
-    setTimeout(() => {
-      setBusinesses(businessesData);
-      setFilteredBusinesses(businessesData);
-      setTotalPages(Math.ceil(businessesData.length / itemsPerPage));
-      setIsLoading(false);
-    }, 1000);
-  }, [itemsPerPage]);
+  const apiStatusToDisplay: Record<string, string> = {
+    ACTIVE: "Active",
+    PENDING_VERIFICATION: "Pending Verification",
+    INCOMPLETE: "Incomplete",
+    SUSPENDED: "Suspended",
+    ONBOARDING: "ONBOARDING",
+  };
 
   useEffect(() => {
-    let result = [...businesses];
+    const fetchBusinesses = async () => {
+      setIsLoading(true);
+      try {
+        const apiResponse = await businessService.getAllBusinesses();
+
+        // Now, we map the API data to the format our UI expects.
+        const transformedData = apiResponse.map(business => ({
+          id: business.id,
+          tenant_id: business.tenant_id, // Make sure tenant_id is available for links
+          name: business.name,
+          category: business.category || 'N/A', // API response may not have category
+          tier: business.type, // Map 'type' to 'tier'
+          status: apiStatusToDisplay[business.status] || business.status, // Transform status for display
+          dateJoined: business.createdAt, // Map 'createdAt' to 'dateJoined'
+          region: business.country, // Map 'country' to 'region'
+          kycStatus: business.verification_status, // Map 'verification_status' to 'kycStatus'
+          owner: business.created_by ? `${business.created_by.first_name} ${business.created_by.last_name}`.trim() : 'Admin/System',
+          email: business.email || 'N/A', // API response may not have email
+          phone: business.phone || 'N/A', // API response may not have phone
+          productsCount: business.productsCount || 0, // Not in API response
+          revenue: business.revenue || 0, // Not in API response
+        }));
+
+        setBusinesses(transformedData);
+      } catch (error) {
+        console.error("Failed to fetch businesses:", error);
+        toast.error("Failed to load businesses. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBusinesses();
+  }, []);
+
+  useEffect(() => {
+    // This effect handles filtering, searching, and sorting whenever the source data or criteria change.
+    let processedData = [...businesses];
 
     // Apply search
     if (searchTerm) {
-      result = result.filter(
+      const lowercasedTerm = searchTerm.toLowerCase();
+      processedData = processedData.filter(
         (business) =>
-          business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          business.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          business.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          business.email.toLowerCase().includes(searchTerm.toLowerCase())
+          business.name.toLowerCase().includes(lowercasedTerm) ||
+          (business.id && business.id.toLowerCase().includes(lowercasedTerm)) ||
+          (business.owner && business.owner.toLowerCase().includes(lowercasedTerm)) ||
+          (business.email && business.email.toLowerCase().includes(lowercasedTerm))
       );
     }
 
+    // Apply filters
     if (filters.status && filters.status !== "All Statuses") {
-      result = result.filter((business) => business.status === filters.status);
+      processedData = processedData.filter((business) => business.status === filters.status);
     }
     if (filters.tier && filters.tier !== "All Tiers") {
-      result = result.filter((business) => business.tier === filters.tier);
+      processedData = processedData.filter((business) => business.tier === filters.tier);
     }
     if (filters.category && filters.category !== "All Categories") {
-      result = result.filter((business) => business.category === filters.category);
+      processedData = processedData.filter((business) => business.category === filters.category);
     }
     if (filters.region && filters.region !== "All Regions") {
-      result = result.filter((business) => business.region === filters.region);
+      processedData = processedData.filter((business) => business.region === filters.region);
     }
 
-    result.sort((a, b) => {
+    // Apply sorting
+    processedData.sort((a, b) => {
       if (sortField === "name") {
         return sortDirection === "asc"
           ? a.name.localeCompare(b.name)
@@ -308,21 +164,26 @@ const AllBusinessesPage = () => {
           ? new Date(a.dateJoined).getTime() - new Date(b.dateJoined).getTime()
           : new Date(b.dateJoined).getTime() - new Date(a.dateJoined).getTime();
       } else if (sortField === "revenue") {
-        return sortDirection === "asc"
-          ? a.revenue - b.revenue
-          : b.revenue - a.revenue;
+        return sortDirection === "asc" ? a.revenue - b.revenue : b.revenue - a.revenue;
       } else if (sortField === "productsCount") {
-        return sortDirection === "asc"
-          ? a.productsCount - b.productsCount
-          : b.productsCount - a.productsCount;
+        return sortDirection === "asc" ? a.productsCount - b.productsCount : b.productsCount - a.productsCount;
       }
       return 0;
     });
 
-    setFilteredBusinesses(result);
-    setTotalPages(Math.ceil(result.length / itemsPerPage));
-    setCurrentPage(1);
-  }, [searchTerm, filters, sortField, sortDirection, businesses, itemsPerPage]);
+    setFilteredBusinesses(processedData);
+    setCurrentPage(1); // Reset to page 1 whenever filters/search/sort changes
+  }, [searchTerm, filters, sortField, sortDirection, businesses]);
+
+  // This separate effect handles pagination recalculation
+  useEffect(() => {
+    const newTotalPages = Math.ceil(filteredBusinesses.length / itemsPerPage);
+    setTotalPages(newTotalPages > 0 ? newTotalPages : 1);
+    // Ensure currentPage is not out of bounds after itemsPerPage changes
+    if (currentPage > newTotalPages && newTotalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [filteredBusinesses, itemsPerPage]);
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -353,8 +214,7 @@ const AllBusinessesPage = () => {
     if (selectAll) {
       setSelectedRows([]);
     } else {
-      const currentPageItems = getCurrentPageItems();
-      setSelectedRows(currentPageItems.map((item) => item.id));
+      setSelectedRows(pagedBusinesses.map((item) => item.id));
     }
     setSelectAll(!selectAll);
   };
@@ -365,18 +225,17 @@ const AllBusinessesPage = () => {
       setSelectAll(false);
     } else {
       setSelectedRows([...selectedRows, id]);
-      const currentPageItems = getCurrentPageItems();
-      if (selectedRows.length + 1 === currentPageItems.length) {
+      if (selectedRows.length + 1 === pagedBusinesses.length) {
         setSelectAll(true);
       }
     }
   };
 
-  const getCurrentPageItems = () => {
+  const pagedBusinesses = React.useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return filteredBusinesses.slice(startIndex, endIndex);
-  };
+  }, [filteredBusinesses, currentPage, itemsPerPage]);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-KE", {
@@ -415,9 +274,7 @@ const AllBusinessesPage = () => {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <motion.a
-            href="/admin/business/registration"
-            className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 dark:text-gray-100 rounded-xl text-sm shadow-sm hover:bg-primary-700 dark:hover:bg-primary-600"
+          <motion.div
             whileHover={{
               y: -2,
               backgroundColor: "#4f46e5",
@@ -425,9 +282,14 @@ const AllBusinessesPage = () => {
             }}
             whileTap={{ y: 0 }}
           >
-            <Plus size={16} className="mr-2" strokeWidth={1.8} />
-            Add Business
-          </motion.a>
+            <Link
+              to="/admin/business/register"
+              className="flex items-center px-4 py-2 bg-primary-600 text-white dark:bg-primary-700 dark:text-gray-100 rounded-xl text-sm shadow-sm hover:bg-primary-700 dark:hover:bg-primary-600"
+            >
+              <Plus size={16} className="mr-2" strokeWidth={1.8} />
+              Add Business
+            </Link>
+          </motion.div>
           <motion.button
             className="flex items-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm shadow-sm"
             whileHover={{ y: -2, boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
@@ -754,7 +616,7 @@ const AllBusinessesPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {getCurrentPageItems().map((business) => (
+                {pagedBusinesses.map((business) => (
                   <tr
                     key={business.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
@@ -807,6 +669,8 @@ const AllBusinessesPage = () => {
                             ? "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
                             : business.status === "Suspended"
                             ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                            : business.status === "ONBOARDING"
+                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                             : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                         }`}
                       >
@@ -832,20 +696,21 @@ const AllBusinessesPage = () => {
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end items-center space-x-2">
-                        <a
-                          href={`/admin/business/view/${business.id}`}
+                        <Link
+                          to={`/admin/business/view/${business.id}`}
+                          state={{ business: business }}
                           className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
                           title="View"
                         >
                           <Eye size={18} />
-                        </a>
-                        <a
-                          href={`/admin/business/edit/${business.id}`}
+                        </Link>
+                        <Link
+                          to={`/admin/business/edit/${business.id}`}
                           className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                           title="Edit"
                         >
                           <Edit size={18} />
-                        </a>
+                        </Link>
                         <div className="relative group">
                           <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" title="More options">
                             <MoreHorizontal size={18} />

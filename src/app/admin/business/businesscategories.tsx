@@ -23,6 +23,8 @@ import {
   Move,
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import businessService from "../../../api/services/businessService";
+import { toast } from "react-hot-toast";
 
 const BusinessCategoriesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,199 +49,6 @@ const BusinessCategoriesPage: React.FC = () => {
     parentId: "",
   });
 
-  const sampleCategories = [
-    {
-      id: "cat-001",
-      name: "Technology",
-      description: "Tech products and services",
-      icon: "💻",
-      color: "#6366f1",
-      businessCount: 245,
-      parentId: null,
-      subCategories: [
-        {
-          id: "cat-001-1",
-          name: "Software Development",
-          description: "Custom software and app development services",
-          icon: "🖥️",
-          color: "#818cf8",
-          businessCount: 86,
-          parentId: "cat-001",
-        },
-        {
-          id: "cat-001-2",
-          name: "Hardware & Electronics",
-          description: "Electronic devices and hardware components",
-          icon: "🔌",
-          color: "#818cf8",
-          businessCount: 53,
-          parentId: "cat-001",
-        },
-        {
-          id: "cat-001-3",
-          name: "IT Consulting",
-          description: "Technology consulting and IT services",
-          icon: "📊",
-          color: "#818cf8",
-          businessCount: 106,
-          parentId: "cat-001",
-        },
-      ],
-    },
-    {
-      id: "cat-002",
-      name: "Retail",
-      description: "Physical and online retail stores",
-      icon: "🛍️",
-      color: "#ef4444",
-      businessCount: 378,
-      parentId: null,
-      subCategories: [
-        {
-          id: "cat-002-1",
-          name: "Fashion & Apparel",
-          description: "Clothing, footwear, and accessories",
-          icon: "👕",
-          color: "#f87171",
-          businessCount: 158,
-          parentId: "cat-002",
-        },
-        {
-          id: "cat-002-2",
-          name: "Home & Garden",
-          description: "Furniture, decor, and gardening supplies",
-          icon: "🏡",
-          color: "#f87171",
-          businessCount: 95,
-          parentId: "cat-002",
-        },
-        {
-          id: "cat-002-3",
-          name: "Electronics Retail",
-          description: "Consumer electronics and gadgets",
-          icon: "📱",
-          color: "#f87171",
-          businessCount: 125,
-          parentId: "cat-002",
-        },
-      ],
-    },
-    {
-      id: "cat-003",
-      name: "Food & Beverage",
-      description: "Restaurants, cafes, and food services",
-      icon: "🍽️",
-      color: "#10b981",
-      businessCount: 456,
-      parentId: null,
-      subCategories: [
-        {
-          id: "cat-003-1",
-          name: "Restaurants",
-          description: "Full-service dining establishments",
-          icon: "🍲",
-          color: "#34d399",
-          businessCount: 215,
-          parentId: "cat-003",
-        },
-        {
-          id: "cat-003-2",
-          name: "Cafes & Bakeries",
-          description: "Coffee shops, bakeries, and patisseries",
-          icon: "☕",
-          color: "#34d399",
-          businessCount: 148,
-          parentId: "cat-003",
-        },
-        {
-          id: "cat-003-3",
-          name: "Catering Services",
-          description: "Event catering and food delivery",
-          icon: "🍱",
-          color: "#34d399",
-          businessCount: 93,
-          parentId: "cat-003",
-        },
-      ],
-    },
-    {
-      id: "cat-004",
-      name: "Health & Wellness",
-      description: "Medical services and wellness centers",
-      icon: "🏥",
-      color: "#a855f7",
-      businessCount: 289,
-      parentId: null,
-      subCategories: [
-        {
-          id: "cat-004-1",
-          name: "Medical Clinics",
-          description: "Healthcare facilities and medical practitioners",
-          icon: "🩺",
-          color: "#c084fc",
-          businessCount: 124,
-          parentId: "cat-004",
-        },
-        {
-          id: "cat-004-2",
-          name: "Fitness & Exercise",
-          description: "Gyms, fitness centers, and sports facilities",
-          icon: "🏋️",
-          color: "#c084fc",
-          businessCount: 87,
-          parentId: "cat-004",
-        },
-        {
-          id: "cat-004-3",
-          name: "Wellness & Spa",
-          description: "Spas, massage, and wellness treatments",
-          icon: "💆",
-          color: "#c084fc",
-          businessCount: 78,
-          parentId: "cat-004",
-        },
-      ],
-    },
-    {
-      id: "cat-005",
-      name: "Education",
-      description: "Schools, training, and educational services",
-      icon: "🎓",
-      color: "#f59e0b",
-      businessCount: 175,
-      parentId: null,
-      subCategories: [
-        {
-          id: "cat-005-1",
-          name: "Schools & Universities",
-          description: "Formal educational institutions",
-          icon: "📚",
-          color: "#fbbf24",
-          businessCount: 65,
-          parentId: "cat-005",
-        },
-        {
-          id: "cat-005-2",
-          name: "Professional Training",
-          description: "Vocational and professional skill development",
-          icon: "📝",
-          color: "#fbbf24",
-          businessCount: 89,
-          parentId: "cat-005",
-        },
-        {
-          id: "cat-005-3",
-          name: "Tutoring & Coaching",
-          description: "Private tutors and academic coaching",
-          icon: "👨‍🏫",
-          color: "#fbbf24",
-          businessCount: 21,
-          parentId: "cat-005",
-        },
-      ],
-    },
-  ];
-
   const [categorySettings, setCategorySettings] = useState({
     allowCustomColors: true,
     allowSubcategories: true,
@@ -250,50 +59,29 @@ const BusinessCategoriesPage: React.FC = () => {
     defaultSortOrder: "alphabetical",
   });
 
-  const getAllCategories = (categoriesArray) => {
-    let result = [];
-
-    categoriesArray.forEach((category) => {
-      result.push({
-        id: category.id,
-        name: category.name,
-        description: category.description,
-        icon: category.icon,
-        color: category.color,
-        businessCount: category.businessCount,
-        parentId: category.parentId,
-      });
-
-      if (category.subCategories && category.subCategories.length > 0) {
-        result = result.concat(getAllCategories(category.subCategories));
-      }
-    });
-
-    return result;
+  const fetchCategories = async () => {
+    setIsLoading(true);
+    try {
+      const response = await businessService.getBusinessCategories();
+      // Add default icon and color for UI consistency
+      const formattedCategories = response.map((cat, index) => ({
+        ...cat,
+        icon: "🏷️",
+        color: ["#6366f1", "#ef4444", "#10b981", "#a855f7", "#f59e0b"][index % 5],
+        businessCount: cat.businessCount || 0, // Assuming API might provide this
+      }));
+      setCategories(formattedCategories);
+      setFilteredCategories(formattedCategories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast.error("Could not load categories.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setCategories(sampleCategories);
-      setFilteredCategories(sampleCategories);
-      setIsLoading(false);
-    }, 1000);
-
-    // In a real app, you would fetch categories from the API
-    // const fetchCategories = async () => {
-    //   try {
-    //     const response = await businessService.getBusinessCategories();
-    //     setCategories(response);
-    //     setFilteredCategories(response);
-    //   } catch (error) {
-    //     console.error("Error fetching categories:", error);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // };
-    // fetchCategories();
+    fetchCategories();
   }, []);
 
   useEffect(() => {
@@ -304,36 +92,11 @@ const BusinessCategoriesPage: React.FC = () => {
 
     const lowercaseSearch = searchTerm.toLowerCase();
 
-    const filterCategories = (categoriesArray) => {
-      return categoriesArray.filter((category) => {
-        const categoryMatches =
-          category.name.toLowerCase().includes(lowercaseSearch) ||
-          category.description.toLowerCase().includes(lowercaseSearch);
-
-        let matchingSubcategories = [];
-        if (category.subCategories && category.subCategories.length > 0) {
-          matchingSubcategories = filterCategories(category.subCategories);
-        }
-
-        if (categoryMatches) {
-          return {
-            ...category,
-            subCategories: category.subCategories,
-          };
-        }
-
-        if (matchingSubcategories.length === 0) {
-          return false;
-        }
-
-        return {
-          ...category,
-          subCategories: matchingSubcategories,
-        };
-      });
-    };
-
-    const filtered = filterCategories(categories);
+    const filtered = categories.filter(
+      (category) =>
+        category.name.toLowerCase().includes(lowercaseSearch) ||
+        (category.description && category.description.toLowerCase().includes(lowercaseSearch))
+    );
     setFilteredCategories(filtered);
   }, [searchTerm, categories]);
 
@@ -369,125 +132,51 @@ const BusinessCategoriesPage: React.FC = () => {
     setShowDeleteModal(true);
   };
 
-  const confirmAddCategory = () => {
-    // In a real app, you would call an API to create the category
-    // For now, we'll just update the state
-
-    const newCategoryObj = {
-      id: `cat-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: newCategory.name,
-      description: newCategory.description,
-      icon: newCategory.icon || "🏷️",
-      color: newCategory.color,
-      businessCount: 0,
-      parentId: newCategory.parentId || null,
-      subCategories: [],
-    };
-
-    if (!newCategory.parentId) {
-      setCategories([...categories, newCategoryObj]);
-    } else {
-      const updatedCategories = [...categories];
-      const addSubcategory = (categoriesArray) => {
-        return categoriesArray.map((category) => {
-          if (category.id === newCategory.parentId) {
-            return {
-              ...category,
-              subCategories: [
-                ...(category.subCategories || []),
-                newCategoryObj,
-              ],
-            };
-          }
-
-          if (category.subCategories && category.subCategories.length > 0) {
-            return {
-              ...category,
-              subCategories: addSubcategory(category.subCategories),
-            };
-          }
-
-          return category;
-        });
-      };
-
-      const result = addSubcategory(updatedCategories);
-      setCategories(result);
-    }
-
-    setShowAddModal(false);
-  };
-
-  const confirmEditCategory = () => {
-    // In a real app, you would call an API to update the category
-    // For now, we'll just update the state
-
-    const updatedCategories = [...categories];
-    const updateCategory = (categoriesArray) => {
-      return categoriesArray.map((category) => {
-        if (category.id === currentCategory.id) {
-          return {
-            ...category,
-            name: newCategory.name,
-            description: newCategory.description,
-            icon: newCategory.icon,
-            color: newCategory.color,
-            // Don't update parentId as that would require moving the category
-          };
-        }
-
-        if (category.subCategories && category.subCategories.length > 0) {
-          return {
-            ...category,
-            subCategories: updateCategory(category.subCategories),
-          };
-        }
-
-        return category;
+  const confirmAddCategory = async () => {
+    try {
+      await businessService.createBusinessCategory({
+        name: newCategory.name,
+        description: newCategory.description,
       });
-    };
-
-    const result = updateCategory(updatedCategories);
-    setCategories(result);
-    setShowEditModal(false);
+      toast.success("Category created successfully!");
+      fetchCategories(); // Refetch to show the new category
+    } catch (error) {
+      console.error("Failed to create category:", error);
+      toast.error((error as Error).message || "Failed to create category.");
+    } finally {
+      setShowAddModal(false);
+    }
   };
 
-  const confirmDeleteCategory = () => {
-    // In a real app, you would call an API to delete the category
-    // For now, we'll just update the state
-
+  const confirmEditCategory = async () => {
     if (!currentCategory) return;
-
-    // If it's a top-level category, filter it out
-    if (!currentCategory.parentId) {
-      setCategories(categories.filter((cat) => cat.id !== currentCategory.id));
-    } else {
-      // If it's a subcategory, we need to find its parent
-      const updatedCategories = [...categories];
-      const removeSubcategory = (categoriesArray) => {
-        return categoriesArray.map((category) => {
-          if (category.subCategories && category.subCategories.length > 0) {
-            return {
-              ...category,
-              subCategories:
-                category.subCategories.filter(
-                  (subCat) => subCat.id !== currentCategory.id
-                ).length > 0
-                  ? removeSubcategory(category.subCategories)
-                  : category.subCategories.filter(
-                      (subCat) => subCat.id !== currentCategory.id
-                    ),
-            };
-          }
-          return category;
-        });
-      };
-
-      const result = removeSubcategory(updatedCategories);
-      setCategories(result);
+    try {
+      await businessService.updateBusinessCategory(currentCategory.id, {
+        name: newCategory.name,
+        description: newCategory.description,
+      });
+      toast.success("Category updated successfully!");
+      fetchCategories(); // Refetch to show the changes
+    } catch (error) {
+      console.error("Failed to update category:", error);
+      toast.error((error as Error).message || "Failed to update category.");
+    } finally {
+      setShowEditModal(false);
     }
+  };
 
-    setShowDeleteModal(false);
+  const confirmDeleteCategory = async () => {
+    if (!currentCategory) return;
+    try {
+      await businessService.deleteBusinessCategory(currentCategory.id);
+      toast.success("Category deleted successfully!");
+      fetchCategories(); // Refetch to remove the deleted category
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+      toast.error((error as Error).message || "Failed to delete category.");
+    } finally {
+      setShowDeleteModal(false);
+    }
   };
 
   const toggleExpandCategory = (categoryId) => {
@@ -525,7 +214,6 @@ const BusinessCategoriesPage: React.FC = () => {
     // For simplicity, we're just handling top-level reordering here
     // In a real app, you'd need to handle subcategory reordering as well
   };
-
   const renderCategoryItem = (category, index, isSubcategory = false) => {
     if (viewMode === "grid") {
       return (
@@ -552,12 +240,6 @@ const BusinessCategoriesPage: React.FC = () => {
                 <h3 className="font-medium text-gray-900 dark:text-gray-100">
                   {category.name}
                 </h3>
-                {category.subCategories &&
-                  category.subCategories.length > 0 && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {category.subCategories.length} subcategories
-                    </span>
-                  )}
               </div>
             </div>
             <div className="flex space-x-1">
@@ -584,29 +266,7 @@ const BusinessCategoriesPage: React.FC = () => {
             <span className="text-xs font-medium px-2.5 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
               {category.businessCount} businesses
             </span>
-
-            {category.subCategories && category.subCategories.length > 0 && (
-              <button
-                className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-                onClick={() => toggleExpandCategory(category.id)}
-              >
-                {expandedParents[category.id]
-                  ? "Hide subcategories"
-                  : "Show subcategories"}
-              </button>
-            )}
           </div>
-
-          {/* Render subcategories if expanded */}
-          {category.subCategories &&
-            category.subCategories.length > 0 &&
-            expandedParents[category.id] && (
-              <div className="mt-4 space-y-3 pl-3 border-l-2 border-gray-100 dark:border-gray-700">
-                {category.subCategories.map((subCategory, subIndex) =>
-                  renderCategoryItem(subCategory, subIndex, true)
-                )}
-              </div>
-            )}
         </motion.div>
       );
     } else {
@@ -645,23 +305,6 @@ const BusinessCategoriesPage: React.FC = () => {
               {category.businessCount} businesses
             </span>
 
-            {category.subCategories && category.subCategories.length > 0 && (
-              <button
-                className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400"
-                onClick={() => toggleExpandCategory(category.id)}
-              >
-                <span className="hidden sm:inline">
-                  {expandedParents[category.id] ? "Hide" : "Show"}
-                </span>
-                {category.subCategories.length} subcategories
-                {expandedParents[category.id] ? (
-                  <ChevronUp size={16} />
-                ) : (
-                  <ChevronDown size={16} />
-                )}
-              </button>
-            )}
-
             <div className="flex space-x-1">
               <button
                 className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -677,17 +320,6 @@ const BusinessCategoriesPage: React.FC = () => {
               </button>
             </div>
           </div>
-
-          {/* Render subcategories if expanded */}
-          {category.subCategories &&
-            category.subCategories.length > 0 &&
-            expandedParents[category.id] && (
-              <div className="mt-3 space-y-2 pl-6 border-l-2 border-gray-100 dark:border-gray-700">
-                {category.subCategories.map((subCategory, subIndex) =>
-                  renderCategoryItem(subCategory, subIndex, true)
-                )}
-              </div>
-            )}
         </motion.div>
       );
     }
@@ -829,7 +461,7 @@ const BusinessCategoriesPage: React.FC = () => {
                   Total Categories
                 </p>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
-                  {getAllCategories(categories).length}
+                  {categories.length}
                 </h3>
               </div>
               <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30">
@@ -874,7 +506,7 @@ const BusinessCategoriesPage: React.FC = () => {
                   Subcategories
                 </p>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">
-                  {getAllCategories(categories).length - categories.length}
+                  0
                 </h3>
               </div>
               <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30">
@@ -1160,7 +792,7 @@ const BusinessCategoriesPage: React.FC = () => {
                 </div>
               </div>
 
-              {categorySettings.allowSubcategories && (
+              {false && ( // Sub-categories are disabled as per simple API structure
                 <div>
                   <label
                     htmlFor="parentCategory"

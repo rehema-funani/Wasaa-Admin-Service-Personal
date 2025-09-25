@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   Download,
@@ -34,221 +34,53 @@ import {
   Plus,
   ChevronRight,
 } from "lucide-react";
+import businessService from "../../../api/services/businessService";
+import { Business } from "../../../types/business";
+import { toast } from "react-hot-toast";
 
 const BusinessDetailPage: React.FC = () => {
-  const [business, setBusiness] = useState<any>(null);
+  const [business, setBusiness] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [showActionModal, setShowActionModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showDocumentViewer, setShowDocumentViewer] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>(); 
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const businessData = {
-    id: id || "BUS-001243",
-    name: "TechnoHub Solutions",
-    logo: null,
-    description:
-      "Leading provider of innovative technology solutions for businesses across East Africa.",
-    category: "Technology",
-    tier: "Enterprise",
-    status: "Active",
-    dateJoined: "2025-04-01",
-    region: "Nairobi",
-    kycStatus: "Verified",
-    owner: {
-      id: "USR-1234",
-      name: "John Kamau",
-      email: "john@technohub.co.ke",
-      phone: "+254 712 345 678",
-      role: "CEO",
-      verificationStatus: "Verified",
-    },
-    contacts: {
-      email: "info@technohub.co.ke",
-      phone: "+254 712 345 678",
-      website: "https://technohub.co.ke",
-      address: "Westlands Business Park, Nairobi, Kenya",
-    },
-    statistics: {
-      productsCount: 25,
-      revenue: 12500000,
-      ordersCount: 780,
-      transactionsCount: 920,
-      averageOrderValue: 16025.64,
-    },
-    documents: [
-      {
-        id: "DOC-1",
-        name: "Business Registration Certificate",
-        type: "certificate",
-        status: "Verified",
-        dateUploaded: "2025-04-01",
-        fileUrl: "#",
-        fileSize: "1.2 MB",
-      },
-      {
-        id: "DOC-2",
-        name: "KRA Tax PIN Certificate",
-        type: "tax",
-        status: "Verified",
-        dateUploaded: "2025-04-01",
-        fileUrl: "#",
-        fileSize: "850 KB",
-      },
-      {
-        id: "DOC-3",
-        name: "ID Document - John Kamau",
-        type: "identification",
-        status: "Verified",
-        dateUploaded: "2025-04-01",
-        fileUrl: "#",
-        fileSize: "1.5 MB",
-      },
-    ],
-    products: [
-      {
-        id: "PRD-001",
-        name: "Cloud Hosting Solutions",
-        price: 25000,
-        category: "Services",
-        status: "Active",
-        inventory: "Unlimited",
-        sales: 130,
-      },
-      {
-        id: "PRD-002",
-        name: "Custom Software Development",
-        price: 250000,
-        category: "Services",
-        status: "Active",
-        inventory: "Unlimited",
-        sales: 45,
-      },
-      {
-        id: "PRD-003",
-        name: "IT Security Audit",
-        price: 120000,
-        category: "Services",
-        status: "Active",
-        inventory: "Unlimited",
-        sales: 62,
-      },
-      {
-        id: "PRD-004",
-        name: "Enterprise Data Backup",
-        price: 75000,
-        category: "Services",
-        status: "Active",
-        inventory: "Unlimited",
-        sales: 88,
-      },
-      {
-        id: "PRD-005",
-        name: "Network Infrastructure Setup",
-        price: 350000,
-        category: "Services",
-        status: "Active",
-        inventory: "Unlimited",
-        sales: 29,
-      },
-    ],
-    transactions: [
-      {
-        id: "TRX-001",
-        type: "Sale",
-        amount: 250000,
-        status: "Completed",
-        date: "2025-04-10",
-        customer: "Acme Corporation",
-      },
-      {
-        id: "TRX-002",
-        type: "Sale",
-        amount: 120000,
-        status: "Completed",
-        date: "2025-04-08",
-        customer: "Sunrise Hotels",
-      },
-      {
-        id: "TRX-003",
-        type: "Sale",
-        amount: 75000,
-        status: "Pending",
-        date: "2025-04-15",
-        customer: "EcoTech Solutions",
-      },
-      {
-        id: "TRX-004",
-        type: "Refund",
-        amount: 25000,
-        status: "Completed",
-        date: "2025-04-05",
-        customer: "GlobalNet Inc",
-      },
-      {
-        id: "TRX-005",
-        type: "Sale",
-        amount: 350000,
-        status: "Completed",
-        date: "2025-04-12",
-        customer: "City Hospital",
-      },
-    ],
-    activityLog: [
-      {
-        id: "ACT-001",
-        type: "Account Created",
-        description: "Business account was created",
-        date: "2025-04-01",
-      },
-      {
-        id: "ACT-002",
-        type: "KYC Verification",
-        description: "KYC documents verified successfully",
-        date: "2025-04-01",
-      },
-      {
-        id: "ACT-003",
-        type: "Product Added",
-        description: "5 products were added to the catalog",
-        date: "2025-04-02",
-      },
-      {
-        id: "ACT-004",
-        type: "First Sale",
-        description: "First transaction completed",
-        date: "2025-04-05",
-      },
-      {
-        id: "ACT-005",
-        type: "Profile Updated",
-        description: "Business profile information updated",
-        date: "2025-04-07",
-      },
-    ],
+  const apiStatusToDisplay: Record<string, string> = {
+    ACTIVE: "Active",
+    PENDING_VERIFICATION: "Pending Verification",
+    INCOMPLETE: "Incomplete",
+    SUSPENDED: "Suspended",
+    ONBOARDING: "ONBOARDING",
   };
 
   useEffect(() => {
-    if (id) {
-      fetchBusinessDetails();
+    // If business data is passed via navigation state, use it.
+    // Otherwise, fetch it from the API (e.g., on page refresh).
+    if (location.state?.business) {
+      setBusiness(location.state.business);
+      setIsLoading(false);
+    } else if (id) {
+      fetchBusinessDetails(id); 
     }
-  }, [id]);
+  }, [id, location.state]);
 
-  const fetchBusinessDetails = async () => {
+  const fetchBusinessDetails = async (businessId: string) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      setTimeout(() => {
-        setBusiness(businessData);
-        setIsLoading(false);
-      }, 1000);
-
-      // const res = await businessService.getBusinessById(id);
-      // setBusiness(res);
+      const apiBusiness = await businessService.getBusinessById(businessId);
+      setBusiness({
+        ...apiBusiness,
+        status: apiStatusToDisplay[apiBusiness.status] || apiBusiness.status,
+      });
     } catch (error) {
       console.error("Error fetching business details:", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to load business details.";
+      toast.error(errorMessage);
       setBusiness(null);
     } finally {
       setIsLoading(false);
@@ -256,11 +88,13 @@ const BusinessDetailPage: React.FC = () => {
   };
 
   const handleStatusChange = (newStatus: string) => {
-    console.log(`Changing status from ${business?.status} to ${newStatus}`);
-    setBusiness({
-      ...business,
-      status: newStatus,
-    });
+    if (business) {
+      console.log(`Changing status from ${business.status} to ${newStatus}`);
+      setBusiness({
+        ...business,
+        status: newStatus as Business["status"],
+      });
+    }
     setShowStatusModal(false);
   };
 
@@ -274,6 +108,9 @@ const BusinessDetailPage: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) {
+      return "N/A";
+    }
     return new Date(dateString).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
@@ -300,6 +137,10 @@ const BusinessDetailPage: React.FC = () => {
         dot: "bg-gray-400",
       },
     };
+
+    if (!status) {
+      return null;
+    }
 
     const config =
       statusConfig[status as keyof typeof statusConfig] || statusConfig.Active;
@@ -330,6 +171,10 @@ const BusinessDetailPage: React.FC = () => {
       },
     };
 
+    if (!tier) {
+      return null;
+    }
+
     const config =
       tierConfig[tier as keyof typeof tierConfig] || tierConfig.SME;
 
@@ -344,8 +189,11 @@ const BusinessDetailPage: React.FC = () => {
   };
 
   const getInitials = (name: string) => {
-    return name
-      .split(" ")
+    if (!name || typeof name !== "string") {
+      return "";
+    }
+    return name.trim()
+      .split(/\s+/)
       .map((n) => n[0])
       .join("")
       .toUpperCase();
@@ -400,6 +248,11 @@ const BusinessDetailPage: React.FC = () => {
     );
   }
 
+  const ownerName = business.owner // Check for pre-formatted name from list page state
+    ? business.owner
+    : business.created_by // Fallback for direct fetch
+    ? `${business.created_by.first_name || ""} ${business.created_by.last_name || ""}`.trim() || "Unnamed User"
+    : "Admin/System";
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50">
       {/* Header */}
@@ -424,7 +277,7 @@ const BusinessDetailPage: React.FC = () => {
                     #{business.id}
                   </span>
                   {getStatusBadge(business.status)}
-                  {getTierBadge(business.tier)}
+                  {getTierBadge(business.tier || business.type)}
                 </div>
               </div>
             </div>
@@ -432,7 +285,7 @@ const BusinessDetailPage: React.FC = () => {
             <div className="flex items-center gap-2">
               <motion.button
                 className="p-2.5 hover:bg-white/50 rounded-xl transition-colors"
-                onClick={fetchBusinessDetails}
+                onClick={() => id && fetchBusinessDetails(id)}
                 whileHover={{ rotate: 180 }}
                 transition={{ duration: 0.3 }}
               >
@@ -564,27 +417,29 @@ const BusinessDetailPage: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <p className="text-gray-500 mt-1">{business.description}</p>
+                  <p className="text-gray-500 mt-1">
+                    {business.description || "No description available."}
+                  </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                     <div className="flex items-center gap-2">
                       <Tag className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-600">Category:</span>
                       <span className="text-gray-900 font-medium">
-                        {business.category}
+                        {business.category || "N/A"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-600">Region:</span>
                       <span className="text-gray-900 font-medium">
-                        {business.region}
+                        {business.country}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-600">Joined:</span>
                       <span className="text-gray-900 font-medium">
-                        {formatDate(business.dateJoined)}
+                        {formatDate(business.createdAt)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -592,14 +447,14 @@ const BusinessDetailPage: React.FC = () => {
                       <span className="text-gray-600">KYC Status:</span>
                       <span
                         className={`font-medium ${
-                          business.kycStatus === "Verified"
+                          business.verification_status === "VERIFIED"
                             ? "text-green-600"
-                            : business.kycStatus === "Pending"
+                            : business.verification_status === "PENDING"
                             ? "text-amber-600"
                             : "text-gray-600"
                         }`}
                       >
-                        {business.kycStatus}
+                        {business.verification_status}
                       </span>
                     </div>
                   </div>
@@ -613,6 +468,16 @@ const BusinessDetailPage: React.FC = () => {
                     }
                   >
                     <Edit className="w-4 h-4" />
+                    Edit Business
+                  </motion.button>
+                  <motion.button
+                    className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                    whileHover={{ scale: 1.02 }}
+                    onClick={() =>
+                      navigate(`/admin/business/profile/${business.id}`)
+                    }
+                  >
+                    <User className="w-4 h-4" />
                     Edit Profile
                   </motion.button>
                   <motion.button
@@ -651,7 +516,7 @@ const BusinessDetailPage: React.FC = () => {
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  {business.statistics.productsCount}
+                  {business.productsCount || 0}
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">
                   Total products/services
@@ -671,7 +536,7 @@ const BusinessDetailPage: React.FC = () => {
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(business.statistics.revenue)}
+                  {formatCurrency(business.revenue || 0)}
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">Total revenue</p>
               </motion.div>
@@ -689,7 +554,7 @@ const BusinessDetailPage: React.FC = () => {
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  {business.statistics.ordersCount}
+                  N/A
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">Total orders</p>
               </motion.div>
@@ -707,7 +572,7 @@ const BusinessDetailPage: React.FC = () => {
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  {business.statistics.transactionsCount}
+                  N/A
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">Total transactions</p>
               </motion.div>
@@ -725,7 +590,7 @@ const BusinessDetailPage: React.FC = () => {
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(business.statistics.averageOrderValue)}
+                  N/A
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">
                   Average order value
@@ -751,12 +616,12 @@ const BusinessDetailPage: React.FC = () => {
                     <p className="text-gray-500 text-sm">Email</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Mail className="w-4 h-4 text-gray-400" />
-                      <a
-                        href={`mailto:${business.contacts.email}`}
+                      {business.email ? <a
+                        href={`mailto:${business.email}`}
                         className="text-blue-600 hover:underline"
                       >
-                        {business.contacts.email}
-                      </a>
+                        {business.email}
+                      </a> : <span className="text-gray-500">Not provided</span>}
                     </div>
                   </div>
 
@@ -764,12 +629,12 @@ const BusinessDetailPage: React.FC = () => {
                     <p className="text-gray-500 text-sm">Phone</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Phone className="w-4 h-4 text-gray-400" />
-                      <a
-                        href={`tel:${business.contacts.phone}`}
+                      {business.phone ? <a
+                        href={`tel:${business.phone}`}
                         className="text-blue-600 hover:underline"
                       >
-                        {business.contacts.phone}
-                      </a>
+                        {business.phone}
+                      </a> : <span className="text-gray-500">Not provided</span>}
                     </div>
                   </div>
 
@@ -777,14 +642,14 @@ const BusinessDetailPage: React.FC = () => {
                     <p className="text-gray-500 text-sm">Website</p>
                     <div className="flex items-center gap-2 mt-1">
                       <ExternalLink className="w-4 h-4 text-gray-400" />
-                      <a
-                        href={business.contacts.website}
+                      {business.website ? <a
+                        href={business.website}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline"
                       >
-                        {business.contacts.website}
-                      </a>
+                        {business.website}
+                      </a> : <span className="text-gray-500">Not provided</span>}
                     </div>
                   </div>
 
@@ -793,7 +658,7 @@ const BusinessDetailPage: React.FC = () => {
                     <div className="flex items-center gap-2 mt-1">
                       <MapPin className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-700">
-                        {business.contacts.address}
+                        {business.address || "Not provided"}
                       </span>
                     </div>
                   </div>
@@ -814,49 +679,49 @@ const BusinessDetailPage: React.FC = () => {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold">
-                      {getInitials(business.owner.name)}
+                      {getInitials(ownerName)}
                     </span>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">
-                      {business.owner.name}
-                    </p>
+                    <p className="font-medium text-gray-900">{ownerName}</p>
                     <p className="text-sm text-gray-500">
-                      {business.owner.role}
+                      {/* Role is not in API response */}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-gray-400" />
-                    <a
-                      href={`mailto:${business.owner.email}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {business.owner.email}
-                    </a>
+                    {business.created_by?.email ? (
+                      <a href={`mailto:${business.created_by.email}`} className="text-blue-600 hover:underline">
+                        {business.created_by.email}
+                      </a>
+                    ) : (
+                      <span className="text-gray-500">Email not available</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-gray-400" />
-                    <a
-                      href={`tel:${business.owner.phone}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {business.owner.phone}
-                    </a>
+                    {business.created_by?.phone_number ? (
+                      <a href={`tel:${business.created_by.phone_number}`} className="text-blue-600 hover:underline">
+                        {business.created_by.phone_number}
+                      </a>
+                    ) : (
+                      <span className="text-gray-500">Phone not available</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4 text-gray-400" />
                     <span className="text-gray-700">
                       Verification:
                       <span
-                        className={`ml-1 ${
-                          business.owner.verificationStatus === "Verified"
+                        className={`ml-1 ${ // Owner verification status not in API response
+                          false
                             ? "text-green-600"
                             : "text-amber-600"
                         }`}
                       >
-                        {business.owner.verificationStatus}
+                        N/A
                       </span>
                     </span>
                   </div>
@@ -948,7 +813,12 @@ const BusinessDetailPage: React.FC = () => {
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {business.products.slice(0, 3).map((product) => (
+                  {/* This data is not available from the getBusinessById endpoint */}
+                  <div className="text-center py-4 text-gray-500">
+                    <ShoppingBag className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                    <p className="text-sm">Product data is not available.</p>
+                  </div>
+                  {/* {business.products.slice(0, 3).map((product) => (
                     <div
                       key={product.id}
                       className="flex items-center justify-between p-3 bg-white/40 rounded-xl hover:bg-white/70 transition-colors"
@@ -975,7 +845,7 @@ const BusinessDetailPage: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                  ))}
+                  ))} */}
                 </div>
               </motion.div>
 
@@ -999,7 +869,12 @@ const BusinessDetailPage: React.FC = () => {
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {business.transactions.slice(0, 3).map((transaction) => (
+                  {/* This data is not available from the getBusinessById endpoint */}
+                  <div className="text-center py-4 text-gray-500">
+                    <CreditCard className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                    <p className="text-sm">Transaction data is not available.</p>
+                  </div>
+                  {/* {business.transactions.slice(0, 3).map((transaction) => (
                     <div
                       key={transaction.id}
                       className="flex items-center justify-between p-3 bg-white/40 rounded-xl hover:bg-white/70 transition-colors"
@@ -1045,7 +920,7 @@ const BusinessDetailPage: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                  ))}
+                  ))} */}
                 </div>
               </motion.div>
             </div>
@@ -1058,12 +933,12 @@ const BusinessDetailPage: React.FC = () => {
             {/* Actions Header */}
             <motion.div
               className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/60 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
               <h3 className="text-lg font-bold text-gray-900">
-                Products & Services ({business.products.length})
+                Products & Services ({business.productsCount || 0})
               </h3>
               <div className="flex flex-wrap gap-2">
                 <motion.button
@@ -1086,7 +961,7 @@ const BusinessDetailPage: React.FC = () => {
 
             {/* Products Table */}
             <motion.div
-              className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/20 shadow-sm overflow-hidden"
+              className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/20 shadow-sm"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -1140,77 +1015,12 @@ const BusinessDetailPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white/40 divide-y divide-gray-200">
-                    {business.products.map((product) => (
-                      <tr
-                        key={product.id}
-                        className="hover:bg-white/70 transition-colors"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                              <ShoppingBag className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {product.name}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {product.id}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {product.category}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {formatCurrency(product.price)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              product.status === "Active"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-gray-100 text-gray-800"
-                            }`}
-                          >
-                            {product.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {product.inventory}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                          {product.sales}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex justify-end items-center space-x-3">
-                            <button
-                              className="text-blue-600 hover:text-blue-900"
-                              title="View"
-                            >
-                              <Eye size={18} />
-                            </button>
-                            <button
-                              className="text-green-600 hover:text-green-900"
-                              title="Edit"
-                            >
-                              <Edit size={18} />
-                            </button>
-                            <button
-                              className="text-red-600 hover:text-red-900"
-                              title="Delete"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    <tr>
+                      <td colSpan={7} className="text-center py-10 text-gray-500">
+                        <ShoppingBag className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                        <p>No products found for this business.</p>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -1251,7 +1061,7 @@ const BusinessDetailPage: React.FC = () => {
 
             {/* Transactions Table */}
             <motion.div
-              className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/20 shadow-sm overflow-hidden"
+              className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/20 shadow-sm"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -1305,78 +1115,12 @@ const BusinessDetailPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white/40 divide-y divide-gray-200">
-                    {business.transactions.map((transaction) => (
-                      <tr
-                        key={transaction.id}
-                        className="hover:bg-white/70 transition-colors"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-mono text-gray-900">
-                            {transaction.id}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div
-                            className={`text-sm font-medium ${
-                              transaction.type === "Sale"
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {transaction.type}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div
-                            className={`text-sm font-medium ${
-                              transaction.type === "Sale"
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {transaction.type === "Sale" ? "+" : "-"}
-                            {formatCurrency(transaction.amount)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {transaction.customer}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {formatDate(transaction.date)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              transaction.status === "Completed"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-amber-100 text-amber-800"
-                            }`}
-                          >
-                            {transaction.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex justify-end items-center space-x-3">
-                            <button
-                              className="text-blue-600 hover:text-blue-900"
-                              title="View"
-                            >
-                              <Eye size={18} />
-                            </button>
-                            <button
-                              className="text-gray-600 hover:text-gray-900"
-                              title="Download Receipt"
-                            >
-                              <Download size={18} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    <tr>
+                      <td colSpan={7} className="text-center py-10 text-gray-500">
+                        <CreditCard className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                        <p>No transactions found for this business.</p>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -1411,63 +1155,11 @@ const BusinessDetailPage: React.FC = () => {
 
             {/* Documents Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {business.documents.map((document, index) => (
-                <motion.div
-                  key={document.id}
-                  className="bg-white/60 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-                  onClick={() => viewDocument(document)}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 * index }}
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-blue-100 rounded-xl">
-                      <FileText className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-gray-900 mb-1">
-                        {document.name}
-                      </h4>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                        <span>
-                          Uploaded {formatDate(document.dateUploaded)}
-                        </span>
-                        <span>•</span>
-                        <span>{document.fileSize}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`px-2 py-1 text-xs rounded-full ${
-                            document.status === "Verified"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-amber-100 text-amber-700"
-                          }`}
-                        >
-                          {document.status}
-                        </span>
-                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
-                          {document.type}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <button
-                        className="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg"
-                        title="View Document"
-                      >
-                        <Eye size={16} />
-                      </button>
-                      <button
-                        className="p-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg"
-                        title="Download Document"
-                      >
-                        <Download size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+              <div className="col-span-full text-center py-10 text-gray-500 bg-white/60 backdrop-blur-xl rounded-2xl">
+                <FileText className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                <p>No documents have been uploaded for this business.</p>
+              </div>
+
             </div>
           </div>
         )}
@@ -1477,7 +1169,7 @@ const BusinessDetailPage: React.FC = () => {
             {/* Actions Header */}
             <motion.div
               className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/60 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
@@ -1508,47 +1200,10 @@ const BusinessDetailPage: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <div className="space-y-8">
-                {business.activityLog.map((activity, index) => (
-                  <div key={activity.id} className="relative pl-8">
-                    {/* Vertical line */}
-                    {index < business.activityLog.length - 1 && (
-                      <div className="absolute left-3 top-3 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
-                    )}
-
-                    {/* Timeline dot */}
-                    <div className="absolute left-0 top-0.5 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                      {activity.type.includes("Account") && (
-                        <User className="w-3 h-3 text-blue-600" />
-                      )}
-                      {activity.type.includes("KYC") && (
-                        <Shield className="w-3 h-3 text-blue-600" />
-                      )}
-                      {activity.type.includes("Product") && (
-                        <ShoppingBag className="w-3 h-3 text-blue-600" />
-                      )}
-                      {activity.type.includes("Sale") && (
-                        <CreditCard className="w-3 h-3 text-blue-600" />
-                      )}
-                      {activity.type.includes("Profile") && (
-                        <Edit className="w-3 h-3 text-blue-600" />
-                      )}
-                    </div>
-
-                    <div className="pb-8">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                        <h4 className="text-lg font-medium text-gray-900">
-                          {activity.type}
-                        </h4>
-                        <span className="text-sm text-gray-500">
-                          {formatDate(activity.date)}
-                        </span>
-                      </div>
-                      <p className="text-gray-600 mt-1">
-                        {activity.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                <div className="text-center py-10 text-gray-500">
+                  <BarChart2 className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                  <p>No activity has been logged for this business.</p>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -1576,7 +1231,7 @@ const BusinessDetailPage: React.FC = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {getStatusBadge(business.status)}
+                    {getStatusBadge(business.status as string)}
                     <motion.button
                       className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-xl text-sm font-medium border border-gray-200 transition-colors flex items-center gap-2"
                       whileHover={{ scale: 1.02 }}
@@ -1608,13 +1263,13 @@ const BusinessDetailPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        business.kycStatus === "Verified"
+                      className={`px-2 py-1 text-xs rounded-full ${ // TODO: Use correct status
+                        business.verification_status === "VERIFIED"
                           ? "bg-green-100 text-green-700"
                           : "bg-amber-100 text-amber-700"
                       }`}
                     >
-                      {business.kycStatus}
+                      {business.verification_status}
                     </span>
                     <motion.button
                       className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-xl text-sm font-medium border border-gray-200 transition-colors flex items-center gap-2"
@@ -1634,7 +1289,7 @@ const BusinessDetailPage: React.FC = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {getTierBadge(business.tier)}
+                    {getTierBadge(business.type)}
                     <motion.button
                       className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-xl text-sm font-medium border border-gray-200 transition-colors flex items-center gap-2"
                       whileHover={{ scale: 1.02 }}

@@ -658,6 +658,23 @@ export const userService = {
       );
     }
   },
+
+  async getAllUsers(): Promise<any[]> {
+    try {
+      // Fetch all users, assuming the endpoint supports fetching without pagination
+      // or returns all users if no pagination params are provided.
+      const response = await api.get('/users');
+      // The response might be { users: [...] } or just [...]
+      return response.data.users || response.data || [];
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data.message || "Failed to get all users");
+      }
+      throw new Error(
+        "Failed to get all users. Please check your network connection."
+      );
+    }
+  },
 };
 
 export default userService;

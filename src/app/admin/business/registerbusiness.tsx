@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import {
   ArrowLeft,
   Save,
@@ -20,10 +21,14 @@ import {
   Info,
   Settings,
 } from "lucide-react";
+// import businessService from "../../../../api/services/businessService";
+import businessService from "../../../api/services/businessService";
+import { useAuth } from "../../../context/AuthContext";
 
 const BusinessRegistrationPage = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -35,6 +40,7 @@ const BusinessRegistrationPage = () => {
     tier: "SME",
     region: "",
     description: "",
+    registration_number: "",
     logo: null,
     
     email: "",
@@ -104,8 +110,9 @@ const BusinessRegistrationPage = () => {
   };
   const [errors, setErrors] = useState<ErrorFields>({});
   
+  
   const validateStep = (step) => {
-    const newErrors = {};
+    const newErrors: ErrorFields = {};
     
     if (step === 1) {
       if (!formData.name.trim()) newErrors.name = "Business name is required";
@@ -192,31 +199,34 @@ const BusinessRegistrationPage = () => {
     setIsSubmitting(true);
     
     try {
-      // In a real implementation, you would create a FormData object
-      // to handle file uploads and send to your API
-      
-      // Simulate API call with a timeout
-      setTimeout(() => {
-        // Generate a random business ID
-        const randomId = `BUS-${Math.floor(10000 + Math.random() * 90000)}`;
-        setNewBusinessId(randomId);
-        setShowSuccessModal(true);
-        setIsSubmitting(false);
-      }, 1500);
-      
-      // Real API call would look like this:
-      // const formDataObj = new FormData();
-      // Object.keys(formData).forEach(key => {
-      //   formDataObj.append(key, formData[key]);
-      // });
-      // const response = await businessService.registerBusiness(formDataObj);
-      // setNewBusinessId(response.id);
-      // setShowSuccessModal(true);
+      // The user ID is hardcoded as provided in the prompt.
+      // In a real app, this should come from the authenticated user's state.
+      const userId = user?.id;
+
+      const apiPayload = {
+        name: formData.name,
+        type: formData.tier,
+        registration_number: formData.registration_number,
+        country: formData.region,
+        // The API is very strict and rejects any fields it does not expect.
+        // We are only sending the core fields for business creation.
+        // Other details like contact info (email, phone) and address
+        // might need to be added via a separate "update business" call after creation.
+      };
+
+      // Note: File uploads are not included in this implementation.
+      // A real implementation would likely use FormData.
+
+      const response = await businessService.registerBusiness(userId as string, apiPayload);
+
+      setNewBusinessId(response.id);
+      setShowSuccessModal(true);
+      toast.success("Business registered successfully!");
       
     } catch (error) {
       console.error("Error registering business:", error);
+      toast.error((error as Error).message || "Failed to register business. Please try again.");
       setIsSubmitting(false);
-      // Handle error appropriately
     }
   };
   
@@ -348,24 +358,40 @@ const BusinessRegistrationPage = () => {
                 
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex-1 space-y-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Business Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-2 border ${
-                          errors.name ? "border-red-300" : "border-gray-300"
-                        } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                        placeholder="Enter business name"
-                      />
-                      {errors.name && (
-                        <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                      )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                          Business Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          className={`w-full px-4 py-2 border ${
+                            errors.name ? "border-red-300" : "border-gray-300"
+                          } rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                          placeholder="Enter business name"
+                        />
+                        {errors.name && (
+                          <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="registration_number" className="block text-sm font-medium text-gray-700 mb-1">
+                          Registration Number
+                        </label>
+                        <input
+                          type="text"
+                          id="registration_number"
+                          name="registration_number"
+                          value={formData.registration_number}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g. BN-123456"
+                        />
+                      </div>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

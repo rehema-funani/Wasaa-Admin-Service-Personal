@@ -27,6 +27,7 @@ import {
   BarChart2,
   Briefcase,
   PenTool,
+  Phone,
 } from "lucide-react";
 
 export type LinkRoute = {
@@ -765,6 +766,30 @@ const routes: Route[] = [
         title: "Campaign Settings",
         icon: Settings,
         description: "Configure fundraising parameters",
+      },
+    ],
+  },
+  {
+    type: "section",
+    title: "Calls",
+    items: [
+      {
+        type: "dropdown",
+        title: "Call Management",
+        icon: Phone,
+        key: "calls-management",
+        items: [
+          {
+            type: "link",
+            path: "/admin/calls/dashboard",
+            title: "Dashboard",
+          },
+          {
+            type: "link",
+            path: "/admin/calls/monitoring",
+            title: "Calls Monitoring",
+          },
+        ],
       },
     ],
   },

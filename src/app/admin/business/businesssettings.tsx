@@ -34,6 +34,8 @@ import {
   ChevronUp,
   ExternalLink
 } from "lucide-react";
+import businessService from "../../../api/services/businessService";
+import { toast } from "react-hot-toast";
 
 const BusinessSettingsPage = () => {
   const navigate = useNavigate();
@@ -46,6 +48,10 @@ const BusinessSettingsPage = () => {
     financial: true,
     limits: true,
     display: true,
+    verification: false,
+    financial: false,
+    limits: false,
+    display: false,
     integration: false,
     security: false,
   });
@@ -56,18 +62,25 @@ const BusinessSettingsPage = () => {
     registrationEnabled: true,
     requireVerificationBeforeOperating: true,
     allowPublicRegistration: true,
+    registrationEnabled: false,
+    requireVerificationBeforeOperating: false,
+    allowPublicRegistration: false,
     adminApprovalRequired: false,
     requiredDocuments: [
       "businessRegistration",
       "taxCertificate",
       "ownerIdentification",
     ],
+    requiredDocuments: [],
     registrationFee: 0,
 
     // Verification settings
     autoVerifyEmails: true,
     kycLevel: "standard", // basic, standard, advanced
     documentVerificationTimeout: 48, // hours
+    autoVerifyEmails: false,
+    kycLevel: "",
+    documentVerificationTimeout: 0,
     allowOperationPendingVerification: false,
 
     // Financial settings
@@ -79,14 +92,27 @@ const BusinessSettingsPage = () => {
     allowExternalPayments: true,
     payoutSchedule: "weekly", // daily, weekly, monthly, manual
     minimumPayoutAmount: 1000,
+    transactionFeePercent: 0,
+    minimumTransactionFee: 0,
+    maxTransactionFeeAmount: 0,
+    walletEnabled: false,
+    maxWalletBalance: 0,
+    allowExternalPayments: false,
+    payoutSchedule: "",
+    minimumPayoutAmount: 0,
 
     // Limits and restrictions
     maxProductsPerBusiness: 100,
     maxCategoriesPerBusiness: 5,
     maxMediaPerProduct: 10,
     maxStorefrontBanners: 5,
+    maxProductsPerBusiness: 0,
+    maxCategoriesPerBusiness: 0,
+    maxMediaPerProduct: 0,
+    maxStorefrontBanners: 0,
     productApprovalRequired: false,
     restrictedProductCategories: ["alcohol", "tobacco", "pharmaceuticals"],
+    restrictedProductCategories: [],
 
     // Display settings
     defaultBusinessSortOrder: "newest", // newest, highestRated, mostPopular
@@ -95,6 +121,12 @@ const BusinessSettingsPage = () => {
     showVerificationBadges: true,
     showBusinessContacts: true,
     allowBusinessCustomization: true,
+    defaultBusinessSortOrder: "",
+    businessListingPageSize: 0,
+    showBusinessRatings: false,
+    showVerificationBadges: false,
+    showBusinessContacts: false,
+    allowBusinessCustomization: false,
 
     // Integration settings
     enableApiAccess: true,
@@ -110,6 +142,11 @@ const BusinessSettingsPage = () => {
     loginThrottling: true,
     maxLoginAttempts: 5,
     securityAuditFrequency: "monthly", // weekly, monthly, quarterly
+    passwordPolicyStrength: "",
+    sessionTimeout: 0,
+    loginThrottling: false,
+    maxLoginAttempts: 0,
+    securityAuditFrequency: "",
   });
 
   // Lists for dropdowns and options
@@ -120,6 +157,7 @@ const BusinessSettingsPage = () => {
   ];
 
   const payoutScheduleOptions = [
+    { value: "", label: "Select Schedule" },
     { value: "daily", label: "Daily" },
     { value: "weekly", label: "Weekly" },
     { value: "monthly", label: "Monthly" },
@@ -137,6 +175,10 @@ const BusinessSettingsPage = () => {
     { value: "low", label: "Low (minimum 6 characters)" },
     { value: "medium", label: "Medium (8+ chars, requires numbers)" },
     { value: "high", label: "High (8+ chars, numbers, symbols, mixed case)" },
+    { value: "", label: "Select Strength" },
+    { value: "low", label: "Low" },
+    { value: "medium", label: "Medium" },
+    { value: "high", label: "High" },
   ];
 
   const securityAuditOptions = [
@@ -172,8 +214,15 @@ const BusinessSettingsPage = () => {
         // setSettings(response);
         setIsLoading(false);
       }, 1000);
+      const response = await businessService.getBusinessSettings();
+      setSettings(response);
     } catch (error) {
       console.error("Error fetching business settings:", error);
+      toast.error("Failed to load business settings.");
+      // Initialize with empty arrays to prevent crashes on render
+      setSettings(prev => ({ ...prev, requiredDocuments: [], restrictedProductCategories: [] }));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -222,8 +271,14 @@ const BusinessSettingsPage = () => {
           setShowSuccessMessage(false);
         }, 3000);
       }, 1500);
+      await businessService.updateBusinessSettings(settings);
+      toast.success("Settings saved successfully!");
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
     } catch (error) {
       console.error("Error saving business settings:", error);
+      toast.error((error as Error).message || "Failed to save settings.");
+    } finally {
       setIsSaving(false);
     }
   };
