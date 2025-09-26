@@ -1576,6 +1576,16 @@ const BusinessDetailPage: React.FC = () => {
         </motion.div>
       )}
 
+      {/* Upload Document Modal */}
+      {business?.id && (
+        <UploadDocumentModal
+          isOpen={showUploadModal}
+          onClose={() => setShowUploadModal(false)}
+          onSuccess={() => id && fetchBusinessDetails(id)} // Refetch details on success
+          businessId={business.id}
+        />
+      )}
+
       {/* Document Viewer Modal */}
       {showDocumentViewer && selectedDocument && (
         <motion.div
