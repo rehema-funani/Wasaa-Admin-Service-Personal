@@ -331,7 +331,12 @@ const createBusinessRole = async (businessId: string, roleData: { title: string;
 
 const getBusinessRoles = async (businessId: string): Promise<any[]> => {
     try {
+        // This endpoint correctly fetches ALL available roles for a business,
+        // not just the ones currently assigned to users.
         const response = await businessApi.get(`/business-roles/business/${businessId}`);
+        // The response might be an array directly, or nested under a 'roles' property.
+        // This handles both cases safely.
+        const roles = response.data?.roles || (Array.isArray(response.data) ? response.data : []);
         return response.data || [];
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -380,10 +385,26 @@ const deleteBusinessRole = async (roleId: string): Promise<void> => {
     }
 };
 
-const getBusinessRolePermissions = async (): Promise<string[]> => {
+const getBusinessRolePermissions = async (): Promise<{ id: string; name: string }[]> => {
     try {
         const response = await businessApi.get('/business-roles/permissions');
-        return response.data || [];
+        let data = response.data;
+
+        // The API might return the array nested under a property like 'permissions' or 'data'
+        if (data && !Array.isArray(data)) {
+            if (Array.isArray(data.permissions)) {
+                data = data.permissions;
+            } else if (Array.isArray(data.data)) {
+                data = data.data;
+            }
+        }
+
+        if (!Array.isArray(data)) {
+            console.warn("getBusinessRolePermissions: API response was not in a recognized array format.", response.data);
+            return [];
+        }
+
+        return data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             const errorMessage = error.response.data?.message || 'Failed to fetch business role permissions';
@@ -418,6 +439,27 @@ const removeBusinessUser = async (businessUserId: string): Promise<void> => {
     }
 };
 
+const uploadBusinessDocument = async (businessId: string, document: File, type: string): Promise<any> => {
+    const formData = new FormData();
+    formData.append('document', document);
+    formData.append('type', type);
+
+    try {
+        const response = await businessApi.post(`/business/${businessId}/upload-documents`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message || 'Failed to upload document';
+            throw new Error(errorMessage);
+        }
+        throw new Error('An unexpected error occurred while uploading the document.');
+    }
+};
+
 const businessService = {
     registerBusiness,
     getAllBusinesses,
@@ -444,6 +486,7 @@ const businessService = {
     getBusinessRolePermissions,
     updateBusinessUserRole,
     removeBusinessUser,
+    uploadBusinessDocument,
 };
 
 export default businessService;

@@ -37,12 +37,14 @@ import {
 import businessService from "../../../api/services/businessService";
 import { Business } from "../../../types/business";
 import { toast } from "react-hot-toast";
+import UploadDocumentModal from "./UploadDocumentModal";
 
 const BusinessDetailPage: React.FC = () => {
   const [business, setBusiness] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [showActionModal, setShowActionModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showDocumentViewer, setShowDocumentViewer] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
@@ -469,6 +471,16 @@ const BusinessDetailPage: React.FC = () => {
                   >
                     <Edit className="w-4 h-4" />
                     Edit Business
+                  </motion.button>
+                  <motion.button
+                    className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                    whileHover={{ scale: 1.02 }}
+                    onClick={() =>
+                      navigate(`/admin/business/${business.id}/roles`)
+                    }
+                  >
+                    <Settings className="w-4 h-4" />
+                    Manage Roles
                   </motion.button>
                   <motion.button
                     className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
@@ -1146,6 +1158,7 @@ const BusinessDetailPage: React.FC = () => {
                   className="px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl text-sm font-medium hover:shadow-md transition-all duration-200 flex items-center gap-2"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={() => setShowUploadModal(true)}
                 >
                   <Upload className="w-4 h-4" />
                   Upload Document

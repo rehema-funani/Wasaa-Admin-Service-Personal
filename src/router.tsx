@@ -62,6 +62,12 @@ const BusinessModule = {
   VerificationQueue: lazy(
     () => import("./app/admin/business/verificationqueue")
   ),
+  ManageBusinessRoles: lazy(
+    () => import("./app/admin/business/ManageBusinessRoles")
+  ),
+  BusinessRoleDetail: lazy(
+    () => import("./app/admin/business/BusinessRoleDetail")
+  ),
 };
 
 const GroupModule = {
@@ -416,6 +422,14 @@ const BusinessRoutes = [
   {
     path: PATHS.ADMIN.BUSINESS.VERIFICATION_QUEUE,
     element: BusinessModule.VerificationQueue,
+  },
+  {
+    path: "/admin/business/:businessId/roles",
+    element: BusinessModule.ManageBusinessRoles,
+  },
+  {
+    path: "/admin/business/roles/:roleId",
+    element: BusinessModule.BusinessRoleDetail,
   },
 ];
 
